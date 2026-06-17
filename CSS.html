@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            alert("Access Denied: You must be enrolled and signed in to view Structured Track materials. Redirecting to Enrollment Terminal...");
+            window.location.href = "index.html#auth";
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Reference Sheet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container study-guide-container">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="signup.html">Signup</a>
+            <a href="reference.html">References</a>
+        </nav>
+
+        <h3>CSS Reference Sheet</h3>
+        
+        <!-- Subject Progress Tracker -->
+        <div id="page-progress-container"></div>
+
+        <h4>📋 Learning Checkpoints</h4>
+                <h5><span class="emoji">🟢</span> Easy Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="css-task-1" class="progress-check"> CSS Selectors, colors, fonts, and inline vs external styles</label></li>
+            <li><label><input type="checkbox" id="css-task-2" class="progress-check"> CSS Box Model (Margins, Padding, Borders, Width, Height)</label></li>
+        </ul>
+        <h5><span class="emoji">🟡</span> Medium Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="css-task-3" class="progress-check"> Layout systems: Flexbox and CSS Grid</label></li>
+            <li><label><input type="checkbox" id="css-task-4" class="progress-check"> Responsive web design, Media Queries, and viewport settings</label></li>
+        </ul>
+
+
+        <h4>📖 Tutorials & Official Documentation</h4>
+        <ul>
+                        <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS" target="_blank">MDN CSS Guide</a> - The ultimate CSS reference manual for web styles, selectors, and selectors specifications.</li>
+            <li><a href="https://css-tricks.com/almanac/" target="_blank">CSS-Tricks Almanac</a> - An alphabetical index of all CSS selectors, properties, and values with clear examples.</li>
+            <li><a href="https://www.w3schools.com/css/" target="_blank">W3Schools CSS Guide</a> - Clear, interactive tutorials with simple try-it-yourself code sandboxes.</li>
+            <li><a href="https://github.com/styleguide/css" target="_blank">CSS Guidelines by Harry Roberts</a> - High-level guidelines for writing scalable, manageable CSS code.</li>
+            <li><a href="https://web.dev/learn/css/" target="_blank">Learn CSS by Google Devs</a> - An evergreen CSS course and reference broken down into easy-to-understand chapters.</li>
+        </ul>
+
+        <h4>🛠️ Interactive Visualizers & Sandboxes</h4>
+        <ul>
+                        <li><a href="https://flexboxfroggy.com/" target="_blank">Flexbox Froggy Game</a> - Learn and visualize CSS Flexbox layout properties by guiding frogs home.</li>
+            <li><a href="https://cssgridgarden.com/" target="_blank">Grid Garden Game</a> - Interactive gardening game to learn and visualize CSS Grid layouts.</li>
+            <li><a href="https://grid.layoutit.com/" target="_blank">CSS Grid Generator Tool</a> - Visually design CSS grids and copy-paste generated CSS/HTML grids codes.</li>
+            <li><a href="https://bennettfeely.com/clippy/" target="_blank">CSS Clip Path Maker (Clippy)</a> - Visually make clip paths, polygons, and circles to shape HTML structures.</li>
+            <li><a href="https://glassmorphism.com/" target="_blank">CSS Glassmorphism Generator</a> - Visual CSS design tool to generate sleek translucent glass effects.</li>
+        </ul>
+
+        <h4>🧠 Practice Websites & Quizzes</h4>
+        <ul>
+                        <li><a href="https://flukeout.github.io/" target="_blank">CSS Diner</a> - Interactive selector game to master CSS selector specificity and combinations.</li>
+            <li><a href="https://www.frontendmentor.io/challenges?type=free" target="_blank">Frontend Mentor Challenges</a> - Build professional, pixel-perfect frontend layouts using provided styles and assets.</li>
+            <li><a href="http://www.flexboxdefense.com/" target="_blank">Flexbox Defense Game</a> - Tower defense style game where towers are placed using CSS Flexbox rules.</li>
+            <li><a href="https://cssbattle.dev/" target="_blank">CSS Battle</a> - Use your CSS skills to replicate target designs using the smallest code size possible.</li>
+        </ul>
+
+        <h4>🎓 Professional Certifications & Badges</h4>
+        <ul>
+                        <li><a href="https://www.freecodecamp.org/learn/2022/responsive-web-design/" target="_blank">freeCodeCamp Responsive Web Design Certification</a> - Earn a globally respected frontend certification by building 5 core web layout projects.</li>
+            <li><a href="https://shop.w3schools.com/products/css-certificate" target="_blank">W3Schools CSS Certification</a> - Verify your understanding of modern web page stylesheets.</li>
+            <li><a href="https://scrimba.com/learn/htmlandcss" target="_blank">Scrimba Advanced CSS Certificate</a> - Interactive certificate course covering advanced layouts and grid patterns.</li>
+        </ul>
+
+        <h4>🎥 Recommended YouTube Playlists</h4>
+        <ul class="youtube-list">
+                        <li><a href="https://www.youtube.com/c/KevinPowell" target="_blank"><img src="YT.png" height="24" width="24" alt="Kevin Powell - CSS Expert"> Kevin Powell - CSS Expert</a> - The definitive channel for modern CSS layouts, tips, grids, and tricks.</li>
+            <li><a href="https://www.youtube.com/watch?v=oxx5a3181Bs" target="_blank"><img src="FCC.png" height="24" width="24" alt="freeCodeCamp CSS Playlist"> freeCodeCamp CSS Playlist</a> - Full beginner courses and tutorials on CSS styling.</li>
+            <li><a href="https://www.youtube.com/c/DesignCourse" target="_blank"><img src="YT.png" height="24" width="24" alt="DesignCourse CSS Layouts"> DesignCourse CSS Layouts</a> - Beautiful front-end layout styling guides and layout tips.</li>
+        </ul>
+
+        <h4>💡 Recommended Project Ideas</h4>
+                <h5>🟢 Beginner Projects</h5>
+        <ul>
+            <li><strong>Responsive Profile Card:</strong> Design a profile card layout that looks beautiful on mobile, tablet, and desktop viewports.</li>
+            <li><strong>Animated CSS Button Set:</strong> Build a gallery of interactive buttons utilizing CSS hover states and 3D transition effects.</li>
+                    <li><strong>Glassmorphic Login Form:</strong> Design a modern login card layout utilizing CSS backdrop filters, smooth borders, and gradient highlights.</li>
+</ul>
+        <h5>🟡 Medium Projects</h5>
+        <ul>
+            <li><strong>Flexbox CSS Landing Page:</strong> Construct a responsive landing page layout utilizing nested flex containers and sticky navigation.</li>
+            <li><strong>CSS Grid Photo Gallery:</strong> Build a Pinterest-style grid image gallery utilizing css grids autofit and gap properties.</li>
+                    <li><strong>Accordion FAQ Section:</strong> Create a CSS-only FAQ dropdown layout using the checkbox hack or details/summary styling selectors.</li>
+</ul>
+        <h5>🔴 Advanced Projects</h5>
+        <ul>
+            <li><strong>Interactive Dashboard Grid Theme:</strong> Develop a layout featuring dark mode, animations, collapsable sidebars, and customizable theme cards.</li>
+            <li><strong>CSS-Only Sliding Carousel:</strong> Build a sliding image carousel with pagination dots using pure CSS selectors and transitions.</li>
+                    <li><strong>3D Card Hover Carousel:</strong> Construct an interactive product card showcase with CSS 3D transforms, perspectives, and keyframe hover transitions.</li>
+</ul>
+
+    </div>
+    <script src="tracker.js"></script>
+</body>
+</html>

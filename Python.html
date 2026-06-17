@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            alert("Access Denied: You must be enrolled and signed in to view Structured Track materials. Redirecting to Enrollment Terminal...");
+            window.location.href = "index.html#auth";
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Programming Reference Sheet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container study-guide-container">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="signup.html">Signup</a>
+            <a href="reference.html">References</a>
+        </nav>
+
+        <h3>Python Programming Reference Sheet</h3>
+        
+        <!-- Subject Progress Tracker -->
+        <div id="page-progress-container"></div>
+
+        <h4>📋 Learning Checkpoints</h4>
+                <h5><span class="emoji">🟢</span> Easy Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="python-task-1" class="progress-check"> Learn basic syntax, variables, lists, dictionaries, and loops</label></li>
+            <li><label><input type="checkbox" id="python-task-2" class="progress-check"> Write functions, define arguments, and handle exceptions (try/except)</label></li>
+        </ul>
+        <h5><span class="emoji">🟡</span> Medium Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="python-task-3" class="progress-check"> Perform file I/O operations (read/write text/CSV files)</label></li>
+            <li><label><input type="checkbox" id="python-task-4" class="progress-check"> Learn Object-Oriented Programming (Classes, Objects, Inheritance)</label></li>
+        </ul>
+
+
+        <h4>📖 Tutorials & Official Documentation</h4>
+        <ul>
+                        <li><a href="https://docs.python.org/3/" target="_blank">Official Python Documentation</a> - The primary language tutorial, standard library definitions, and syntax guides.</li>
+            <li><a href="https://realpython.com/" target="_blank">Real Python Learning Paths</a> - Outstanding articles and courses explaining OOP, decorators, generators, and packages.</li>
+            <li><a href="https://www.w3schools.com/python/" target="_blank">W3Schools Python Tutorial</a> - Interactive, bite-sized lessons explaining core data structures (lists, dicts, tuples).</li>
+            <li><a href="https://pymotw.com/3/" target="_blank">Python 3 Module of the Week (PyMOTW)</a> - Provides concrete code examples for each module in the Python standard library.</li>
+        </ul>
+
+        <h4>🛠️ Interactive Visualizers & Sandboxes</h4>
+        <ul>
+                        <li><a href="https://pythontutor.com/visualize.html" target="_blank">Python Tutor Visualizer</a> - Trace Python variables, lists, objects, and function calls step-by-step.</li>
+            <li><a href="https://replit.com/languages/python3" target="_blank">Repl.it Online Playground</a> - Quickly write, compile, run, and share python scripts instantly in your browser.</li>
+            <li><a href="https://trinket.io/" target="_blank">Trinket Online Python IDE</a> - Simple in-browser python compiler environment for scripts and animations.</li>
+            <li><a href="https://colab.research.google.com/" target="_blank">Google Colab Notebook</a> - Run an interactive Google Colab Python notebook in your browser without local installation.</li>
+        </ul>
+
+        <h4>🧠 Practice Websites & Quizzes</h4>
+        <ul>
+                        <li><a href="https://codingbat.com/python" target="_blank">CodingBat Python Practice</a> - Interactive python puzzles covering lists, string manipulations, and basic logic loops.</li>
+            <li><a href="https://exercism.org/tracks/python" target="_blank">Exercism Python Track</a> - Master python by solving 100+ tasks with mentorship feedback options.</li>
+            <li><a href="https://www.codewars.com/" target="_blank">CodeWars Python Dojo</a> - Level-up your coding capability by solving code katas of increasing difficulty.</li>
+            <li><a href="https://www.hackinscience.org/" target="_blank">Hackinscience Exercises</a> - Free, open-source Python exercises with automated code validation and hints.</li>
+        </ul>
+
+        <h4>🎓 Professional Certifications & Badges</h4>
+        <ul>
+                        <li><a href="https://pythoninstitute.org/pcep" target="_blank">PCEP: Certified Entry-Level Python Programmer</a> - Validates your basic programming structures and syntax capabilities.</li>
+            <li><a href="https://pythoninstitute.org/pcap" target="_blank">PCAP: Certified Associate in Python Programming</a> - Earn a credential validating standard OOP patterns and libraries usage.</li>
+            <li><a href="https://shop.w3schools.com/products/python-certificate" target="_blank">W3Schools Python Certification</a> - Official certification assessing fundamental language parameters.</li>
+            <li><a href="https://www.coursera.org/professional-certificates/google-it-automation" target="_blank">Google IT Automation with Python Professional Certificate</a> - Earn a professional certificate validating system automation using Python scripting.</li>
+        </ul>
+
+        <h4>🎥 Recommended YouTube Playlists</h4>
+        <ul class="youtube-list">
+                        <li><a href="https://www.youtube.com/c/CoreyMSchafer" target="_blank"><img src="YT.png" height="24" width="24" alt="Corey Schafer - Python Expert"> Corey Schafer - Python Expert</a> - Exceptional guides on OOP, web scrapers, data structures, and logging modules.</li>
+            <li><a href="https://www.youtube.com/user/programmingwithmosh" target="_blank"><img src="YT.png" height="24" width="24" alt="Programming with Mosh Python Course"> Programming with Mosh Python Course</a> - Very popular python beginner tutorial for software engineering developers.</li>
+            <li><a href="https://www.youtube.com/watch?v=rfscVS0vtbw" target="_blank"><img src="FCC.png" height="24" width="24" alt="freeCodeCamp Python Full Course"> freeCodeCamp Python Full Course</a> - A complete 4-hour crash course to master python programming fundamentals.</li>
+            <li><a href="https://www.youtube.com/playlist?list=PLhQjrBD2T3817j24-GpnUSJKm6AL3YgMT" target="_blank"><img src="YT.png" height="24" width="24" alt="Harvard CS50 Python Lectures"> Harvard CS50 Python Lectures</a> - University introduction to programming with Python from CS50.</li>
+        </ul>
+
+        <h4>💡 Recommended Project Ideas</h4>
+                <h5>🟢 Beginner Projects</h5>
+        <ul>
+            <li><strong>Basic Web Scraper Script:</strong> Write a python script utilizing requests and BeautifulSoup to scrape and save headline articles from blogs.</li>
+            <li><strong>Interactive CLI Weather App:</strong> Develop a console utility that queries open weather APIs and displays city statistics.</li>
+                    <li><strong>Desktop Notification Script:</strong> Build a script that runs in the background and sends system notifications or alarms at specified times.</li>
+</ul>
+        <h5>🟡 Medium Projects</h5>
+        <ul>
+            <li><strong>To-Do List REST API:</strong> Build a functional back-end server utilizing Flask/FastAPI supporting CRUD operations and JSON responses.</li>
+            <li><strong>Custom File Renaming Script:</strong> Write a filesystem tool utilizing the os/pathlib module that renames hundreds of files according to dates.</li>
+                    <li><strong>PDF Metadata Extractor:</strong> Develop a CLI tool using PyPDF2 that extracts author details, page counts, and encrypted states of target PDFs.</li>
+</ul>
+        <h5>🔴 Advanced Projects</h5>
+        <ul>
+            <li><strong>Real-time Machine Learning Classifier:</strong> Program a classification model utilizing Scikit-Learn that evaluates inputs and returns predictions in real-time.</li>
+            <li><strong>Multiplayer Tic-Tac-Toe via WebSockets:</strong> Construct a network lobby and socket client allowing real-time board gameplay between two peers.</li>
+                    <li><strong>Custom HTTP Banner Grabber:</strong> Create a network security script that checks open ports and parses server responses to detect software versions.</li>
+</ul>
+
+    </div>
+    <script src="tracker.js"></script>
+</body>
+</html>

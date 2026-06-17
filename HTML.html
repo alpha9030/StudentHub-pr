@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            alert("Access Denied: You must be enrolled and signed in to view Structured Track materials. Redirecting to Enrollment Terminal...");
+            window.location.href = "index.html#auth";
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Reference Sheet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container study-guide-container">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="signup.html">Signup</a>
+            <a href="reference.html">References</a>
+        </nav>
+
+        <h3>HTML Reference Sheet</h3>
+        
+        <!-- Subject Progress Tracker -->
+        <div id="page-progress-container"></div>
+
+        <h4>📋 Learning Checkpoints</h4>
+                <h5><span class="emoji">🟢</span> Easy Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="html-task-1" class="progress-check"> Learn basic text tags (headings, paragraphs, bold/italic, lists)</label></li>
+            <li><label><input type="checkbox" id="html-task-2" class="progress-check"> Insert images with alt text and create anchors/links</label></li>
+        </ul>
+        <h5><span class="emoji">🟡</span> Medium Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="html-task-3" class="progress-check"> Build input forms using labels, text boxes, selects, and buttons</label></li>
+            <li><label><input type="checkbox" id="html-task-4" class="progress-check"> Structure tabular data using tables, headers (th), rows (tr), and cells (td)</label></li>
+        </ul>
+        <h5><span class="emoji">🔴</span> Hard Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="html-task-6" class="progress-check"> Write semantic HTML5 structure (header, section, footer) and implement accessibility basics</label></li>
+        </ul>
+
+
+        <h4>📖 Tutorials & Official Documentation</h4>
+        <ul>
+                        <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML" target="_blank">MDN HTML Basics Guide</a> - Mozilla Developer Network tutorial covering tags, attributes, and webpage layouts.</li>
+            <li><a href="https://www.w3schools.com/html/" target="_blank">W3Schools HTML Tutorial</a> - Clear, interactive tutorials with simple try-it-yourself code sandboxes.</li>
+            <li><a href="https://www.codecademy.com/learn/learn-html" target="_blank">Codecademy Learn HTML Course</a> - Interactive guided course explaining core semantic tags.</li>
+            <li><a href="http://html5doctor.com/" target="_blank">HTML5 Doctor Guide</a> - Informative explanations of HTML5 block elements and web semantics.</li>
+            <li><a href="https://html.spec.whatwg.org/multipage/" target="_blank">WHATWG HTML Living Standard</a> - The official, absolute specification for modern HTML structures.</li>
+        </ul>
+
+        <h4>🛠️ Interactive Visualizers & Sandboxes</h4>
+        <ul>
+                        <li><a href="https://codepen.io/" target="_blank">CodePen Live Sandbox</a> - Instantly write HTML structure and visualize live output in real-time.</li>
+            <li><a href="https://jsfiddle.net/" target="_blank">JSFiddle HTML Playground</a> - Great sandbox for coding and testing HTML structures, styling, and JS logic.</li>
+            <li><a href="https://jsbin.com/?html,output" target="_blank">JSBin HTML Editor</a> - Simple, distraction-free playground to build and render HTML structures.</li>
+            <li><a href="https://liveweave.com/" target="_blank">Liveweave Web Editor</a> - Real-time editor sandbox for HTML, CSS, and JS with built-in autocompletes.</li>
+            <li><a href="https://validator.w3.org/" target="_blank">W3C Markup Validation Service</a> - Verify HTML structural syntax and validate formatting standards.</li>
+        </ul>
+
+        <h4>🧠 Practice Websites & Quizzes</h4>
+        <ul>
+                        <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Test_your_skills:_HTML_text_basics" target="_blank">MDN HTML Assessments</a> - Practical test-your-skills assignments from Mozilla web developer guides.</li>
+            <li><a href="https://www.w3schools.com/html/html_exercises.asp" target="_blank">W3Schools HTML Exercises</a> - Interactive fill-in-the-blanks style HTML quizzes.</li>
+            <li><a href="https://www.sanfoundry.com/html-questions-answers/" target="_blank">Sanfoundry HTML Questions</a> - Large multiple-choice questionnaire database on HTML semantics and frames.</li>
+            <li><a href="https://www.frontendpractice.com/" target="_blank">Frontend Practice Templates</a> - Recreate real websites from scratch using clean, semantic HTML structure.</li>
+        </ul>
+
+        <h4>🎓 Professional Certifications & Badges</h4>
+        <ul>
+                        <li><a href="https://www.freecodecamp.org/learn/2022/responsive-web-design/" target="_blank">freeCodeCamp Responsive Web Design Certification</a> - Highly recognized certification validating core semantic HTML5 capabilities.</li>
+            <li><a href="https://shop.w3schools.com/products/html-certificate" target="_blank">W3Schools HTML Certification</a> - Earn a public webpage HTML certification.</li>
+            <li><a href="https://www.coursera.org/learn/html" target="_blank">Coursera HTML5 Introduction (University of Michigan)</a> - Academic certificate covering semantic web page structures.</li>
+        </ul>
+
+        <h4>🎥 Recommended YouTube Playlists</h4>
+        <ul class="youtube-list">
+                        <li><a href="https://www.youtube.com/c/KevinPowell" target="_blank"><img src="YT.png" height="24" width="24" alt="Kevin Powell HTML/CSS"> Kevin Powell HTML/CSS</a> - Excellent modern tutorials on semantic structures and SEO layout practices.</li>
+            <li><a href="https://www.youtube.com/watch?v=pQN-pnXPaVg" target="_blank"><img src="FCC.png" height="24" width="24" alt="freeCodeCamp HTML Course"> freeCodeCamp HTML Course</a> - Interactive, full video course on structural HTML fundamentals.</li>
+            <li><a href="https://www.youtube.com/user/programmingwithmosh" target="_blank"><img src="YT.png" height="24" width="24" alt="Programming with Mosh HTML Course"> Programming with Mosh HTML Course</a> - Excellent introductory web structures crash course.</li>
+        </ul>
+
+        <h4>💡 Recommended Project Ideas</h4>
+                <h5>🟢 Beginner Projects</h5>
+        <ul>
+            <li><strong>Personal Profile Page:</strong> Build a simple biography webpage showcasing lists, headers, images, and contact links.</li>
+            <li><strong>Survey Form Design:</strong> Design a survey form page using inputs, radio buttons, dropdown options, and comments areas.</li>
+                    <li><strong>Structured Recipe Page:</strong> Build a recipe presentation webpage utilizing lists, headers, images, and cooking timer frames.</li>
+</ul>
+        <h5>🟡 Medium Projects</h5>
+        <ul>
+            <li><strong>Semantic Blog Layout:</strong> Structure a multi-page blogging website layout utilizing header, main, article, aside, and footer semantic elements.</li>
+            <li><strong>Product Comparison Table:</strong> Construct a pricing grid table comparing service features using rowspans/colspans.</li>
+                    <li><strong>Event Registration Portal:</strong> Design a multi-section registration form layout utilizing semantic inputs, calendars, and file uploads.</li>
+</ul>
+        <h5>🔴 Advanced Projects</h5>
+        <ul>
+            <li><strong>Interactive Web Portfolio Template:</strong> Build a responsive grid web portfolio, embedding videos, sound clips, and interactive contact panels.</li>
+            <li><strong>HTML Emails Template Gallery:</strong> Design and test a responsive inline-style HTML newsletter email template.</li>
+                    <li><strong>Audio Player Controls Layout:</strong> Structure a web audio player playlist utilizing semantic markup, nesting custom SVG icon controls.</li>
+</ul>
+
+    </div>
+    <script src="tracker.js"></script>
+</body>
+</html>

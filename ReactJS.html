@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            alert("Access Denied: You must be enrolled and signed in to view Structured Track materials. Redirecting to Enrollment Terminal...");
+            window.location.href = "index.html#auth";
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Reference Sheet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container study-guide-container">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="signup.html">Signup</a>
+            <a href="reference.html">References</a>
+        </nav>
+
+        <h3>React Reference Sheet</h3>
+        
+        <!-- Subject Progress Tracker -->
+        <div id="page-progress-container"></div>
+
+        <h4>📋 Learning Checkpoints</h4>
+                <h5><span class="emoji">🟢</span> Easy Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="react-task-1" class="progress-check"> Understand JSX, Components, and Props</label></li>
+        </ul>
+        <h5><span class="emoji">🟡</span> Medium Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="react-task-4" class="progress-check"> Learn single-page navigation using React Router</label></li>
+        </ul>
+
+
+        <h4>📖 Tutorials & Official Documentation</h4>
+        <ul>
+                        <li><a href="https://react.dev/" target="_blank">Official React Documentation (react.dev)</a> - Official React manuals detailing hooks, components, rendering, state management, and updates.</li>
+            <li><a href="https://scrimba.com/learn/learnreact" target="_blank">Scrimba Interactive React Course</a> - Learn React interactively inside a video-coding workspace environment.</li>
+            <li><a href="https://www.w3schools.com/react/" target="_blank">W3Schools React Tutorial</a> - Simple introduction to JSX, hooks, state, and props configurations.</li>
+            <li><a href="https://reactpatterns.com/" target="_blank">React Patterns Guide</a> - Curated collection of React component architecture patterns.</li>
+            <li><a href="https://react.dev/reference/react/hooks" target="_blank">React Hooks Reference Guide</a> - Complete reference manual for all standard React hooks (useState, useEffect, useMemo, etc.).</li>
+        </ul>
+
+        <h4>🛠️ Interactive Visualizers & Sandboxes</h4>
+        <ul>
+                        <li><a href="https://react.dev/learn/react-developer-tools" target="_blank">React Developer Tools Extension</a> - Browser extension to inspect react components, properties, states, and renders.</li>
+            <li><a href="https://codesandbox.io/s/react" target="_blank">CodeSandbox React Environment</a> - Visually build React apps instantly and preview live web displays.</li>
+            <li><a href="https://stackblitz.com/" target="_blank">StackBlitz React Playground</a> - Extremely fast IDE environment to compile and execute React apps.</li>
+            <li><a href="https://github.com/welldone-software/why-did-you-render" target="_blank">Why Did You Render tool</a> - A visual tool to alert you about avoidable component re-renders.</li>
+        </ul>
+
+        <h4>🧠 Practice Websites & Quizzes</h4>
+        <ul>
+                        <li><a href="https://www.jschallenger.com/" target="_blank">JS Challenger React Exercises</a> - Interactive lessons to test hook updates and components structure patterns.</li>
+            <li><a href="https://github.com/alexgurr/react-coding-challenges" target="_blank">React Coding Challenges</a> - Verify your understanding of state, props, hooks, and lifecycle methods.</li>
+            <li><a href="https://github.com/sudheerj/reactjs-interview-questions" target="_blank">ReactJS Interview Questions & Exercises</a> - Interactive challenges designed to test hook states and API integrations.</li>
+            <li><a href="https://github.com/uidotdev/usehooks" target="_blank">useHooks Custom React Hooks Reference</a> - Popular, production-ready custom React hook recipes and code templates.</li>
+        </ul>
+
+        <h4>🎓 Professional Certifications & Badges</h4>
+        <ul>
+                        <li><a href="https://www.coursera.org/professional-certificates/meta-front-end-developer" target="_blank">Meta Front-End Developer Professional Certificate (Coursera)</a> - A prestigious professional credential validating React engineering and front-end architectures.</li>
+            <li><a href="https://shop.w3schools.com/collections/certifications" target="_blank">W3Schools React Certification</a> - Earn a webpage React programming certification.</li>
+            <li><a href="https://www.coursera.org/specializations/meta-react-native" target="_blank">Meta React Native Professional Certificate</a> - Advanced credential validating cross-platform mobile development using React.</li>
+        </ul>
+
+        <h4>🎥 Recommended YouTube Playlists</h4>
+        <ul class="youtube-list">
+                        <li><a href="https://www.youtube.com/c/WebDevSimplified" target="_blank"><img src="YT.png" height="24" width="24" alt="Web Dev Simplified React"> Web Dev Simplified React</a> - Great hook guides (useState, useEffect, useContext, useMemo) and structural files advice.</li>
+            <li><a href="https://www.youtube.com/c/Academind" target="_blank"><img src="YT.png" height="24" width="24" alt="Academind React Playlist"> Academind React Playlist</a> - In-depth video walkthroughs building modern React applications.</li>
+            <li><a href="https://www.youtube.com/watch?v=bMknfKXIFA8" target="_blank"><img src="FCC.png" height="24" width="24" alt="freeCodeCamp React Course"> freeCodeCamp React Course</a> - Complete 12-hour video programming course on building React apps.</li>
+            <li><a href="https://www.youtube.com/c/TheNetNinja" target="_blank"><img src="YT.png" height="24" width="24" alt="Net Ninja React Tutorial"> Net Ninja React Tutorial</a> - Simple, beginner-friendly series building complete React pages.</li>
+        </ul>
+
+        <h4>💡 Recommended Project Ideas</h4>
+                <h5>🟢 Beginner Projects</h5>
+        <ul>
+            <li><strong>Interactive Counter App:</strong> Design a basic app utilizing useState hooks to increment, decrement, and reset numeric metrics.</li>
+            <li><strong>Searchable Shopping Checklist:</strong> Build a list display showing shopping items, letting users filter options dynamically via text input.</li>
+                    <li><strong>Random Quote Generator Card:</strong> Build a component fetching quotes from external APIs, updating quotes on Twitter share buttons.</li>
+</ul>
+        <h5>🟡 Medium Projects</h5>
+        <ul>
+            <li><strong>Task Kanban Board:</strong> Develop a multi-list task manager utilizing components states representing To-Do, In-Progress, and Completed tickets.</li>
+            <li><strong>Movie Database Explorer:</strong> Construct an app fetching film data from REST APIs, presenting details inside responsive component grid cards.</li>
+                    <li><strong>GitHub User Profile Explorer:</strong> Develop an app querying GitHub user profiles via API, displaying avatar pictures, repository lists, and follower statistics.</li>
+</ul>
+        <h5>🔴 Advanced Projects</h5>
+        <ul>
+            <li><strong>E-Commerce Shopping Cart System:</strong> Build a shop app using useContext/Redux to handle shopping cart lists, item additions, checkouts, and total cost updates.</li>
+            <li><strong>Real-time Collaborative Drawing Canvas:</strong> Design a React paint interface using HTML5 Canvas and Socket.io to sync drawings with peers.</li>
+                    <li><strong>Real-time Drawing Whiteboard:</strong> Construct a canvas whiteboard utilizing React refs, syncing drawing paths with connected browsers using WebSockets.</li>
+</ul>
+
+    </div>
+    <script src="tracker.js"></script>
+</body>
+</html>

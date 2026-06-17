@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            alert("Access Denied: You must be enrolled and signed in to view Structured Track materials. Redirecting to Enrollment Terminal...");
+            window.location.href = "index.html#auth";
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Management Systems (DBMS) Reference Sheet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container study-guide-container">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="signup.html">Signup</a>
+            <a href="reference.html">References</a>
+        </nav>
+
+        <h3>Database Management Systems (DBMS) Reference Sheet</h3>
+        
+        <!-- Subject Progress Tracker -->
+        <div id="page-progress-container"></div>
+
+        <h4>📋 Learning Checkpoints</h4>
+                <h5><span class="emoji">🟢</span> Easy Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="dbms-task-1" class="progress-check"> Understand ER Diagrams, entities, attributes, and relationships</label></li>
+            <li><label><input type="checkbox" id="dbms-task-2" class="progress-check"> Master Relational Schema, Candidate Keys, Primary Keys, and Foreign Keys</label></li>
+        </ul>
+        <h5><span class="emoji">🟡</span> Medium Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="dbms-task-3" class="progress-check"> Learn Functional Dependency and Normalization (1NF, 2NF, 3NF, BCNF)</label></li>
+            <li><label><input type="checkbox" id="dbms-task-4" class="progress-check"> Learn Transaction Control, schedules, and ACID properties</label></li>
+        </ul>
+        <h5><span class="emoji">🔴</span> Hard Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="dbms-task-5" class="progress-check"> Understand Concurrency Control (2PL, Timestamping) and Database recovery</label></li>
+        </ul>
+
+
+        <h4>📖 Tutorials & Official Documentation</h4>
+        <ul>
+                        <li><a href="https://www.geeksforgeeks.org/dbms-tutorials/" target="_blank">GeeksforGeeks DBMS Tutorials</a> - Complete academic directory covering normalization, ERDs, and relational algebra.</li>
+            <li><a href="https://www.javatpoint.com/dbms-tutorial" target="_blank">Javatpoint DBMS Guide</a> - Simple, beginner-friendly explanations of SQL, NoSQL, and database models.</li>
+            <li><a href="https://www.studytonight.com/dbms/" target="_blank">Studytonight DBMS Tutorial</a> - Academic lectures on transaction models, keys, and relational calculus.</li>
+            <li><a href="https://www.guru99.com/dbms-tutorial.html" target="_blank">Guru99 Database Tutorial</a> - Easy introduction to RDBMS fundamentals and database structures.</li>
+            <li><a href="https://use-the-index-luke.com/" target="_blank">Use The Index, Luke!</a> - A developer-focused guide to database performance, indexing, and tuning.</li>
+        </ul>
+
+        <h4>🛠️ Interactive Visualizers & Sandboxes</h4>
+        <ul>
+                        <li><a href="https://dbdiagram.io/" target="_blank">dbdiagram.io ERD Tool</a> - Instantly draw visual Entity-Relationship Diagrams (ERDs) using clean, simple database markup language.</li>
+            <li><a href="https://www.db-fiddle.com/" target="_blank">DB Fiddle Playground</a> - Test, visualize, and share raw SQL queries and schemas side-by-side.</li>
+            <li><a href="https://www.quickdatabasediagrams.com/" target="_blank">QuickDBD Schema Tool</a> - Quick online diagram tool to draw structured database schemas.</li>
+            <li><a href="https://dbis-uibk.github.io/relax/" target="_blank">Relational Algebra Calculator</a> - Translate relational algebra expressions into SQL and visualize data sets.</li>
+        </ul>
+
+        <h4>🧠 Practice Websites & Quizzes</h4>
+        <ul>
+                        <li><a href="https://sqlzoo.net/" target="_blank">SQLZoo Database Practice</a> - Interactive in-browser queries to test your basic, intermediate, and advanced SQL skills.</li>
+            <li><a href="https://www.sanfoundry.com/dbms-questions-answers/" target="_blank">Sanfoundry DBMS MCQs</a> - Verify your theoretical DBMS knowledge with hundreds of quizzes.</li>
+            <li><a href="https://www.w3schools.com/sql/sql_quiz.asp" target="_blank">W3Schools SQL Quiz</a> - Fast multiple choice test for SQL DML and DDL commands.</li>
+            <li><a href="https://datalemur.com/" target="_blank">DataLemur SQL Interview Questions</a> - Practice real SQL interview questions from tech giants like FAANG.</li>
+        </ul>
+
+        <h4>🎓 Professional Certifications & Badges</h4>
+        <ul>
+                        <li><a href="https://education.oracle.com/oracle-database-foundations-associate/pexam_1Z0-006" target="_blank">Oracle Database Foundations Associate</a> - Validates fundamental database architecture and querying knowledge.</li>
+            <li><a href="https://www.hackerrank.com/skills-verification" target="_blank">HackerRank SQL Skill Certification</a> - Earn a public SQL credential badge to prove database querying mastery.</li>
+            <li><a href="https://learn.microsoft.com/" target="_blank">Microsoft Database Fundamentals (98-364)</a> - Enterprise certificate validating relational storage structures.</li>
+            <li><a href="https://www.coursera.org/professional-certificates/ibm-data-engineer" target="_blank">IBM Data Engineering Professional Certificate</a> - Credential validating RDBMS, NoSQL, and ETL pipeline management.</li>
+        </ul>
+
+        <h4>🎥 Recommended YouTube Playlists</h4>
+        <ul class="youtube-list">
+                        <li><a href="https://www.youtube.com/c/GateSmashers" target="_blank"><img src="YT.png" height="24" width="24" alt="Gate Smashers DBMS Playlist"> Gate Smashers DBMS Playlist</a> - Highly popular gate exam prep videos on DBMS keys, normalization, and ACID properties.</li>
+            <li><a href="https://www.youtube.com/c/nesoacademy" target="_blank"><img src="YT.png" height="24" width="24" alt="Neso Academy DBMS lectures"> Neso Academy DBMS lectures</a> - Clean and detailed academic presentations on database designs.</li>
+            <li><a href="https://www.youtube.com/c/KnowledgeGate" target="_blank"><img src="YT.png" height="24" width="24" alt="Knowledge Gate DBMS Playlist"> Knowledge Gate DBMS Playlist</a> - Detailed lectures on keys, joins, and normal forms.</li>
+        </ul>
+
+        <h4>💡 Recommended Project Ideas</h4>
+                <h5>🟢 Beginner Projects</h5>
+        <ul>
+            <li><strong>ER Diagram for Library:</strong> Design a complete ER Diagram representing tables, keys, and relational cardinality for a university library.</li>
+            <li><strong>Basic SQL Schema for Store:</strong> Write basic SQL DDL commands to create store tables, setting constraints and primary/foreign keys.</li>
+                    <li><strong>SQL Inventory Tracker Schema:</strong> Design a relational schema with tables for items, suppliers, and transactions with key constraints.</li>
+</ul>
+        <h5>🟡 Medium Projects</h5>
+        <ul>
+            <li><strong>E-Commerce Database Schema:</strong> Establish tables, indexes, and constraints for users, shopping carts, orders, and products.</li>
+            <li><strong>Normalizer Converter Utility:</strong> Write a script in Python/Java to verify functional dependencies and check for 3NF/BCNF violations.</li>
+                    <li><strong>Hotel Booking Schema & Functions:</strong> Establish tables for rooms, guests, bookings, and payments, including check-in date validation triggers.</li>
+</ul>
+        <h5>🔴 Advanced Projects</h5>
+        <ul>
+            <li><strong>DBMS Engine from Scratch:</strong> Program a minimal file-based DBMS engine supporting basic SELECT, INSERT, and WHERE filters in Python/C++.</li>
+            <li><strong>Banking System Transactions Simulation:</strong> Model a database system simulating concurrency issues, deadlocks, and ACID transaction commits.</li>
+                    <li><strong>Database Replication Engine:</strong> Write a Python script that parses transaction logs from one DBMS database and replicates transactions to a standby server.</li>
+</ul>
+
+    </div>
+    <script src="tracker.js"></script>
+</body>
+</html>

@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Hub - Academic Workspace</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- Modern App Header -->
+        <header class="app-header">
+            <div class="header-logo" onclick="showView('landing')">
+                <span class="logo-icon">🎓</span>
+                <span class="logo-text">Student Hub</span>
+            </div>
+            <nav class="main-nav">
+                <a href="#" id="nav-landing" onclick="showView('landing'); return false;" class="active">Home</a>
+                <a href="#" id="nav-auth" onclick="showView('auth'); return false;">Account</a>
+                <a href="reference.html" onclick="return checkReferenceAccess(event)" id="nav-references">References</a>
+            </nav>
+            <div class="header-controls">
+                <div class="settings-trigger-btn" onclick="toggleSettingsMenu(event)">
+                    ⚙️ <span class="btn-text">Settings</span>
+                </div>
+                <div id="settings-dropdown-menu" class="settings-dropdown">
+                    <div class="settings-dropdown-item">
+                        <label for="theme-select">Theme</label>
+                        <select id="theme-select" onchange="changeTheme(this.value)">
+                            <option value="default">Default Blue</option>
+                            <option value="light">Light Teal & Sage</option>
+                            <option value="dark">Dark Charcoal</option>
+                        </select>
+                    </div>
+                    <div class="settings-dropdown-item">
+                        <label for="font-size-select">Font Size</label>
+                        <select id="font-size-select" onchange="changeFontSize(this.value)">
+                            <option value="small">Small</option>
+                            <option value="medium">Medium</option>
+                            <option value="large">Large</option>
+                        </select>
+                    </div>
+                    <div class="settings-dropdown-divider"></div>
+                    <button id="signout-btn" onclick="doSignOut()" class="btn btn-secondary signout-dropdown-btn" style="display: none; width: 100%;">Sign Out</button>
+                    <button id="delete-btn" onclick="doDeleteAccount()" class="btn delete-dropdown-btn" style="display: none; width: 100%; margin-top: 8px; background-color: #ef4444; color: white; border: none; padding: 8px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">Delete Account</button>
+                </div>
+            </div>
+        </header>
+
+        <script>
+            function checkReferenceAccess(event) {
+                const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                if (!loggedIn) {
+                    event.preventDefault();
+                    alert("Access Denied: You must be enrolled and signed in to view Scholastic Reference Materials. Redirecting to Enrollment Terminal...");
+                    showView('auth');
+                    return false;
+                }
+                return true;
+            }
+
+            function toggleSettingsMenu(event) {
+                event.stopPropagation();
+                const menu = document.getElementById('settings-dropdown-menu');
+                if (menu) {
+                    menu.classList.toggle('active');
+                }
+            }
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                const controls = document.querySelector('.header-controls');
+                const menu = document.getElementById('settings-dropdown-menu');
+                if (menu && controls && !controls.contains(e.target)) {
+                    menu.classList.remove('active');
+                }
+            });
+        </script>
+
+        <!-- ==================== VIEW 1: WELCOME GATEWAY ==================== -->
+        <div id="landing-panel" class="view-panel active">
+            <!-- Modern Hero Section -->
+            <div class="hero-section">
+                <div class="hero-badge">🚀 Interactive Learning Space</div>
+                <h2 class="hero-title">Your Step-by-Step Guide to CS & Web Development</h2>
+                <p class="hero-subtitle">Align your studies, track course syllabus checklists, master key career requirements, and explore curated references and active internships.</p>
+                <div class="hero-actions">
+                    <button onclick="showView('auth')" class="btn btn-primary btn-hero">Enroll Student Profile</button>
+                    <button onclick="showView('dashboard')" class="btn btn-secondary btn-hero" style="margin-left: 12px;">Enter Dashboard (Guest)</button>
+                </div>
+            </div>
+            
+            <!-- ==================== NEW SECTION: ENGINEERING CURRICULUM BY YEAR & DEPT ==================== -->
+            <div class="notice-box dashboard-curriculum-box">
+                <h3 style="margin-top: 0;">🎓 Department Curriculum (By Year & Course)</h3>
+                <p>Align your studies by choosing your department and current year of study to see recommended subjects and materials:</p>
+                
+                <div class="curriculum-filters">
+                    <div class="filter-group">
+                        <label for="dept-select" style="margin-top: 0;">Department / Specialization:</label>
+                        <select id="dept-select" onchange="filterCurriculum()" style="margin-bottom: 0;">
+                            <option value="" disabled selected>-- Select your department --</option>
+                            <option value="cse">Computer Science & Engineering (CSE)</option>
+                            <option value="it">Information Technology (IT)</option>
+                            <option value="ece">Electronics & Communication Engineering (ECE)</option>
+                            <option value="eee">Electrical & Electronics Engineering (EEE)</option>
+                            <option value="me">Mechanical Engineering (ME)</option>
+                            <option value="ce">Civil Engineering (CE)</option>
+                            <option value="bca">Bachelor of Computer Applications (BCA)</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="year-select" style="margin-top: 0;">Academic Year:</label>
+                        <select id="year-select" onchange="filterCurriculum()" style="margin-bottom: 0;">
+                            <option value="" disabled selected>-- Select your academic year --</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="curriculum-result" class="curriculum-result-container">
+                    <!-- Curriculum list will be injected here dynamically -->
+                </div>
+            </div>
+
+            <div class="tracks-header-row">
+                <h3 class="tracks-title">Structured Tracks:</h3>
+                <div class="search-container-right">
+                    <input id="home-search" class="search-input" type="search" placeholder="Search subjects, topics..." />
+                    <button id="home-search-btn" class="search-btn">Search</button>
+                    <div id="home-search-results" class="search-results"></div>
+                </div>
+            </div>
+            <div class="track-grid">
+                <!-- 1. Academic Mathematics -->
+                <div class="track-card">
+                    <h4>🧮 Academic Mathematics</h4>
+                    <ul>
+                        <li><em>Easy:</em> <a href="https://en.wikipedia.org/wiki/Set_theory" target="_blank" title="Open Set Theory Wikipedia Entry">Set Theory</a>, <a href="https://www.khanacademy.org/math/algebra" target="_blank" title="Open Khan Academy Algebra Course">College Algebra</a>, <a href="https://en.wikipedia.org/wiki/Game_theory" target="_blank" title="Open Game Theory Wiki Entry">Game Theory</a></li>
+                        <li><em>Medium:</em> <a href="https://en.wikipedia.org/wiki/Discrete_mathematics" target="_blank" title="Open Discrete Mathematics Entry">Discrete Mathematics</a>, <a href="https://www.khanacademy.org/math/statistics-probability" target="_blank" title="Open Khan Academy Stats Course">Probability & Statistics</a>, <a href="https://en.wikipedia.org/wiki/Graph_theory" target="_blank" title="Open Graph Theory Wiki">Graph Theory</a></li>
+                        <li><em>Hard:</em> <a href="https://www.khanacademy.org/math/linear-algebra" target="_blank" title="Open Khan Academy Linear Algebra Course">Linear Algebra</a>, <a href="https://en.wikipedia.org/wiki/Calculus" target="_blank" title="Open Calculus Wikipedia Entry">Calculus for Machine Learning</a>, <a href="https://en.wikipedia.org/wiki/Numerical_analysis" target="_blank" title="Open Numerical Methods Wiki">Numerical Analysis</a></li>
+                    </ul>
+                </div>
+
+                <!-- 2. Core Subjects -->
+                <div class="track-card">
+                    <h4>💻 Core Computer Science</h4>
+                    <ul>
+                        <li><em>Easy:</em> <a href="https://learncodethehardway.org/unix/" target="_blank" title="Open CLI Basics Guide">Command Line Basics</a>, <a href="https://www.cybrary.it/" target="_blank" title="Open Cybersecurity Basics Course">Cybersecurity Basics</a></li>
+                        <li><em>Medium:</em> <a href="DSA.html" target="_blank" title="Open local DSA Guide">Data Structures & Algorithms (DSA)</a>, <a href="CN.html" target="_blank" title="Open local Computer Networks Guide">Computer Networks (CN)</a>, <a href="https://en.wikipedia.org/wiki/Theory_of_computation" target="_blank" title="Open Theory of Computation Wikipedia Entry">Theory of Computation</a></li>
+                        <li><em>Hard:</em> <a href="OS.html" target="_blank" title="Open local Operating Systems Guide">Operating Systems (OS)</a>, <a href="https://github.com/donnemartin/system-design-primer" target="_blank" title="Open System Design Primer on GitHub">System Design</a>, <a href="https://en.wikipedia.org/wiki/Compiler" target="_blank" title="Open Compiler Design Entry">Compiler Design</a>, <a href="https://en.wikipedia.org/wiki/Distributed_computing" target="_blank" title="Open Distributed Computing Entry">Distributed Systems</a></li>
+                    </ul>
+                </div>
+
+                <!-- 3. Software Engineering Practices -->
+                <div class="track-card">
+                    <h4>🛠️ Software Engineering</h4>
+                    <ul>
+                        <li><em>Easy:</em> <a href="https://www.markdownguide.org" target="_blank" title="Open Markdown Guide">Markdown Documentation</a>, <a href="https://git-scm.com" target="_blank" title="Open Git Documentation">Git & Version Control</a>, <a href="https://en.wikipedia.org/wiki/Object-oriented_design" target="_blank" title="Open Object-Oriented Design Wiki">Object-Oriented Design (OOD)</a></li>
+                        <li><em>Medium:</em> <a href="https://jestjs.io" target="_blank" title="Open Jest Testing Docs">Testing & QA (Jest/JUnit)</a>, <a href="https://www.scrum.org/resources/what-is-scrum" target="_blank" title="Open Scrum Resource Guide">Agile & Scrum Methodologies</a>, <a href="https://sourcemaking.com/design_patterns" target="_blank" title="Open Design Patterns Reference">Software Design Patterns</a></li>
+                        <li><em>Hard:</em> <a href="https://about.gitlab.com/topics/ci-cd/" target="_blank" title="Open CI/CD Concepts Guide">Continuous Integration & Deployment (CI/CD)</a>, <a href="https://en.wikipedia.org/wiki/Microservices" target="_blank" title="Open Microservices Architecture Entry">Microservices Architecture</a></li>
+                    </ul>
+                </div>
+
+                <!-- 4. Frontend -->
+                <div class="track-card">
+                    <h4>🎨 Frontend Web Development</h4>
+                    <ul>
+                        <li><em>Easy:</em> <a href="HTML.html" target="_blank" title="Open local HTML Guide">HTML</a>, <a href="https://getbootstrap.com" target="_blank" title="Open Bootstrap Docs">Bootstrap</a>, <a href="https://www.figma.com" target="_blank" title="Open Figma Design Tool Reference">Figma to Code</a>, <a href="https://www.w3.org/WAI/fundamentals/accessibility-intro/" target="_blank" title="Open W3C Web Accessibility Introduction">Web Accessibility (a11y)</a>, <a href="https://www.interaction-design.org/literature/topics/ui-design" target="_blank" title="Open UI Design Introduction by Interaction Design Foundation">UI/UX Design Basics</a></li>
+                        <li><em>Medium:</em> <a href="CSS.html" target="_blank" title="Open local CSS Guide">CSS</a>, <a href="JavaScript.html" target="_blank" title="Open local JavaScript Guide">JavaScript</a>, <a href="https://tailwindcss.com" target="_blank" title="Open Tailwind CSS Docs">Tailwind CSS</a>, <a href="https://sass-lang.com" target="_blank" title="Open SASS Docs">SASS</a>, <a href="https://vuejs.org" target="_blank" title="Open Vue.js Docs">Vue.js</a>, <a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON" target="_blank" title="Open JSON & Web APIs Reference">JSON & Web APIs</a></li>
+                        <li><em>Hard:</em> <a href="ReactJS.html" target="_blank" title="Open local ReactJS Guide">React.js</a>, <a href="https://www.typescriptlang.org" target="_blank" title="Open TypeScript Docs">TypeScript</a>, <a href="https://nextjs.org" target="_blank" title="Open Next.js Docs">Next.js</a>, <a href="https://angular.dev" target="_blank" title="Open Angular Docs">Angular</a>, <a href="https://redux.js.org" target="_blank" title="Open Redux Docs">State Management (Redux)</a>, <a href="https://vite.dev" target="_blank" title="Open Vite Build Tool Docs">Web Performance (Vite)</a></li>
+                    </ul>
+                </div>
+
+                <!-- 5. Backend -->
+                <div class="track-card">
+                    <h4>⚙️ Backend & API Systems</h4>
+                    <ul>
+                        <li><em>Easy:</em> <a href="Python.html" target="_blank" title="Open local Python Guide">Python</a>, <a href="C.html" target="_blank" title="Open local C Guide">Basic C</a></li>
+                        <li><em>Medium:</em> <a href="Java.html" target="_blank" title="Open local Java Guide">Java</a>, <a href="https://isocpp.org" target="_blank" title="Open C++ Standard Docs">C++</a>, <a href="https://nodejs.org" target="_blank" title="Open Node.js Docs">Node.js</a>, <a href="https://rubyonrails.org" target="_blank" title="Open Ruby on Rails Docs">Ruby on Rails</a></li>
+                        <li><em>Hard:</em> <a href="https://expressjs.com" target="_blank" title="Open Express.js Docs">Express.js</a>, <a href="https://go.dev" target="_blank" title="Open Go Language Docs">Go (Golang)</a>, <a href="https://www.rust-lang.org" target="_blank" title="Open Rust Language Docs">Rust Programming</a>, <a href="https://graphql.org" target="_blank" title="Open GraphQL Query Language Docs">GraphQL APIs</a></li>
+                    </ul>
+                </div>
+
+                <!-- 6. Databases -->
+                <div class="track-card">
+                    <h4>🗄️ Database Management</h4>
+                    <ul>
+                        <li><em>Easy:</em> <a href="https://sqlite.org" target="_blank" title="Open SQLite Docs">SQLite</a>, <a href="SQL.html" target="_blank" title="Open local SQL Guide">Basic SQL</a>, <a href="https://firebase.google.com" target="_blank" title="Open Firebase Docs">Firebase Realtime DB</a></li>
+                        <li><em>Medium:</em> <a href="PostgreSQL.html" target="_blank" title="Open local PostgreSQL Guide">PostgreSQL</a>, <a href="https://www.mongodb.com" target="_blank" title="Open MongoDB Docs">MongoDB</a>, <a href="DBMS.html" target="_blank" title="Open local DBMS Guide">DBMS Models</a></li>
+                        <li><em>Hard:</em> <a href="https://redis.io" target="_blank" title="Open Redis Docs">Redis</a>, <a href="https://use-the-index-luke.com" target="_blank" title="Open SQL Indexing Guide">Query Optimization</a>, <a href="https://cassandra.apache.org" target="_blank" title="Open Apache Cassandra Docs">Cassandra NoSQL</a>, <a href="https://neo4j.com" target="_blank" title="Open Neo4j Graph Database Docs">Neo4j Graph DB</a></li>
+                    </ul>
+                </div>
+
+                <!-- 7. Mobile App Development -->
+                <div class="track-card">
+                    <h4>📱 Mobile Application Dev</h4>
+                    <ul>
+                        <li><em>Easy:</em> <a href="https://developer.android.com/develop/ui" target="_blank" title="Open Android UI Layout Guides">Mobile UI Layouts</a>, <a href="https://docs.expo.dev" target="_blank" title="Open Expo Framework Docs">Expo Basics</a></li>
+                        <li><em>Medium:</em> <a href="https://flutter.dev" target="_blank" title="Open Flutter Framework Docs">Flutter (Dart)</a>, <a href="https://reactnative.dev" target="_blank" title="Open React Native Docs">React Native</a>, <a href="https://web.dev/progressive-web-apps/" target="_blank" title="Open PWA Guide on web.dev">Progressive Web Apps (PWA)</a></li>
+                        <li><em>Hard:</em> <a href="https://swift.org" target="_blank" title="Open Swift Language Docs">Swift (iOS) / Kotlin (Android) Development</a>, <a href="https://owasp.org/www-project-mobile-top-10/" target="_blank" title="Open OWASP Mobile Security Top 10">Mobile App Security</a>, <a href="https://unity.com" target="_blank" title="Open Unity Engine Portal">Unity Mobile Game Dev</a></li>
+                    </ul>
+                </div>
+
+                <!-- 8. DevOps & Cloud Computing -->
+                <div class="track-card">
+                    <h4>☁️ DevOps & Cloud Infra</h4>
+                    <ul>
+                        <li><em>Easy:</em> <a href="https://tldp.org/LDP/Bash-Beginners-Guide/html/" target="_blank" title="Open Bash Beginners Guide">Linux Shell Basics</a>, <a href="https://vercel.com" target="_blank" title="Open Vercel Hosting Platform">Static Site Deployment</a></li>
+                        <li><em>Medium:</em> <a href="https://www.docker.com" target="_blank" title="Open Docker Container Platform">Docker Containers</a>, <a href="https://aws.amazon.com" target="_blank" title="Open AWS Cloud Services">Cloud Infrastructure (AWS/GCP/Azure)</a>, <a href="https://prometheus.io" target="_blank" title="Open Prometheus Monitoring Tool Docs">Monitoring & Logging (Prometheus)</a></li>
+                        <li><em>Hard:</em> <a href="https://kubernetes.io" target="_blank" title="Open Kubernetes Orchestration Platform">Kubernetes Orchestration</a>, <a href="https://www.terraform.io" target="_blank" title="Open Terraform IaC tool">Infrastructure as Code (IaC)</a>, <a href="https://aws.amazon.com/serverless/" target="_blank" title="Open AWS Serverless Hub">Serverless (AWS Lambda)</a>, <a href="https://istio.io" target="_blank" title="Open Istio Service Mesh Docs">Service Mesh (Istio)</a></li>
+                    </ul>
+                </div>
+
+                <!-- 9. Cybersecurity & Web Security -->
+                <div class="track-card">
+                    <h4>🛡️ Cybersecurity & Defense</h4>
+                    <ul>
+                        <li><em>Easy:</em> <a href="https://en.wikipedia.org/wiki/Multi-factor_authentication" target="_blank" title="Open Multi-Factor Authentication Entry">Passwords & MFA</a>, <a href="https://en.wikipedia.org/wiki/Cyber_hygiene" target="_blank" title="Open Cyber Hygiene Guide">Security Hygiene</a>, <a href="https://www.eccouncil.org/what-is-ethical-hacking/" target="_blank" title="Open Ethical Hacking definition by EC-Council">Ethical Hacking Basics</a></li>
+                        <li><em>Medium:</em> <a href="https://en.wikipedia.org/wiki/Cryptography" target="_blank" title="Open Cryptography Wikipedia Entry">Cryptography</a>, <a href="https://owasp.org/www-project-top-ten/" target="_blank" title="Open OWASP Top 10 Project Portal">OWASP Top 10 Web Vulnerabilities</a></li>
+                        <li><em>Hard:</em> <a href="https://en.wikipedia.org/wiki/Penetration_test" target="_blank" title="Open Penetration Testing Definition">Penetration Testing</a>, <a href="https://www.wireshark.org/docs/" target="_blank" title="Open Wireshark Network Tool Docs">Network Auditing</a>, <a href="https://en.wikipedia.org/wiki/Digital_forensics" target="_blank" title="Open Digital Forensics Wiki">Digital Forensics</a>, <a href="https://en.wikipedia.org/wiki/Reverse_engineering" target="_blank" title="Open Reverse Engineering Entry">Reverse Engineering</a></li>
+                    </ul>
+                </div>
+
+                <!-- 10. Data Science -->
+                <div class="track-card">
+                    <h4>📊 Data Science & Analytics</h4>
+                    <ul>
+                        <li><em>Easy:</em> <a href="https://numpy.org" target="_blank" title="Open NumPy Array Docs">Python for Data Science (NumPy/Pandas)</a>, <a href="https://matplotlib.org" target="_blank" title="Open Matplotlib Plot Library Docs">Matplotlib Visualization</a>, <a href="https://www.tableau.com" target="_blank" title="Open Tableau Visual Analytics Platform">Tableau Visualization</a></li>
+                        <li><em>Medium:</em> <a href="https://en.wikipedia.org/wiki/Exploratory_data_analysis" target="_blank" title="Open Exploratory Data Analysis Definition">Exploratory Data Analysis (EDA)</a>, <a href="https://www.khanacademy.org/math/statistics-probability" target="_blank" title="Open Khan Academy Statistics Course">Statistics & Probability</a></li>
+                        <li><em>Hard:</em> <a href="https://spark.apache.org" target="_blank" title="Open Apache Spark Big Data Engine Docs">Big Data Frameworks (Spark)</a>, <a href="https://en.wikipedia.org/wiki/Predictive_modelling" target="_blank" title="Open Predictive Modeling Wikipedia Entry">Predictive Modeling</a>, <a href="https://en.wikipedia.org/wiki/Data_warehouse" target="_blank" title="Open Data Warehousing Wikipedia Entry">Data Warehousing & ETL</a>, <a href="https://airflow.apache.org" target="_blank" title="Open Apache Airflow Orchestration Docs">Data Pipeline Orchestration (Airflow)</a></li>
+                    </ul>
+                </div>
+
+                <!-- 11. Machine Learning & AI -->
+                <div class="track-card">
+                    <h4>🤖 Machine Learning & AI</h4>
+                    <ul>
+                        <li><em>Easy:</em> <a href="https://pandas.pydata.org" target="_blank" title="Open Pandas Documentation">Python for Data Science</a>, <a href="https://www.promptingguide.ai" target="_blank" title="Open Prompt Engineering Guide">Prompt Engineering</a>, <a href="https://en.wikipedia.org/wiki/Ethics_of_artificial_intelligence" target="_blank" title="Open Ethics of AI Entry">AI Ethics & Policy</a></li>
+                        <li><em>Medium:</em> <a href="https://scikit-learn.org" target="_blank" title="Open Scikit-Learn Docs">Machine Learning Basics (Scikit-Learn)</a>, <a href="https://developers.google.com/machine-learning/data-prep" target="_blank" title="Open Google ML Data Prep Guide">Data Preprocessing</a>, <a href="https://opencv.org" target="_blank" title="Open OpenCV Website">Computer Vision (OpenCV)</a></li>
+                        <li><em>Hard:</em> <a href="https://pytorch.org" target="_blank" title="Open PyTorch Documentation">Deep Learning (Neural Networks, PyTorch)</a>, <a href="https://en.wikipedia.org/wiki/Natural_language_processing" target="_blank" title="Open NLP Wikipedia Page">Natural Language Processing (NLP)</a></li>
+                    </ul>
+                </div>
+
+                <!-- 12. Generative AI & LLMs -->
+                <div class="track-card">
+                    <h4>✨ Generative AI & Agents</h4>
+                    <ul>
+                        <li><em>Easy:</em> <a href="https://www.promptingguide.ai" target="_blank" title="Open Prompt Engineering Guide">Prompt Engineering</a>, <a href="https://ai.google.dev" target="_blank" title="Open Gemini API Documentation">AI APIs (OpenAI/Gemini)</a>, <a href="https://www.google.com/search?q=ai+safety+and+guardrails" target="_blank" title="Search for AI Guardrails and Safety Guides">AI Safety & Guardrails</a></li>
+                        <li><em>Medium:</em> <a href="https://www.pinecone.io" target="_blank" title="Open Pinecone Vector DB Docs">Vector Databases</a>, <a href="https://blogs.nvidia.com/blog/what-is-retrieval-augmented-generation/" target="_blank" title="Open NVIDIA RAG Definition blog">Retrieval-Augmented Generation (RAG)</a>, <a href="https://www.langchain.com" target="_blank" title="Open LangChain Agent Platform">LangChain Framework</a></li>
+                        <li><em>Hard:</em> <a href="https://www.langchain.com" target="_blank" title="Open LangChain Agent Platform">Agentic AI Systems</a>, <a href="https://huggingface.co/docs/transformers/training" target="_blank" title="Open HuggingFace Fine-Tuning Guide">Fine-Tuning Models</a>, <a href="https://cloud.google.com/discover/what-is-llmops" target="_blank" title="Open LLMOps Entry">LLMOps (Model Ops)</a></li>
+                    </ul>
+                </div>
+
+                <!-- 13. Web3 & Blockchain -->
+                <div class="track-card">
+                    <h4>🔗 Web3 & Decentralized Web</h4>
+                    <ul>
+                        <li><em>Easy:</em> <a href="https://ethereum.org/en/developers/docs/intro-to-ethereum/" target="_blank" title="Open Ethereum intro to blockchain">Blockchain Basics</a>, <a href="https://metamask.io" target="_blank" title="Open MetaMask Crypto Wallet Portal">Crypto Wallets</a></li>
+                        <li><em>Medium:</em> <a href="https://docs.soliditylang.org" target="_blank" title="Open Solidity Language Docs">Solidity Programming</a>, <a href="https://ethereum.org/en/developers/docs/smart-contracts/" target="_blank" title="Open Ethereum Smart Contracts Intro">Smart Contracts</a>, <a href="https://ipfs.tech" target="_blank" title="Open IPFS Decentralized Web System Page">IPFS Decentralized Storage</a></li>
+                        <li><em>Hard:</em> <a href="https://hardhat.org" target="_blank" title="Open Hardhat Smart Contract Framework Docs">DApp Development</a>, <a href="https://docs.ethers.org" target="_blank" title="Open Ethers.js Web3 Library Docs">Web3 Frontend Integration</a>, <a href="https://ethereum.org/en/defi/" target="_blank" title="Open DeFi Wiki by Ethereum">DeFi Protocols</a>, <a href="https://en.wikipedia.org/wiki/Zero-knowledge_proof" target="_blank" title="Open Zero-Knowledge Proof Wiki Entry">Zero-Knowledge Proofs (ZKP)</a></li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <div style="margin: 20px 0; text-align: center;">
+                <button onclick="showView('auth')" class="btn btn-primary">Enroll Academic Account</button>
+                <button onclick="showView('dashboard')" class="btn btn-secondary" style="margin-left: 10px;">Enter Workspace (Guest Access)</button>
+            </div>
+            
+            <p style="text-align: center; font-size: 13px; color: #666666;">
+                Access offline syllabus reference lists: <a href="reference.html" onclick="return checkReferenceAccess(event)">Reference Materials Directory</a>.
+            </p>
+        </div>
+
+        <!-- ==================== VIEW 2: ENROLLMENT TERMINAL ==================== -->
+        <div id="auth-panel" class="view-panel">
+            <!-- Active Profile Details (Shown when logged in) -->
+            <div id="profile-details-panel" style="display: none; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 30px; margin-top: 20px;">
+                <h2 style="margin-top: 0; border: none; padding-bottom: 12px; color: var(--text-body); font-weight: 700; border-bottom: 1px solid var(--border-color);">👤 Active Student Profile</h2>
+                <p style="color: var(--text-muted); margin-bottom: 24px;">You are currently signed in with the following academic credentials:</p>
+                <div style="display: grid; grid-template-columns: 140px 1fr; gap: 16px 12px; font-size: 15px; margin-bottom: 30px; color: var(--text-body);">
+                    <strong>Scholar Name:</strong> <span id="profile-name" style="font-weight: 600;"></span>
+                    <strong>Department:</strong> <span id="profile-dept" style="font-weight: 600;"></span>
+                    <strong>Academic Year:</strong> <span id="profile-grade" style="font-weight: 600;"></span>
+                </div>
+                <button onclick="doSignOut()" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 600; border-radius: 8px; border: none; cursor: pointer;">Log Out & Clear Profile</button>
+                <button onclick="doDeleteAccount()" class="btn" style="width: 100%; padding: 12px; font-weight: 600; border-radius: 8px; border: 1px solid #ef4444; background: transparent; color: #ef4444; margin-top: 10px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#ef4444'; this.style.color='white';" onmouseout="this.style.background='transparent'; this.style.color='#ef4444';">Delete Account & Clear Progress</button>
+            </div>
+
+            <!-- Enrollment Forms Container (Shown when logged out) -->
+            <div id="auth-forms-container">
+                <h2>Enrollment Terminal</h2>
+                <p>Verify your scholastic credentials or create a new student log profile to begin tracking.</p>
+                
+                <div class="auth-tabs-row">
+                    <button onclick="switchAuthTab('login')" id="btn-tab-login" class="btn btn-primary auth-tab-button" style="border-radius: 4px 0 0 4px;">Student Sign In</button>
+                    <button onclick="switchAuthTab('reg')" id="btn-tab-reg" class="btn btn-secondary auth-tab-button" style="border-radius: 0 4px 4px 0;">Create Account</button>
+                </div>
+
+                <!-- Sign In Form -->
+                <form id="form-login" onsubmit="return doLogin(event)" autocomplete="off">
+                    <label for="login-id">Academic Identity (Email/ID):</label>
+                    <input type="text" id="login-id" placeholder="Enter your academic email address" autocomplete="username" required>
+
+                    <label for="login-pwd">Access Key (Password):</label>
+                    <input type="password" id="login-pwd" placeholder="Enter your password" autocomplete="current-password" required>
+
+                    <input type="submit" value="Verify Identity & Enter Workspace">
+                </form>
+
+                <!-- Register Form -->
+                <form id="form-reg" onsubmit="return doRegister(event)" style="display: none;" autocomplete="off">
+                    <label for="reg-username">Full Student Name:</label>
+                    <input type="text" id="reg-username" placeholder="e.g., Jane Doe" autocomplete="off" required>
+
+                    <label for="reg-email">University Email Address:</label>
+                    <input type="email" id="reg-email" placeholder="e.g., student@university.edu" autocomplete="off" required>
+
+                    <label for="reg-pwd">Secret Access Key:</label>
+                    <input type="password" id="reg-pwd" placeholder="Enter a secure password" autocomplete="new-password" required>
+                    <small class="form-helper" style="display: block; margin-top: 4px; color: #888; font-size: 0.85em; margin-bottom: 12px;">Password must be at least 8 characters, containing letters, numbers, and special symbols.</small>
+
+                    <label for="reg-dept">Department / Specialization:</label>
+                    <select id="reg-dept">
+                        <option value="" disabled selected>-- Select your department --</option>
+                        <option value="cse">Computer Science & Engineering (CSE)</option>
+                        <option value="it">Information Technology (IT)</option>
+                        <option value="ece">Electronics & Communication Engineering (ECE)</option>
+                        <option value="eee">Electrical & Electronics Engineering (EEE)</option>
+                        <option value="me">Mechanical Engineering (ME)</option>
+                        <option value="ce">Civil Engineering (CE)</option>
+                        <option value="bca">Bachelor of Computer Applications (BCA)</option>
+                    </select>
+
+                    <label for="reg-grade">Academic Grade Standing:</label>
+                    <select id="reg-grade">
+                        <option value="" disabled selected>-- Select your academic year --</option>
+                        <option value="freshman">1st Year</option>
+                        <option value="sophomore">2nd Year</option>
+                        <option value="junior">3rd Year</option>
+                        <option value="senior">4th Year</option>
+                    </select>
+
+                    <input type="submit" value="Enroll Profile & Enter Workspace">
+                </form>
+            </div>
+
+            <script>
+                function switchAuthTab(tabName) {
+                    const btnLogin = document.getElementById('btn-tab-login');
+                    const btnReg = document.getElementById('btn-tab-reg');
+                    const formLogin = document.getElementById('form-login');
+                    const formReg = document.getElementById('form-reg');
+
+                    if (tabName === 'login') {
+                        btnLogin.className = "btn btn-primary";
+                        btnReg.className = "btn btn-secondary";
+                        formLogin.style.display = "block";
+                        formReg.style.display = "none";
+                    } else {
+                        btnLogin.className = "btn btn-secondary";
+                        btnReg.className = "btn btn-primary";
+                        formLogin.style.display = "none";
+                        formReg.style.display = "block";
+                    }
+                }
+            </script>
+        </div>
+
+        <!-- ==================== VIEW 3: SCHOLASTIC WORKSPACE ==================== -->
+        <div id="dashboard-panel" class="view-panel">
+            <h2 id="welcome-heading">Welcome back! 🌟</h2>
+            
+            <!-- Dynamic Overall Activity Tracker (Handled by tracker.js) -->
+            <div id="overall-progress-container"></div>
+
+            <!-- Workspace Statistics Panel -->
+            <div class="notice-box">
+                <h3>📊 Academic Stat Overview</h3>
+                <ul>
+                    <li><strong>Student Profile:</strong> <span id="dash-profile-display" style="font-weight: bold;">Guest Academic Access</span></li>
+                    <li><strong>Checked Tasks:</strong> <span id="dash-completed-count" style="font-weight: bold;">0</span> objectives achieved.</li>
+                    <li><strong>Global Progress:</strong> <span id="dash-progress-percent" style="font-weight: bold;">0%</span></li>
+                    <li><strong>Active Track:</strong> Web Development & CS Core</li>
+                </ul>
+            </div>
+
+            <!-- Subject Syllabus Data Table -->
+            <h2>Academic Learning Syllabus</h2>
+            <div style="margin-bottom: 10px;">
+                <label for="filter-box" style="display: inline-block; font-weight: bold;">Filter Topics: </label>
+                <input type="text" id="filter-box" placeholder="Type to filter..." style="width: auto; padding: 4px; display: inline-block; margin-left: 10px;">
+            </div>
+
+            <table id="syllabus-table">
+                <thead>
+                    <tr>
+                        <th>Subject Topic</th>
+                        <th>Study Material</th>
+                        <th>Syllabus Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>C Programming</td>
+                        <td><a href="C.html" target="_blank">Open Syllabus Sheet</a></td>
+                        <td id="c-status">Checking...</td>
+                    </tr>
+                    <tr>
+                        <td>Python</td>
+                        <td><a href="Python.html" target="_blank">Open Syllabus Sheet</a></td>
+                        <td id="python-status">Checking...</td>
+                    </tr>
+                    <tr>
+                        <td>HTML</td>
+                        <td><a href="HTML.html" target="_blank">Open Syllabus Sheet</a></td>
+                        <td id="html-status">Checking...</td>
+                    </tr>
+                    <tr>
+                        <td>CSS</td>
+                        <td><a href="CSS.html" target="_blank">Open Syllabus Sheet</a></td>
+                        <td id="css-status">Checking...</td>
+                    </tr>
+                    <tr>
+                        <td>JavaScript</td>
+                        <td><a href="JavaScript.html" target="_blank">Open Syllabus Sheet</a></td>
+                        <td id="javascript-status">Checking...</td>
+                    </tr>
+                    <tr>
+                        <td>Java</td>
+                        <td><a href="Java.html" target="_blank">Open Syllabus Sheet</a></td>
+                        <td id="java-status">Checking...</td>
+                    </tr>
+                    <tr>
+                        <td>SQL</td>
+                        <td><a href="SQL.html" target="_blank">Open Syllabus Sheet</a></td>
+                        <td id="sql-status">Checking...</td>
+                    </tr>
+                    <tr>
+                        <td>DBMS</td>
+                        <td><a href="DBMS.html" target="_blank">Open Syllabus Sheet</a></td>
+                        <td id="dbms-status">Checking...</td>
+                    </tr>
+                    <tr>
+                        <td>Operating Systems</td>
+                        <td><a href="OS.html" target="_blank">Open Syllabus Sheet</a></td>
+                        <td id="os-status">Checking...</td>
+                    </tr>
+                    <tr>
+                        <td>Computer Networks</td>
+                        <td><a href="CN.html" target="_blank">Open Syllabus Sheet</a></td>
+                        <td id="cn-status">Checking...</td>
+                    </tr>
+                    <tr>
+                        <td>React.js</td>
+                        <td><a href="ReactJS.html" target="_blank">Open Syllabus Sheet</a></td>
+                        <td id="react-status">Checking...</td>
+                    </tr>
+                    <tr>
+                        <td>PostgreSQL</td>
+                        <td><a href="PostgreSQL.html" target="_blank">Open Syllabus Sheet</a></td>
+                        <td id="postgresql-status">Checking...</td>
+                    </tr>
+                    <tr>
+                        <td>Data Structures & Algorithms (DSA)</td>
+                        <td><a href="DSA.html" target="_blank">Open Syllabus Sheet</a></td>
+                        <td id="dsa-status">Checking...</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Quick Notice Board -->
+            <div class="notice-box">
+                <h3>📢 Academic Bulletins</h3>
+                <ul>
+                    <li><strong>Assignment Objectives:</strong> Ensure all HTML reference checks are logged by Friday.</li>
+                    <li><strong>Tip:</strong> Verify checkpoints inside individual guides to update progress scores.</li>
+                </ul>
+            </div>
+            
+            <p style="text-align: center; margin-top: 15px;">
+                <a href="reference.html" onclick="return checkReferenceAccess(event)" class="btn btn-secondary">Open References Directory</a>
+            </p>
+        </div>
+
+    </div>
+    <script src="tracker.js"></script>
+    <script src="chatbot.js"></script>
+    <script>
+        // Simple page view switching logic
+        function showView(viewId) {
+            // Hide all panels
+            const panels = document.querySelectorAll('.view-panel');
+            panels.forEach(p => p.classList.remove('active'));
+
+            // Show selected panel
+            const activePanel = document.getElementById(viewId + '-panel');
+            if (activePanel) {
+                activePanel.classList.add('active');
+            }
+
+            // Reset navigation link highlights
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Highlight the active nav link
+            const activeLink = document.getElementById('nav-' + viewId);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+
+            // Update local storage tracking hash
+            window.location.hash = viewId;
+
+            // Trigger updates for progress values
+            if (viewId === 'dashboard' && window.updateHomepageProgress) {
+                window.updateHomepageProgress();
+            }
+        }
+
+        // Note: changeTheme and changeFontSize are now managed globally in tracker.js
+
+        // Handle simulated Student ID login
+        async function doLogin(event) {
+            if (event) event.preventDefault();
+            const idValue = document.getElementById('login-id').value || '';
+            const pwdValue = document.getElementById('login-pwd').value || '';
+
+            const isBackendAvailable = window.location.protocol.startsWith('http');
+            if (isBackendAvailable) {
+                try {
+                    const apiBase = window.location.protocol.startsWith('http') ? '' : 'https://studenhub.pr';
+                    const response = await fetch(`${apiBase}/api/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: idValue, password: pwdValue })
+                    });
+                    const resData = await response.json();
+                    if (resData.success) {
+                        const foundUser = resData.user;
+                        localStorage.setItem('studentName', foundUser.username);
+                        localStorage.setItem('studentGrade', foundUser.grade);
+                        localStorage.setItem('studentDept', foundUser.dept);
+                        localStorage.setItem('studentEmail', foundUser.email);
+                        localStorage.setItem('isLoggedIn', 'true');
+
+                        // Load progress from backend
+                        try {
+                            const progResp = await fetch(`${apiBase}/api/progress?email=${encodeURIComponent(foundUser.email)}`);
+                            const progData = await progResp.json();
+                            if (progData.success) {
+                                // Clear old local task progress
+                                for (let i = 0; i < localStorage.length; i++) {
+                                    const key = localStorage.key(i);
+                                    if (key && key.includes('-task-')) {
+                                        localStorage.removeItem(key);
+                                        i--;
+                                    }
+                                }
+                                // Set new progress
+                                progData.progress.forEach(ch => {
+                                    localStorage.setItem(ch, 'true');
+                                });
+                            }
+                        } catch (e) {
+                            console.warn("Could not sync progress from backend:", e);
+                        }
+
+                        // Load chatbot settings from backend
+                        try {
+                            const chatResp = await fetch(`${apiBase}/api/chatbot?email=${encodeURIComponent(foundUser.email)}`);
+                            const chatData = await chatResp.json();
+                            if (chatData.success && chatData.settings) {
+                                localStorage.setItem('aura_mode', chatData.settings.aura_mode);
+                                localStorage.setItem('aura_api_key', chatData.settings.aura_api_key);
+                                localStorage.setItem('aura_user_name', chatData.settings.aura_user_name);
+                            }
+                        } catch (e) {
+                            console.warn("Could not sync chatbot settings:", e);
+                        }
+
+                        updateUserSession();
+
+                        // Sync filter values on landing page
+                        const deptSelect = document.getElementById('dept-select');
+                        const yearSelect = document.getElementById('year-select');
+
+                        let yearNum = "";
+                        if (foundUser.grade === 'freshman') yearNum = "1";
+                        else if (foundUser.grade === 'sophomore') yearNum = "2";
+                        else if (foundUser.grade === 'junior') yearNum = "3";
+                        else if (foundUser.grade === 'senior') yearNum = "4";
+
+                        if (deptSelect) deptSelect.value = foundUser.dept;
+                        if (yearSelect) yearSelect.value = yearNum;
+
+                        filterCurriculum();
+                        showView('dashboard');
+                        return false;
+                    } else {
+                        alert("Access Denied: " + (resData.message || "Invalid credentials."));
+                        return false;
+                    }
+                } catch (err) {
+                    console.warn("Backend login failed, falling back to local storage:", err);
+                }
+            }
+
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const foundUser = users.find(u => (u.email === idValue || u.username === idValue) && u.password === pwdValue);
+
+            if (!foundUser) {
+                alert("Access Denied: Invalid credentials or account does not exist. Please enroll first.");
+                return false;
+            }
+
+            localStorage.setItem('studentName', foundUser.username);
+            localStorage.setItem('studentGrade', foundUser.grade);
+            localStorage.setItem('studentDept', foundUser.dept);
+            localStorage.setItem('studentEmail', foundUser.email);
+            localStorage.setItem('isLoggedIn', 'true');
+
+            updateUserSession();
+
+            // Sync filter values on landing page
+            const deptSelect = document.getElementById('dept-select');
+            const yearSelect = document.getElementById('year-select');
+
+            let yearNum = "";
+            if (foundUser.grade === 'freshman') yearNum = "1";
+            else if (foundUser.grade === 'sophomore') yearNum = "2";
+            else if (foundUser.grade === 'junior') yearNum = "3";
+            else if (foundUser.grade === 'senior') yearNum = "4";
+
+            if (deptSelect) deptSelect.value = foundUser.dept;
+            if (yearSelect) yearSelect.value = yearNum;
+
+            filterCurriculum();
+            showView('dashboard');
+            return false;
+        }
+
+        function validatePasswordStrength(password) {
+            const minLength = 8;
+            const hasLetter = /[a-zA-Z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSpecial = /[^a-zA-Z0-9]/.test(password);
+            
+            if (password.length < minLength) {
+                return "Password must be at least 8 characters long.";
+            }
+            if (!hasLetter) {
+                return "Password must contain at least one letter.";
+            }
+            if (!hasNumber) {
+                return "Password must contain at least one number.";
+            }
+            if (!hasSpecial) {
+                return "Password must contain at least one special symbol (e.g., !, @, #, $, etc.).";
+            }
+            return null; // Valid
+        }
+
+        // Handle simulated registration
+        async function doRegister(event) {
+            if (event) event.preventDefault();
+            const userValue = document.getElementById('reg-username').value || 'Scholar';
+            const emailValue = document.getElementById('reg-email').value || '';
+            const gradeValue = document.getElementById('reg-grade').value || '';
+            const deptValue = document.getElementById('reg-dept').value || '';
+            const pwdValue = document.getElementById('reg-pwd').value || '';
+
+            const pwdError = validatePasswordStrength(pwdValue);
+            if (pwdError) {
+                alert("Weak Password: " + pwdError);
+                return false;
+            }
+
+            if (!gradeValue || !deptValue || !emailValue) {
+                alert("Please complete all registration fields.");
+                return false;
+            }
+
+            const isBackendAvailable = window.location.protocol.startsWith('http');
+            if (isBackendAvailable) {
+                try {
+                    const apiBase = window.location.protocol.startsWith('http') ? '' : 'https://studenhub.pr';
+                    const response = await fetch(`${apiBase}/api/register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            username: userValue,
+                            email: emailValue,
+                            password: pwdValue,
+                            grade: gradeValue,
+                            dept: deptValue
+                        })
+                    });
+                    const resData = await response.json();
+                    if (resData.success) {
+                        localStorage.setItem('studentName', userValue);
+                        localStorage.setItem('studentGrade', gradeValue);
+                        localStorage.setItem('studentDept', deptValue);
+                        localStorage.setItem('studentEmail', emailValue);
+                        localStorage.setItem('isLoggedIn', 'true');
+
+                        // Also add to local registeredUsers list so offline works later
+                        const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                        if (!users.some(u => u.email === emailValue)) {
+                            users.push({
+                                username: userValue,
+                                email: emailValue,
+                                password: pwdValue,
+                                grade: gradeValue,
+                                dept: deptValue
+                            });
+                            localStorage.setItem('registeredUsers', JSON.stringify(users));
+                        }
+
+                        // Sync filter values on landing page
+                        const deptSelect = document.getElementById('dept-select');
+                        const yearSelect = document.getElementById('year-select');
+
+                        let yearNum = "";
+                        if (gradeValue === 'freshman') yearNum = "1";
+                        else if (gradeValue === 'sophomore') yearNum = "2";
+                        else if (gradeValue === 'junior') yearNum = "3";
+                        else if (gradeValue === 'senior') yearNum = "4";
+
+                        if (deptSelect) deptSelect.value = deptValue;
+                        if (yearSelect) yearSelect.value = yearNum;
+
+                        updateUserSession();
+                        filterCurriculum();
+                        showView('dashboard');
+                        return false;
+                    } else {
+                        alert("Enrollment Failed: " + (resData.message || "Unknown error"));
+                        return false;
+                    }
+                } catch (err) {
+                    console.warn("Backend registration failed, falling back to local storage:", err);
+                }
+            }
+
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            if (users.some(u => u.email === emailValue)) {
+                alert("An account with this email address is already registered.");
+                return false;
+            }
+
+            const newUser = {
+                username: userValue,
+                email: emailValue,
+                password: pwdValue,
+                grade: gradeValue,
+                dept: deptValue
+            };
+            users.push(newUser);
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+
+            localStorage.setItem('studentName', userValue);
+            localStorage.setItem('studentGrade', gradeValue);
+            localStorage.setItem('studentDept', deptValue);
+            localStorage.setItem('studentEmail', emailValue);
+            localStorage.setItem('isLoggedIn', 'true');
+
+            // Sync filter values on landing page
+            const deptSelect = document.getElementById('dept-select');
+            const yearSelect = document.getElementById('year-select');
+
+            let yearNum = "";
+            if (gradeValue === 'freshman') yearNum = "1";
+            else if (gradeValue === 'sophomore') yearNum = "2";
+            else if (gradeValue === 'junior') yearNum = "3";
+            else if (gradeValue === 'senior') yearNum = "4";
+
+            if (deptSelect) deptSelect.value = deptValue;
+            if (yearSelect) yearSelect.value = yearNum;
+
+            updateUserSession();
+            filterCurriculum();
+            showView('dashboard');
+            return false;
+        }
+
+        // Perform Sign Out
+        function doSignOut() {
+            // Clear all student-specific data from localStorage (keep theme, font size, and user database)
+            const theme = localStorage.getItem('siteTheme');
+            const fontSize = localStorage.getItem('siteFontSize');
+            const users = localStorage.getItem('registeredUsers');
+            localStorage.clear();
+            if (theme) localStorage.setItem('siteTheme', theme);
+            if (fontSize) localStorage.setItem('siteFontSize', fontSize);
+            if (users) localStorage.setItem('registeredUsers', users);
+
+            // Reset curriculum dropdowns on landing page
+            const deptSelect = document.getElementById('dept-select');
+            const yearSelect = document.getElementById('year-select');
+            if (deptSelect) deptSelect.value = "";
+            if (yearSelect) yearSelect.value = "";
+
+            // Reset curriculum results
+            const resultDiv = document.getElementById('curriculum-result');
+            if (resultDiv) {
+                resultDiv.innerHTML = `<p style="font-style: italic; color: #666; margin-top: 10px;">Please select both a department and an academic year to view the recommended curriculum.</p>`;
+            }
+
+            // Uncheck all checkboxes in the DOM
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+
+            // Re-run user session updates (resets stats to guest view)
+            updateUserSession();
+            
+            // Re-run homepage progress updates (resets progress indicators to 0%)
+            if (window.updateHomepageProgress) {
+                window.updateHomepageProgress();
+            }
+
+            // Return to landing view
+            showView('landing');
+        }
+
+        async function doDeleteAccount() {
+            const confirmDelete = confirm("Warning: Are you sure you want to permanently delete your student profile and erase all your checked syllabus progress checkpoints?");
+            if (confirmDelete) {
+                const currentEmail = localStorage.getItem('studentEmail');
+
+                const isBackendAvailable = window.location.protocol.startsWith('http');
+                if (isBackendAvailable && currentEmail) {
+                    try {
+                        const apiBase = window.location.protocol.startsWith('http') ? '' : 'https://studenhub.pr';
+                        await fetch(`${apiBase}/api/delete-account`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email: currentEmail })
+                        });
+                    } catch (e) {
+                        console.warn("Could not delete account on backend:", e);
+                    }
+                }
+
+                // Clear active session from localStorage (keep theme and font preferences)
+                const theme = localStorage.getItem('siteTheme');
+                const fontSize = localStorage.getItem('siteFontSize');
+                const usersJson = localStorage.getItem('registeredUsers');
+
+                localStorage.clear();
+
+                if (theme) localStorage.setItem('siteTheme', theme);
+                if (fontSize) localStorage.setItem('siteFontSize', fontSize);
+
+                // Remove this user from the registered users list
+                if (usersJson && currentEmail) {
+                    let users = JSON.parse(usersJson);
+                    users = users.filter(u => u.email !== currentEmail);
+                    localStorage.setItem('registeredUsers', JSON.stringify(users));
+                }
+
+                alert("Your student account and progress checkpoints have been permanently deleted.");
+                const isIndex = window.location.pathname.endsWith("index.html") ||
+                                window.location.pathname.endsWith("/") ||
+                                window.location.pathname === "";
+                window.location.href = "index.html";
+                if (isIndex) {
+                    window.location.reload();
+                }
+            }
+        }
+
+        // Update user display text
+        function updateUserSession() {
+            const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const name = localStorage.getItem('studentName') || 'Honored Scholar';
+            const savedGrade = localStorage.getItem('studentGrade');
+            const savedDept = localStorage.getItem('studentDept');
+
+            const welcomeHeader = document.getElementById('welcome-heading');
+            if (welcomeHeader) {
+                welcomeHeader.innerText = loggedIn ? "Welcome back, " + name + "!" : "Scholar Dashboard";
+            }
+
+            const signOutBtn = document.getElementById('signout-btn');
+            if (signOutBtn) {
+                signOutBtn.style.display = loggedIn ? 'inline-block' : 'none';
+            }
+            const deleteBtn = document.getElementById('delete-btn');
+            if (deleteBtn) {
+                deleteBtn.style.display = loggedIn ? 'inline-block' : 'none';
+            }
+
+            let gradeText = "";
+            if (savedGrade === "freshman") gradeText = "1st Year";
+            else if (savedGrade === "sophomore") gradeText = "2nd Year";
+            else if (savedGrade === "junior") gradeText = "3rd Year";
+            else if (savedGrade === "senior") gradeText = "4th Year";
+
+            let deptText = "";
+            if (savedDept === "cse") deptText = "Computer Science & Engineering (CSE)";
+            else if (savedDept === "it") deptText = "Information Technology (IT)";
+            else if (savedDept === "ece") deptText = "Electronics & Communication Engineering (ECE)";
+            else if (savedDept === "eee") deptText = "Electrical & Electronics Engineering (EEE)";
+            else if (savedDept === "me") deptText = "Mechanical Engineering (ME)";
+            else if (savedDept === "ce") deptText = "Civil Engineering (CE)";
+            else if (savedDept === "bca") deptText = "Bachelor of Computer Applications (BCA)";
+
+            const dashProfileDisplay = document.getElementById('dash-profile-display');
+            if (dashProfileDisplay) {
+                if (loggedIn && deptText && gradeText) {
+                    dashProfileDisplay.innerText = `${deptText} - ${gradeText}`;
+                } else if (loggedIn) {
+                    dashProfileDisplay.innerText = "Profile Setup Incomplete";
+                } else {
+                    dashProfileDisplay.innerText = "Guest Academic Access";
+                }
+            }
+
+            // Toggle Enrollment Terminal panels based on login state
+            const profilePanel = document.getElementById('profile-details-panel');
+            const authFormsContainer = document.getElementById('auth-forms-container');
+
+            if (profilePanel && authFormsContainer) {
+                if (loggedIn) {
+                    profilePanel.style.display = 'block';
+                    authFormsContainer.style.display = 'none';
+
+                    const profileName = document.getElementById('profile-name');
+                    const profileDept = document.getElementById('profile-dept');
+                    const profileGrade = document.getElementById('profile-grade');
+                    
+                    if (profileName) profileName.innerText = name;
+                    if (profileDept) profileDept.innerText = deptText || savedDept || "Unspecified";
+                    if (profileGrade) profileGrade.innerText = gradeText || savedGrade || "Unspecified";
+                } else {
+                    profilePanel.style.display = 'none';
+                    authFormsContainer.style.display = 'block';
+                }
+            }
+        }
+
+        // Curriculum Database for Engineering & BCA
+        const curriculumData = {
+            cse: {
+                name: "Computer Science & Engineering (CSE)",
+                years: {
+                    1: [
+                        { name: "Basic C Programming", url: "C.html", type: "local", desc: "Learn logic, variables, and loops in C" },
+                        { name: "Python Programming", url: "Python.html", type: "local", desc: "Intro to Python scripting and syntax" },
+                        { name: "College Algebra", url: "https://www.khanacademy.org/math/algebra", type: "external", desc: "Core algebraic operations and functions" },
+                        { name: "Set Theory", url: "https://en.wikipedia.org/wiki/Set_theory", type: "external", desc: "Foundations of math and set structures" },
+                        { name: "Figma to HTML/CSS", url: "https://www.figma.com", type: "external", desc: "Convert digital design mockups into semantic code templates" }
+                    ],
+                    2: [
+                        { name: "Data Structures & Algorithms (DSA)", url: "DSA.html", type: "local", desc: "Arrays, lists, trees, search & sort" },
+                        { name: "Java Programming", url: "Java.html", type: "local", desc: "Object-oriented program structure" },
+                        { name: "Basic SQL", url: "SQL.html", type: "local", desc: "Relational database queries and syntax" },
+                        { name: "HTML Web Basics", url: "HTML.html", type: "local", desc: "Hypertext Markup Language structure" },
+                        { name: "CSS Styling", url: "CSS.html", type: "local", desc: "Cascading Stylesheets visual design" },
+                        { name: "JavaScript Logic", url: "JavaScript.html", type: "local", desc: "Client-side interactivity and logic" },
+                        { name: "Bootstrap CSS Framework", url: "https://getbootstrap.com", type: "external", desc: "Responsive layout grid design and styling utilities" },
+                        { name: "JSON & Web APIs", url: "https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON", type: "external", desc: "Fetch asynchronous data and manipulate web responses" }
+                    ],
+                    3: [
+                        { name: "Operating Systems (OS)", url: "OS.html", type: "local", desc: "Processes, scheduling, memory, and threads" },
+                        { name: "Computer Networks (CN)", url: "CN.html", type: "local", desc: "IP routing, protocols, TCP/UDP layers" },
+                        { name: "DBMS Models", url: "DBMS.html", type: "local", desc: "Data modeling, normalization, ER diagrams" },
+                        { name: "React.js Framework", url: "ReactJS.html", type: "local", desc: "Component-based reactive UI" },
+                        { name: "PostgreSQL Database", url: "PostgreSQL.html", type: "local", desc: "Advanced queries, keys, and schemas" },
+                        { name: "Vue.js Framework", url: "https://vuejs.org", type: "external", desc: "Progressive JavaScript framework for reactive views" }
+                    ],
+                    4: [
+                        { name: "Machine Learning Basics", url: "https://scikit-learn.org", type: "external", desc: "Supervised and unsupervised models" },
+                        { name: "System Design", url: "https://github.com/donnemartin/system-design-primer", type: "external", desc: "Scalability, load balancing, databases" },
+                        { name: "Cybersecurity Basics", url: "https://www.cybrary.it/", type: "external", desc: "Security principles and network defense" },
+                        { name: "DevOps & CI/CD", url: "https://about.gitlab.com/topics/ci-cd/", type: "external", desc: "Automation, pipelines, containerization" },
+                        { name: "Generative AI & LLMs", url: "https://ai.google.dev", type: "external", desc: "Prompting, vector DBs, model APIs" },
+                        { name: "Angular Framework", url: "https://angular.dev", type: "external", desc: "Enterprise scale typescript application framework" },
+                        { name: "State Management (Redux)", url: "https://redux.js.org", type: "external", desc: "Centralized state architecture for complex user interfaces" },
+                        { name: "Web Performance (Vite)", url: "https://vite.dev", type: "external", desc: "Asynchronous module loading, compilation, and bundling systems" }
+                    ]
+                }
+            },
+            it: {
+                name: "Information Technology (IT)",
+                years: {
+                    1: [
+                        { name: "Basic C Programming", url: "C.html", type: "local", desc: "Logic design, statements, and memory" },
+                        { name: "Python Programming", url: "Python.html", type: "local", desc: "General-purpose scripting and syntax" },
+                        { name: "College Algebra", url: "https://www.khanacademy.org/math/algebra", type: "external", desc: "Variables, graphing, and equations" },
+                        { name: "Command Line Basics", url: "https://learncodethehardway.org/unix/", type: "external", desc: "Navigating folders, shell scripting" },
+                        { name: "Figma to HTML/CSS", url: "https://www.figma.com", type: "external", desc: "Framer design conversion guidelines" }
+                    ],
+                    2: [
+                        { name: "Data Structures & Algorithms (DSA)", url: "DSA.html", type: "local", desc: "Linked lists, stacks, queues, hash maps" },
+                        { name: "Basic SQL", url: "SQL.html", type: "local", desc: "Relational database structures" },
+                        { name: "HTML Web Basics", url: "HTML.html", type: "local", desc: "Creating static web pages" },
+                        { name: "CSS Styling", url: "CSS.html", type: "local", desc: "Layouts, flexbox, and responsive pages" },
+                        { name: "JavaScript Logic", url: "JavaScript.html", type: "local", desc: "DOM manipulation and events" },
+                        { name: "Bootstrap CSS Framework", url: "https://getbootstrap.com", type: "external", desc: "Responsive design templates and selectors" },
+                        { name: "JSON & Web APIs", url: "https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON", type: "external", desc: "Manipulate online web feeds" }
+                    ],
+                    3: [
+                        { name: "Operating Systems (OS)", url: "OS.html", type: "local", desc: "System kernel, storage, and processing" },
+                        { name: "Computer Networks (CN)", url: "CN.html", type: "local", desc: "Internet architecture and packet protocols" },
+                        { name: "DBMS Models", url: "DBMS.html", type: "local", desc: "Entity-Relationship model and normalization" },
+                        { name: "Java Programming", url: "Java.html", type: "local", desc: "Classes, inheritance, and libraries" },
+                        { name: "PostgreSQL Database", url: "PostgreSQL.html", type: "local", desc: "Indexes, transactions, and triggers" },
+                        { name: "React.js Framework", url: "ReactJS.html", type: "local", desc: "Interactive frontend components" }
+                    ],
+                    4: [
+                        { name: "Cybersecurity Basics", url: "https://www.cybrary.it/", type: "external", desc: "Defense strategies, threat assessment" },
+                        { name: "DevOps & Cloud", url: "https://aws.amazon.com", type: "external", desc: "Vercel, AWS infrastructure and services" },
+                        { name: "Web Security & OWASP", url: "https://owasp.org/www-project-top-ten/", type: "external", desc: "Web vulnerabilities and mitigation" },
+                        { name: "Mobile App Development", url: "https://reactnative.dev", type: "external", desc: "Developing cross-platform mobile apps" },
+                        { name: "Data Science & Spark", url: "https://spark.apache.org", type: "external", desc: "Analyzing big data sets and analytics" },
+                        { name: "Vue.js Framework", url: "https://vuejs.org", type: "external", desc: "Reactive data binding interfaces" },
+                        { name: "State Management (Redux)", url: "https://redux.js.org", type: "external", desc: "Centralized client-side application state store" }
+                    ]
+                }
+            },
+            ece: {
+                name: "Electronics & Communication Engineering (ECE)",
+                years: {
+                    1: [
+                        { name: "Basic C Programming", url: "C.html", type: "local", desc: "Coding logic for hardware firmware" },
+                        { name: "College Algebra", url: "https://www.khanacademy.org/math/algebra", type: "external", desc: "Mathematical roots and equations" },
+                        { name: "Engineering Physics", url: "https://en.wikipedia.org/wiki/Engineering_physics", type: "external", desc: "Electromagnetism, optics, and solid state" },
+                        { name: "Basic Electrical Engineering", url: "https://en.wikipedia.org/wiki/Electrical_engineering", type: "external", desc: "Circuits, voltage, current laws" },
+                        { name: "Figma to HTML/CSS", url: "https://www.figma.com", type: "external", desc: "Convert digital design mockups into semantic code templates" }
+                    ],
+                    2: [
+                        { name: "Python Programming", url: "Python.html", type: "local", desc: "Scripting for signal math and simulations" },
+                        { name: "Electronic Devices & Circuits", url: "https://en.wikipedia.org/wiki/Electronic_circuit", type: "external", desc: "Diodes, transistors, and amplifiers" },
+                        { name: "Digital System Design", url: "https://en.wikipedia.org/wiki/Digital_electronics", type: "external", desc: "Logic gates, flip-flops, multiplexers" },
+                        { name: "Signals & Systems", url: "https://en.wikipedia.org/wiki/Signal_processing", type: "external", desc: "Fourier, Laplace, and LTI systems" },
+                        { name: "HTML Web Basics", url: "HTML.html", type: "local", desc: "Hypertext Markup Language structure" },
+                        { name: "CSS Styling", url: "CSS.html", type: "local", desc: "Cascading Stylesheets visual design" },
+                        { name: "JavaScript Logic", url: "JavaScript.html", type: "local", desc: "Client-side interactivity and logic" },
+                        { name: "Bootstrap CSS Framework", url: "https://getbootstrap.com", type: "external", desc: "Responsive layout grid design and styling utilities" },
+                        { name: "JSON & Web APIs", url: "https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON", type: "external", desc: "Fetch asynchronous data and manipulate web responses" }
+                    ],
+                    3: [
+                        { name: "Computer Networks (CN)", url: "CN.html", type: "local", desc: "Physical and Data Link layers, routing" },
+                        { name: "Operating Systems (OS)", url: "OS.html", type: "local", desc: "Kernel scheduling and resource management" },
+                        { name: "Microprocessors & MCUs", url: "https://en.wikipedia.org/wiki/Microprocessor", type: "external", desc: "8085/8086 assembly, architecture" },
+                        { name: "Analog Communications", url: "https://en.wikipedia.org/wiki/Analog_transmission", type: "external", desc: "Modulation, AM, FM, and noise analysis" },
+                        { name: "React.js Framework", url: "ReactJS.html", type: "local", desc: "Component-based reactive UI" },
+                        { name: "Vue.js Framework", url: "https://vuejs.org", type: "external", desc: "Progressive JavaScript framework for reactive views" }
+                    ],
+                    4: [
+                        { name: "Embedded Systems", url: "https://en.wikipedia.org/wiki/Embedded_system", type: "external", desc: "RTOS, microcontroller programming" },
+                        { name: "VLSI Design", url: "https://en.wikipedia.org/wiki/VLSI", type: "external", desc: "CMOS circuits and physical layouts" },
+                        { name: "Wireless Communication", url: "https://en.wikipedia.org/wiki/Wireless_communication", type: "external", desc: "Cellular networks, antennas, and propagation" },
+                        { name: "Machine Learning Basics", url: "https://scikit-learn.org", type: "external", desc: "Pattern recognition and classification" },
+                        { name: "Angular Framework", url: "https://angular.dev", type: "external", desc: "Enterprise scale typescript application framework" },
+                        { name: "State Management (Redux)", url: "https://redux.js.org", type: "external", desc: "Centralized state architecture for complex user interfaces" },
+                        { name: "Web Performance (Vite)", url: "https://vite.dev", type: "external", desc: "Asynchronous module loading, compilation, and bundling systems" }
+                    ]
+                }
+            },
+            eee: {
+                name: "Electrical & Electronics Engineering (EEE)",
+                years: {
+                    1: [
+                        { name: "Basic C Programming", url: "C.html", type: "local", desc: "C language syntax for embedded logic" },
+                        { name: "College Algebra", url: "https://www.khanacademy.org/math/algebra", type: "external", desc: "Functions, polynomial operations" },
+                        { name: "Engineering Chemistry", url: "https://en.wikipedia.org/wiki/Engineering_chemistry", type: "external", desc: "Electrochemistry, battery systems" },
+                        { name: "Engineering Mechanics", url: "https://en.wikipedia.org/wiki/Mechanics", type: "external", desc: "Statics, dynamics, vector forces" },
+                        { name: "Figma to HTML/CSS", url: "https://www.figma.com", type: "external", desc: "Convert digital design mockups into semantic code templates" }
+                    ],
+                    2: [
+                        { name: "Python Programming", url: "Python.html", type: "local", desc: "Computational scripts for power equations" },
+                        { name: "Electric Circuits & Networks", url: "https://en.wikipedia.org/wiki/Network_analysis_(electrical_circuits)", type: "external", desc: "KCL, KVL, Mesh, and AC Analysis" },
+                        { name: "Electrical Machines", url: "https://en.wikipedia.org/wiki/Electric_machine", type: "external", desc: "Transformers, DC motors, generators" },
+                        { name: "Linear Algebra", url: "https://www.khanacademy.org/math/linear-algebra", type: "external", desc: "Matrices, eigenvalues, state space" },
+                        { name: "HTML Web Basics", url: "HTML.html", type: "local", desc: "Hypertext Markup Language structure" },
+                        { name: "CSS Styling", url: "CSS.html", type: "local", desc: "Cascading Stylesheets visual design" },
+                        { name: "JavaScript Logic", url: "JavaScript.html", type: "local", desc: "Client-side interactivity and logic" },
+                        { name: "Bootstrap CSS Framework", url: "https://getbootstrap.com", type: "external", desc: "Responsive layout grid design and styling utilities" },
+                        { name: "JSON & Web APIs", url: "https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON", type: "external", desc: "Fetch asynchronous data and manipulate web responses" }
+                    ],
+                    3: [
+                        { name: "DBMS Models", url: "DBMS.html", type: "local", desc: "Data structures for grid metrics log" },
+                        { name: "Power Systems", url: "https://en.wikipedia.org/wiki/Electric_power_system", type: "external", desc: "Generation, transmission, load flow" },
+                        { name: "Control Systems", url: "https://en.wikipedia.org/wiki/Control_theory", type: "external", desc: "Feedback loop, stability, transfer functions" },
+                        { name: "Power Electronics", url: "https://en.wikipedia.org/wiki/Power_electronics", type: "external", desc: "Converters, inverters, rectifiers" },
+                        { name: "React.js Framework", url: "ReactJS.html", type: "local", desc: "Component-based reactive UI" },
+                        { name: "Vue.js Framework", url: "https://vuejs.org", type: "external", desc: "Progressive JavaScript framework for reactive views" }
+                    ],
+                    4: [
+                        { name: "Renewable Energy Systems", url: "https://en.wikipedia.org/wiki/Renewable_energy", type: "external", desc: "Solar, wind power grids" },
+                        { name: "Smart Grid Technologies", url: "https://en.wikipedia.org/wiki/Smart_grid", type: "external", desc: "Microgrids, digital power grid systems" },
+                        { name: "Industrial Automation", url: "https://en.wikipedia.org/wiki/Automation", type: "external", desc: "PLC, SCADA, and control networks" },
+                        { name: "Embedded Systems Basics", url: "https://en.wikipedia.org/wiki/Embedded_system", type: "external", desc: "Microcontroller interface designs" },
+                        { name: "Angular Framework", url: "https://angular.dev", type: "external", desc: "Enterprise scale typescript application framework" },
+                        { name: "State Management (Redux)", url: "https://redux.js.org", type: "external", desc: "Centralized state architecture for complex user interfaces" },
+                        { name: "Web Performance (Vite)", url: "https://vite.dev", type: "external", desc: "Asynchronous module loading, compilation, and bundling systems" }
+                    ]
+                }
+            },
+            me: {
+                name: "Mechanical Engineering (ME)",
+                years: {
+                    1: [
+                        { name: "Basic C Programming", url: "C.html", type: "local", desc: "Fundamental logic and arrays in C" },
+                        { name: "Engineering Graphics & CAD", url: "https://en.wikipedia.org/wiki/Engineering_drawing", type: "external", desc: "Drafting, orthographic views, modeling" },
+                        { name: "Engineering Physics", url: "https://en.wikipedia.org/wiki/Engineering_physics", type: "external", desc: "Mechanics, heat, and wave structures" },
+                        { name: "College Algebra", url: "https://www.khanacademy.org/math/algebra", type: "external", desc: "Solving systems of equations" },
+                        { name: "Figma to HTML/CSS", url: "https://www.figma.com", type: "external", desc: "Convert digital design mockups into semantic code templates" }
+                    ],
+                    2: [
+                        { name: "Python Programming", url: "Python.html", type: "local", desc: "Scripting for thermal calculations" },
+                        { name: "Thermodynamics", url: "https://en.wikipedia.org/wiki/Thermodynamics", type: "external", desc: "First and Second Laws, cycle efficiency" },
+                        { name: "Strength of Materials", url: "https://en.wikipedia.org/wiki/Strength_of_materials", type: "external", desc: "Stress, strain, bending, torsion" },
+                        { name: "Fluid Mechanics", url: "https://en.wikipedia.org/wiki/Fluid_mechanics", type: "external", desc: "Fluid statics, dynamics, Bernoulli equation" },
+                        { name: "HTML Web Basics", url: "HTML.html", type: "local", desc: "Hypertext Markup Language structure" },
+                        { name: "CSS Styling", url: "CSS.html", type: "local", desc: "Cascading Stylesheets visual design" },
+                        { name: "JavaScript Logic", url: "JavaScript.html", type: "local", desc: "Client-side interactivity and logic" },
+                        { name: "Bootstrap CSS Framework", url: "https://getbootstrap.com", type: "external", desc: "Responsive layout grid design and styling utilities" },
+                        { name: "JSON & Web APIs", url: "https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON", type: "external", desc: "Fetch asynchronous data and manipulate web responses" }
+                    ],
+                    3: [
+                        { name: "Basic SQL", url: "SQL.html", type: "local", desc: "Database logs for product inventory" },
+                        { name: "Design of Machine Elements", url: "https://en.wikipedia.org/wiki/Machine_element", type: "external", desc: "Shafts, gears, bearings, joints" },
+                        { name: "Heat Transfer", url: "https://en.wikipedia.org/wiki/Heat_transfer", type: "external", desc: "Conduction, convection, radiation" },
+                        { name: "Manufacturing Technology", url: "https://en.wikipedia.org/wiki/Manufacturing", type: "external", desc: "Casting, welding, metal cutting" },
+                        { name: "React.js Framework", url: "ReactJS.html", type: "local", desc: "Component-based reactive UI" },
+                        { name: "Vue.js Framework", url: "https://vuejs.org", type: "external", desc: "Progressive JavaScript framework for reactive views" }
+                    ],
+                    4: [
+                        { name: "CAD/CAM/CAE Systems", url: "https://en.wikipedia.org/wiki/Computer-aided_design", type: "external", desc: "CNC programming, FEA stress simulations" },
+                        { name: "Robotics & Automation", url: "https://en.wikipedia.org/wiki/Robotics", type: "external", desc: "Kinematics, actuators, programming" },
+                        { name: "Finite Element Analysis (FEA)", url: "https://en.wikipedia.org/wiki/Finite_element_method", type: "external", desc: "Stress distribution on parts" },
+                        { name: "IoT in Manufacturing", url: "https://en.wikipedia.org/wiki/Internet_of_things", type: "external", desc: "Smart sensors, data log, predictive repair" },
+                        { name: "Angular Framework", url: "https://angular.dev", type: "external", desc: "Enterprise scale typescript application framework" },
+                        { name: "State Management (Redux)", url: "https://redux.js.org", type: "external", desc: "Centralized state architecture for complex user interfaces" },
+                        { name: "Web Performance (Vite)", url: "https://vite.dev", type: "external", desc: "Asynchronous module loading, compilation, and bundling systems" }
+                    ]
+                }
+            },
+            ce: {
+                name: "Civil Engineering (CE)",
+                years: {
+                    1: [
+                        { name: "Basic C Programming", url: "C.html", type: "local", desc: "Fundamental logic structures in C" },
+                        { name: "Engineering Mechanics", url: "https://en.wikipedia.org/wiki/Mechanics", type: "external", desc: "Force systems, trusses, equilibrium" },
+                        { name: "Engineering Graphics", url: "https://en.wikipedia.org/wiki/Engineering_drawing", type: "external", desc: "Scale drawings, plan layouts" },
+                        { name: "College Algebra", url: "https://www.khanacademy.org/math/algebra", type: "external", desc: "Linear modeling, equations" },
+                        { name: "Figma to HTML/CSS", url: "https://www.figma.com", type: "external", desc: "Convert digital design mockups into semantic code templates" }
+                    ],
+                    2: [
+                        { name: "Python Programming", url: "Python.html", type: "local", desc: "Automation scripts for site data" },
+                        { name: "Surveying", url: "https://en.wikipedia.org/wiki/Surveying", type: "external", desc: "Levelling, angle measurements, maps" },
+                        { name: "Strength of Materials", url: "https://en.wikipedia.org/wiki/Strength_of_materials", type: "external", desc: "Tension, compression, beam bending" },
+                        { name: "Concrete Technology", url: "https://en.wikipedia.org/wiki/Concrete", type: "external", desc: "Mix design, properties, curing" },
+                        { name: "HTML Web Basics", url: "HTML.html", type: "local", desc: "Hypertext Markup Language structure" },
+                        { name: "CSS Styling", url: "CSS.html", type: "local", desc: "Cascading Stylesheets visual design" },
+                        { name: "JavaScript Logic", url: "JavaScript.html", type: "local", desc: "Client-side interactivity and logic" },
+                        { name: "Bootstrap CSS Framework", url: "https://getbootstrap.com", type: "external", desc: "Responsive layout grid design and styling utilities" },
+                        { name: "JSON & Web APIs", url: "https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON", type: "external", desc: "Fetch asynchronous data and manipulate web responses" }
+                    ],
+                    3: [
+                        { name: "Structural Analysis", url: "https://en.wikipedia.org/wiki/Structural_analysis", type: "external", desc: "Beams, frames, cables, deflections" },
+                        { name: "Geotechnical Engineering", url: "https://en.wikipedia.org/wiki/Geotechnical_engineering", type: "external", desc: "Soil mechanics, foundations, bearing power" },
+                        { name: "Transportation Engineering", url: "https://en.wikipedia.org/wiki/Transportation_engineering", type: "external", desc: "Highway geometry, pavement design" },
+                        { name: "Environmental Engineering", url: "https://en.wikipedia.org/wiki/Environmental_engineering", type: "external", desc: "Water treatment, sewage network" },
+                        { name: "React.js Framework", url: "ReactJS.html", type: "local", desc: "Component-based reactive UI" },
+                        { name: "Vue.js Framework", url: "https://vuejs.org", type: "external", desc: "Progressive JavaScript framework for reactive views" }
+                    ],
+                    4: [
+                        { name: "Construction Management", url: "https://en.wikipedia.org/wiki/Construction_management", type: "external", desc: "Scheduling, CPM, PERT, cost estimates" },
+                        { name: "GIS & Remote Sensing", url: "https://en.wikipedia.org/wiki/Geographic_information_system", type: "external", desc: "Mapping, spatial data coordinates" },
+                        { name: "Earthquake Engineering", url: "https://en.wikipedia.org/wiki/Earthquake_engineering", type: "external", desc: "Seismic waves, load calculations" },
+                        { name: "System Design Basics", url: "https://github.com/donnemartin/system-design-primer", type: "external", desc: "Planning infrastructure workflows" },
+                        { name: "Angular Framework", url: "https://angular.dev", type: "external", desc: "Enterprise scale typescript application framework" },
+                        { name: "State Management (Redux)", url: "https://redux.js.org", type: "external", desc: "Centralized state architecture for complex user interfaces" },
+                        { name: "Web Performance (Vite)", url: "https://vite.dev", type: "external", desc: "Asynchronous module loading, compilation, and bundling systems" }
+                    ]
+                }
+            },
+            bca: {
+                name: "Bachelor of Computer Applications (BCA)",
+                years: {
+                    1: [
+                        { name: "Basic C Programming", url: "C.html", type: "local", desc: "Learn logic, variables, and loops in C" },
+                        { name: "HTML Web Basics", url: "HTML.html", type: "local", desc: "Hypertext Markup Language structure" },
+                        { name: "CSS Styling", url: "CSS.html", type: "local", desc: "Cascading Stylesheets visual design" },
+                        { name: "College Algebra", url: "https://www.khanacademy.org/math/algebra", type: "external", desc: "Variables, graphing, and equations" },
+                        { name: "Bootstrap CSS Framework", url: "https://getbootstrap.com", type: "external", desc: "Responsive visual grid and styling utility templates" },
+                        { name: "Figma to HTML/CSS", url: "https://www.figma.com", type: "external", desc: "Converting mockup drafts to structural tags" }
+                    ],
+                    2: [
+                        { name: "Python Programming", url: "Python.html", type: "local", desc: "Intro to Python scripting and syntax" },
+                        { name: "Java Programming", url: "Java.html", type: "local", desc: "Object-oriented program structure" },
+                        { name: "Basic SQL", url: "SQL.html", type: "local", desc: "Relational database queries and syntax" },
+                        { name: "JavaScript Logic", url: "JavaScript.html", type: "local", desc: "Client-side interactivity and logic" },
+                        { name: "Data Structures & Algorithms (DSA)", url: "DSA.html", type: "local", desc: "Linked lists, stacks, queues, hash maps" },
+                        { name: "JSON & Web APIs", url: "https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON", type: "external", desc: "Connect data fields and fetch responses" }
+                    ],
+                    3: [
+                        { name: "Operating Systems (OS)", url: "OS.html", type: "local", desc: "Processes, scheduling, memory, and threads" },
+                        { name: "DBMS Models", url: "DBMS.html", type: "local", desc: "Data modeling, normalization, ER diagrams" },
+                        { name: "Computer Networks (CN)", url: "CN.html", type: "local", desc: "IP routing, protocols, TCP/UDP layers" },
+                        { name: "React.js Framework", url: "ReactJS.html", type: "local", desc: "Component-based reactive UI" },
+                        { name: "PostgreSQL Database", url: "PostgreSQL.html", type: "local", desc: "Advanced queries, keys, and schemas" },
+                        { name: "Vue.js Framework", url: "https://vuejs.org", type: "external", desc: "Progressive components for reactive layout" }
+                    ],
+                    4: [
+                        { name: "Cybersecurity Basics", url: "https://www.cybrary.it/", type: "external", desc: "Security principles and network defense" },
+                        { name: "System Design Basics", url: "https://github.com/donnemartin/system-design-primer", type: "external", desc: "Scalability, load balancing, databases" },
+                        { name: "DevOps & Cloud", url: "https://aws.amazon.com", type: "external", desc: "Vercel, AWS infrastructure and services" },
+                        { name: "Machine Learning Basics", url: "https://scikit-learn.org", type: "external", desc: "Pattern recognition and classification" },
+                        { name: "Angular Framework", url: "https://angular.dev", type: "external", desc: "Enterprise application controller designs" },
+                        { name: "State Management (Redux)", url: "https://redux.js.org", type: "external", desc: "Global reactive store architectures" }
+                    ]
+                }
+            }
+        };
+
+        // Filter and display curriculum
+        function filterCurriculum() {
+            const deptSelect = document.getElementById('dept-select');
+            const yearSelect = document.getElementById('year-select');
+            const resultDiv = document.getElementById('curriculum-result');
+            if (!deptSelect || !yearSelect || !resultDiv) return;
+
+            const dept = deptSelect.value;
+            const year = yearSelect.value;
+
+            if (!dept || !year) {
+                resultDiv.innerHTML = `<p style="font-style: italic; color: #666; margin-top: 10px;">Please select both a department and an academic year to view the recommended curriculum.</p>`;
+                return;
+            }
+            
+            const deptData = curriculumData[dept];
+            if (!deptData) return;
+
+            const subjects = deptData.years[year] || [];
+            
+            let htmlContent = `<h4>Recommended for <strong>${deptData.name}</strong> - <strong>Year ${year}</strong>:</h4>`;
+            if (subjects.length === 0) {
+                htmlContent += `<p>No subjects defined for this selection.</p>`;
+            } else {
+                htmlContent += `<ul style="list-style-type: none; padding-left: 0; margin-top: 10px;">`;
+                subjects.forEach(sub => {
+                    const badge = sub.type === "local" ? `<span class="badge badge-local">Local Guide</span>` : `<span class="badge badge-external">External Reference</span>`;
+                    htmlContent += `
+                        <li class="course-item">
+                            <div style="margin-bottom: 3px;">
+                                ${badge}
+                                <a href="${sub.url}" target="_blank" style="font-weight: bold; font-size: 14px;" title="Open reference for ${sub.name}">${sub.name}</a>
+                            </div>
+                            <div class="course-desc">${sub.desc}</div>
+                        </li>
+                    `;
+                });
+                htmlContent += `</ul>`;
+            }
+            resultDiv.innerHTML = htmlContent;
+        }
+
+        // Run when DOM loads
+        window.addEventListener('DOMContentLoaded', () => {
+            updateUserSession();
+
+            // Set theme select dropdown value on load
+            const savedTheme = localStorage.getItem('siteTheme') || 'default';
+            const themeSelect = document.getElementById('theme-select');
+            if (themeSelect) {
+                themeSelect.value = savedTheme;
+            }
+
+            // Sync filter values from local storage or defaults on load
+            const savedDept = localStorage.getItem('studentDept');
+            const savedGrade = localStorage.getItem('studentGrade');
+            
+            const deptSelect = document.getElementById('dept-select');
+            const yearSelect = document.getElementById('year-select');
+
+            if (savedDept && deptSelect) {
+                deptSelect.value = savedDept;
+            }
+            if (savedGrade && yearSelect) {
+                let yearNum = "";
+                if (savedGrade === 'freshman') yearNum = "1";
+                else if (savedGrade === 'sophomore') yearNum = "2";
+                else if (savedGrade === 'junior') yearNum = "3";
+                else if (savedGrade === 'senior') yearNum = "4";
+                yearSelect.value = yearNum;
+            }
+
+            filterCurriculum();
+            
+            // Handle URL Hash if present
+            const currentHash = window.location.hash.replace('#', '');
+            const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (currentHash === 'auth') {
+                showView('auth');
+            } else if (currentHash === 'dashboard') {
+                if (loggedIn) {
+                    showView('dashboard');
+                } else {
+                    showView('landing');
+                }
+            } else {
+                if (loggedIn) {
+                    showView('dashboard');
+                } else {
+                    showView('landing');
+                }
+            }
+
+            // Client side search filter
+            const filterInput = document.getElementById('filter-box');
+            if (filterInput) {
+                filterInput.addEventListener('keyup', function() {
+                    const query = filterInput.value.toLowerCase();
+                    const tableRows = document.querySelectorAll('#syllabus-table tbody tr');
+                    
+                    tableRows.forEach(row => {
+                        const topic = row.cells[0].textContent.toLowerCase();
+                        if (topic.includes(query)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Guard clicks on Structured Tracks, Curriculum Results, Search Results, and Syllabus Table for guests
+            const blockGuestClicks = (event) => {
+                const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                const anchor = event.target.closest('a');
+                if (!loggedIn && anchor) {
+                    event.preventDefault();
+                    alert("Access Denied: You must be enrolled and signed in to view Structured Track materials. Redirecting to Enrollment Terminal...");
+                    showView('auth');
+                }
+            };
+
+            const trackGrid = document.querySelector('.track-grid');
+            if (trackGrid) {
+                trackGrid.addEventListener('click', blockGuestClicks);
+            }
+
+            const curriculumResult = document.getElementById('curriculum-result');
+            if (curriculumResult) {
+                curriculumResult.addEventListener('click', blockGuestClicks);
+            }
+
+            const homeSearchResults = document.getElementById('home-search-results');
+            if (homeSearchResults) {
+                homeSearchResults.addEventListener('click', blockGuestClicks);
+            }
+
+            const syllabusTable = document.getElementById('syllabus-table');
+            if (syllabusTable) {
+                syllabusTable.addEventListener('click', blockGuestClicks);
+            }
+        });
+    </script>
+</body>
+</html>

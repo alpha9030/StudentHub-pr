@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            alert("Access Denied: You must be enrolled and signed in to view Structured Track materials. Redirecting to Enrollment Terminal...");
+            window.location.href = "index.html#auth";
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computer Networks (CN) Reference Sheet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container study-guide-container">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="signup.html">Signup</a>
+            <a href="reference.html">References</a>
+        </nav>
+
+        <h3>Computer Networks (CN) Reference Sheet</h3>
+        
+        <!-- Subject Progress Tracker -->
+        <div id="page-progress-container"></div>
+
+        <h4>📋 Learning Checkpoints</h4>
+                <h5><span class="emoji">🟢</span> Easy Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="cn-task-1" class="progress-check"> OSI Reference Model (7 Layers) vs TCP/IP Protocol Suite</label></li>
+            <li><label><input type="checkbox" id="cn-task-2" class="progress-check"> Data Link Layer (Framing, Flow Control, Error Detection/CRC)</label></li>
+        </ul>
+        <h5><span class="emoji">🟡</span> Medium Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="cn-task-3" class="progress-check"> Network Layer IP addressing, CIDR notation, and IP Subnetting</label></li>
+            <li><label><input type="checkbox" id="cn-task-4" class="progress-check"> Transport Layer protocols, TCP connection management, flow control, and UDP</label></li>
+        </ul>
+        <h5><span class="emoji">🔴</span> Hard Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="cn-task-5" class="progress-check"> Application Layer protocols (HTTP, HTTPS, DNS, DHCP, FTP, SMTP)</label></li>
+        </ul>
+
+
+        <h4>📖 Tutorials & Official Documentation</h4>
+        <ul>
+                        <li><a href="https://www.geeksforgeeks.org/computer-network-tutorials/" target="_blank">GeeksforGeeks CN Tutorials</a> - Comprehensive academic explanations of OSI, TCP/IP, and networking protocols.</li>
+            <li><a href="https://gaia.cs.umass.edu/kurose_ross/" target="_blank">Kurose & Ross Top-Down Approach Companion</a> - Official student resources for the world-renowned networking textbook.</li>
+            <li><a href="https://www.javatpoint.com/computer-network" target="_blank">Javatpoint Computer Network Guide</a> - Easy-to-follow explanations of networking concepts and topologies.</li>
+            <li><a href="https://www.tutorialspoint.com/data_communication_computer_network/index.htm" target="_blank">TutorialsPoint CN Guide</a> - In-depth guide on data transmission, layers, and network routing.</li>
+            <li><a href="https://www.studytonight.com/computer-networks/" target="_blank">Studytonight CN Lectures</a> - Simple academic syllabus tutorials on routing and networking layouts.</li>
+            <li><a href="https://www.rfc-editor.org/" target="_blank">RFC Editor Database</a> - The official repository of Internet standards and protocols documentation.</li>
+        </ul>
+
+        <h4>🛠️ Interactive Visualizers & Sandboxes</h4>
+        <ul>
+                        <li><a href="https://www.wireshark.org/" target="_blank">Wireshark Network Analyzer</a> - Analyze packet transmissions, headers, and protocol exchanges in real-time.</li>
+            <li><a href="https://www.netacad.com/courses/packet-tracer" target="_blank">Cisco Packet Tracer Sandbox</a> - Build virtual network topologies, configure routers/switches, and simulate traffic flows.</li>
+            <li><a href="https://www.subnet-calculator.com/" target="_blank">Subnet Calculator</a> - Calculate subnets, CIDR blocks, host ranges, and broadcast addresses visually.</li>
+            <li><a href="https://www.gns3.com/" target="_blank">GNS3 Network Simulator</a> - Advanced network simulator to run real OS images for virtual network designs.</li>
+            <li><a href="https://dnssec-analyzer.verisignlabs.com/" target="_blank">DNS Lookup Visualizer (DNSSEC Analyzer)</a> - Visualize DNS query resolution paths and security chains.</li>
+        </ul>
+
+        <h4>🧠 Practice Websites & Quizzes</h4>
+        <ul>
+                        <li><a href="https://www.sanfoundry.com/computer-network-questions-answers/" target="_blank">Sanfoundry CN Questions & Answers</a> - Large database of multiple choice questions on standard protocols.</li>
+            <li><a href="https://www.subnetting.net/" target="_blank">Subnetting Practice</a> - Interactive training tool to master subnetting calculations quickly.</li>
+            <li><a href="http://www.subnetting.org/" target="_blank">Subnetting.org Quiz</a> - Fast randomly generated subnet questions to test speed and accuracy.</li>
+            <li><a href="https://www.geeksforgeeks.org/computer-network-gq/" target="_blank">GeeksforGeeks Networking Quiz</a> - Database of networking multiple choice quizzes.</li>
+        </ul>
+
+        <h4>🎓 Professional Certifications & Badges</h4>
+        <ul>
+                        <li><a href="https://www.netacad.com/courses/networking" target="_blank">Cisco Certified Network Associate (CCNA)</a> - The gold-standard certification validating associate-level networking credentials.</li>
+            <li><a href="https://www.comptia.org/certifications/network" target="_blank">CompTIA Network+ Certification</a> - Vendor-neutral professional networking credential covering core infrastructure concepts.</li>
+            <li><a href="https://www.coursera.org/professional-certificates/google-it-support" target="_blank">Google IT Support Professional Certificate</a> - Google credential verifying network administration fundamentals.</li>
+        </ul>
+
+        <h4>🎥 Recommended YouTube Playlists</h4>
+        <ul class="youtube-list">
+                        <li><a href="https://www.youtube.com/c/nesoacademy" target="_blank"><img src="YT.png" height="24" width="24" alt="Neso Academy CN Playlist"> Neso Academy CN Playlist</a> - Detailed classroom style lectures on network layers and protocols.</li>
+            <li><a href="https://www.youtube.com/c/GateSmashers" target="_blank"><img src="YT.png" height="24" width="24" alt="Gate Smashers CN Course"> Gate Smashers CN Course</a> - Excellent exam prep playlist explaining routing algorithms and calculations.</li>
+            <li><a href="https://www.youtube.com/watch?v=IPvYjXCsTg8" target="_blank"><img src="FCC.png" height="24" width="24" alt="freeCodeCamp Computer Networking Course"> freeCodeCamp Computer Networking Course</a> - Complete 4-hour video course on networking systems.</li>
+            <li><a href="https://www.youtube.com/c/KnowledgeGate" target="_blank"><img src="YT.png" height="24" width="24" alt="Knowledge Gate CN Lectures"> Knowledge Gate CN Lectures</a> - Detailed academic lessons covering networking parameters.</li>
+        </ul>
+
+        <h4>💡 Recommended Project Ideas</h4>
+                <h5>🟢 Beginner Projects</h5>
+        <ul>
+            <li><strong>Network Packet Header Parser:</strong> Write a script (in Python/C) to parse local packet structures and print IPv4/TCP headers.</li>
+            <li><strong>Simple Ping Tool Script:</strong> Develop a CLI utility that tests connectivity to a server by sending ICMP echo requests.</li>
+                    <li><strong>Multi-threaded Port Scanner:</strong> Write a utility that scans a target host's ports concurrently to verify open services.</li>
+</ul>
+        <h5>🟡 Medium Projects</h5>
+        <ul>
+            <li><strong>Chat Server & Client:</strong> Implement a multi-user socket chat system utilizing TCP sockets.</li>
+            <li><strong>Custom DNS Client:</strong> Code a utility that sends custom DNS query packets and decodes the responses.</li>
+                    <li><strong>FTP Client & Server:</strong> Implement a custom File Transfer Protocol client and server over TCP sockets to transfer binary files.</li>
+</ul>
+        <h5>🔴 Advanced Projects</h5>
+        <ul>
+            <li><strong>HTTP Web Server from Scratch:</strong> Design and write a functional HTTP/1.1 server from TCP sockets that serves static files.</li>
+            <li><strong>Software Defined Network (SDN) Controller:</strong> Build or configure an OpenFlow SDN controller to dynamically route packets.</li>
+                    <li><strong>Raw Socket Packet Sniffer:</strong> Code a low-level packet capture tool using raw sockets to filter IP/TCP headers in hex format.</li>
+</ul>
+
+    </div>
+    <script src="tracker.js"></script>
+</body>
+</html>

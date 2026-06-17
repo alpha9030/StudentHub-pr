@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            alert("Access Denied: You must be enrolled and signed in to view Structured Track materials. Redirecting to Enrollment Terminal...");
+            window.location.href = "index.html#auth";
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java Reference Sheet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container study-guide-container">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="signup.html">Signup</a>
+            <a href="reference.html">References</a>
+        </nav>
+
+        <h3>Java Reference Sheet</h3>
+        
+        <!-- Subject Progress Tracker -->
+        <div id="page-progress-container"></div>
+
+        <h4>📋 Learning Checkpoints</h4>
+                <h5><span class="emoji">🟢</span> Easy Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="java-task-1" class="progress-check"> Syntax, data types, logic control, classes, objects, and constructors</label></li>
+            <li><label><input type="checkbox" id="java-task-2" class="progress-check"> Master OOP concepts: Inheritance, Polymorphism, Encapsulation, Abstraction</label></li>
+        </ul>
+        <h5><span class="emoji">🟡</span> Medium Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="java-task-3" class="progress-check"> Handle exceptions (try/catch/finally) and read/write files</label></li>
+            <li><label><input type="checkbox" id="java-task-4" class="progress-check"> Learn Java Collections Framework (ArrayList, HashMap, HashSet, List)</label></li>
+        </ul>
+
+
+        <h4>📖 Tutorials & Official Documentation</h4>
+        <ul>
+                        <li><a href="https://dev.java/" target="_blank">Official Dev.java Tutorials</a> - The official Oracle platform for Java developer documentation and learning paths.</li>
+            <li><a href="https://www.w3schools.com/java/" target="_blank">W3Schools Java Guide</a> - Clear, practical introduction to Java OOP paradigms and libraries.</li>
+            <li><a href="https://www.javatpoint.com/java-tutorial" target="_blank">Javatpoint Java Tutorial</a> - Comprehensive topics covering core Java, multithreading, and swings.</li>
+            <li><a href="https://www.baeldung.com/" target="_blank">Baeldung Java Guides</a> - Excellent advanced developer guides covering Spring, Hibernate, and core APIs.</li>
+            <li><a href="https://refactoring.guru/design-patterns/java" target="_blank">Refactoring Guru: Java Design Patterns</a> - Beautifully illustrated guide to creational, structural, and behavioral design patterns in Java.</li>
+        </ul>
+
+        <h4>🛠️ Interactive Visualizers & Sandboxes</h4>
+        <ul>
+                        <li><a href="https://pythontutor.com/java.html" target="_blank">Java Visualizer on Python Tutor</a> - Visualize Java references, class instances, arrays, and execution frames in real-time.</li>
+            <li><a href="https://tryjshell.org/" target="_blank">TryJShell Online</a> - Interactive Java REPL playground to run Java snippets instantly without compiling.</li>
+            <li><a href="https://www.onlinegdb.com/online_java_compiler" target="_blank">Online GDB Java Compiler</a> - Write, compile, and run Java programs online with direct GDB debugging capabilities.</li>
+            <li><a href="https://visualvm.github.io/" target="_blank">VisualVM Profiler</a> - A visual tool integrating command-line JDK tools and lightweight profiling capabilities.</li>
+        </ul>
+
+        <h4>🧠 Practice Websites & Quizzes</h4>
+        <ul>
+                        <li><a href="https://codingbat.com/java" target="_blank">CodingBat Java Challenges</a> - Interactive Java logic problems covering basic types, recursion, arrays, and loops.</li>
+            <li><a href="https://www.hackerrank.com/domains/java" target="_blank">HackerRank Java Practice</a> - Solve problems testing OOP, inheritance, regex, collections, and Java APIs.</li>
+            <li><a href="https://leetcode.com/problemset/all/?search=java" target="_blank">LeetCode Java Coding</a> - Solve platform puzzles using standard Java Class methods.</li>
+            <li><a href="https://exercism.org/tracks/java" target="_blank">Exercism Java Track</a> - Solve exercises and get personal programming mentorship from experts.</li>
+        </ul>
+
+        <h4>🎓 Professional Certifications & Badges</h4>
+        <ul>
+                        <li><a href="https://education.oracle.com/oracle-certified-professional-java-se-17-developer/pexam_1Z0-829" target="_blank">Oracle Certified Professional (OCP): Java SE Developer</a> - The premier professional credential for enterprise Java developers worldwide.</li>
+            <li><a href="https://www.hackerrank.com/skills-verification" target="_blank">HackerRank Java Skills Badge</a> - Earning this badge validates proficiency in core Java design.</li>
+            <li><a href="https://shop.w3schools.com/products/java-certificate" target="_blank">W3Schools Java Certification</a> - Assess and verify your understanding of standard Java classes.</li>
+            <li><a href="https://www.coursera.org/specializations/java-programming" target="_blank">Coursera Java Programming and Software Engineering Specialization (Duke)</a> - University credential validating algorithmic coding and Java application development.</li>
+        </ul>
+
+        <h4>🎥 Recommended YouTube Playlists</h4>
+        <ul class="youtube-list">
+                        <li><a href="https://www.youtube.com/user/programmingwithmosh" target="_blank"><img src="YT.png" height="24" width="24" alt="Programming with Mosh Java"> Programming with Mosh Java</a> - In-depth, beginner-focused tutorial on Java basics and OOP paradigms.</li>
+            <li><a href="https://www.youtube.com/watch?v=A74TOX803D0" target="_blank"><img src="FCC.png" height="24" width="24" alt="freeCodeCamp Java Full Course"> freeCodeCamp Java Full Course</a> - Complete video tutorial to learn Java programming in one sitting.</li>
+            <li><a href="https://www.youtube.com/user/derekbanas" target="_blank"><img src="YT.png" height="24" width="24" alt="Derek Banas Java Programming"> Derek Banas Java Programming</a> - Detailed, fast-paced code-along guide covering all core Java library structures.</li>
+        </ul>
+
+        <h4>💡 Recommended Project Ideas</h4>
+                <h5>🟢 Beginner Projects</h5>
+        <ul>
+            <li><strong>Basic Calculator App:</strong> Build a command line calculator supporting arithmetic operations and exception handling.</li>
+            <li><strong>Number Guessing Game:</strong> Design a logic game where the computer generates a random number and evaluates user guesses.</li>
+                    <li><strong>Word Counter CLI Utility:</strong> Build a command-line tool that parses a text file and counts sentences, words, and characters.</li>
+</ul>
+        <h5>🟡 Medium Projects</h5>
+        <ul>
+            <li><strong>ATM System Simulator:</strong> Write an OOP-based system simulating user accounts, withdrawals, deposits, and balances.</li>
+            <li><strong>Library Management System:</strong> Build a system to track books, authors, loans, and system user privileges.</li>
+                    <li><strong>Currency Converter GUI:</strong> Develop a Swing/JavaFX currency converter app that queries exchange rates from local text files or JSON APIs.</li>
+</ul>
+        <h5>🔴 Advanced Projects</h5>
+        <ul>
+            <li><strong>Multi-threaded Web Server:</strong> Program a Java socket web server using threading pools to serve files concurrently.</li>
+            <li><strong>Custom File Encryption Tool:</strong> Implement a cryptographic CLI application that encrypts/decrypts files using AES and custom keys.</li>
+                    <li><strong>Distributed Chat System:</strong> Design a client-server socket network supporting private chat rooms and username registration.</li>
+</ul>
+
+    </div>
+    <script src="tracker.js"></script>
+</body>
+</html>

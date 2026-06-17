@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            alert("Access Denied: You must be enrolled and signed in to view Structured Track materials. Redirecting to Enrollment Terminal...");
+            window.location.href = "index.html#auth";
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Reference Sheet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container study-guide-container">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="signup.html">Signup</a>
+            <a href="reference.html">References</a>
+        </nav>
+
+        <h3>JavaScript Reference Sheet</h3>
+        
+        <!-- Subject Progress Tracker -->
+        <div id="page-progress-container"></div>
+
+        <h4>📋 Learning Checkpoints</h4>
+                <h5><span class="emoji">🟢</span> Easy Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="javascript-task-1" class="progress-check"> Learn variables, data types, loops, and conditional logic</label></li>
+            <li><label><input type="checkbox" id="javascript-task-2" class="progress-check"> Master functions, array methods (map, filter, reduce), and scope</label></li>
+        </ul>
+        <h5><span class="emoji">🟡</span> Medium Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="javascript-task-3" class="progress-check"> Practice DOM manipulation and event handling (click, submit, keypress)</label></li>
+            <li><label><input type="checkbox" id="javascript-task-4" class="progress-check"> Understand asynchronous JS (Promises, async/await, and Fetch API)</label></li>
+        </ul>
+
+
+        <h4>📖 Tutorials & Official Documentation</h4>
+        <ul>
+                        <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">MDN JavaScript Guide</a> - Comprehensive standard guide for core language syntax, arrays, objects, and APIs.</li>
+            <li><a href="https://javascript.info/" target="_blank">JavaScript.info Tutorial</a> - Highly detailed, modern tutorial covering closures, prototypes, event loop, and promises.</li>
+            <li><a href="https://eloquentjavascript.net/" target="_blank">Eloquent JavaScript Book Site</a> - Interactive textbook covering programming structures, DOM models, and Node.js.</li>
+            <li><a href="https://www.w3schools.com/js/" target="_blank">W3Schools JavaScript Guide</a> - Popular interactive tutorial explaining syntax variables and browser events.</li>
+            <li><a href="https://www.patterns.dev/" target="_blank">Patterns.dev (JavaScript Design Patterns)</a> - Modern guide to JavaScript and React design patterns for building web apps.</li>
+        </ul>
+
+        <h4>🛠️ Interactive Visualizers & Sandboxes</h4>
+        <ul>
+                        <li><a href="https://www.jsv9000.app/" target="_blank">JS Visualizer 9000</a> - Visualize JavaScript's call stack, event loop, microtask queue, and macro-task queue in action.</li>
+            <li><a href="https://pythontutor.com/javascript.html" target="_blank">Python Tutor JavaScript Visualizer</a> - Step through JavaScript execution to trace closures, arrays, and scopes changes.</li>
+            <li><a href="https://jsconsole.com/" target="_blank">JSConsole Web Terminal</a> - Interactive console command line sandbox to test JS objects and arrays scripts.</li>
+            <li><a href="https://eslint.org/play/" target="_blank">ESLint Playground</a> - Write code and visually check for syntax bugs, formatting issues, and code smells.</li>
+        </ul>
+
+        <h4>🧠 Practice Websites & Quizzes</h4>
+        <ul>
+                        <li><a href="https://www.jschallenger.com/" target="_blank">JS Challenger Interactive Exercises</a> - Solve small JavaScript puzzles to master array operations, string functions, and algorithms.</li>
+            <li><a href="https://exercism.org/tracks/javascript" target="_blank">Exercism JavaScript Track</a> - Practice programming exercises with personalized mentor code reviews.</li>
+            <li><a href="https://leetcode.com/problemset/javascript/" target="_blank">LeetCode JS Challenges</a> - Modern database of programming tasks for testing closures, functions, and arrays.</li>
+            <li><a href="https://edabit.com/challenges/javascript" target="_blank">Edabit JavaScript Challenges</a> - Solve bite-sized JavaScript coding challenges to build muscle memory.</li>
+        </ul>
+
+        <h4>🎓 Professional Certifications & Badges</h4>
+        <ul>
+                        <li><a href="https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures-v8/" target="_blank">freeCodeCamp JavaScript Algorithms & Data Structures v8</a> - Earn a credential validating ES6 capabilities, OOP, and data structures implementation.</li>
+            <li><a href="https://shop.w3schools.com/products/javascript-certificate" target="_blank">W3Schools JavaScript Certification</a> - Earn a formal certificate verifying core web programming knowledge.</li>
+            <li><a href="https://www.coursera.org/learn/javascript" target="_blank">Coursera JavaScript Basics (UC Davis)</a> - Earn a public university certificate covering modern ES6 scripting.</li>
+        </ul>
+
+        <h4>🎥 Recommended YouTube Playlists</h4>
+        <ul class="youtube-list">
+                        <li><a href="https://www.youtube.com/c/WebDevSimplified" target="_blank"><img src="YT.png" height="24" width="24" alt="Web Dev Simplified JavaScript"> Web Dev Simplified JavaScript</a> - Clear explanations of ES6 syntax, asynchronous code, promises, and fetch APIs.</li>
+            <li><a href="https://www.youtube.com/user/TechGuyWeb" target="_blank"><img src="YT.png" height="24" width="24" alt="Traversy Media JS Playlist"> Traversy Media JS Playlist</a> - Practical JavaScript DOM tutorials and crash courses.</li>
+            <li><a href="https://www.youtube.com/watch?v=PkZNo7MFNFg" target="_blank"><img src="FCC.png" height="24" width="24" alt="freeCodeCamp JS Course"> freeCodeCamp JS Course</a> - Comprehensive 3-hour video course on fundamental coding algorithms.</li>
+            <li><a href="https://www.youtube.com/c/TheCodingTrain" target="_blank"><img src="YT.png" height="24" width="24" alt="The Coding Train JavaScript"> The Coding Train JavaScript</a> - Interactive coding challenges in p5.js and modular JS structures.</li>
+        </ul>
+
+        <h4>💡 Recommended Project Ideas</h4>
+                <h5>🟢 Beginner Projects</h5>
+        <ul>
+            <li><strong>Interactive To-Do List:</strong> Build a list application supporting tasks creation, completion, deletion, and localStorage preservation.</li>
+            <li><strong>Custom Digital Clock:</strong> Design a real-time running clock interface utilizing setInterval and custom styling updates.</li>
+                    <li><strong>Hex Color Flipper Page:</strong> Build a webpage that generates random hex codes and flips background colors dynamically on click events.</li>
+</ul>
+        <h5>🟡 Medium Projects</h5>
+        <ul>
+            <li><strong>Interactive Weather Dashboard:</strong> Build an app fetching real-time weather information from external REST APIs using fetch/async-await.</li>
+            <li><strong>Expense Tracker:</strong> Develop a financial manager calculator displaying budget charts and historical ledger items.</li>
+                    <li><strong>Recipe Finder Application:</strong> Develop an app that queries food APIs based on user-input ingredients, rendering results in responsive grid cards.</li>
+</ul>
+        <h5>🔴 Advanced Projects</h5>
+        <ul>
+            <li><strong>Virtual Keyboard with Sound:</strong> Create a fully functional screen keyboard triggerable by clicks and keydown events, playing audios.</li>
+            <li><strong>Real-time Chat via WebSockets:</strong> Program a client-side chat interface sending socket payloads dynamically to a chat server.</li>
+                    <li><strong>Markdown Editor with Live Preview:</strong> Create a side-by-side markdown editor that parses formatting in real-time utilizing regular expressions or parsers.</li>
+</ul>
+
+    </div>
+    <script src="tracker.js"></script>
+</body>
+</html>

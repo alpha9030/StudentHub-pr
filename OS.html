@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            alert("Access Denied: You must be enrolled and signed in to view Structured Track materials. Redirecting to Enrollment Terminal...");
+            window.location.href = "index.html#auth";
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operating Systems (OS) Reference Sheet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container study-guide-container">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="signup.html">Signup</a>
+            <a href="reference.html">References</a>
+        </nav>
+
+        <h3>Operating Systems (OS) Reference Sheet</h3>
+        
+        <!-- Subject Progress Tracker -->
+        <div id="page-progress-container"></div>
+
+        <h4>📋 Learning Checkpoints</h4>
+                <h5><span class="emoji">🟢</span> Easy Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="os-task-1" class="progress-check"> Basics of OS, kernel modes, system calls, and interrupts</label></li>
+            <li><label><input type="checkbox" id="os-task-2" class="progress-check"> CPU Scheduling algorithms (FCFS, SJF, Round Robin, Priority)</label></li>
+        </ul>
+        <h5><span class="emoji">🟡</span> Medium Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="os-task-3" class="progress-check"> Process synchronization, Semaphores, Mutex, and Classical IPC problems</label></li>
+            <li><label><input type="checkbox" id="os-task-4" class="progress-check"> Deadlock detection, prevention, avoidance, and Banker's Algorithm</label></li>
+        </ul>
+        <h5><span class="emoji">🔴</span> Hard Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="os-task-5" class="progress-check"> Memory management, Paging, Segmentation, and Page Replacement (FIFO, LRU)</label></li>
+        </ul>
+
+
+        <h4>📖 Tutorials & Official Documentation</h4>
+        <ul>
+                        <li><a href="https://www.geeksforgeeks.org/operating-systems/" target="_blank">GeeksforGeeks Operating Systems</a> - Academic guide explaining virtual memory, paging, thrashing, and disk schedules.</li>
+            <li><a href="https://pages.cs.wisc.edu/~remzi/OSTEP/" target="_blank">OS: Three Easy Pieces (OSTEP Book)</a> - Excellent textbook on virtualization, concurrency, and persistence available free online.</li>
+            <li><a href="https://www.tutorialspoint.com/operating_system/index.htm" target="_blank">Tutorialspoint Operating System</a> - Explanations of systems structures, memory management, and file systems.</li>
+            <li><a href="https://www.studytonight.com/operating-system/" target="_blank">Studytonight OS Lectures</a> - Academic lectures on processes, mutual exclusion, and paging directories.</li>
+            <li><a href="https://codex.cs.yale.edu/avi/os-book/" target="_blank">Operating Systems Course Notes (Silberschatz)</a> - Official lecture notes and chapter guides for the standard Dinosaur book.</li>
+        </ul>
+
+        <h4>🛠️ Interactive Visualizers & Sandboxes</h4>
+        <ul>
+                        <li><a href="https://www.vlabs.co.in/" target="_blank">OS Process Scheduling Simulator</a> - Visualize and compare CPU scheduling algorithms like FIFO, SJF, and Round Robin.</li>
+            <li><a href="https://github.com/yousefkotp/CPU-Scheduling-Algorithms" target="_blank">CPU Scheduling Simulator GitHub Project</a> - Interactive scheduling simulator displaying gantt charts and wait ratios.</li>
+            <li><a href="https://github.com/josefdc/page-replacement-simulator" target="_blank">Virtual Memory Paging Visualizer</a> - Visual interactive tool demonstrating page replacements, paging, and hit ratios.</li>
+        </ul>
+
+        <h4>🧠 Practice Websites & Quizzes</h4>
+        <ul>
+                        <li><a href="https://www.sanfoundry.com/operating-system-questions-answers/" target="_blank">Sanfoundry OS MCQs</a> - Practice multiple choice quizzes covering deadlocks, semaphores, and systems calls.</li>
+            <li><a href="https://www.geeksforgeeks.org/gate-cs-operating-systems-prev-year-questions/" target="_blank">Gate Questions on OS</a> - Previous year exam questions on virtual address paging and CPU interrupts.</li>
+            <li><a href="https://www.geeksforgeeks.org/operating-systems-gq/" target="_blank">GeeksforGeeks OS Quizzes</a> - Exam-level multiple choice questions covering memory, deadlock, and threads.</li>
+        </ul>
+
+        <h4>🎓 Professional Certifications & Badges</h4>
+        <ul>
+                        <li><a href="https://www.comptia.org/certifications/linux" target="_blank">CompTIA Linux+</a> - Validates system administrator capabilities across Linux-based enterprise kernels.</li>
+            <li><a href="https://www.redhat.com/en/services/certification/rhcsa" target="_blank">Red Hat Certified System Administrator (RHCSA)</a> - A prestigious professional credential verifying hands-on system administration credentials.</li>
+            <li><a href="https://www.comptia.org/certifications/a" target="_blank">CompTIA A+ Certification</a> - Validates hardware systems, networking, and OS basic diagnostics skills.</li>
+            <li><a href="https://training.linuxfoundation.org/certification/linux-foundation-certified-system-administrator-lfcs/" target="_blank">Linux Foundation Certified System Administrator (LFCS)</a> - Prestige credential validating system administration and command line scripting.</li>
+        </ul>
+
+        <h4>🎥 Recommended YouTube Playlists</h4>
+        <ul class="youtube-list">
+                        <li><a href="https://www.youtube.com/c/GateSmashers" target="_blank"><img src="YT.png" height="24" width="24" alt="Gate Smashers OS Course"> Gate Smashers OS Course</a> - Highly engaging lectures on semaphores, mutexes, deadlocks, and scheduling algorithms.</li>
+            <li><a href="https://www.youtube.com/c/nesoacademy" target="_blank"><img src="YT.png" height="24" width="24" alt="Neso Academy OS Playlist"> Neso Academy OS Playlist</a> - Clean presentations covering system structures and kernel architectures.</li>
+        </ul>
+
+        <h4>💡 Recommended Project Ideas</h4>
+                <h5>🟢 Beginner Projects</h5>
+        <ul>
+            <li><strong>CLI Task Manager Script:</strong> Write a bash/python script displaying process statistics and CPU/Memory usage metrics.</li>
+            <li><strong>Basic Linux Commands Simulator:</strong> Build a python program simulating commands like ls, cd, mkdir, and cat in memory.</li>
+                    <li><strong>Environment Variables Log Utility:</strong> Write a shell/python script that logs, searches, and updates system environment parameters.</li>
+</ul>
+        <h5>🟡 Medium Projects</h5>
+        <ul>
+            <li><strong>CPU Scheduler Simulator:</strong> Program a simulator executing Shortest Job First, Priority, and Round Robin scheduling algorithms.</li>
+            <li><strong>Thread-Safe Producer Consumer Queue:</strong> Implement a task processing queue in C/Java utilizing mutexes and semaphores for thread safety.</li>
+                    <li><strong>Disk Partitioning Simulator:</strong> Program a simulator executing contiguous and non-contiguous partition allocations (First-Fit, Best-Fit).</li>
+</ul>
+        <h5>🔴 Advanced Projects</h5>
+        <ul>
+            <li><strong>Custom Memory Paging Simulator:</strong> Develop a program simulating LRU, FIFO, and Optimal page replacement algorithms, tracking hit/miss ratios.</li>
+            <li><strong>Minimal Kernel/Bootloader from Scratch:</strong> Code a minimal x86 boot sector script printing messages in assembly.</li>
+                    <li><strong>File System Check Utility (fsck):</strong> Build a program that parses a custom structured disk image block by block to identify corrupt sectors or lost files.</li>
+</ul>
+
+    </div>
+    <script src="tracker.js"></script>
+</body>
+</html>

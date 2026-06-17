@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            alert("Access Denied: You must be enrolled and signed in to view Structured Track materials. Redirecting to Enrollment Terminal...");
+            window.location.href = "index.html#auth";
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Structures & Algorithms Study Guide</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container study-guide-container">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="signup.html">Signup</a>
+            <a href="reference.html">References</a>
+        </nav>
+
+        <h3>Data Structures & Algorithms Reference Sheet</h3>
+        
+        <!-- Subject Progress Tracker -->
+        <div id="page-progress-container"></div>
+
+        <h4>📋 Learning Checkpoints</h4>
+        <h5><span class="emoji">🟢</span> Easy Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="dsa-task-1" class="progress-check"> Basic linear structures: Arrays, Linked Lists, Stacks, Queues, Hash Tables</label></li>
+            <li><label><input type="checkbox" id="dsa-task-2" class="progress-check"> Non-linear structures: Trees, Binary Search Trees, Heaps</label></li>
+        </ul>
+        <h5><span class="emoji">🟡</span> Medium Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="dsa-task-3" class="progress-check"> Algorithms: Big-O notation, Sorting, Searching, Graphs, BFS/DFS</label></li>
+            <li><label><input type="checkbox" id="dsa-task-4" class="progress-check"> Advanced paradigms: Dynamic Programming, Greedy Algorithms, Backtracking</label></li>
+        </ul>
+
+        <h4>📖 Tutorials & Official Documentation</h4>
+        <ul>
+            <li><a href="https://www.geeksforgeeks.org/data-structures/" target="_blank">GeeksforGeeks DSA Reference</a> - Comprehensive guide on data structures and algorithms.</li>
+            <li><a href="https://neetcode.io/practice" target="_blank">NeetCode Practice & Study Guide</a> - Curated list of LeetCode problems grouped by patterns.</li>
+            <li><a href="https://www.freecodecamp.org/news/data-structures-the-key-to-scalable-software" target="_blank">freeCodeCamp DSA Guide</a> - Structured article and courses on algorithms.</li>
+            <li><a href="https://en.wikipedia.org/wiki/Data_structure" target="_blank">Wikipedia Data Structure Portal</a> - In-depth academic articles on storage and organization.</li>
+        </ul>
+
+        <h4>🛠️ Interactive Visualizers & Sandboxes</h4>
+        <ul>
+            <li><a href="https://visualgo.net/" target="_blank">VisuAlgo Interactive Visualizations</a> - Step-by-step visual operations on graphs, BSTs, heaps, and sorting.</li>
+            <li><a href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html" target="_blank">USFCA Data Structure Visualizations</a> - Interactive HTML5 canvas visualizer for heaps, trees, and hash tables.</li>
+            <li><a href="https://algorithm-visualizer.org/" target="_blank">Algorithm Visualizer Sandbox</a> - Web-based sandbox where you can visualize algorithms in code.</li>
+        </ul>
+
+        <h4>🧠 Practice Websites & Quizzes</h4>
+        <ul>
+            <li><a href="https://leetcode.com/" target="_blank">LeetCode Problems Archive</a> - Industry standard platform for technical interview preparation.</li>
+            <li><a href="https://www.hackerrank.com/domains/algorithms" target="_blank">HackerRank Algorithms Practice</a> - Structured programming problems and skill tests.</li>
+            <li><a href="https://codeforces.com/" target="_blank">Codeforces Competitive Programming</a> - Competitive programming platform with regular contests.</li>
+            <li><a href="https://www.codechef.com/" target="_blank">CodeChef Learning & Practice</a> - Practice problem tracks and contest schedules.</li>
+        </ul>
+
+        <h4>🎓 Professional Certifications & Badges</h4>
+        <ul>
+            <li><a href="https://www.coursera.org/specializations/algorithms" target="_blank">Stanford Algorithms Specialization (Coursera)</a> - Highly rated foundational courses on algorithms by Tim Roughgarden.</li>
+            <li><a href="https://www.coursera.org/specializations/data-structures-algorithms" target="_blank">UC San Diego DSA Specialization (Coursera)</a> - Practice-based algorithm and data structures design specialization.</li>
+        </ul>
+
+        <h4>🎥 Recommended YouTube Playlists</h4>
+        <ul class="youtube-list">
+            <li><a href="https://www.youtube.com/@abdul_bari" target="_blank"><img src="YT.png" height="24" width="24" alt="Abdul Bari lectures"> Abdul Bari lectures</a> - Famous, clear academic walkthroughs of algorithms and analysis.</li>
+            <li><a href="https://www.youtube.com/@NeetCode" target="_blank"><img src="YT.png" height="24" width="24" alt="NeetCode YouTube channel"> NeetCode YouTube channel</a> - Detailed, intuitive LeetCode problem explanations.</li>
+            <li><a href="https://www.youtube.com/@takeUforward" target="_blank"><img src="YT.png" height="24" width="24" alt="takeUforward channel"> takeUforward (Striver)</a> - Comprehensive DSA sheet and topic playlists.</li>
+            <li><a href="https://www.youtube.com/watch?v=8hly31xKjns" target="_blank"><img src="FCC.png" height="24" width="24" alt="freeCodeCamp DSA Course"> freeCodeCamp DSA Course</a> - Multi-hour video tutorials on data structures and algorithms.</li>
+        </ul>
+
+        <h4>💡 Recommended Project Ideas</h4>
+        <h5>🟢 Beginner Projects</h5>
+        <ul>
+            <li><strong>Sorting Visualizer:</strong> Build a simple web application that shows sorting algorithms (bubble, insertion, selection) running visually.</li>
+            <li><strong>Simple Contact Manager:</strong> Create a terminal application that uses hash tables or binary trees to store and search contacts.</li>
+        </ul>
+        <h5>🟡 Medium Projects</h5>
+        <ul>
+            <li><strong>Maze Solver:</strong> Write a program that generates a maze and uses BFS/DFS or Dijkstra's algorithm to find the shortest path.</li>
+            <li><strong>Text Editor Undo/Redo:</strong> Implement a stack-based undo/redo feature for a simple text input tool.</li>
+        </ul>
+        <h5>🔴 Advanced Projects</h5>
+        <ul>
+            <li><strong>File Compressor (Huffman Encoding):</strong> Build a utility that compresses and decompresses text files using Huffman trees.</li>
+            <li><strong>Social Network Graph:</strong> Design a mini social network system that models connections as graphs, offering degree-of-separation and mutual friend recommendations.</li>
+        </ul>
+
+    </div>
+    <script src="tracker.js"></script>
+</body>
+</html>

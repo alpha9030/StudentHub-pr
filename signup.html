@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration - Enrollment</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- Modern App Header -->
+        <header class="app-header">
+            <div class="header-logo" onclick="window.location.href='index.html'">
+                <span class="logo-icon">🎓</span>
+                <span class="logo-text">Student Hub</span>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html">Home</a>
+                <a href="signup.html" class="active">Account</a>
+                <a href="reference.html" onclick="return checkReferenceAccess(event)">References</a>
+            </nav>
+            <div class="header-controls">
+                <div class="settings-trigger-btn" onclick="toggleSettingsMenu(event)">
+                    ⚙️ <span class="btn-text">Settings</span>
+                </div>
+                <div id="settings-dropdown-menu" class="settings-dropdown">
+                    <div class="settings-dropdown-item">
+                        <label for="theme-select">Theme</label>
+                        <select id="theme-select" onchange="changeTheme(this.value)">
+                            <option value="default">Default Blue</option>
+                            <option value="light">Light Teal & Sage</option>
+                            <option value="dark">Dark Charcoal</option>
+                        </select>
+                    </div>
+                    <div class="settings-dropdown-item">
+                        <label for="font-size-select">Font Size</label>
+                        <select id="font-size-select" onchange="changeFontSize(this.value)">
+                            <option value="small">Small</option>
+                            <option value="medium">Medium</option>
+                            <option value="large">Large</option>
+                        </select>
+                    </div>
+                    <div class="settings-dropdown-divider"></div>
+                    <button id="signout-btn" onclick="doSignOut()" class="btn btn-secondary signout-dropdown-btn" style="display: none; width: 100%;">Sign Out</button>
+                    <button id="delete-btn" onclick="doDeleteAccount()" class="btn delete-dropdown-btn" style="display: none; width: 100%; margin-top: 8px; background-color: #ef4444; color: white; border: none; padding: 8px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">Delete Account</button>
+                </div>
+            </div>
+        </header>
+
+        <script>
+            function toggleSettingsMenu(event) {
+                event.stopPropagation();
+                const menu = document.getElementById('settings-dropdown-menu');
+                if (menu) {
+                    menu.classList.toggle('active');
+                }
+            }
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                const controls = document.querySelector('.header-controls');
+                const menu = document.getElementById('settings-dropdown-menu');
+                if (menu && controls && !controls.contains(e.target)) {
+                    menu.classList.remove('active');
+                }
+            });
+        </script>
+
+        <!-- Profile details view if logged in -->
+        <div id="profile-details-panel" style="display: none; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 30px; margin-top: 20px;">
+            <h2 style="margin-top: 0; border: none; padding-bottom: 12px; color: var(--text-body); font-weight: 700; border-bottom: 1px solid var(--border-color);">👤 Active Student Profile</h2>
+            <p style="color: var(--text-muted); margin-bottom: 24px;">You are currently signed in with the following academic credentials:</p>
+            <div style="display: grid; grid-template-columns: 140px 1fr; gap: 16px 12px; font-size: 15px; margin-bottom: 30px; color: var(--text-body);">
+                <strong>Scholar Name:</strong> <span id="profile-name" style="font-weight: 600;"></span>
+                <strong>Department:</strong> <span id="profile-dept" style="font-weight: 600;"></span>
+                <strong>Academic Year:</strong> <span id="profile-grade" style="font-weight: 600;"></span>
+            </div>
+            <button onclick="doSignOut()" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 600; border-radius: 8px; border: none; cursor: pointer;">Log Out & Clear Profile</button>
+            <button onclick="doDeleteAccount()" class="btn" style="width: 100%; padding: 12px; font-weight: 600; border-radius: 8px; border: 1px solid #ef4444; background: transparent; color: #ef4444; margin-top: 10px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#ef4444'; this.style.color='white';" onmouseout="this.style.background='transparent'; this.style.color='#ef4444';">Delete Account & Clear Progress</button>
+        </div>
+
+        <!-- Standard Signup Form -->
+        <div id="signup-form-container">
+            <h2>Student Enrollment Registry</h2>
+            <p>Create a secure profile to track your subject objectives and coursework goals.</p>
+
+            <form onsubmit="return handleSignup(event)" autocomplete="off">
+            <label for="username">Scholar Name / Identity:</label>
+            <input type="text" id="username" placeholder="Enter your full name or ID" autocomplete="off" required>
+
+            <label for="email">Academic Email Address:</label>
+            <input type="email" id="email" placeholder="Enter your student email" autocomplete="off" required>
+
+            <label for="password">Profile Security Password:</label>
+            <input type="password" id="password" placeholder="Create a secure access code" autocomplete="new-password" required>
+            <small class="form-helper" style="display: block; margin-top: 4px; color: #888; font-size: 0.85em; margin-bottom: 12px;">Password must be at least 8 characters, containing letters, numbers, and special symbols.</small>
+
+            <label for="dept">Department / Specialization:</label>
+            <select id="dept">
+                <option value="" disabled selected>-- Select your department --</option>
+                <option value="cse">Computer Science & Engineering (CSE)</option>
+                <option value="it">Information Technology (IT)</option>
+                <option value="ece">Electronics & Communication Engineering (ECE)</option>
+                <option value="eee">Electrical & Electronics Engineering (EEE)</option>
+                <option value="me">Mechanical Engineering (ME)</option>
+                <option value="ce">Civil Engineering (CE)</option>
+                <option value="bca">Bachelor of Computer Applications (BCA)</option>
+            </select>
+
+            <label for="grade-level">Academic Class Standing:</label>
+            <select id="grade-level">
+                <option value="" disabled selected>-- Select your academic year --</option>
+                <option value="freshman">1st Year</option>
+                <option value="sophomore">2nd Year</option>
+                <option value="junior">3rd Year</option>
+                <option value="senior">4th Year</option>
+            </select>
+
+            <input type="submit" value="Enroll Identity & Enter Workspace">
+        </form>
+        </div>
+    </div>
+    <script src="tracker.js"></script>
+    <script>
+        function validatePasswordStrength(password) {
+            const minLength = 8;
+            const hasLetter = /[a-zA-Z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSpecial = /[^a-zA-Z0-9]/.test(password);
+            
+            if (password.length < minLength) {
+                return "Password must be at least 8 characters long.";
+            }
+            if (!hasLetter) {
+                return "Password must contain at least one letter.";
+            }
+            if (!hasNumber) {
+                return "Password must contain at least one number.";
+            }
+            if (!hasSpecial) {
+                return "Password must contain at least one special symbol (e.g., !, @, #, $, etc.).";
+            }
+            return null; // Valid
+        }
+
+        async function handleSignup(event) {
+            if (event) event.preventDefault();
+            const usernameVal = document.getElementById('username').value || 'Scholar';
+            const emailVal = document.getElementById('email').value || '';
+            const gradeVal = document.getElementById('grade-level').value || 'freshman';
+            const deptVal = document.getElementById('dept').value || 'cse';
+            const pwdVal = document.getElementById('password').value || '';
+            
+            const pwdError = validatePasswordStrength(pwdVal);
+            if (pwdError) {
+                alert("Weak Password: " + pwdError);
+                return false;
+            }
+            
+            if (!gradeVal || !deptVal || !emailVal) {
+                alert("Please complete all registration fields.");
+                return false;
+            }
+
+            const isBackendAvailable = window.location.protocol.startsWith('http');
+            if (isBackendAvailable) {
+                try {
+                    const apiBase = window.location.protocol.startsWith('http') ? '' : 'https://studenhub.pr';
+                    const response = await fetch(`${apiBase}/api/register`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            username: usernameVal,
+                            email: emailVal,
+                            password: pwdVal,
+                            grade: gradeVal,
+                            dept: deptVal
+                        })
+                    });
+                    const resData = await response.json();
+                    if (resData.success) {
+                        localStorage.setItem('studentName', usernameVal);
+                        localStorage.setItem('studentGrade', gradeVal);
+                        localStorage.setItem('studentDept', deptVal);
+                        localStorage.setItem('studentEmail', emailVal);
+                        localStorage.setItem('isLoggedIn', 'true');
+
+                        // Also add to local registeredUsers list so offline works later
+                        const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                        if (!users.some(u => u.email === emailVal)) {
+                            users.push({
+                                username: usernameVal,
+                                email: emailVal,
+                                password: pwdVal,
+                                grade: gradeVal,
+                                dept: deptVal
+                            });
+                            localStorage.setItem('registeredUsers', JSON.stringify(users));
+                        }
+
+                        // Redirect back to index.html #dashboard
+                        window.location.href = 'index.html#dashboard';
+                        return false;
+                    } else {
+                        alert("Enrollment Failed: " + (resData.message || "Unknown error"));
+                        return false;
+                    }
+                } catch (err) {
+                    console.warn("Backend registration failed, falling back to local storage:", err);
+                }
+            }
+
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            if (users.some(u => u.email === emailVal)) {
+                alert("An account with this email address is already registered.");
+                return false;
+            }
+
+            const newUser = {
+                username: usernameVal,
+                email: emailVal,
+                password: pwdVal,
+                grade: gradeVal,
+                dept: deptVal
+            };
+            users.push(newUser);
+            localStorage.setItem('registeredUsers', JSON.stringify(users));
+            
+            localStorage.setItem('studentName', usernameVal);
+            localStorage.setItem('studentGrade', gradeVal);
+            localStorage.setItem('studentDept', deptVal);
+            localStorage.setItem('studentEmail', emailVal);
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            // Redirect back to index.html #dashboard
+            window.location.href = 'index.html#dashboard';
+            return false;
+        }
+
+        function doSignOut() {
+            // Clear all student-specific data from localStorage (keep theme, font size, and user database)
+            const theme = localStorage.getItem('siteTheme');
+            const fontSize = localStorage.getItem('siteFontSize');
+            const users = localStorage.getItem('registeredUsers');
+            localStorage.clear();
+            if (theme) localStorage.setItem('siteTheme', theme);
+            if (fontSize) localStorage.setItem('siteFontSize', fontSize);
+            if (users) localStorage.setItem('registeredUsers', users);
+            window.location.reload();
+        }
+
+        async function doDeleteAccount() {
+            const confirmDelete = confirm("Warning: Are you sure you want to permanently delete your student profile and erase all your checked syllabus progress checkpoints?");
+            if (confirmDelete) {
+                const currentEmail = localStorage.getItem('studentEmail');
+                
+                const isBackendAvailable = window.location.protocol.startsWith('http');
+                if (isBackendAvailable && currentEmail) {
+                    try {
+                        const apiBase = window.location.protocol.startsWith('http') ? '' : 'https://studenhub.pr';
+                        await fetch(`${apiBase}/api/delete-account`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email: currentEmail })
+                        });
+                    } catch (e) {
+                        console.warn("Could not delete account on backend:", e);
+                    }
+                }
+
+                // Clear active session from localStorage (keep theme and font preferences)
+                const theme = localStorage.getItem('siteTheme');
+                const fontSize = localStorage.getItem('siteFontSize');
+                const usersJson = localStorage.getItem('registeredUsers');
+                
+                localStorage.clear();
+                
+                if (theme) localStorage.setItem('siteTheme', theme);
+                if (fontSize) localStorage.setItem('siteFontSize', fontSize);
+                
+                // Remove this user from the registered users list
+                if (usersJson && currentEmail) {
+                    let users = JSON.parse(usersJson);
+                    users = users.filter(u => u.email !== currentEmail);
+                    localStorage.setItem('registeredUsers', JSON.stringify(users));
+                }
+
+                alert("Your student account and progress checkpoints have been permanently deleted.");
+                const isIndex = window.location.pathname.endsWith("index.html") || 
+                                window.location.pathname.endsWith("/") || 
+                                window.location.pathname === "";
+                window.location.href = "index.html";
+                if (isIndex) {
+                    window.location.reload();
+                }
+            }
+        }
+
+        function checkReferenceAccess(event) {
+            const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (!loggedIn) {
+                event.preventDefault();
+                alert("Access Denied: You must be enrolled and signed in to view Scholastic Reference Materials. Redirecting to Enrollment Terminal...");
+                window.location.href = "index.html#auth";
+                return false;
+            }
+            return true;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Check session status
+            const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const name = localStorage.getItem('studentName') || 'Scholar';
+            const savedGrade = localStorage.getItem('studentGrade');
+            const savedDept = localStorage.getItem('studentDept');
+
+            const profilePanel = document.getElementById('profile-details-panel');
+            const signupContainer = document.getElementById('signup-form-container');
+            const signOutBtn = document.getElementById('signout-btn');
+            const deleteBtn = document.getElementById('delete-btn');
+
+            // Set values on theme dropdown on load
+            const savedTheme = localStorage.getItem('siteTheme') || 'default';
+            const themeSelect = document.getElementById('theme-select');
+            if (themeSelect) themeSelect.value = savedTheme;
+
+            if (loggedIn) {
+                if (profilePanel) profilePanel.style.display = 'block';
+                if (signupContainer) signupContainer.style.display = 'none';
+                if (signOutBtn) signOutBtn.style.display = 'block';
+                if (deleteBtn) deleteBtn.style.display = 'block';
+
+                document.getElementById('profile-name').innerText = name;
+
+                let deptText = "";
+                if (savedDept === "cse") deptText = "Computer Science & Engineering (CSE)";
+                else if (savedDept === "it") deptText = "Information Technology (IT)";
+                else if (savedDept === "ece") deptText = "Electronics & Communication Engineering (ECE)";
+                else if (savedDept === "eee") deptText = "Electrical & Electronics Engineering (EEE)";
+                else if (savedDept === "me") deptText = "Mechanical Engineering (ME)";
+                else if (savedDept === "ce") deptText = "Civil Engineering (CE)";
+                else if (savedDept === "bca") deptText = "Bachelor of Computer Applications (BCA)";
+                else deptText = savedDept || "Unspecified";
+
+                document.getElementById('profile-dept').innerText = deptText;
+
+                let gradeText = "";
+                if (savedGrade === "freshman") gradeText = "1st Year";
+                else if (savedGrade === "sophomore") gradeText = "2nd Year";
+                else if (savedGrade === "junior") gradeText = "3rd Year";
+                else if (savedGrade === "senior") gradeText = "4th Year";
+                else gradeText = savedGrade || "Unspecified";
+
+                document.getElementById('profile-grade').innerText = gradeText;
+            } else {
+                if (profilePanel) profilePanel.style.display = 'none';
+                if (signupContainer) signupContainer.style.display = 'block';
+                if (signOutBtn) signOutBtn.style.display = 'none';
+                if (deleteBtn) deleteBtn.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

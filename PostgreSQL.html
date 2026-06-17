@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            alert("Access Denied: You must be enrolled and signed in to view Structured Track materials. Redirecting to Enrollment Terminal...");
+            window.location.href = "index.html#auth";
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PostgreSQL Reference Sheet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container study-guide-container">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="signup.html">Signup</a>
+            <a href="reference.html">References</a>
+        </nav>
+
+        <h3>PostgreSQL Reference Sheet</h3>
+        
+        <!-- Subject Progress Tracker -->
+        <div id="page-progress-container"></div>
+
+        <h4>📋 Learning Checkpoints</h4>
+                <h5><span class="emoji">🟢</span> Easy Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="postgresql-task-1" class="progress-check"> Install PostgreSQL, set up pgAdmin, and run basic DDL/DML</label></li>
+            <li><label><input type="checkbox" id="postgresql-task-2" class="progress-check"> Master PostgreSQL specific features (JSONB, Arrays, Custom Types)</label></li>
+        </ul>
+        <h5><span class="emoji">🟡</span> Medium Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="postgresql-task-3" class="progress-check"> Write stored procedures, user-defined functions, and triggers</label></li>
+            <li><label><input type="checkbox" id="postgresql-task-4" class="progress-check"> Performance tuning, indexing (B-Tree, GIN, GiST), and EXPLAIN ANALYZE</label></li>
+        </ul>
+
+
+        <h4>📖 Tutorials & Official Documentation</h4>
+        <ul>
+                        <li><a href="https://www.postgresql.org/docs/" target="_blank">Official PostgreSQL Documentation</a> - The authoritative source manual detailing pgsql configuration, indices, and querying options.</li>
+            <li><a href="https://www.postgresqltutorial.com/" target="_blank">Postgres Tutorial (postgresqltutorial.com)</a> - Highly popular postgres resource covering PL/pgSQL, window functions, and analytics query structures.</li>
+            <li><a href="https://neon.tech/docs/" target="_blank">Neon Postgres Guides</a> - Serverless PostgreSQL platform guides covering branching, indexes, and performance optimization.</li>
+            <li><a href="https://theartofpostgresql.com/" target="_blank">The Art of PostgreSQL</a> - In-depth guide for developers looking to write advanced SQL in Postgres.</li>
+        </ul>
+
+        <h4>🛠️ Interactive Visualizers & Sandboxes</h4>
+        <ul>
+                        <li><a href="https://www.pgadmin.org/" target="_blank">pgAdmin Query Interface</a> - Visual PostgreSQL database manager to run queries, check EXPLAIN plans, and view data grids.</li>
+            <li><a href="https://dbdiagram.io/" target="_blank">dbdiagram.io PG Schema Visualizer</a> - Directly export database structures from diagrams into PostgreSQL syntax SQL scripts.</li>
+            <li><a href="https://dbeaver.io/" target="_blank">DBeaver Community Database Tool</a> - A multi-platform visual SQL explorer database engine tool.</li>
+            <li><a href="https://explain.dalibo.com/" target="_blank">Explain Dalibo Plan Visualizer</a> - Paste your PostgreSQL EXPLAIN output to get a visual representation of query execution costs.</li>
+        </ul>
+
+        <h4>🧠 Practice Websites & Quizzes</h4>
+        <ul>
+                        <li><a href="https://pgexercises.com/" target="_blank">pgexercises (PostgreSQL Practice)</a> - Excellent interactive portal to practice querying, joining, aggregating, and analyzing PG databases.</li>
+            <li><a href="https://leetcode.com/problemset/database/" target="_blank">LeetCode Database Problems</a> - Solve schema and aggregation queries using PostgreSQL database engines.</li>
+            <li><a href="https://sqlzoo.net/" target="_blank">SQLZoo PostgreSQL Queries</a> - Relational query assessments covering SQL databases.</li>
+            <li><a href="https://sqlpad.io/" target="_blank">SQLPad PostgreSQL Practice</a> - Interactive coding workspace with dozens of practice datasets for PostgreSQL.</li>
+        </ul>
+
+        <h4>🎓 Professional Certifications & Badges</h4>
+        <ul>
+                        <li><a href="https://postgrespro.com/education/cert" target="_blank">PostgreSQL Associate Certification (Postgres Professional)</a> - Global industry standard certificate validating postgres database knowledge.</li>
+            <li><a href="https://www.hackerrank.com/skills-verification" target="_blank">HackerRank SQL (Advanced) Certificate</a> - Verify advanced query scripting skills with real-time database problems.</li>
+            <li><a href="https://www.coursera.org/specializations/postgresql-for-everybody" target="_blank">Coursera PostgreSQL for Everyone (University of Michigan)</a> - Earn a certificate covering JSON storage, database modeling, and optimization in Postgres.</li>
+        </ul>
+
+        <h4>🎥 Recommended YouTube Playlists</h4>
+        <ul class="youtube-list">
+                        <li><a href="https://www.youtube.com/@hnasr" target="_blank"><img src="YT.png" height="24" width="24" alt="Hussein Nasser - Database Engineering"> Hussein Nasser - Database Engineering</a> - Excellent channel covering PG indexing, B-Trees, WAL logs, and system architectures.</li>
+            <li><a href="https://www.youtube.com/watch?v=qw--VYLpxG4" target="_blank"><img src="FCC.png" height="24" width="24" alt="freeCodeCamp PostgreSQL Full Course"> freeCodeCamp PostgreSQL Full Course</a> - Learn advanced querying, backups, triggers, and transactions in this PG video guide.</li>
+            <li><a href="https://www.youtube.com/c/amigoscode" target="_blank"><img src="YT.png" height="24" width="24" alt="Amigoscode PostgreSQL Course"> Amigoscode PostgreSQL Course</a> - Beginner-friendly video tutorial covering setup, joins, UUIDs, and transactions.</li>
+        </ul>
+
+        <h4>💡 Recommended Project Ideas</h4>
+                <h5>🟢 Beginner Projects</h5>
+        <ul>
+            <li><strong>Employee Hierarchy DB:</strong> Design a company organizational structure using PG schema commands, setting primary and foreign keys.</li>
+            <li><strong>Library Lending Schema:</strong> Code a database tracking book checkouts, late fees, and borrower records.</li>
+                    <li><strong>Relational Student Gradebook:</strong> Set up a student grade database querying student lists, courses, and marks using basic inner joins.</li>
+</ul>
+        <h5>🟡 Medium Projects</h5>
+        <ul>
+            <li><strong>Spatial Mapping DB with PostGIS:</strong> Configure PostGIS geometry extensions to model geographic locations and query nearest-neighbor targets.</li>
+            <li><strong>E-Commerce Cart Database:</strong> Design tables with triggers that automatically update stock levels and record transaction histories.</li>
+                    <li><strong>Hierarchical Organization Chart:</strong> Design a database representing manager-employee hierarchies utilizing recursive Common Table Expressions (CTEs).</li>
+</ul>
+        <h5>🔴 Advanced Projects</h5>
+        <ul>
+            <li><strong>PostgreSQL Partitioning System:</strong> Set up a highly scalable database utilizing range partitioning, indexes, and pg_partman scripts.</li>
+            <li><strong>Real-time Auditing Database:</strong> Program a PG database implementing audit log triggers that record changes on vital tables automatically.</li>
+                    <li><strong>Full-Text Search Engine DB:</strong> Create a PG document store database implementing indexing, tsvector columns, and weights for semantic queries.</li>
+</ul>
+
+    </div>
+    <script src="tracker.js"></script>
+</body>
+</html>

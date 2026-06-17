@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            alert("Access Denied: You must be enrolled and signed in to view Structured Track materials. Redirecting to Enrollment Terminal...");
+            window.location.href = "index.html#auth";
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Basics Reference Sheet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container study-guide-container">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="signup.html">Signup</a>
+            <a href="reference.html">References</a>
+        </nav>
+
+        <h3>SQL Basics Reference Sheet</h3>
+        
+        <!-- Subject Progress Tracker -->
+        <div id="page-progress-container"></div>
+
+        <h4>📋 Learning Checkpoints</h4>
+                <h5><span class="emoji">🟢</span> Easy Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="sql-task-1" class="progress-check"> SELECT queries, WHERE clauses, and ORDER BY sorting</label></li>
+            <li><label><input type="checkbox" id="sql-task-2" class="progress-check"> Join queries: INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN</label></li>
+        </ul>
+        <h5><span class="emoji">🟡</span> Medium Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="sql-task-3" class="progress-check"> Grouping and Aggregates: GROUP BY, HAVING, COUNT, SUM, AVG</label></li>
+            <li><label><input type="checkbox" id="sql-task-4" class="progress-check"> Advanced concepts: Subqueries, CTEs, and Window Functions</label></li>
+        </ul>
+
+
+        <h4>📖 Tutorials & Official Documentation</h4>
+        <ul>
+                        <li><a href="https://www.w3schools.com/sql/" target="_blank">W3Schools SQL Guide</a> - Simple, interactive database syntax tutorials covering SELECT, JOIN, and CRUD queries.</li>
+            <li><a href="https://mode.com/sql-tutorial/" target="_blank">Mode Analytics SQL Course</a> - Premium analytical querying tutorial covering subqueries, aggregates, and window scripts.</li>
+            <li><a href="https://sqlbolt.com/" target="_blank">SQLBolt Interactive Lessons</a> - Interactive lessons containing database sandboxes to test SQL logic.</li>
+            <li><a href="https://www.geeksforgeeks.org/sql-tutorial/" target="_blank">GeeksforGeeks SQL Guide</a> - Extensive academic tutorials covering keys, tables, and nested queries.</li>
+            <li><a href="https://use-the-index-luke.com/" target="_blank">Use The Index, Luke! SQL Indexing Guide</a> - Learn how database indexing works to optimize SELECT queries speed.</li>
+        </ul>
+
+        <h4>🛠️ Interactive Visualizers & Sandboxes</h4>
+        <ul>
+                        <li><a href="http://sqlfiddle.com/" target="_blank">SQLFiddle Compiler</a> - Write queries and schemas side-by-side to visualize table outputs instantly.</li>
+            <li><a href="https://www.db-fiddle.com/" target="_blank">DB Fiddle SQL Playground</a> - Interactive sql playground testing joins, aggregation, and database indexes.</li>
+            <li><a href="https://sql-format.com/" target="_blank">SQL Query Plan Visualizer</a> - Visualize and format complex nested queries to improve readability.</li>
+        </ul>
+
+        <h4>🧠 Practice Websites & Quizzes</h4>
+        <ul>
+                        <li><a href="https://sqlzoo.net/" target="_blank">SQLZoo Interactive</a> - The primary database practice portal testing joins, nested queries, and sum evaluations.</li>
+            <li><a href="https://leetcode.com/problemset/database/" target="_blank">LeetCode Database Questions</a> - Write SQL queries to solve complex database problems.</li>
+            <li><a href="https://sqlzoo.net/" target="_blank">SQLZoo Joins Practice</a> - Highly targeted practice sets focusing purely on inner, outer, and self joins.</li>
+            <li><a href="https://leetcode.com/studyplan/30-days-of-sql/" target="_blank">LeetCode SQL Study Plan</a> - A 30-day study plan covering fundamental, intermediate, and advanced SQL querying.</li>
+        </ul>
+
+        <h4>🎓 Professional Certifications & Badges</h4>
+        <ul>
+                        <li><a href="https://education.oracle.com/oracle-database-sql/pexam_1Z0-071" target="_blank">Oracle Database SQL Certified Associate</a> - Globally recognized certification validating relational database querying capabilities.</li>
+            <li><a href="https://www.hackerrank.com/skills-verification" target="_blank">HackerRank SQL (Basic) Certification</a> - Earn a shareable public certification verifying database scripting skills.</li>
+            <li><a href="https://shop.w3schools.com/products/sql-certificate" target="_blank">W3Schools SQL Certification</a> - Verify your ability to query databases and filter columns.</li>
+            <li><a href="https://www.coursera.org/professional-certificates/google-data-analytics" target="_blank">Google Data Analytics Certificate</a> - Includes comprehensive SQL querying modules validating data analytics capabilities.</li>
+        </ul>
+
+        <h4>🎥 Recommended YouTube Playlists</h4>
+        <ul class="youtube-list">
+                        <li><a href="https://www.youtube.com/user/programmingwithmosh" target="_blank"><img src="YT.png" height="24" width="24" alt="Programming with Mosh SQL Course"> Programming with Mosh SQL Course</a> - Highly rated crash course on database queries and joins.</li>
+            <li><a href="https://www.youtube.com/watch?v=HXV3zeQKqGY" target="_blank"><img src="FCC.png" height="24" width="24" alt="freeCodeCamp SQL Tutorial"> freeCodeCamp SQL Tutorial</a> - Learn database design, tables, primary keys, and schema creation in this video guide.</li>
+            <li><a href="https://www.youtube.com/user/kudvenkat" target="_blank"><img src="YT.png" height="24" width="24" alt="Kudvenkat SQL Server Playlist"> Kudvenkat SQL Server Playlist</a> - Exceptional legacy database playist explaining SQL triggers, stored procedures, and views.</li>
+        </ul>
+
+        <h4>💡 Recommended Project Ideas</h4>
+                <h5>🟢 Beginner Projects</h5>
+        <ul>
+            <li><strong>School Directory Database:</strong> Create a schema representing students, teachers, and classrooms tables, query with basic filters.</li>
+            <li><strong>Basic Sales Records:</strong> Establish a database tracking sales totals, calculating sum aggregates by dates and regions.</li>
+                    <li><strong>Simple Book Copy Inventory:</strong> Write SELECT, INSERT, and UPDATE queries to manage a database of library book copies.</li>
+</ul>
+        <h5>🟡 Medium Projects</h5>
+        <ul>
+            <li><strong>E-Commerce Database Schema:</strong> Design a relational system joining users, products, shopping carts, and checkout orders tables.</li>
+            <li><strong>HR Management Database:</strong> Write queries calculating median employee salaries, group records by departments and hierarchies.</li>
+                    <li><strong>E-Commerce Cohort Analysis Query:</strong> Construct nested queries and CASE WHEN statements to group database orders by user registration months.</li>
+</ul>
+        <h5>🔴 Advanced Projects</h5>
+        <ul>
+            <li><strong>Hospital Ledger Analysis Project:</strong> Build an analytical script joining doctor shifts, patient check-ins, and medical records to generate detailed reports.</li>
+            <li><strong>Stock Transactions Analyzer:</strong> Write queries utilizing SQL window functions to trace rolling stock prices and moving averages.</li>
+                    <li><strong>Rolling Sales Retention Analyzer:</strong> Write SQL window functions calculating rolling monthly sales averages and customer retention metrics.</li>
+</ul>
+
+    </div>
+    <script src="tracker.js"></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            alert("Access Denied: You must be enrolled and signed in to view Structured Track materials. Redirecting to Enrollment Terminal...");
+            window.location.href = "index.html#auth";
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C Programming Reference Sheet</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container study-guide-container">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="signup.html">Signup</a>
+            <a href="reference.html">References</a>
+        </nav>
+
+        <h3>C Programming Reference Sheet</h3>
+        
+        <!-- Subject Progress Tracker -->
+        <div id="page-progress-container"></div>
+
+        <h4>📋 Learning Checkpoints</h4>
+                <h5><span class="emoji">🟢</span> Easy Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="c-task-1" class="progress-check"> Basic C syntax, variables, operators, loops, and condition branching</label></li>
+            <li><label><input type="checkbox" id="c-task-2" class="progress-check"> Custom functions, structures, and arrays</label></li>
+        </ul>
+        <h5><span class="emoji">🟡</span> Medium Checkpoints</h5>
+        <ul class="checkpoint-list">
+            <li><label><input type="checkbox" id="c-task-3" class="progress-check"> Master pointers, address referencing, and memory layouts</label></li>
+            <li><label><input type="checkbox" id="c-task-4" class="progress-check"> Dynamic memory management (malloc, calloc, realloc, free)</label></li>
+        </ul>
+
+
+        <h4>📖 Tutorials & Official Documentation</h4>
+        <ul>
+                        <li><a href="https://en.cppreference.com/w/c" target="_blank">cppreference C Documentation</a> - The ultimate C language standard library reference guide.</li>
+            <li><a href="https://www.w3schools.com/c/" target="_blank">W3Schools C Tutorial</a> - Beginner-friendly step-by-step introduction to C programming.</li>
+            <li><a href="http://learn-c.org/" target="_blank">Learn-C.org Interactive Tutorial</a> - Interactive in-browser lessons with code compilers.</li>
+            <li><a href="https://www.geeksforgeeks.org/c-programming-language/" target="_blank">GeeksforGeeks C Programming Guide</a> - Detailed topics from basic variables to advanced file structures.</li>
+            <li><a href="https://quickref.me/c" target="_blank">QuickRef C Cheat Sheet</a> - A quick visual syntax reference card for developers.</li>
+            <li><a href="https://www.freecodecamp.org/news/the-c-beginners-handbook/" target="_blank">freeCodeCamp C Course</a> - Comprehensive full course for absolute beginners.</li>
+            <li><a href="https://www.iso-9899.info/wiki/The_C_Programming_Language" target="_blank">C Programming Language by K&R Companion</a> - Reference wiki and errata for the classic K&R C programming bible.</li>
+        </ul>
+
+        <h4>🛠️ Interactive Visualizers & Sandboxes</h4>
+        <ul>
+                        <li><a href="https://pythontutor.com/c.html" target="_blank">Python Tutor C Memory Visualizer</a> - Visualize stack/heap allocation, pointers, and memory cell values execution step-by-step.</li>
+            <li><a href="https://www.onlinegdb.com/online_c_compiler" target="_blank">Online GDB Compiler & Debugger</a> - Write, compile, run, and debug C code directly in your browser with gdb.</li>
+            <li><a href="https://www.tutorialspoint.com/compile_c_online.php" target="_blank">Tutorialspoint Online Compiler</a> - Fast interactive compiler sandbox for C snippets.</li>
+            <li><a href="https://godbolt.org/" target="_blank">Compiler Explorer (Godbolt)</a> - Interactive tool to write C code and view its compiled assembly output for various architectures.</li>
+        </ul>
+
+        <h4>🧠 Practice Websites & Quizzes</h4>
+        <ul>
+                        <li><a href="https://www.hackerrank.com/domains/c" target="_blank">HackerRank C Practice</a> - Interactive coding challenges covering pointers, loops, and arrays.</li>
+            <li><a href="https://leetcode.com/problemset/all/?search=c" target="_blank">LeetCode C Problem Archive</a> - Solve computational problems using clean C code.</li>
+            <li><a href="https://www.sanfoundry.com/c-programming-questions-answers/" target="_blank">Sanfoundry 1000+ C MCQs</a> - Massive collection of C questions for interview and gate exam prep.</li>
+            <li><a href="https://exercism.org/tracks/c" target="_blank">Exercism C Track</a> - Solve C coding problems with personalized feedback and track mentoring.</li>
+        </ul>
+
+        <h4>🎓 Professional Certifications & Badges</h4>
+        <ul>
+                        <li><a href="https://pythoninstitute.org/cla-certification" target="_blank">Python Institute CLA: C Programming Language Certified Associate</a> - Industry-recognized certification validating fundamental C coding skills.</li>
+            <li><a href="https://www.hackerrank.com/skills-verification" target="_blank">HackerRank C Skill Verification</a> - Assess your skills and earn a shareable public certification badge.</li>
+            <li><a href="https://shop.w3schools.com/collections/certifications" target="_blank">W3Schools C Programming Certification</a> - Official certification verifying fundamental syntax capabilities.</li>
+            <li><a href="https://www.coursera.org/specializations/c-programming" target="_blank">Coursera C Programming for Everyone (UC Santa Cruz)</a> - Comprehensive academic specialization teaching basic to advanced C.</li>
+        </ul>
+
+        <h4>🎥 Recommended YouTube Playlists</h4>
+        <ul class="youtube-list">
+                        <li><a href="https://www.youtube.com/c/nesoacademy" target="_blank"><img src="YT.png" height="24" width="24" alt="Neso Academy C Playlist"> Neso Academy C Playlist</a> - Academically detailed playlist explaining C syntax and constructs.</li>
+            <li><a href="https://www.youtube.com/watch?v=irqbmMNs2Bo" target="_blank"><img src="AC.png" height="24" width="24" alt="Apna College C Programming"> Apna College C Programming</a> - Popular beginner course from Apna College channel.</li>
+            <li><a href="https://www.youtube.com/watch?v=KJgsSFOSQv0" target="_blank"><img src="FCC.png" height="24" width="24" alt="freeCodeCamp C Tutorial"> freeCodeCamp C Tutorial</a> - Full 4-hour video guide to learn C programming.</li>
+            <li><a href="https://www.youtube.com/user/thenewboston" target="_blank"><img src="TNB.png" height="24" width="24" alt="TheNewBoston C Playlist"> TheNewBoston C Playlist</a> - Classic, easy-to-follow legacy tutorials on C programming.</li>
+        </ul>
+
+        <h4>💡 Recommended Project Ideas</h4>
+                <h5>🟢 Beginner Projects</h5>
+        <ul>
+            <li><strong>Simple Calculator:</strong> Develop a terminal-based calculator that performs basic arithmetic operations.</li>
+            <li><strong>Number Guessing Game:</strong> Write a game where the user guesses a randomly generated number with hints.</li>
+                    <li><strong>Rock-Paper-Scissors Game:</strong> Write a CLI-based Rock-Paper-Scissors game against the computer with score tracking.</li>
+</ul>
+        <h5>🟡 Medium Projects</h5>
+        <ul>
+            <li><strong>Student Database System:</strong> Create a structure-based system to store, search, and display student records in file databases.</li>
+            <li><strong>Tic-Tac-Toe Game:</strong> Build a two-player terminal-based grid game.</li>
+                    <li><strong>Command-Line Phonebook:</strong> Build a contact registry using linked lists that allows adding, deleting, and searching contacts in memory.</li>
+</ul>
+        <h5>🔴 Advanced Projects</h5>
+        <ul>
+            <li><strong>Custom Shell or CLI Parser:</strong> Implement a simple parser that reads user commands and executes them using fork/exec.</li>
+            <li><strong>Dynamic Memory Allocator:</strong> Write your own simplified memory allocator simulating malloc, calloc, and free.</li>
+                    <li><strong>Simple Virtual Machine:</strong> Implement a minimal instruction-set interpreter with registers, instruction memory, and virtual stack commands.</li>
+</ul>
+
+    </div>
+    <script src="tracker.js"></script>
+</body>
+</html>
