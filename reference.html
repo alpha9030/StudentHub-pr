@@ -10,7 +10,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Reference Materials - Directory</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1.0.3">
     <style>
         /* Smooth scrolling for sidebar navigation clicks */
         html {
@@ -115,6 +115,12 @@
                     <option value="small">Small</option>
                     <option value="medium">Medium</option>
                     <option value="large">Large</option>
+                </select>
+                <label for="view-mode-select" class="settings-label">View Mode: </label>
+                <select id="view-mode-select" onchange="changeViewMode(this.value)" class="settings-select">
+                    <option value="laptop">Laptop</option>
+                    <option value="tab">Tablet</option>
+                    <option value="phone">Phone</option>
                 </select>
             </div>
         </div>
@@ -3294,7 +3300,7 @@
     </div>
 
     <!-- ScrollSpy & Interactive Filter Search Scripts -->
-    <script src="tracker.js"></script>
+    <script src="tracker.js?v=1.0.3"></script>
     <script src="chatbot.js"></script>
     <script>
         // Global functions for Modal

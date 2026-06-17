@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Registration - Enrollment</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=1.0.3">
 </head>
 <body>
     <div class="app-container">
@@ -39,6 +39,14 @@
                             <option value="small">Small</option>
                             <option value="medium">Medium</option>
                             <option value="large">Large</option>
+                        </select>
+                    </div>
+                    <div class="settings-dropdown-item">
+                        <label for="view-mode-select">View Mode</label>
+                        <select id="view-mode-select" onchange="changeViewMode(this.value)">
+                            <option value="laptop">Laptop (Desktop)</option>
+                            <option value="tab">Tablet (Portrait)</option>
+                            <option value="phone">Phone (Portrait)</option>
                         </select>
                     </div>
                     <div class="settings-dropdown-divider"></div>
@@ -120,7 +128,7 @@
         </form>
         </div>
     </div>
-    <script src="tracker.js"></script>
+    <script src="tracker.js?v=1.0.3"></script>
     <script>
         function validatePasswordStrength(password) {
             const minLength = 8;

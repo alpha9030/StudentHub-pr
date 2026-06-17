@@ -2486,3 +2486,408 @@ input[type="submit"]:hover {
     padding: 12px 16px;
     margin-bottom: 12px;
 }
+
+/* ==========================================================================
+   ADDITIONAL RESPONSIVE OVERRIDES (PHONE, TABLET, LAPTOP)
+   ========================================================================== */
+
+/* Laptop / Medium Screen Tweaks (max-width: 1200px) */
+@media (max-width: 1200px) {
+    .app-container {
+        max-width: 95%;
+    }
+    .ref-page-container {
+        max-width: 98% !important;
+    }
+}
+
+/* Tablet & Smaller (max-width: 768px) */
+@media (max-width: 768px) {
+    body {
+        margin: 10px;
+        padding: 5px;
+        font-size: 13.5px;
+    }
+
+    .app-container, 
+    .study-guide-container, 
+    .ref-page-container,
+    .admin-container {
+        margin: 15px auto;
+        padding: 24px !important;
+        border-radius: 12px !important;
+    }
+
+    /* Header Responsiveness */
+    .app-header {
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px 0;
+        text-align: center;
+    }
+
+    .main-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .main-nav a {
+        padding: 6px 12px;
+        font-size: 14.5px;
+    }
+
+    .header-controls {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        position: relative;
+    }
+
+    .settings-dropdown {
+        right: 50%;
+        transform: translateX(50%);
+        top: 100%;
+        width: 240px;
+    }
+
+    /* Hero Section Responsive */
+    .hero-section {
+        padding: 35px 20px;
+        margin-bottom: 25px;
+        border-radius: 16px;
+    }
+
+    .hero-title {
+        font-size: 26px;
+    }
+
+    .hero-subtitle {
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto;
+        gap: 10px;
+    }
+
+    .hero-actions .btn-hero {
+        margin-left: 0 !important;
+        width: 100%;
+    }
+
+    /* Tables scroll on overflow */
+    table {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Admin header tweaks */
+    .admin-header {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+    }
+
+    /* Reference search panel layouts */
+    .control-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+}
+
+/* Phone Portrait & Small Screen (max-width: 480px) */
+@media (max-width: 480px) {
+    body {
+        margin: 0;
+        padding: 8px;
+    }
+
+    .app-container, 
+    .study-guide-container, 
+    .ref-page-container,
+    .admin-container {
+        margin: 0;
+        padding: 16px !important;
+        border-radius: 0 !important;
+        border-left: none !important;
+        border-right: none !important;
+        border-top: none !important;
+        box-shadow: none !important;
+    }
+
+    .logo-text {
+        font-size: 19px;
+    }
+
+    .logo-icon {
+        font-size: 26px;
+    }
+
+    .main-nav a {
+        padding: 6px 10px;
+        font-size: 13.5px;
+    }
+
+    /* Stepper items wrap */
+    .step-item {
+        display: block;
+        margin: 8px 0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    /* Form container padding */
+    form, .login-box {
+        padding: 16px;
+        margin: 15px auto;
+        border-radius: 8px;
+        max-width: 100%;
+    }
+
+    /* Aura Chatbot responsive position and sizing */
+    #aura-chatbot-container {
+        bottom: 16px;
+        right: 16px;
+    }
+
+    #aura-chat-toggle {
+        width: 50px;
+        height: 50px;
+    }
+
+    #aura-chat-window {
+        width: calc(100vw - 32px);
+        height: calc(100vh - 120px);
+        max-height: 520px;
+        right: 0;
+        bottom: 65px;
+    }
+}
+
+/* Global responsive media elements */
+img, svg, video, canvas, iframe {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ==========================================================================
+   12. VIEW MODE SWITCHER (PHONE, TABLET, LAPTOP PREVIEW)
+   ========================================================================== */
+body.view-mode-active-body {
+    background-color: #0f172a !important; /* Dark slate outer background */
+    transition: background-color 0.3s ease;
+    padding-top: 50px !important;
+    box-sizing: border-box;
+}
+
+/* The View Mode Toolbar */
+#view-mode-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background: #1e293b;
+    color: #f8fafc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    box-sizing: border-box;
+    z-index: 100000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    border-bottom: 1px solid #334155;
+}
+
+.view-mode-title {
+    font-weight: 700;
+    font-size: 14px;
+    color: #38bdf8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.view-mode-controls {
+    display: flex;
+    gap: 6px;
+}
+
+.view-mode-btn {
+    background: #0f172a;
+    border: 1px solid #475569;
+    color: #94a3b8;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.view-mode-btn:hover {
+    background: #334155;
+    color: #f8fafc;
+}
+
+.view-mode-btn.active {
+    background: #38bdf8;
+    color: #0f172a;
+    border-color: #38bdf8;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+}
+
+/* Phone View Container Styles */
+body.view-mode-phone {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+body.view-mode-phone .app-container,
+body.view-mode-phone .admin-container {
+    width: 375px !important;
+    max-width: 375px !important;
+    height: 780px !important;
+    overflow-y: auto !important;
+    border: 14px solid #000000 !important;
+    border-radius: 40px !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+    margin: 40px auto !important;
+    background-color: var(--bg-card) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box !important;
+    position: relative;
+}
+
+/* Tablet View Container Styles */
+body.view-mode-tab {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+body.view-mode-tab .app-container,
+body.view-mode-tab .admin-container {
+    width: 768px !important;
+    max-width: 768px !important;
+    height: 1024px !important;
+    overflow-y: auto !important;
+    border: 18px solid #000000 !important;
+    border-radius: 28px !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+    margin: 40px auto !important;
+    background-color: var(--bg-card) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box !important;
+    position: relative;
+}
+
+/* Force mobile styling when simulated view modes are active */
+body.view-mode-phone .track-card,
+body.view-mode-phone .platform-card,
+body.view-mode-tab .track-card,
+body.view-mode-tab .platform-card {
+    width: 96% !important;
+    float: none !important;
+    display: block !important;
+    margin: 10px auto !important;
+}
+
+body.view-mode-phone .ref-links-grid li,
+body.view-mode-tab .ref-links-grid li {
+    width: 100% !important;
+    margin: 0 !important;
+}
+
+body.view-mode-phone .reference-layout,
+body.view-mode-tab .reference-layout {
+    flex-direction: column !important;
+}
+
+body.view-mode-phone .reference-layout aside,
+body.view-mode-tab .reference-layout aside {
+    width: 100% !important;
+    position: static !important;
+    margin-bottom: 20px !important;
+}
+
+body.view-mode-phone .reference-layout main,
+body.view-mode-tab .reference-layout main {
+    margin-left: 0 !important;
+}
+
+body.view-mode-phone .modal-footer-info,
+body.view-mode-phone .modal-footer-buttons,
+body.view-mode-tab .modal-footer-info,
+body.view-mode-tab .modal-footer-buttons {
+    float: none !important;
+    display: block !important;
+    text-align: center !important;
+    margin-bottom: 10px !important;
+}
+
+body.view-mode-phone .control-row,
+body.view-mode-tab .control-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+}
+
+body.view-mode-phone .ref-control-left,
+body.view-mode-phone .ref-control-right,
+body.view-mode-tab .ref-control-left,
+body.view-mode-tab .ref-control-right {
+    text-align: center !important;
+    width: 100% !important;
+}
+
+body.view-mode-phone .ref-control-left .search-input,
+body.view-mode-tab .ref-control-left .search-input {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 10px !important;
+}
+
+body.view-mode-phone .ref-control-left label,
+body.view-mode-phone .ref-control-left select,
+body.view-mode-tab .ref-control-left label,
+body.view-mode-tab .ref-control-left select {
+    display: block !important;
+    margin: 10px auto !important;
+    width: 100% !important;
+}
+
+body.view-mode-phone .tracks-title,
+body.view-mode-phone .search-container-right,
+body.view-mode-tab .tracks-title,
+body.view-mode-tab .search-container-right {
+    float: none !important;
+    text-align: center !important;
+    width: 100% !important;
+    margin-bottom: 10px !important;
+}
+
+body.view-mode-phone .search-container-right,
+body.view-mode-tab .search-container-right {
+    margin: 0 auto !important;
+}
+
+body.view-mode-phone .filter-group,
+body.view-mode-tab .filter-group {
+    width: 96% !important;
+    margin-right: 0 !important;
+    margin-bottom: 10px !important;
+}

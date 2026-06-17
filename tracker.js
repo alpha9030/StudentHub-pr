@@ -3,13 +3,24 @@
     function applySettings() {
         const savedTheme = localStorage.getItem('siteTheme') || 'default';
         const savedFontSize = localStorage.getItem('siteFontSize') || 'medium';
+        const savedViewMode = localStorage.getItem('siteViewMode') || 'laptop';
 
         // Apply theme and font size classes to body
-        document.body.className = '';
+        document.body.classList.remove('theme-light', 'theme-dark', 'font-size-small', 'font-size-medium', 'font-size-large');
         if (savedTheme !== 'default') {
             document.body.classList.add('theme-' + savedTheme);
         }
         document.body.classList.add('font-size-' + savedFontSize);
+
+        // Apply view mode classes to body
+        document.body.classList.remove('view-mode-phone', 'view-mode-tab', 'view-mode-laptop', 'view-mode-active-body');
+        if (savedViewMode === 'phone') {
+            document.body.classList.add('view-mode-phone', 'view-mode-active-body');
+        } else if (savedViewMode === 'tab') {
+            document.body.classList.add('view-mode-tab', 'view-mode-active-body');
+        } else {
+            document.body.classList.add('view-mode-laptop');
+        }
 
         // Sync dropdown selectors on the current page if they exist
         const themeSelect = document.getElementById('theme-select');
@@ -19,6 +30,10 @@
         const fontSelect = document.getElementById('font-size-select');
         if (fontSelect) {
             fontSelect.value = savedFontSize;
+        }
+        const viewModeSelect = document.getElementById('view-mode-select');
+        if (viewModeSelect) {
+            viewModeSelect.value = savedViewMode;
         }
     }
 
@@ -33,16 +48,24 @@
         applySettings();
     };
 
+    window.changeViewMode = function(viewModeName) {
+        localStorage.setItem('siteViewMode', viewModeName);
+        applySettings();
+    };
+
     function standardizeSubjectPage() {
         try {
             const path = window.location.pathname || '';
             const fileName = path.split('/').pop() || document.location.href.split('/').pop() || '';
             
-            // Determine if it's a subject page (local guide page other than primary entry points)
-            const isSubjectPage = fileName.endsWith('.html') && 
-                !['index.html', 'index', 'signup.html', 'signup', 'reference.html', 'reference', ''].includes(fileName.toLowerCase());
+            // Strip query parameters and hash to get a clean file name
+            const cleanFileName = fileName.split('?')[0].split('#')[0];
+            const subjectKey = cleanFileName.toLowerCase().replace('.html', '');
             
-            if (!isSubjectPage) return;
+            // List of valid academic subject keys
+            const validSubjects = ['c', 'cn', 'css', 'dbms', 'dsa', 'html', 'java', 'javascript', 'os', 'postgresql', 'python', 'reactjs', 'sql'];
+            
+            if (!validSubjects.includes(subjectKey)) return;
 
             // 1. Wrap the body content in .app-container if not already present
             if (!document.querySelector('.app-container')) {
@@ -111,6 +134,7 @@
 
         const savedTheme = localStorage.getItem('siteTheme') || 'default';
         const savedFontSize = localStorage.getItem('siteFontSize') || 'medium';
+        const savedViewMode = localStorage.getItem('siteViewMode') || 'laptop';
 
         settingsBar.innerHTML = `
             <label for="theme-select" class="settings-label">Theme: </label>
@@ -125,6 +149,12 @@
                 <option value="medium">Medium</option>
                 <option value="large">Large</option>
             </select>
+            <label for="view-mode-select" class="settings-label">View Mode: </label>
+            <select id="view-mode-select" onchange="changeViewMode(this.value)" class="settings-select">
+                <option value="laptop">Laptop</option>
+                <option value="tab">Tablet</option>
+                <option value="phone">Phone</option>
+            </select>
         `;
 
         // Insert after nav
@@ -133,9 +163,150 @@
         applySettings();
     }
     
+    function injectViewModeStyles() {
+        if (document.getElementById('view-mode-styles')) return;
+
+        // Dynamic style injection to bypass any cached style.css issues
+        const style = document.createElement('style');
+        style.id = 'view-mode-styles';
+        style.innerHTML = `
+            body.view-mode-active-body {
+                background-color: #0f172a !important;
+                transition: background-color 0.3s ease;
+                padding-top: 0 !important;
+                box-sizing: border-box;
+            }
+            body.view-mode-phone {
+                display: flex !important;
+                justify-content: center !important;
+                align-items: flex-start !important;
+            }
+            body.view-mode-phone .app-container,
+            body.view-mode-phone .admin-container {
+                width: 375px !important;
+                max-width: 375px !important;
+                height: 780px !important;
+                overflow-y: auto !important;
+                border: 14px solid #000000 !important;
+                border-radius: 40px !important;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+                margin: 40px auto !important;
+                background-color: var(--bg-card, #ffffff) !important;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                box-sizing: border-box !important;
+                position: relative !important;
+            }
+            body.view-mode-tab {
+                display: flex !important;
+                justify-content: center !important;
+                align-items: flex-start !important;
+            }
+            body.view-mode-tab .app-container,
+            body.view-mode-tab .admin-container {
+                width: 768px !important;
+                max-width: 768px !important;
+                height: 1024px !important;
+                overflow-y: auto !important;
+                border: 18px solid #000000 !important;
+                border-radius: 28px !important;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+                margin: 40px auto !important;
+                background-color: var(--bg-card, #ffffff) !important;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                box-sizing: border-box !important;
+                position: relative !important;
+            }
+            body.view-mode-phone .track-card,
+            body.view-mode-phone .platform-card,
+            body.view-mode-tab .track-card,
+            body.view-mode-tab .platform-card {
+                width: 96% !important;
+                float: none !important;
+                display: block !important;
+                margin: 10px auto !important;
+            }
+            body.view-mode-phone .ref-links-grid li,
+            body.view-mode-tab .ref-links-grid li {
+                width: 100% !important;
+                margin: 0 !important;
+            }
+            body.view-mode-phone .reference-layout,
+            body.view-mode-tab .reference-layout {
+                flex-direction: column !important;
+            }
+            body.view-mode-phone .reference-layout aside,
+            body.view-mode-tab .reference-layout aside {
+                width: 100% !important;
+                position: static !important;
+                margin-bottom: 20px !important;
+            }
+            body.view-mode-phone .reference-layout main,
+            body.view-mode-tab .reference-layout main {
+                margin-left: 0 !important;
+            }
+            body.view-mode-phone .modal-footer-info,
+            body.view-mode-phone .modal-footer-buttons,
+            body.view-mode-tab .modal-footer-info,
+            body.view-mode-tab .modal-footer-buttons {
+                float: none !important;
+                display: block !important;
+                text-align: center !important;
+                margin-bottom: 10px !important;
+            }
+            body.view-mode-phone .control-row,
+            body.view-mode-tab .control-row {
+                flex-direction: column !important;
+                align-items: stretch !important;
+            }
+            body.view-mode-phone .ref-control-left,
+            body.view-mode-phone .ref-control-right,
+            body.view-mode-tab .ref-control-left,
+            body.view-mode-tab .ref-control-right {
+                text-align: center !important;
+                width: 100% !important;
+            }
+            body.view-mode-phone .ref-control-left .search-input,
+            body.view-mode-tab .ref-control-left .search-input {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin-bottom: 10px !important;
+            }
+            body.view-mode-phone .ref-control-left label,
+            body.view-mode-phone .ref-control-left select,
+            body.view-mode-tab .ref-control-left label,
+            body.view-mode-tab .ref-control-left select {
+                display: block !important;
+                margin: 10px auto !important;
+                width: 100% !important;
+            }
+            body.view-mode-phone .tracks-title,
+            body.view-mode-phone .search-container-right,
+            body.view-mode-tab .tracks-title,
+            body.view-mode-tab .search-container-right {
+                float: none !important;
+                text-align: center !important;
+                width: 100% !important;
+                margin-bottom: 10px !important;
+            }
+            body.view-mode-phone .search-container-right,
+            body.view-mode-tab .search-container-right {
+                margin: 0 auto !important;
+            }
+            body.view-mode-phone .filter-group,
+            body.view-mode-tab .filter-group {
+                width: 96% !important;
+                margin-right: 0 !important;
+                margin-bottom: 10px !important;
+            }
+        `;
+        document.head.appendChild(style);
+        applySettings();
+    }
+
     function initPage() {
         standardizeSubjectPage();
         injectSettingsBar();
+        injectViewModeStyles();
     }
 
     if (document.body) {
@@ -146,7 +317,7 @@
 
     // Listen for storage events (updates in other tabs/windows)
     window.addEventListener('storage', function(e) {
-        if (e.key === 'siteTheme' || e.key === 'siteFontSize') {
+        if (e.key === 'siteTheme' || e.key === 'siteFontSize' || e.key === 'siteViewMode') {
             applySettings();
         }
         if (e.key === 'isLoggedIn' || e.key === null) {
@@ -344,273 +515,7 @@ document.addEventListener("DOMContentLoaded", function() {
     setInterval(updateHomepageProgress, 1500);
 });
 
-// Inject a standardized resources section into subject pages when missing
-document.addEventListener('DOMContentLoaded', function() {
-    try {
-        // Only run on subject pages (HTML files other than index.html and common pages)
-        const path = window.location.pathname || '';
-        const fileName = path.split('/').pop() || document.location.href.split('/').pop();
-        const subjectKey = (fileName || '').toLowerCase().replace('.html', '');
 
-        // Don't inject on index or signup or reference pages
-        if (!subjectKey || ['index.html', 'index', 'signup.html', 'signup', 'reference.html', 'reference'].includes(fileName)) return;
-
-        // If page already contains common resource headings, skip injection
-        const pageText = document.body.innerText.toLowerCase();
-        if (pageText.includes('youtube') || pageText.includes('practice') || pageText.includes('recommended project')) {
-            return;
-        }
-
-        const resourcesData = {
-            html: {
-                tutorials: [ {label: 'MDN HTML Guide', url: 'https://developer.mozilla.org/en-US/docs/Web/HTML'}, {label: 'W3Schools HTML', url: 'https://www.w3schools.com/html/'} ],
-                practice: [ {label: 'freeCodeCamp HTML Exercises', url: 'https://www.freecodecamp.org'}, {label: 'Frontend Mentor (HTML challenges)', url: 'https://www.frontendmentor.io'} ],
-                youtube: [ {label: 'Traversy Media', url: 'https://www.youtube.com/user/TechGuyWeb'}, {label: 'Kevin Powell', url: 'https://www.youtube.com/kepowob'} ],
-                visualizers: [ {label: 'CodePen Live Editor', url: 'https://codepen.io'} ],
-                certifications: [ {label: 'freeCodeCamp Responsive Web Design', url: 'https://www.freecodecamp.org/learn/responsive-web-design/'} ],
-                projects: ['Personal portfolio homepage', 'Landing page clone']
-            },
-            css: {
-                tutorials: [ {label: 'MDN CSS Guide', url: 'https://developer.mozilla.org/en-US/docs/Web/CSS'}, {label: 'CSS-Tricks', url: 'https://css-tricks.com'} ],
-                practice: [ {label: 'CSS Battle', url: 'https://cssbattle.dev'}, {label: 'Frontend Mentor (CSS)', url: 'https://www.frontendmentor.io'} ],
-                youtube: [ {label: 'Kevin Powell', url: 'https://www.youtube.com/kepowob'}, {label: 'The Net Ninja', url: 'https://www.youtube.com/channel/UCW5YeuERMmlnqo4oq8vwUpg'} ],
-                visualizers: [ {label: 'CSS Grid Generator', url: 'https://cssgrid-generator.netlify.app/' } ],
-                certifications: [],
-                projects: ['Responsive landing page', 'Portfolio with CSS Grid/Flexbox']
-            },
-            react: {
-                tutorials: [ {label: 'React Official Docs', url: 'https://react.dev/'}, {label: 'React Tutorial (Codecademy/freeCodeCamp)', url: 'https://www.freecodecamp.org/learn'} ],
-                practice: [ {label: 'Frontend Mentor (React)', url: 'https://www.frontendmentor.io'}, {label: 'Build small apps', url: 'https://github.com' } ],
-                youtube: [ {label: 'Traversy Media React', url: 'https://www.youtube.com/user/TechGuyWeb'}, {label: 'Academind', url: 'https://www.youtube.com/c/Academind'} ],
-                visualizers: [ {label: 'React DevTools', url: 'https://react.dev/tools'} ],
-                certifications: [],
-                projects: ['To-do React App', 'Weather app with API']
-            },
-            java: {
-                tutorials: [ {label: 'Oracle Java Documentation', url: 'https://docs.oracle.com/en/java/'}, {label: 'GeeksforGeeks Java', url: 'https://www.geeksforgeeks.org/java/'} ],
-                practice: [ {label: 'HackerRank Java', url: 'https://www.hackerrank.com/domains/java'}, {label: 'CodingBat Java', url: 'https://codingbat.com/java'} ],
-                youtube: [ {label: 'Telusko', url: 'https://www.youtube.com/c/Telusko'}, {label: 'Bro Code', url: 'https://www.youtube.com/c/BroCode'} ],
-                visualizers: [],
-                certifications: [ {label: 'Coursera Java Specialization', url: 'https://www.coursera.org'} ],
-                projects: ['Student record CLI app', 'Simple REST API with Spring Boot']
-            },
-            postgresql: {
-                tutorials: [ {label: 'PostgreSQL Docs', url: 'https://www.postgresql.org/docs/'}, {label: 'Postgres Tutorial', url: 'https://www.postgresqltutorial.com/'} ],
-                practice: [ {label: 'Mode SQL Tutorial', url: 'https://mode.com/sql-tutorial/'}, {label: 'LeetCode SQL', url: 'https://leetcode.com/problemset/database/'} ],
-                youtube: [ {label: 'freeCodeCamp SQL', url: 'https://www.youtube.com/freecodecamp'}, {label: 'Caleb Curry (SQL)', url: 'https://www.youtube.com/user/CalebTheVideoMaker2'} ],
-                visualizers: [],
-                certifications: [],
-                projects: ['Design a student database schema', 'Implement queries and reports']
-            },
-            dbms: {
-                tutorials: [ {label: 'DBMS Concepts (GeeksforGeeks)', url: 'https://www.geeksforgeeks.org/dbms/'}, {label: 'Database Systems (tutorialspoint)', url: 'https://www.tutorialspoint.com/dbms/'} ],
-                practice: [ {label: 'SQLZoo', url: 'https://sqlzoo.net/'}, {label: 'LeetCode Database', url: 'https://leetcode.com/problemset/database/'} ],
-                youtube: [ {label: 'thenewboston', url: 'https://www.youtube.com/user/thenewboston'}, {label: 'mycodeschool', url: 'https://www.youtube.com/user/mycodeschool'} ],
-                visualizers: [],
-                certifications: [],
-                projects: ['ER modeling and normalization exercises', 'Implement relational schemas']
-            },
-            os: {
-                tutorials: [ {label: 'Operating Systems (GeeksforGeeks)', url: 'https://www.geeksforgeeks.org/operating-systems/'}, {label: 'OS Concepts (Tutorialspoint)', url: 'https://www.tutorialspoint.com/operating_system/'} ],
-                practice: [ {label: 'GATE/DSA practice sets', url: 'https://gateoverflow.in/' } ],
-                youtube: [ {label: 'Neso Academy', url: 'https://www.youtube.com/c/nesoacademy'}, {label: 'Gaurav Sen', url: 'https://www.youtube.com/c/GauravSen'} ],
-                visualizers: [],
-                certifications: [],
-                projects: ['Simulate scheduling algorithms', 'Memory management simulation']
-            },
-            cn: {
-                tutorials: [ {label: 'Computer Networks (GeeksforGeeks)', url: 'https://www.geeksforgeeks.org/computer-network-tutorials/'}, {label: 'TCP/IP Guide', url: 'http://www.tcpipguide.com/'} ],
-                practice: [ {label: 'Wireshark exercises', url: 'https://www.wireshark.org/docs/' } ],
-                youtube: [ {label: 'Computerphile', url: 'https://www.youtube.com/user/Computerphile'}, {label: 'Neso Academy', url: 'https://www.youtube.com/c/nesoacademy'} ],
-                visualizers: [],
-                certifications: [],
-                projects: ['Packet capture analysis with Wireshark', 'Build a basic socket chat program']
-            },
-            default: {
-                tutorials: [
-                    {label: 'Official Docs', url: 'https://www.google.com/search?q=' + encodeURIComponent(subjectKey + ' documentation')},
-                    {label: 'freeCodeCamp Tutorials', url: 'https://www.freecodecamp.org'}
-                ],
-                practice: [
-                    {label: 'HackerRank', url: 'https://www.hackerrank.com'},
-                    {label: 'GeeksforGeeks Practice', url: 'https://practice.geeksforgeeks.org'}
-                ],
-                youtube: [
-                    {label: 'freeCodeCamp', url: 'https://www.youtube.com/freecodecamp'},
-                    {label: 'Traversy Media', url: 'https://www.youtube.com/user/TechGuyWeb'}
-                ],
-                visualizers: [],
-                certifications: [
-                    {label: 'Coursera / edX - Search', url: 'https://www.coursera.org'},
-                ],
-                projects: [
-                    'Mini project to practice core concepts',
-                    'One intermediate build integrating libraries or APIs',
-                    'Capstone-style small application demonstrating end-to-end flow'
-                ]
-            },
-            c: {
-                tutorials: [ {label: 'Learn-C.org', url: 'https://www.learn-c.org'}, {label: 'TutorialsPoint C', url: 'https://www.tutorialspoint.com/cprogramming/'} ],
-                practice: [ {label: 'HackerRank C', url: 'https://www.hackerrank.com/domains/c'} ],
-                youtube: [ {label: 'Neso Academy', url: 'https://www.youtube.com/c/nesoacademy'}, {label: 'Apna College', url: 'https://www.youtube.com/channel/UC1u9L4W8t1j5Z1nKZVQW7Gg'} ],
-                visualizers: [ {label: 'OnlineGDB (debugger)', url: 'https://www.onlinegdb.com/online_c_compiler'} ],
-                certifications: [],
-                projects: ['Simple calculator', 'Student DB system', 'Tic-Tac-Toe game']
-            },
-            python: {
-                tutorials: [ {label: 'Python.org Docs', url: 'https://docs.python.org/3/'}, {label: 'Real Python', url: 'https://realpython.com/'} ],
-                practice: [ {label: 'HackerRank Python', url: 'https://www.hackerrank.com/domains/python'}, {label: 'LeetCode', url: 'https://leetcode.com'} ],
-                youtube: [ {label: 'Corey Schafer', url: 'https://www.youtube.com/user/schafer5'}, {label: 'freeCodeCamp', url: 'https://www.youtube.com/freecodecamp'} ],
-                visualizers: [ {label: 'Python Tutor', url: 'http://pythontutor.com/visualize.html'} ],
-                certifications: [ {label: 'Coursera - Python for Everybody', url: 'https://www.coursera.org/specializations/python'} ],
-                projects: ['Data processing script', 'Web scraper', 'Small Flask web app']
-            },
-            javascript: {
-                tutorials: [ {label: 'MDN Web Docs', url: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript'}, {label: 'JavaScript.info', url: 'https://javascript.info/'} ],
-                practice: [ {label: 'freeCodeCamp JS', url: 'https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/'}, {label: 'Codewars', url: 'https://www.codewars.com'} ],
-                youtube: [ {label: 'Traversy Media', url: 'https://www.youtube.com/user/TechGuyWeb'}, {label: 'The Net Ninja', url: 'https://www.youtube.com/channel/UCW5YeuERMmlnqo4oq8vwUpg'} ],
-                visualizers: [ {label: 'JS Tutor & Console', url: 'https://pythontutor.com/javascript.html'} ],
-                certifications: [],
-                projects: ['Interactive to-do app', 'Single-page portfolio', 'API-based dashboard']
-            },
-            sql: {
-                tutorials: [ {label: 'SQLBolt', url: 'https://sqlbolt.com/'}, {label: 'W3Schools SQL', url: 'https://www.w3schools.com/sql/'} ],
-                practice: [ {label: 'Mode SQL Tutorial', url: 'https://mode.com/sql-tutorial/'}, {label: 'LeetCode SQL', url: 'https://leetcode.com/problemset/database/'} ],
-                youtube: [ {label: 'thenewboston', url: 'https://www.youtube.com/user/thenewboston'} ],
-                visualizers: [],
-                certifications: [ {label: 'IBM Data Science / SQL', url: 'https://www.coursera.org/learn/sql-data-science'} ],
-                projects: ['Student records DB', 'Inventory management schema']
-            }
-        };
-
-        const data = resourcesData[subjectKey] || resourcesData.default;
-
-        // Roadmap.sh mapping
-        const ROADMAP_SH_MAP = {
-            'html': 'https://roadmap.sh/html',
-            'css': 'https://roadmap.sh/css',
-            'javascript': 'https://roadmap.sh/javascript',
-            'python': 'https://roadmap.sh/python',
-            'c': 'https://roadmap.sh/c',
-            'java': 'https://roadmap.sh/java',
-            'sql': 'https://roadmap.sh/sql',
-            'postgresql': 'https://roadmap.sh/postgresql',
-            'dbms': 'https://roadmap.sh/sql',
-            'os': 'https://roadmap.sh/computer-science',
-            'cn': 'https://roadmap.sh/computer-science',
-            'react': 'https://roadmap.sh/react',
-            'dsa': 'https://roadmap.sh/computer-science'
-        };
-        const pageRoadmapUrl = ROADMAP_SH_MAP[subjectKey] || null;
-
-        // Build HTML
-        const container = document.createElement('section');
-        container.id = 'resources-section';
-        container.innerHTML = `
-            <h3>Study Resources & Roadmap</h3>
-            <div id="page-progress-container"></div>
-            <h4>Roadmap</h4>
-            <ul class="resource-roadmap">
-                <li>Follow the syllabus: fundamentals → intermediate → projects</li>
-                ${pageRoadmapUrl ? `<li>🗺️ <strong>Interactive Path:</strong> <a href="${pageRoadmapUrl}" target="_blank" style="font-weight: bold; text-decoration: underline;">View roadmap.sh Roadmap</a></li>` : ''}
-            </ul>
-            <h4>Checkpoints</h4>
-            <ul class="resource-checkpoints">
-                <li><label><input type="checkbox" id="${subjectKey}-task-1" class="progress-check"> Core syntax and basics</label></li>
-                <li><label><input type="checkbox" id="${subjectKey}-task-2" class="progress-check"> Data structures and common patterns</label></li>
-                <li><label><input type="checkbox" id="${subjectKey}-task-3" class="progress-check"> Debugging and testing</label></li>
-                <li><label><input type="checkbox" id="${subjectKey}-task-4" class="progress-check"> Build a small project</label></li>
-            </ul>
-            <h4>Practice Problems & Challenges</h4>
-            <ul class="resource-practice">
-                ${data.practice.map(p => `<li><a href="${p.url}" target="_blank">${p.label}</a></li>`).join('')}
-            </ul>
-            ${data.visualizers && data.visualizers.length ? `<h4>Visualizers & Debuggers</h4><ul>${data.visualizers.map(v=>`<li><a href="${v.url}" target="_blank">${v.label}</a></li>`).join('')}</ul>` : ''}
-            <h4>Tutorials & Documentation</h4>
-            <ul class="resource-tutorials">
-                ${data.tutorials.map(t => `<li><a href="${t.url}" target="_blank">${t.label}</a></li>`).join('')}
-            </ul>
-            ${data.certifications && data.certifications.length ? `<h4>Certifications</h4><ul>${data.certifications.map(c=>`<li><a href="${c.url}" target="_blank">${c.label}</a></li>`).join('')}</ul>` : ''}
-            <h4>YouTube Channels (language preferences)</h4>
-            <ul class="resource-youtube">
-                ${data.youtube.map(y => `<li><a href="${y.url}" target="_blank">${y.label}</a></li>`).join('')}
-            </ul>
-            <h4>Projects</h4>
-            <ul class="resource-projects">
-                ${data.projects.map(p => `<li>${p}</li>`).join('')}
-            </ul>
-        `;
-
-        // Find a sensible insertion point: after the last main heading or at body end
-        const mainCandidate = document.querySelector('main') || document.querySelector('article') || document.body;
-        mainCandidate.appendChild(container);
-
-        // Re-run tracker initialization on newly inserted checkboxes
-        const newChecks = container.querySelectorAll('.progress-check');
-        newChecks.forEach(function(checkbox) {
-            const id = checkbox.getAttribute('id');
-            if (id && localStorage.getItem(id) === 'true') checkbox.checked = true;
-            checkbox.addEventListener('change', function() {
-                if (id) {
-                    localStorage.setItem(id, checkbox.checked ? 'true' : 'false');
-                    syncProgressToBackend(id, checkbox.checked);
-                }
-                if (window.updateHomepageProgress) window.updateHomepageProgress();
-            });
-        });
-
-        // If there is a local reference sheet for this subject, try to fetch and embed it
-        (function tryEmbedLocalReference() {
-            const localRefMap = {
-                'c': 'C.html',
-                'python': 'Python.html',
-                'java': 'Java.html',
-                'javascript': 'JavaScript.html',
-                'html': 'HTML.html',
-                'css': 'CSS.html',
-                'sql': 'SQL.html',
-                'postgresql': 'PostgreSQL.html',
-                'dbms': 'DBMS.html',
-                'os': 'OS.html',
-                'cn': 'CN.html',
-                'react': 'ReactJS.html',
-                'reactjs': 'ReactJS.html'
-            };
-
-            const candidate = localRefMap[subjectKey] || (subjectKey ? (subjectKey.charAt(0).toUpperCase() + subjectKey.slice(1)) + '.html' : null);
-            if (!candidate) return;
-
-            // Avoid embedding the same file into itself
-            const currentFile = fileName || '';
-            if (candidate.toLowerCase() === currentFile.toLowerCase()) return;
-
-            fetch(candidate).then(function(resp) {
-                if (!resp.ok) throw new Error('Not found');
-                return resp.text();
-            }).then(function(htmlText) {
-                try {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(htmlText, 'text/html');
-                    const bodyContent = doc.body ? doc.body.innerHTML : htmlText;
-
-                    const embedSection = document.createElement('section');
-                    embedSection.className = 'local-reference-embed';
-                    embedSection.innerHTML = `<h4>Local Reference (embedded): <small><a href="${candidate}" target="_blank">open</a></small></h4>` + bodyContent;
-
-                    // Append after resources container
-                    container.appendChild(embedSection);
-                } catch (e) {
-                    console.warn('Failed to parse local reference:', e);
-                }
-            }).catch(function() {
-                // no local reference available - silently ignore
-            });
-        })();
-
-    } catch (e) {
-        console.error('Error injecting resources section:', e);
-    }
-});
 
 // Simple client-side search utilities for home and references pages
 (function() {
