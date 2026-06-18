@@ -726,8 +726,22 @@
                 return false;
             }
 
-            const confirmProceed = confirm("Please double-check and confirm that your email address is correct:\n\n" + emailValue + "\n\nClick OK to create your account.");
+            const confirmProceed = confirm("Please double-check and confirm that your email address is correct:\n\n" + emailValue + "\n\nClick OK to receive your verification code.");
             if (!confirmProceed) {
+                return false;
+            }
+
+            // Generate simulated 6-digit OTP
+            const simulatedOTP = Math.floor(100000 + Math.random() * 900000).toString();
+            const userEnteredOTP = prompt("📧 Verification Code Sent!\n\nWe simulated sending a 6-digit verification code to:\n" + emailValue + "\n\nFor this sandbox demonstration, your simulated OTP is:\n👉 " + simulatedOTP + " 👈\n\nPlease enter the code below to verify your identity and create your account:");
+
+            if (userEnteredOTP === null) {
+                // User cancelled prompt
+                return false;
+            }
+
+            if (userEnteredOTP.trim() !== simulatedOTP) {
+                alert("Verification Failed: Invalid verification code. Account creation aborted.");
                 return false;
             }
 
