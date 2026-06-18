@@ -113,6 +113,20 @@
                 <hr>
             `;
             wrapper.insertBefore(headerContainer, wrapper.firstChild);
+
+            // 4. Append the standard beautiful Student Hub footer
+            if (!wrapper.querySelector('.app-footer')) {
+                const footerContainer = document.createElement('footer');
+                footerContainer.className = 'app-footer';
+                footerContainer.style.marginTop = '40px';
+                footerContainer.style.paddingTop = '20px';
+                footerContainer.style.borderTop = '1px solid var(--border-color)';
+                footerContainer.style.textAlign = 'center';
+                footerContainer.style.color = 'var(--text-muted)';
+                footerContainer.style.fontSize = '13px';
+                footerContainer.innerHTML = `<p>&copy; 2026 Student Hub. All Rights Reserved. Protected by Academic and Software Copyright.</p>`;
+                wrapper.appendChild(footerContainer);
+            }
         } catch (e) {
             console.error('Error standardizing subject page:', e);
         }
