@@ -129,7 +129,7 @@ def api_login():
     
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('SELECT username, email, grade, dept FROM users WHERE email = ? AND password = ?', (email, hashed))
+    cursor.execute('SELECT username, email, grade, dept FROM users WHERE (email = ? OR username = ?) AND password = ?', (email, email, hashed))
     user = cursor.fetchone()
     conn.close()
     
