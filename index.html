@@ -5,6 +5,100 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Hub - Academic Workspace (V2)</title>
     <link rel="stylesheet" href="style.css?v=1.0.3">
+    <style>
+        /* Custom Curriculum Filters Layout */
+        .curriculum-filters-container {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: flex-end !important;
+            flex-wrap: wrap !important;
+            gap: 16px !important;
+            margin-top: 15px !important;
+            margin-bottom: 20px !important;
+        }
+        .curriculum-filter-item {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 6px !important;
+            margin-right: 0 !important;
+        }
+        .curriculum-filter-item.dept {
+            flex: 0 1 300px !important;
+            min-width: 200px !important;
+        }
+        .curriculum-filter-item.year {
+            flex: 0 1 200px !important;
+            min-width: 140px !important;
+        }
+        .curriculum-filter-item.action {
+            flex: 0 0 auto !important;
+            margin-bottom: 0 !important;
+        }
+        .curriculum-filter-item label {
+            font-size: 12px !important;
+            font-weight: 600 !important;
+            color: var(--text-muted) !important;
+            margin: 0 !important;
+        }
+        .curriculum-filter-item select {
+            height: 36px !important;
+            padding: 6px 12px !important;
+            border-radius: 6px !important;
+            border: 1px solid var(--border-color) !important;
+            background-color: var(--input-bg) !important;
+            color: var(--input-text) !important;
+            font-size: 13.5px !important;
+            cursor: pointer !important;
+            box-sizing: border-box !important;
+            width: 100% !important;
+            margin: 0 !important;
+        }
+        .curriculum-filter-item select:focus {
+            border-color: var(--primary-color) !important;
+            outline: none !important;
+        }
+        #save-curriculum-btn {
+            height: 28px !important;
+            padding: 0 !important;
+            font-size: 11px !important;
+            font-weight: 600 !important;
+            border-radius: 4px !important;
+            border: none !important;
+            background-color: var(--btn-primary-bg) !important;
+            color: var(--btn-primary-text) !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+            box-sizing: border-box !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 70px !important;
+            margin: 0 !important;
+        }
+        #save-curriculum-btn:hover {
+            background-color: var(--btn-primary-hover) !important;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .curriculum-filters-container {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 12px !important;
+            }
+            .curriculum-filter-item.dept,
+            .curriculum-filter-item.year,
+            .curriculum-filter-item.action {
+                flex: 1 1 100% !important;
+                width: 100% !important;
+            }
+            #save-curriculum-btn {
+                width: 100% !important;
+                height: 32px !important;
+                margin-top: 5px !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
@@ -103,10 +197,10 @@
                 <h3 style="margin-top: 0; font-size: 21px; font-weight: 700; color: var(--primary-dark);">🎓 Department Curriculum (By Year & Course)</h3>
                 <p>Align your studies by choosing your department and current year of study to see recommended subjects and materials:</p>
                 
-                <div class="curriculum-filters" style="display: flex !important; flex-wrap: wrap !important; gap: 16px !important; align-items: flex-end !important; margin-bottom: 20px !important;">
-                    <div class="filter-group" style="flex: 0 1 300px !important; min-width: 200px !important; margin-right: 0 !important;">
-                        <label for="dept-select" style="margin-top: 0; font-size: 12px; font-weight: 600; color: var(--text-muted);">Department / Specialization:</label>
-                        <select id="dept-select" onchange="filterCurriculum()" style="margin-bottom: 0; height: 36px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--input-text); cursor: pointer; font-size: 13.5px; box-sizing: border-box; width: 100%;">
+                <div class="curriculum-filters-container">
+                    <div class="curriculum-filter-item dept">
+                        <label for="dept-select">Department / Specialization:</label>
+                        <select id="dept-select" onchange="filterCurriculum()">
                             <option value="" disabled selected>-- Select your department --</option>
                             <option value="cse">Computer Science & Engineering (CSE)</option>
                             <option value="it">Information Technology (IT)</option>
@@ -117,9 +211,9 @@
                             <option value="bca">Bachelor of Computer Applications (BCA)</option>
                         </select>
                     </div>
-                    <div class="filter-group" style="flex: 0 1 200px !important; min-width: 140px !important; margin-right: 0 !important;">
-                        <label for="year-select" style="margin-top: 0; font-size: 12px; font-weight: 600; color: var(--text-muted);">Academic Year:</label>
-                        <select id="year-select" onchange="filterCurriculum()" style="margin-bottom: 0; height: 36px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--input-text); cursor: pointer; font-size: 13.5px; box-sizing: border-box; width: 100%;">
+                    <div class="curriculum-filter-item year">
+                        <label for="year-select">Academic Year:</label>
+                        <select id="year-select" onchange="filterCurriculum()">
                             <option value="" disabled selected>-- Select your academic year --</option>
                             <option value="1">1st Year</option>
                             <option value="2">2nd Year</option>
@@ -127,8 +221,8 @@
                             <option value="4">4th Year</option>
                         </select>
                     </div>
-                    <div class="filter-group-btn" style="flex: 0 0 auto !important; margin-bottom: 0 !important;">
-                        <button type="button" onclick="saveCurriculumSettings()" class="btn btn-primary" id="save-curriculum-btn" style="padding: 0; font-size: 11px; height: 28px; line-height: 28px; border-radius: 4px; cursor: pointer; transition: all 0.2s; width: 70px; text-align: center; font-weight: 600; display: block; border: none; background-color: var(--btn-primary-bg); color: var(--btn-primary-text);">Save</button>
+                    <div class="curriculum-filter-item action">
+                        <button type="button" onclick="saveCurriculumSettings()" id="save-curriculum-btn">Save</button>
                     </div>
                 </div>
 
