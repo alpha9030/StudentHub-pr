@@ -336,26 +336,7 @@
                     <input type="password" id="reg-pwd" placeholder="Enter a secure password" autocomplete="new-password" required>
                     <small class="form-helper" style="display: block; margin-top: 4px; color: #888; font-size: 0.85em; margin-bottom: 12px;">Password must be at least 8 characters, containing letters, numbers, and special symbols.</small>
 
-                    <label for="reg-dept">Department / Specialization:</label>
-                    <select id="reg-dept">
-                        <option value="" disabled selected>-- Select your department --</option>
-                        <option value="cse">Computer Science & Engineering (CSE)</option>
-                        <option value="it">Information Technology (IT)</option>
-                        <option value="ece">Electronics & Communication Engineering (ECE)</option>
-                        <option value="eee">Electrical & Electronics Engineering (EEE)</option>
-                        <option value="me">Mechanical Engineering (ME)</option>
-                        <option value="ce">Civil Engineering (CE)</option>
-                        <option value="bca">Bachelor of Computer Applications (BCA)</option>
-                    </select>
 
-                    <label for="reg-grade">Academic Grade Standing:</label>
-                    <select id="reg-grade">
-                        <option value="" disabled selected>-- Select your academic year --</option>
-                        <option value="freshman">1st Year</option>
-                        <option value="sophomore">2nd Year</option>
-                        <option value="junior">3rd Year</option>
-                        <option value="senior">4th Year</option>
-                    </select>
 
                     <input type="submit" value="Enroll Profile & Enter Workspace">
                 </form>
@@ -717,8 +698,8 @@
             const userValue = document.getElementById('reg-username').value || 'Scholar';
             const emailValue = (document.getElementById('reg-email').value || '').trim();
             const confirmEmailValue = (document.getElementById('reg-confirm-email').value || '').trim();
-            const gradeValue = document.getElementById('reg-grade').value || '';
-            const deptValue = document.getElementById('reg-dept').value || '';
+            const gradeValue = 'freshman';
+            const deptValue = 'cse';
             const pwdValue = document.getElementById('reg-pwd').value || '';
 
             const pwdError = validatePasswordStrength(pwdValue);

@@ -123,27 +123,6 @@
                 <input type="password" id="password" placeholder="Create a secure access code" autocomplete="new-password" required>
                 <small class="form-helper" style="display: block; margin-top: 4px; color: #888; font-size: 0.85em; margin-bottom: 12px;">Password must be at least 8 characters, containing letters, numbers, and special symbols.</small>
 
-                <label for="dept">Department / Specialization:</label>
-                <select id="dept">
-                    <option value="" disabled selected>-- Select your department --</option>
-                    <option value="cse">Computer Science & Engineering (CSE)</option>
-                    <option value="it">Information Technology (IT)</option>
-                    <option value="ece">Electronics & Communication Engineering (ECE)</option>
-                    <option value="eee">Electrical & Electronics Engineering (EEE)</option>
-                    <option value="me">Mechanical Engineering (ME)</option>
-                    <option value="ce">Civil Engineering (CE)</option>
-                    <option value="bca">Bachelor of Computer Applications (BCA)</option>
-                </select>
-
-                <label for="grade-level">Academic Class Standing:</label>
-                <select id="grade-level">
-                    <option value="" disabled selected>-- Select your academic year --</option>
-                    <option value="freshman">1st Year</option>
-                    <option value="sophomore">2nd Year</option>
-                    <option value="junior">3rd Year</option>
-                    <option value="senior">4th Year</option>
-                </select>
-
                 <input type="submit" value="Enroll Identity & Enter Workspace">
             </form>
             
@@ -317,8 +296,8 @@
             const usernameVal = document.getElementById('username').value || 'Scholar';
             const emailVal = (document.getElementById('email').value || '').trim();
             const confirmEmailVal = (document.getElementById('confirm-email').value || '').trim();
-            const gradeVal = document.getElementById('grade-level').value || 'freshman';
-            const deptVal = document.getElementById('dept').value || 'cse';
+            const gradeVal = 'freshman';
+            const deptVal = 'cse';
             const pwdVal = document.getElementById('password').value || '';
             
             const pwdError = validatePasswordStrength(pwdVal);
