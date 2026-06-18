@@ -127,6 +127,10 @@
                             <option value="4">4th Year</option>
                         </select>
                     </div>
+                    <div class="filter-group" style="flex: 0 0 auto !important; min-width: auto !important; display: flex !important; flex-direction: column !important; justify-content: flex-end;">
+                        <span style="font-size: 11px; font-weight: 700; color: transparent; text-transform: uppercase; user-select: none;">Save</span>
+                        <button type="button" onclick="saveCurriculumSettings()" class="btn btn-primary" id="save-curriculum-btn" style="padding: 10px 20px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: all 0.2s; height: 38px; line-height: 1;">Save Changes</button>
+                    </div>
                 </div>
 
                 <div id="curriculum-result" class="curriculum-result-container">
@@ -835,8 +839,89 @@
         }
 
 
-        // Perform Sign Out
+        // Show Sign Out confirmation modal before signing out
         function doSignOut() {
+            showSignOutConfirmation();
+        }
+
+        function showSignOutConfirmation() {
+            const modal = document.getElementById('signout-confirm-modal');
+            if (!modal) return;
+            
+            // Check if user is logged in with Google (using oauth placeholder password)
+            const email = localStorage.getItem('studentEmail');
+            let isGoogleUser = false;
+            
+            if (email) {
+                let users = [];
+                try { users = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) { users = []; }
+                if (!Array.isArray(users)) users = [];
+                const foundUser = users.find(u => (u.email || '').toLowerCase() === email.toLowerCase());
+                if (foundUser && foundUser.password === "google_oauth_placeholder") {
+                    isGoogleUser = true;
+                }
+            }
+
+            const pwdSection = document.getElementById('signout-password-setup-section');
+            const savePwdBtn = document.getElementById('signout-save-pwd-btn');
+            const newPwdInput = document.getElementById('signout-new-pwd');
+            
+            if (newPwdInput) newPwdInput.value = '';
+            
+            if (isGoogleUser) {
+                if (pwdSection) pwdSection.style.display = 'block';
+                if (savePwdBtn) savePwdBtn.style.display = 'inline-block';
+            } else {
+                if (pwdSection) pwdSection.style.display = 'none';
+                if (savePwdBtn) savePwdBtn.style.display = 'none';
+            }
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeSignOutModal() {
+            const modal = document.getElementById('signout-confirm-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function handleSignOutSavePassword() {
+            const newPwdInput = document.getElementById('signout-new-pwd');
+            const pwdVal = (newPwdInput ? newPwdInput.value : '').trim();
+            
+            if (!pwdVal) {
+                alert("Please enter a password to save, or click Sign Out to exit without saving.");
+                return;
+            }
+            
+            const strengthError = validatePasswordStrength(pwdVal);
+            if (strengthError) {
+                alert("Weak Password: " + strengthError);
+                return;
+            }
+            
+            // Save the password to the user's account
+            const email = localStorage.getItem('studentEmail');
+            if (email) {
+                let users = [];
+                try { users = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) { users = []; }
+                if (!Array.isArray(users)) users = [];
+                const uIdx = users.findIndex(u => (u.email || '').toLowerCase() === email.toLowerCase());
+                if (uIdx !== -1) {
+                    users[uIdx].password = pwdVal;
+                    localStorage.setItem('registeredUsers', JSON.stringify(users));
+                }
+            }
+            
+            alert("Password saved successfully! Performing sign out...");
+            confirmSignOutDirectly();
+        }
+
+        function confirmSignOutDirectly() {
+            closeSignOutModal();
+            executeSignOutProcess();
+        }
+
+        function executeSignOutProcess() {
             // Save current progress offline to this user's profile in registeredUsers
             const email = localStorage.getItem('studentEmail');
             if (email) {
@@ -1309,6 +1394,47 @@
             }
         };
 
+        // Save curriculum settings manually
+        function saveCurriculumSettings() {
+            const deptSelect = document.getElementById('dept-select');
+            const yearSelect = document.getElementById('year-select');
+            if (!deptSelect || !yearSelect) return;
+
+            const dept = deptSelect.value;
+            const year = yearSelect.value;
+
+            if (!dept || !year) {
+                alert("Please select both a department and academic year before saving changes.");
+                return;
+            }
+
+            let grade = "";
+            if (year === "1") grade = "freshman";
+            else if (year === "2") grade = "sophomore";
+            else if (year === "3") grade = "junior";
+            else if (year === "4") grade = "senior";
+
+            localStorage.setItem('studentDept', dept);
+            localStorage.setItem('studentGrade', grade);
+
+            // If logged in, also update registered user profile in local/database
+            const email = localStorage.getItem('studentEmail');
+            if (email) {
+                let users = [];
+                try { users = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) { users = []; }
+                if (!Array.isArray(users)) users = [];
+                const uIdx = users.findIndex(u => (u.email || '').toLowerCase() === email.toLowerCase());
+                if (uIdx !== -1) {
+                    users[uIdx].dept = dept;
+                    users[uIdx].grade = grade;
+                    localStorage.setItem('registeredUsers', JSON.stringify(users));
+                }
+            }
+
+            updateUserSession();
+            alert("Department and Academic Year settings saved successfully!");
+        }
+
         // Filter and display curriculum
         function filterCurriculum() {
             const deptSelect = document.getElementById('dept-select');
@@ -1362,23 +1488,15 @@
                 themeSelect.value = savedTheme;
             }
 
-            // Sync filter values from local storage or defaults on load
-            const savedDept = localStorage.getItem('studentDept');
-            const savedGrade = localStorage.getItem('studentGrade');
-            
+            // Donot show any default department and grading on load
             const deptSelect = document.getElementById('dept-select');
             const yearSelect = document.getElementById('year-select');
 
-            if (savedDept && deptSelect) {
-                deptSelect.value = savedDept;
+            if (deptSelect) {
+                deptSelect.value = "";
             }
-            if (savedGrade && yearSelect) {
-                let yearNum = "";
-                if (savedGrade === 'freshman') yearNum = "1";
-                else if (savedGrade === 'sophomore') yearNum = "2";
-                else if (savedGrade === 'junior') yearNum = "3";
-                else if (savedGrade === 'senior') yearNum = "4";
-                yearSelect.value = yearNum;
+            if (yearSelect) {
+                yearSelect.value = "";
             }
 
             filterCurriculum();
@@ -1657,6 +1775,34 @@
             
             <div class="google-modal-footer">
                 <p>To continue, google.com will share your name, email address, and profile picture with this site. See this site's <a href="privacy.html" target="_blank" style="color: #1a73e8; text-decoration: none; font-weight: 500;">privacy policy</a>.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Sign Out Confirmation Modal -->
+    <div id="signout-confirm-modal" class="google-modal-backdrop" onclick="closeSignOutModal()" style="display: none; z-index: 2000;">
+        <div class="google-modal-card" onclick="event.stopPropagation()" style="max-width: 440px;">
+            <div class="google-modal-header">
+                <h3>Confirm Sign Out</h3>
+                <p>Verify details before leaving your session</p>
+            </div>
+            
+            <div class="google-modal-body" style="text-align: left; padding: 20px; color: var(--text-body);">
+                <p>Are you sure you want to sign out of your student profile? Any unsaved progress will be cleared.</p>
+                
+                <div id="signout-password-setup-section" style="display: none; margin-top: 15px; padding-top: 15px; border-top: 1px dashed var(--border-color);">
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+                        🔑 <strong>Set Password:</strong> You signed in via Google. To log in with email/password directly in the future, set a password now:
+                    </p>
+                    <label for="signout-new-pwd" style="display:block; font-size:12px; font-weight:600; color:var(--text-body); margin-bottom:6px;">New Access Key (Password)</label>
+                    <input type="password" id="signout-new-pwd" placeholder="Enter password (min 8 chars)" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid var(--border-color); border-radius:4px; box-sizing:border-box; font-size:14px; background-color: var(--input-bg); color: var(--input-text); outline:none;">
+                </div>
+            </div>
+            
+            <div class="google-modal-footer" style="display: flex; justify-content: flex-end; gap: 10px; border-top: 1px solid var(--border-color); padding: 15px 20px; background-color: var(--modal-header-bg);">
+                <button type="button" class="btn btn-secondary" onclick="closeSignOutModal()" style="padding: 8px 16px; margin: 0; font-size: 14px; cursor: pointer; border-radius: 4px;">Cancel</button>
+                <button type="button" id="signout-save-pwd-btn" class="btn" onclick="handleSignOutSavePassword()" style="display: none; padding: 8px 16px; margin: 0; font-size: 14px; cursor: pointer; border-radius: 4px; background-color: #2e7d32; border: none; color: white;">Save Password & Sign Out</button>
+                <button type="button" class="btn btn-primary" onclick="confirmSignOutDirectly()" id="signout-confirm-btn" style="padding: 8px 16px; margin: 0; font-size: 14px; cursor: pointer; border-radius: 4px; background-color: #ef4444; border: none; color: white;">Sign Out</button>
             </div>
         </div>
     </div>
