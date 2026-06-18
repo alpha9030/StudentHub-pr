@@ -103,10 +103,10 @@
                 <h3 style="margin-top: 0; font-size: 21px; font-weight: 700; color: var(--primary-dark);">🎓 Department Curriculum (By Year & Course)</h3>
                 <p>Align your studies by choosing your department and current year of study to see recommended subjects and materials:</p>
                 
-                <div class="curriculum-filters">
-                    <div class="filter-group">
-                        <label for="dept-select" style="margin-top: 0;">Department / Specialization:</label>
-                        <select id="dept-select" onchange="filterCurriculum()" style="margin-bottom: 0;">
+                <div class="curriculum-filters" style="display: flex !important; flex-wrap: wrap !important; gap: 16px !important; align-items: flex-end !important; margin-bottom: 20px !important;">
+                    <div class="filter-group" style="flex: 0 1 300px !important; min-width: 200px !important; margin-right: 0 !important;">
+                        <label for="dept-select" style="margin-top: 0; font-size: 12px; font-weight: 600; color: var(--text-muted);">Department / Specialization:</label>
+                        <select id="dept-select" onchange="filterCurriculum()" style="margin-bottom: 0; height: 36px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--input-text); cursor: pointer; font-size: 13.5px; box-sizing: border-box; width: 100%;">
                             <option value="" disabled selected>-- Select your department --</option>
                             <option value="cse">Computer Science & Engineering (CSE)</option>
                             <option value="it">Information Technology (IT)</option>
@@ -117,9 +117,9 @@
                             <option value="bca">Bachelor of Computer Applications (BCA)</option>
                         </select>
                     </div>
-                    <div class="filter-group">
-                        <label for="year-select" style="margin-top: 0;">Academic Year:</label>
-                        <select id="year-select" onchange="filterCurriculum()" style="margin-bottom: 0;">
+                    <div class="filter-group" style="flex: 0 1 200px !important; min-width: 140px !important; margin-right: 0 !important;">
+                        <label for="year-select" style="margin-top: 0; font-size: 12px; font-weight: 600; color: var(--text-muted);">Academic Year:</label>
+                        <select id="year-select" onchange="filterCurriculum()" style="margin-bottom: 0; height: 36px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border-color); background-color: var(--input-bg); color: var(--input-text); cursor: pointer; font-size: 13.5px; box-sizing: border-box; width: 100%;">
                             <option value="" disabled selected>-- Select your academic year --</option>
                             <option value="1">1st Year</option>
                             <option value="2">2nd Year</option>
@@ -127,9 +127,8 @@
                             <option value="4">4th Year</option>
                         </select>
                     </div>
-                    <div class="filter-group" style="flex: 0 0 auto !important; min-width: auto !important; display: flex !important; flex-direction: column !important; justify-content: flex-end;">
-                        <span style="font-size: 11px; font-weight: 700; color: transparent; text-transform: uppercase; user-select: none;">Save</span>
-                        <button type="button" onclick="saveCurriculumSettings()" class="btn btn-primary" id="save-curriculum-btn" style="padding: 3px 8px; font-size: 10px; height: 22px; line-height: 1; border-radius: 3px; cursor: pointer; transition: all 0.2s; width: 70px; text-align: center; font-weight: 600;">Save</button>
+                    <div class="filter-group-btn" style="flex: 0 0 auto !important; margin-bottom: 0 !important;">
+                        <button type="button" onclick="saveCurriculumSettings()" class="btn btn-primary" id="save-curriculum-btn" style="padding: 0; font-size: 11px; height: 28px; line-height: 28px; border-radius: 4px; cursor: pointer; transition: all 0.2s; width: 70px; text-align: center; font-weight: 600; display: block; border: none; background-color: var(--btn-primary-bg); color: var(--btn-primary-text);">Save</button>
                     </div>
                 </div>
 
