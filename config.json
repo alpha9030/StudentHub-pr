@@ -1,0 +1,6 @@
+{
+  "SMTP_USER": "YOUR_GMAIL_ADDRESS@gmail.com",
+  "SMTP_PASSWORD": "YOUR_16_CHARACTER_GMAIL_APP_PASSWORD",
+  "SMTP_SERVER": "smtp.gmail.com",
+  "SMTP_PORT": "587"
+}

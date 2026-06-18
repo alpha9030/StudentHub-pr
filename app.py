@@ -12,12 +12,40 @@ EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
 
 pending_otps = {}
 
-def send_otp_email(to_email, otp):
-    smtp_server = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
-    smtp_port = os.environ.get('SMTP_PORT', '587')
+def get_smtp_config():
+    smtp_server = os.environ.get('SMTP_SERVER')
+    smtp_port = os.environ.get('SMTP_PORT')
     smtp_user = os.environ.get('SMTP_USER')
     smtp_pwd = os.environ.get('SMTP_PASSWORD')
     
+    # Try reading from config.json if not fully set in environment
+    if not (smtp_user and smtp_pwd):
+        import json
+        try:
+            if os.path.exists('config.json'):
+                with open('config.json', 'r') as f:
+                    config = json.load(f)
+                    if not smtp_user:
+                        smtp_user = config.get('SMTP_USER')
+                    if not smtp_pwd:
+                        smtp_pwd = config.get('SMTP_PASSWORD')
+                    if not smtp_server:
+                        smtp_server = config.get('SMTP_SERVER')
+                    if not smtp_port:
+                        smtp_port = config.get('SMTP_PORT')
+        except Exception as e:
+            print(f"Error loading config.json: {e}")
+            
+    # Set default values if still missing
+    if not smtp_server:
+        smtp_server = 'smtp.gmail.com'
+    if not smtp_port:
+        smtp_port = '587'
+        
+    return smtp_server, smtp_port, smtp_user, smtp_pwd
+
+def send_otp_email(to_email, otp):
+    smtp_server, smtp_port, smtp_user, smtp_pwd = get_smtp_config()
     if not smtp_user or not smtp_pwd:
         return False
         
@@ -165,8 +193,7 @@ def api_send_otp():
     otp = f"{random.randint(100000, 999999)}"
     pending_otps[email] = otp
     
-    smtp_user = os.environ.get('SMTP_USER')
-    smtp_pwd = os.environ.get('SMTP_PASSWORD')
+    smtp_server, smtp_port, smtp_user, smtp_pwd = get_smtp_config()
     
     if smtp_user and smtp_pwd:
         sent = send_otp_email(email, otp)
