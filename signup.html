@@ -146,6 +146,20 @@
 
                 <input type="submit" value="Enroll Identity & Enter Workspace">
             </form>
+            
+            <div class="auth-divider">
+                <span>OR</span>
+            </div>
+            
+            <button type="button" class="btn-google-auth" onclick="triggerGoogleAuth()">
+                <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
+                    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.69c-.29 1.5-1.14 2.78-2.4 3.62v3.02h3.87c2.27-2.08 3.58-5.15 3.58-8.49z"/>
+                    <path fill="#34A853" d="M12 24c3.24 0 5.97-1.08 7.96-2.91l-3.87-3.02c-1.08.72-2.45 1.16-4.09 1.16-3.15 0-5.81-2.13-6.76-5.01H1.27v3.13C3.26 20.21 7.37 24 12 24z"/>
+                    <path fill="#FBBC05" d="M5.24 14.22c-.24-.72-.38-1.5-.38-2.22s.14-1.5.38-2.22V6.65H1.27C.46 8.27 0 10.08 0 12s.46 3.73 1.27 5.35l3.97-3.13z"/>
+                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.96 1.19 15.24 0 12 0 7.37 0 3.26 3.79 1.27 7.78l3.97 3.13c.95-2.88 3.61-5.01 6.76-5.01z"/>
+                </svg>
+                <span>Continue with Google</span>
+            </button>
         </div>
 
         <footer class="app-footer" style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-muted); font-size: 13px;">
@@ -328,58 +342,7 @@
                 return false;
             }
 
-            const confirmProceed = confirm("Please double-check and confirm that your email address is correct:\n\n" + emailVal + "\n\nClick OK to receive your verification code.");
-            if (!confirmProceed) {
-                return false;
-            }
-
-            let otpCode = "";
-            let isSimulated = true;
             const isBackendAvailable = window.location.protocol.startsWith('http');
-
-            if (isBackendAvailable) {
-                try {
-                    const apiBase = window.location.protocol.startsWith('http') ? '' : 'https://studenhub.pr';
-                    const otpResp = await fetch(`${apiBase}/api/send-otp`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: emailVal.toLowerCase() })
-                    });
-                    const otpData = await otpResp.json();
-                    if (!otpData.success) {
-                        alert("Verification Failed: " + (otpData.message || "Failed to send verification code."));
-                        return false;
-                    }
-                    isSimulated = otpData.simulated;
-                    if (isSimulated) {
-                        otpCode = otpData.otp;
-                    }
-                } catch (err) {
-                    console.warn("Backend OTP request failed, falling back to local simulation:", err);
-                }
-            }
-
-            if (!otpCode && isSimulated) {
-                otpCode = Math.floor(100000 + Math.random() * 900000).toString();
-            }
-
-            let userEnteredOTP = null;
-            if (isSimulated) {
-                userEnteredOTP = prompt("📧 Verification Code Sent!\n\nWe simulated sending a 6-digit verification code to:\n" + emailVal.toLowerCase() + "\n\nFor this sandbox demonstration, your simulated OTP is:\n👉 " + otpCode + " 👈\n\nPlease enter the code below to verify your identity and create your account:");
-            } else {
-                userEnteredOTP = prompt("📧 Verification Code Sent!\n\nA 6-digit verification code has been sent to your email address:\n" + emailVal.toLowerCase() + "\n\nPlease enter the code below to verify your identity and create your account:");
-            }
-
-            if (userEnteredOTP === null) {
-                return false;
-            }
-
-            if (!isBackendAvailable || isSimulated) {
-                if (userEnteredOTP.trim() !== otpCode) {
-                    alert("Verification Failed: Invalid verification code. Account creation aborted.");
-                    return false;
-                }
-            }
 
             if (isBackendAvailable) {
                 try {
@@ -392,8 +355,7 @@
                             email: emailVal.toLowerCase(),
                             password: pwdVal,
                             grade: gradeVal,
-                            dept: deptVal,
-                            otp: userEnteredOTP.trim()
+                            dept: deptVal
                         })
                     });
                     const resData = await response.json();
@@ -624,6 +586,196 @@
                 if (deleteBtn) deleteBtn.style.display = 'none';
             }
         });
+        // Google Sign-In Simulation & API client
+        function triggerGoogleAuth() {
+            // Get all registered users to show in the list if offline database has some
+            let users = [];
+            try { users = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) { users = []; }
+            if (!Array.isArray(users)) users = [];
+            
+            const accountsList = document.getElementById('google-accounts-list');
+            accountsList.innerHTML = '';
+            
+            // Add default simulated accounts
+            const mockAccounts = [
+                { name: 'Alasani Scholar', email: 'alasani.scholar@gmail.com' },
+                { name: 'Student Hub Demo', email: 'student.hub@gmail.com' }
+            ];
+            
+            // Also append any already registered local users to make it feel personalized
+            users.forEach(u => {
+                if (!mockAccounts.some(ma => ma.email.toLowerCase() === u.email.toLowerCase())) {
+                    mockAccounts.push({ name: u.username, email: u.email });
+                }
+            });
+            
+            mockAccounts.forEach(acc => {
+                const initial = acc.name.charAt(0);
+                const item = document.createElement('div');
+                item.className = 'google-account-item';
+                item.onclick = () => selectGoogleAccount(acc.name, acc.email);
+                item.innerHTML = `
+                    <div class="google-avatar">${initial}</div>
+                    <div class="google-account-info">
+                        <span class="google-account-name">${acc.name}</span>
+                        <span class="google-account-email">${acc.email}</span>
+                    </div>
+                `;
+                accountsList.appendChild(item);
+            });
+            
+            document.getElementById('google-manual-input-section').style.display = 'none';
+            document.getElementById('google-auth-modal').classList.add('active');
+        }
+        
+        function closeGoogleAuthModal() {
+            document.getElementById('google-auth-modal').classList.remove('active');
+        }
+        
+        function showGoogleManualInput() {
+            const section = document.getElementById('google-manual-input-section');
+            section.style.display = section.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        async function selectGoogleAccount(name, email) {
+            closeGoogleAuthModal();
+            
+            const isBackendAvailable = window.location.protocol.startsWith('http');
+            if (isBackendAvailable) {
+                try {
+                    const apiBase = window.location.protocol.startsWith('http') ? '' : 'https://studenhub.pr';
+                    const response = await fetch(`${apiBase}/api/google-login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: name, email: email })
+                    });
+                    const resData = await response.json();
+                    if (resData.success) {
+                        const user = resData.user;
+                        localStorage.setItem('studentName', user.username);
+                        localStorage.setItem('studentGrade', user.grade);
+                        localStorage.setItem('studentDept', user.dept);
+                        localStorage.setItem('studentEmail', user.email);
+                        localStorage.setItem('isLoggedIn', 'true');
+                        
+                        // Also add/update local registeredUsers list so offline works later
+                        let users = [];
+                        try { users = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) { users = []; }
+                        if (!Array.isArray(users)) users = [];
+                        if (!users.some(u => u.email.toLowerCase() === user.email.toLowerCase())) {
+                            users.push({
+                                username: user.username,
+                                email: user.email,
+                                password: "google_oauth_placeholder",
+                                grade: user.grade,
+                                dept: user.dept
+                            });
+                            localStorage.setItem('registeredUsers', JSON.stringify(users));
+                        }
+                        
+                        // Redirect to index.html #dashboard
+                        window.location.href = 'index.html#dashboard';
+                        return;
+                    } else {
+                        alert("Google Sign-In Failed: " + (resData.message || "Unknown error"));
+                        return;
+                    }
+                } catch(e) {
+                    console.warn("Backend Google login failed, falling back to local storage:", e);
+                }
+            }
+            
+            // Local Storage fallback
+            let users = [];
+            try { users = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) { users = []; }
+            if (!Array.isArray(users)) users = [];
+            
+            const cleanEmail = email.toLowerCase();
+            let foundUser = users.find(u => u.email.toLowerCase() === cleanEmail);
+            
+            if (!foundUser) {
+                foundUser = {
+                    username: name,
+                    email: cleanEmail,
+                    password: "google_oauth_placeholder",
+                    grade: "freshman",
+                    dept: "cse",
+                    progress: []
+                };
+                users.push(foundUser);
+                localStorage.setItem('registeredUsers', JSON.stringify(users));
+            }
+            
+            localStorage.setItem('studentName', foundUser.username);
+            localStorage.setItem('studentGrade', foundUser.grade);
+            localStorage.setItem('studentDept', foundUser.dept);
+            localStorage.setItem('studentEmail', foundUser.email);
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            window.location.href = 'index.html#dashboard';
+        }
+        
+        function submitGoogleCustomAccount() {
+            const name = (document.getElementById('google-custom-name').value || '').trim();
+            const email = (document.getElementById('google-custom-email').value || '').trim();
+            
+            if (!name || !email) {
+                alert("Please enter both your name and Google email address.");
+                return;
+            }
+            
+            // Basic email validation
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(email)) {
+                alert("Please enter a valid Google email address.");
+                return;
+            }
+            
+            selectGoogleAccount(name, email);
+        }
     </script>
+
+    <!-- Google Account Chooser Modal -->
+    <div id="google-auth-modal" class="google-modal-backdrop" onclick="closeGoogleAuthModal()">
+        <div class="google-modal-card" onclick="event.stopPropagation()">
+            <div class="google-modal-header">
+                <svg viewBox="0 0 24 24" width="24" height="24" class="google-logo-header">
+                    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.69c-.29 1.5-1.14 2.78-2.4 3.62v3.02h3.87c2.27-2.08 3.58-5.15 3.58-8.49z"/>
+                    <path fill="#34A853" d="M12 24c3.24 0 5.97-1.08 7.96-2.91l-3.87-3.02c-1.08.72-2.45 1.16-4.09 1.16-3.15 0-5.81-2.13-6.76-5.01H1.27v3.13C3.26 20.21 7.37 24 12 24z"/>
+                    <path fill="#FBBC05" d="M5.24 14.22c-.24-.72-.38-1.5-.38-2.22s.14-1.5.38-2.22V6.65H1.27C.46 8.27 0 10.08 0 12s.46 3.73 1.27 5.35l3.97-3.13z"/>
+                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.96 1.19 15.24 0 12 0 7.37 0 3.26 3.79 1.27 7.78l3.97 3.13c.95-2.88 3.61-5.01 6.76-5.01z"/>
+                </svg>
+                <h3>Sign in with Google</h3>
+                <p>to continue to Student Hub</p>
+            </div>
+            
+            <div class="google-modal-body">
+                <div id="google-accounts-list">
+                    <!-- Dynamically populated or default mock list -->
+                </div>
+                
+                <div class="google-account-item add-account-item" onclick="showGoogleManualInput()">
+                    <div class="google-avatar-icon">➕</div>
+                    <div class="google-account-info">
+                        <span class="google-account-name">Use another account</span>
+                    </div>
+                </div>
+                
+                <div id="google-manual-input-section" style="display: none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+                    <label for="google-custom-name" style="display:block; text-align:left; font-size:12px; font-weight:600; color:#555; margin-bottom:4px;">Google Name:</label>
+                    <input type="text" id="google-custom-name" placeholder="e.g., John Doe" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;">
+                    
+                    <label for="google-custom-email" style="display:block; text-align:left; font-size:12px; font-weight:600; color:#555; margin-bottom:4px;">Google Email:</label>
+                    <input type="email" id="google-custom-email" placeholder="e.g., user@gmail.com" style="width:100%; padding:10px; margin-bottom:12px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;">
+                    
+                    <button type="button" class="btn btn-primary" onclick="submitGoogleCustomAccount()" style="width:100%; padding:10px; border:none; border-radius:4px; background:#1a73e8; color:white; font-weight:600; cursor:pointer;">Select Account</button>
+                </div>
+            </div>
+            
+            <div class="google-modal-footer">
+                <p>To continue, Google will share your name, email address, language preference, and profile picture with Student Hub.</p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

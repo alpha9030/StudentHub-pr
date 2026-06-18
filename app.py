@@ -221,19 +221,15 @@ def api_register():
     dept = data.get('dept', '').strip()
     otp_provided = data.get('otp', '').strip()
     
-    print(f"DEBUG api_register: username={repr(username)}, email={repr(email)}, password={repr(password)}, grade={repr(grade)}, dept={repr(dept)}, otp={repr(otp_provided)}")
+    print(f"DEBUG api_register: username={repr(username)}, email={repr(email)}, password={repr(password)}, grade={repr(grade)}, dept={repr(dept)}")
     
-    if not all([username, email, password, grade, dept, otp_provided]):
-        return jsonify({'success': False, 'message': 'All fields and verification code are required'}), 400
+    if not all([username, email, password, grade, dept]):
+        return jsonify({'success': False, 'message': 'All fields are required'}), 400
         
     if not EMAIL_REGEX.match(email):
         return jsonify({'success': False, 'message': 'Invalid email address format'}), 400
         
-    # Verify OTP
-    if email not in pending_otps or pending_otps[email] != otp_provided:
-        return jsonify({'success': False, 'message': 'Invalid or expired verification code'}), 400
-        
-    # Clear the OTP
+    # Clear the OTP if any existed
     pending_otps.pop(email, None)
         
     hashed = hash_password(password)
@@ -256,6 +252,72 @@ def api_register():
         return jsonify({'success': False, 'message': 'An account with this email already exists'}), 400
     finally:
         conn.close()
+
+@app.route('/api/google-login', methods=['POST', 'OPTIONS'])
+def api_google_login():
+    if request.method == 'OPTIONS':
+        return '', 204
+    data = request.get_json()
+    if not data:
+        return jsonify({'success': False, 'message': 'No data provided'}), 400
+        
+    email = data.get('email', '').strip().lower()
+    username = data.get('username', '').strip()
+    
+    if not email or not username:
+        return jsonify({'success': False, 'message': 'Email and username are required'}), 400
+        
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    # Check if user already exists
+    cursor.execute('SELECT username, email, grade, dept FROM users WHERE LOWER(email) = ?', (email,))
+    user = cursor.fetchone()
+    
+    if user:
+        # User exists, log them in!
+        conn.close()
+        return jsonify({
+            'success': True,
+            'message': 'Logged in successfully via Google',
+            'user': {
+                'username': user['username'],
+                'email': user['email'],
+                'grade': user['grade'],
+                'dept': user['dept']
+            }
+        })
+    else:
+        # User does not exist, register them!
+        # Use a random password string since they authenticate via Google
+        placeholder_pwd = hash_password(os.urandom(24).hex())
+        grade = 'freshman'
+        dept = 'cse'
+        try:
+            cursor.execute(
+                'INSERT INTO users (email, username, password, grade, dept) VALUES (?, ?, ?, ?, ?)',
+                (email, username, placeholder_pwd, grade, dept)
+            )
+            # Initialize default chatbot settings
+            cursor.execute(
+                'INSERT INTO chatbot_settings (email, aura_mode, aura_api_key, aura_user_name) VALUES (?, ?, ?, ?)',
+                (email, 'offline', '', username)
+            )
+            conn.commit()
+            return jsonify({
+                'success': True,
+                'message': 'Account created successfully via Google',
+                'user': {
+                    'username': username,
+                    'email': email,
+                    'grade': grade,
+                    'dept': dept
+                }
+            })
+        except sqlite3.IntegrityError:
+            return jsonify({'success': False, 'message': 'Failed to create account'}), 400
+        finally:
+            conn.close()
 
 @app.route('/api/login', methods=['POST', 'OPTIONS'])
 def api_login():
