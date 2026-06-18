@@ -1473,46 +1473,12 @@
 
         // Google Sign-In Simulation & API client
         function triggerGoogleAuth() {
-            // Get all registered users to show in the list if offline database has some
-            let users = [];
-            try { users = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) { users = []; }
-            if (!Array.isArray(users)) users = [];
+            // Clear inputs
+            const nameField = document.getElementById('google-custom-name');
+            const emailField = document.getElementById('google-custom-email');
+            if (nameField) nameField.value = '';
+            if (emailField) emailField.value = '';
             
-            const accountsList = document.getElementById('google-accounts-list');
-            if (accountsList) {
-                accountsList.innerHTML = '';
-                
-                // Add default simulated accounts
-                const mockAccounts = [
-                    { name: 'Alasani Scholar', email: 'alasani.scholar@gmail.com' },
-                    { name: 'Student Hub Demo', email: 'student.hub@gmail.com' }
-                ];
-                
-                // Also append any already registered local users to make it feel personalized
-                users.forEach(u => {
-                    if (u.email && !mockAccounts.some(ma => ma.email.toLowerCase() === u.email.toLowerCase())) {
-                        mockAccounts.push({ name: u.username || 'Google User', email: u.email });
-                    }
-                });
-                
-                mockAccounts.forEach(acc => {
-                    const initial = (acc.name || 'G').charAt(0);
-                    const item = document.createElement('div');
-                    item.className = 'google-account-item';
-                    item.onclick = () => selectGoogleAccount(acc.name, acc.email);
-                    item.innerHTML = `
-                        <div class="google-avatar">${initial}</div>
-                        <div class="google-account-info">
-                            <span class="google-account-name">${acc.name}</span>
-                            <span class="google-account-email">${acc.email}</span>
-                        </div>
-                    `;
-                    accountsList.appendChild(item);
-                });
-            }
-            
-            const manualInput = document.getElementById('google-manual-input-section');
-            if (manualInput) manualInput.style.display = 'none';
             const modal = document.getElementById('google-auth-modal');
             if (modal) modal.classList.add('active');
         }
@@ -1520,13 +1486,6 @@
         function closeGoogleAuthModal() {
             const modal = document.getElementById('google-auth-modal');
             if (modal) modal.classList.remove('active');
-        }
-        
-        function showGoogleManualInput() {
-            const section = document.getElementById('google-manual-input-section');
-            if (section) {
-                section.style.display = section.style.display === 'none' ? 'block' : 'none';
-            }
         }
         
         async function selectGoogleAccount(name, email) {
@@ -1704,30 +1663,19 @@
             </div>
             
             <div class="google-modal-body">
-                <div id="google-accounts-list">
-                    <!-- Dynamically populated or default mock list -->
-                </div>
-                
-                <div class="google-account-item add-account-item" onclick="showGoogleManualInput()">
-                    <div class="google-avatar-icon">➕</div>
-                    <div class="google-account-info">
-                        <span class="google-account-name">Use another account</span>
-                    </div>
-                </div>
-                
-                <div id="google-manual-input-section" style="display: none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
-                    <label for="google-custom-name" style="display:block; text-align:left; font-size:12px; font-weight:600; color:#555; margin-bottom:4px;">Google Name:</label>
-                    <input type="text" id="google-custom-name" placeholder="e.g., John Doe" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;">
+                <div id="google-manual-input-section" style="margin-top: 10px;">
+                    <label for="google-custom-name" style="display:block; text-align:left; font-size:13px; font-weight:600; color:#3c4043; margin-bottom:6px;">Name</label>
+                    <input type="text" id="google-custom-name" placeholder="Enter your name" style="width:100%; padding:12px; margin-bottom:14px; border:1px solid #dadce0; border-radius:4px; box-sizing:border-box; font-size:14px; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='#1a73e8'" onblur="this.style.borderColor='#dadce0'">
                     
-                    <label for="google-custom-email" style="display:block; text-align:left; font-size:12px; font-weight:600; color:#555; margin-bottom:4px;">Google Email:</label>
-                    <input type="email" id="google-custom-email" placeholder="e.g., user@gmail.com" style="width:100%; padding:10px; margin-bottom:12px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;">
+                    <label for="google-custom-email" style="display:block; text-align:left; font-size:13px; font-weight:600; color:#3c4043; margin-bottom:6px;">Email address</label>
+                    <input type="email" id="google-custom-email" placeholder="email@gmail.com" style="width:100%; padding:12px; margin-bottom:18px; border:1px solid #dadce0; border-radius:4px; box-sizing:border-box; font-size:14px; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='#1a73e8'" onblur="this.style.borderColor='#dadce0'">
                     
-                    <button type="button" class="btn btn-primary" onclick="submitGoogleCustomAccount()" style="width:100%; padding:10px; border:none; border-radius:4px; background:#1a73e8; color:white; font-weight:600; cursor:pointer;">Select Account</button>
+                    <button type="button" class="btn btn-primary" onclick="submitGoogleCustomAccount()" style="width:100%; padding:12px; border:none; border-radius:4px; background:#1a73e8; color:white; font-weight:600; font-size:14px; cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='#1557b0'" onmouseout="this.style.background='#1a73e8'">Sign in</button>
                 </div>
             </div>
             
             <div class="google-modal-footer">
-                <p>To continue, Google will share your name, email address, language preference, and profile picture with Student Hub.</p>
+                <p>To continue, google.com will share your name, email address, and profile picture with this site. See this site's <a href="privacy.html" target="_blank" style="color: #1a73e8; text-decoration: none; font-weight: 500;">privacy policy</a>.</p>
             </div>
         </div>
     </div>
