@@ -254,8 +254,13 @@
 
             // Fallback to local storage (either offline or backend admin disabled)
             if (key === 'admin' || key === 'admin123') {
-                const localUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-                const localDeleted = JSON.parse(localStorage.getItem('deletedUsers') || '[]');
+                let localUsers = [];
+                try { localUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) { localUsers = []; }
+                if (!Array.isArray(localUsers)) localUsers = [];
+
+                let localDeleted = [];
+                try { localDeleted = JSON.parse(localStorage.getItem('deletedUsers') || '[]'); } catch(e) { localDeleted = []; }
+                if (!Array.isArray(localDeleted)) localDeleted = [];
                 
                 const formattedUsers = [];
                 localUsers.forEach(u => {

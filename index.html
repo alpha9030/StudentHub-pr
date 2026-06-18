@@ -626,7 +626,9 @@
                 }
             }
 
-            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            let users = [];
+            try { users = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) { users = []; }
+            if (!Array.isArray(users)) users = [];
             const cleanId = idValue.toLowerCase();
             const foundUser = users.find(u => 
                 ((u.email || '').trim().toLowerCase() === cleanId || (u.username || '').trim().toLowerCase() === cleanId) && 
@@ -803,7 +805,9 @@
                         localStorage.setItem('isLoggedIn', 'true');
 
                         // Also add to local registeredUsers list so offline works later
-                        const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                        let users = [];
+                        try { users = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) { users = []; }
+                        if (!Array.isArray(users)) users = [];
                         if (!users.some(u => u.email === emailValue)) {
                             users.push({
                                 username: userValue,
@@ -841,7 +845,9 @@
                 }
             }
 
-            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            let users = [];
+            try { users = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) { users = []; }
+            if (!Array.isArray(users)) users = [];
             if (users.some(u => u.email === emailValue)) {
                 alert("An account with this email address is already registered.");
                 return false;
@@ -889,7 +895,9 @@
             // Save current progress offline to this user's profile in registeredUsers
             const email = localStorage.getItem('studentEmail');
             if (email) {
-                const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                let users = [];
+                try { users = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) { users = []; }
+                if (!Array.isArray(users)) users = [];
                 const uIdx = users.findIndex(u => u.email === email);
                 if (uIdx !== -1) {
                     const progressKeys = [];
@@ -976,7 +984,9 @@
 
                 // Remove this user from the registered users list and add to deleted list
                 if (usersJson && currentEmail) {
-                    let users = JSON.parse(usersJson);
+                    let users = [];
+                    try { users = JSON.parse(usersJson) || []; } catch(e) { users = []; }
+                    if (!Array.isArray(users)) users = [];
                     const userToDelete = users.find(u => u.email === currentEmail);
                     if (userToDelete) {
                         const deletedUsers = JSON.parse(localStorage.getItem('deletedUsers') || '[]');
