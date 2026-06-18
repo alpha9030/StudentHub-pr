@@ -153,8 +153,7 @@
         settingsBar.innerHTML = `
             <label for="theme-select" class="settings-label">Theme: </label>
             <select id="theme-select" onchange="changeTheme(this.value)" class="settings-select">
-                <option value="default">Nordic Slate & Indigo</option>
-                <option value="light">Light Teal & Sage</option>
+                <option value="default">Light Teal & Sage</option>
                 <option value="dark">Dark Charcoal</option>
             </select>
             <label for="font-size-select" class="settings-label">Font Size: </label>
