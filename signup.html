@@ -168,8 +168,8 @@
 
         async function doLogin(event) {
             if (event) event.preventDefault();
-            const idValue = document.getElementById('login-id').value || '';
-            const pwdValue = document.getElementById('login-pwd').value || '';
+            const idValue = (document.getElementById('login-id').value || '').trim();
+            const pwdValue = (document.getElementById('login-pwd').value || '').trim();
 
             const isBackendAvailable = window.location.protocol.startsWith('http');
             if (isBackendAvailable) {
@@ -228,8 +228,7 @@
                         window.location.href = 'index.html#dashboard';
                         return false;
                     } else {
-                        alert("Access Denied: " + (resData.message || "Invalid credentials."));
-                        return false;
+                        console.warn("Backend login rejected credentials, falling back to Local Storage:", resData.message);
                     }
                 } catch (err) {
                     console.warn("Backend login failed, falling back to local storage:", err);
@@ -237,7 +236,11 @@
             }
 
             const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-            const foundUser = users.find(u => (u.email === idValue || u.username === idValue) && u.password === pwdValue);
+            const cleanId = idValue.toLowerCase();
+            const foundUser = users.find(u => 
+                ((u.email || '').trim().toLowerCase() === cleanId || (u.username || '').trim().toLowerCase() === cleanId) && 
+                (u.password || '').trim() === pwdValue
+            );
 
             if (!foundUser) {
                 alert("Access Denied: Invalid credentials or account does not exist. Please enroll first.");

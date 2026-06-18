@@ -81,11 +81,11 @@ def api_register():
     if not data:
         return jsonify({'success': False, 'message': 'No data provided'}), 400
         
-    username = data.get('username')
-    email = data.get('email')
-    password = data.get('password')
-    grade = data.get('grade')
-    dept = data.get('dept')
+    username = data.get('username', '').strip()
+    email = data.get('email', '').strip().lower()
+    password = data.get('password', '').strip()
+    grade = data.get('grade', '').strip()
+    dept = data.get('dept', '').strip()
     
     if not all([username, email, password, grade, dept]):
         return jsonify({'success': False, 'message': 'All fields are required'}), 400
@@ -119,8 +119,8 @@ def api_login():
     if not data:
         return jsonify({'success': False, 'message': 'No credentials provided'}), 400
         
-    email = data.get('email')
-    password = data.get('password')
+    email = data.get('email', '').strip()
+    password = data.get('password', '').strip()
     
     if not email or not password:
         return jsonify({'success': False, 'message': 'Email and password are required'}), 400
@@ -129,7 +129,7 @@ def api_login():
     
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('SELECT username, email, grade, dept FROM users WHERE (email = ? OR username = ?) AND password = ?', (email, email, hashed))
+    cursor.execute('SELECT username, email, grade, dept FROM users WHERE (LOWER(email) = ? OR LOWER(username) = ?) AND password = ?', (email.lower(), email.lower(), hashed))
     user = cursor.fetchone()
     conn.close()
     
