@@ -72,6 +72,9 @@ def add_cors_headers(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
     response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '-1'
     return response
 
 DATABASE = 'students.db'
@@ -190,6 +193,8 @@ def api_register():
     grade = data.get('grade', '').strip()
     dept = data.get('dept', '').strip()
     otp_provided = data.get('otp', '').strip()
+    
+    print(f"DEBUG api_register: username={repr(username)}, email={repr(email)}, password={repr(password)}, grade={repr(grade)}, dept={repr(dept)}, otp={repr(otp_provided)}")
     
     if not all([username, email, password, grade, dept, otp_provided]):
         return jsonify({'success': False, 'message': 'All fields and verification code are required'}), 400
