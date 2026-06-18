@@ -99,6 +99,9 @@
                         <option value="finops">FinOps Cloud Cost Analyst</option>
                         <option value="ai-grc">AI Governance & GRC Specialist</option>
                     </optgroup>
+                    <optgroup label="Public Sector & Academics">
+                        <option value="government-exams">Government Exams & PSUs (ISRO, BARC, NIC, GATE)</option>
+                    </optgroup>
                 </select>
             </div>
 
@@ -5150,6 +5153,19 @@
             "Assess AI models for compliance with security policies, data privacy (GDPR/CCPA), and bias risks",
             "Establish governance frameworks that mandate algorithmic transparency and impact assessments",
             "Train development teams on responsible AI practices and risk management policies"
+        ]
+    },
+    "government-exams": {
+        "type": "technical",
+        "desc": "Technical recruitment pathways and competitive examinations for public sector undertakings (PSUs), research laboratories (ISRO, BARC), and national informatics services (NIC).",
+        "prereqs": [
+            "Strong foundation in core Computer Science subjects (DSA, OS, CN, DBMS, TOC, Compiler Design)",
+            "Basic mathematical aptitude (Discrete Mathematics, Linear Algebra, Calculus, Probability)"
+        ],
+        "guidelines": [
+            "Solve previous years' question papers for GATE, ISRO Scientist, and NIC Scientist exams",
+            "Focus on depth of core subjects: learn theoretical concepts, proofs, and mathematical models",
+            "Practice online test series to improve time management and accuracy under pressure"
         ]
     }
 };
@@ -10861,6 +10877,97 @@
                 "hint": "Design standardized 'Golden Paths' documentation, organize weekly peer review groups, automate validation scripts, and provide sandbox sandbox test setups."
             }
         ]
+    },
+    "government-exams": {
+        "salary": {
+            "entry": "₹10 - 15 LPA",
+            "mid": "₹18 - 30 LPA",
+            "senior": "₹35 - 60 LPA"
+        },
+        "companies": [
+            {
+                "name": "ISRO",
+                "logo": "🚀",
+                "desc": "Indian Space Research Organisation. Hires Scientist/Engineer 'SC' positions in Computer Science through centralized recruitment exams."
+            },
+            {
+                "name": "BARC",
+                "logo": "🔬",
+                "desc": "Bhabha Atomic Research Centre. Hires Scientific Officers in Computer Science through direct exams or GATE scorecard cutoffs."
+            },
+            {
+                "name": "NIC",
+                "logo": "🌐",
+                "desc": "National Informatics Centre. Recruits Scientist 'B', Scientific Officer, and Technical Assistant positions to design government digital networks."
+            },
+            {
+                "name": "PSU Gateway",
+                "logo": "⚡",
+                "desc": "Public Sector Undertakings (ONGC, IOCL, NTPC, HPCL, POSOCO). Hire Computer Science graduates directly via GATE exam rankings."
+            }
+        ],
+        "easy": [
+            [
+                "Explain the difference between IPv4 and IPv6 address spaces in Computer Networks.",
+                "IPv4 uses 32-bit addresses (4.3 billion addresses), while IPv6 uses 128-bit addresses, offering a virtually inexhaustible address space."
+            ],
+            [
+                "Define regular languages and context-free languages in Theory of Computation.",
+                "Regular languages can be recognized by Finite Automata and written as Regular Expressions. Context-free languages are recognized by Pushdown Automata and defined by Context-Free Grammars."
+            ]
+        ],
+        "medium": [
+            [
+                "Explain the Banker's Algorithm in Operating Systems.",
+                "The Banker's Algorithm is a resource allocation and deadlock avoidance algorithm that tests for safety by simulating the allocation of predetermined maximum possible amounts of resources."
+            ],
+            [
+                "What are ACID properties in database transaction management?",
+                "ACID stands for Atomicity (all or nothing), Consistency (preserves state constraints), Isolation (concurrency control), and Durability (permanent persistence)."
+            ]
+        ],
+        "hard": [
+            [
+                "Explain how compiler optimization resolves register allocation using graph coloring.",
+                "Register allocation is modeled as a graph coloring problem on an interference graph where nodes are variables, edges represent concurrent live ranges, and colors represent physical registers."
+            ],
+            [
+                "Analyze the worst-case time complexity of quicksort and how to optimize it to avoid O(n^2).",
+                "Quicksort worst-case is O(n^2) when elements are already sorted or identical. Optimization includes randomized pivot selection (Randomized Quicksort) or using the median-of-three rule to guarantee balanced partitions."
+            ]
+        ],
+        "questions": [
+            {
+                "level": "easy",
+                "text": "Explain the difference between IPv4 and IPv6 address spaces in Computer Networks.",
+                "hint": "IPv4 uses 32-bit addresses (4.3 billion addresses), while IPv6 uses 128-bit addresses, offering a virtually inexhaustible address space."
+            },
+            {
+                "level": "easy",
+                "text": "Define regular languages and context-free languages in Theory of Computation.",
+                "hint": "Regular languages can be recognized by Finite Automata and written as Regular Expressions. Context-free languages are recognized by Pushdown Automata and defined by Context-Free Grammars."
+            },
+            {
+                "level": "medium",
+                "text": "Explain the Banker's Algorithm in Operating Systems.",
+                "hint": "The Banker's Algorithm is a resource allocation and deadlock avoidance algorithm that tests for safety by simulating allocation."
+            },
+            {
+                "level": "medium",
+                "text": "What are ACID properties in database transaction management?",
+                "hint": "ACID stands for Atomicity (all or nothing), Consistency (preserves state constraints), Isolation (concurrency control), and Durability."
+            },
+            {
+                "level": "hard",
+                "text": "Explain how compiler optimization resolves register allocation using graph coloring.",
+                "hint": "Register allocation is modeled as a graph coloring problem on an interference graph where nodes are variables."
+            },
+            {
+                "level": "hard",
+                "text": "Analyze the worst-case time complexity of quicksort and how to optimize it to avoid O(n^2).",
+                "hint": "Optimization includes randomized pivot selection or using the median-of-three rule to guarantee balanced partitions."
+            }
+        ]
     }
 };
             // ==========================================
@@ -11066,6 +11173,9 @@
                 ],
                 'ai-grc': [
                     'cybersecurity-web-security', 'generative-ai-llms', 'recommended-learning-platforms'
+                ],
+                'government-exams': [
+                    'academic-mathematics', 'computer-science-foundations', 'software-engineering-practices', 'database-systems', 'recommended-learning-platforms', 'practice-platforms'
                 ]
             };
 
@@ -12288,6 +12398,38 @@
                 "duration": "3 Months",
                 "type": "Remote",
                 "link": "https://www.cry.org/"
+            }
+        ]
+    },
+    "government-exams": {
+        "title": "Government Exams & PSUs",
+        "featured": [
+            {
+                "role": "Scientific Officer 'C' Trainee",
+                "company": "Bhabha Atomic Research Centre (BARC)",
+                "stipend": "Paid (₹55,000/month training stipend)",
+                "stipendType": "paid",
+                "duration": "1 Year Training",
+                "type": "On-Site (Mumbai)",
+                "link": "https://www.barcocesexam.in/"
+            },
+            {
+                "role": "Scientist/Engineer 'SC' Trainee",
+                "company": "Indian Space Research Organisation (ISRO)",
+                "stipend": "Paid (₹56,100/month basic pay + allowances)",
+                "stipendType": "paid",
+                "duration": "Permanent Group A",
+                "type": "On-Site (Bangalore/Various)",
+                "link": "https://www.isro.gov.in/Careers.html"
+            },
+            {
+                "role": "Scientist 'B' Technical Officer",
+                "company": "National Informatics Centre (NIC)",
+                "stipend": "Paid (Level 10 Pay Matrix ₹56,100 - 1,77,500)",
+                "stipendType": "paid",
+                "duration": "Permanent Group A Gazetted",
+                "type": "On-Site (Delhi/State Centers)",
+                "link": "https://www.calicut.nielit.in/nic2023/"
             }
         ]
     }
