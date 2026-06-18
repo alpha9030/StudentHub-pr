@@ -12642,6 +12642,10 @@ function applyFilters() {
             // ==========================================
             const refCards = document.querySelectorAll('.ref-link-card');
             refCards.forEach(card => {
+                if (card.closest('#links')) {
+                    // Do not intercept click for cards in the Links section; let them open directly
+                    return;
+                }
                 card.addEventListener('click', function(e) {
                     e.preventDefault();
                     const url = card.getAttribute('href');
