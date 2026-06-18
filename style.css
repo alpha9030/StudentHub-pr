@@ -1107,10 +1107,82 @@ input[type="submit"]:hover, .btn-submit:hover {
 .modal-body li { margin-bottom: 8px; }
 
 /* Modals Checklist Checkboxes */
-.modal-checkpoint-list { list-style-type: none; padding-left: 0 !important; }
-.modal-checkpoint-list li { margin-bottom: 10px; }
-.modal-checkpoint-list input[type="checkbox"] { vertical-align: middle; margin-right: 8px; }
-.modal-checkpoint-list label { display: inline-block; vertical-align: middle; margin-top: 0; font-weight: normal; }
+.modal-checkpoint-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-left: 0 !important;
+    margin: 12px 0 20px 0 !important;
+    list-style: none !important;
+}
+.modal-checkpoint-list li {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.modal-checkpoint-list li label {
+    display: flex;
+    align-items: center;
+    padding: 10px 14px;
+    border-radius: 8px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 13.5px;
+    line-height: 1.4;
+    user-select: none;
+    box-sizing: border-box;
+    width: 100%;
+}
+.modal-checkpoint-list li label:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+.modal-checkpoint-list li label input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+    outline: none;
+    transition: all 0.15s ease;
+    position: relative;
+    background-color: var(--bg-container);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+.modal-checkpoint-list li label input[type="checkbox"]:checked {
+    background-color: #2e7d32;
+    border-color: #2e7d32;
+}
+.modal-checkpoint-list li label input[type="checkbox"]::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translate(-0.5px, -0.5px);
+    opacity: 0;
+    transition: all 0.1s ease;
+}
+.modal-checkpoint-list li label input[type="checkbox"]:checked::after {
+    opacity: 1;
+}
+.modal-checkpoint-list li label input[type="checkbox"]:active {
+    transform: scale(0.85);
+}
+.modal-checkpoint-list li label:has(input[type="checkbox"]:checked) {
+    border-color: rgba(46, 125, 50, 0.3);
+    background-color: rgba(46, 125, 50, 0.03);
+}
 
 /* Modal Roadmap link sub-boxes */
 .modal-roadmap-quote {

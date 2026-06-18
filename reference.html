@@ -4512,8 +4512,10 @@
                 <ul class="modal-checkpoint-list">
                     ${data.checkpoints.map((cp, idx) => `
                         <li>
-                            <input type="checkbox" id="modal-cp-${idx}">
-                            <label for="modal-cp-${idx}"><strong>Checkpoint ${idx + 1}:</strong> ${cp}</label>
+                            <label>
+                                <input type="checkbox" class="modal-check-item" data-index="${idx}">
+                                <span><strong>Checkpoint ${idx + 1}:</strong> ${cp}</span>
+                            </label>
                         </li>
                     `).join('')}
                 </ul>
@@ -4584,6 +4586,36 @@
                     `).join('')}
                 </ul>
             `;
+
+            // Restore checked states & bind event listeners for persistence
+            const modalCheckboxes = tabCheckpoints.querySelectorAll('.modal-check-item');
+            const localSubjects = ['c', 'python', 'html', 'css', 'javascript', 'java', 'sql', 'dbms', 'os', 'cn', 'react', 'postgresql', 'dsa'];
+            
+            modalCheckboxes.forEach((cb) => {
+                const idx = parseInt(cb.getAttribute('data-index'));
+                let storageKey;
+                if (matchedDbKey && localSubjects.includes(matchedDbKey)) {
+                    storageKey = `${matchedDbKey}-task-${idx + 1}`;
+                } else {
+                    storageKey = `ref-task-${matchedDbKey || 'fallback'}-${idx + 1}`;
+                }
+                
+                if (localStorage.getItem(storageKey) === 'true') {
+                    cb.checked = true;
+                }
+                
+                cb.addEventListener('change', function() {
+                    localStorage.setItem(storageKey, cb.checked ? 'true' : 'false');
+                    // Sync to backend if function exists
+                    if (window.syncProgressToBackend) {
+                        window.syncProgressToBackend(storageKey, cb.checked);
+                    }
+                    // Trigger homepage progress sync
+                    if (window.updateHomepageProgress) {
+                        window.updateHomepageProgress();
+                    }
+                });
+            });
         }
 
         function generateFallbackData(subjectName, directUrl) {

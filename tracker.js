@@ -444,7 +444,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const subjects = [
             { id: "c", name: "C Programming", totalTasks: 4 },
             { id: "python", name: "Python", totalTasks: 4 },
-            { id: "html", name: "HTML", totalTasks: 6 },
+            { id: "html", name: "HTML", totalTasks: 5 },
             { id: "css", name: "CSS", totalTasks: 4 },
             { id: "javascript", name: "JavaScript", totalTasks: 4 },
             { id: "java", name: "Java", totalTasks: 4 },
