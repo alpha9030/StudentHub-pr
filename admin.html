@@ -154,6 +154,46 @@
 
     <script src="tracker.js?v=1.0.3"></script>
     <script>
+        // Initialize mock data for testing offline/local storage if empty
+        (function initMockData() {
+            const users = localStorage.getItem('registeredUsers');
+            const deleted = localStorage.getItem('deletedUsers');
+            
+            if (!users) {
+                const mockUsers = [
+                    {
+                        username: "Alex Carter",
+                        email: "alex.carter@university.edu",
+                        dept: "cse",
+                        grade: "freshman",
+                        password: "password123",
+                        progress: ["c-task-1", "c-task-2", "c-task-3"]
+                    },
+                    {
+                        username: "Emma Watson",
+                        email: "emma.watson@university.edu",
+                        dept: "ece",
+                        grade: "junior",
+                        password: "password123",
+                        progress: ["java-task-1", "java-task-2"]
+                    }
+                ];
+                localStorage.setItem('registeredUsers', JSON.stringify(mockUsers));
+            }
+            
+            if (!deleted) {
+                const mockDeleted = [
+                    {
+                        username: "Sarah Jenkins (Demo)",
+                        email: "sarah.j@university.edu",
+                        dept: "it",
+                        grade: "sophomore"
+                    }
+                ];
+                localStorage.setItem('deletedUsers', JSON.stringify(mockDeleted));
+            }
+        })();
+
         let adminKey = sessionStorage.getItem('adminKey') || '';
 
         if (adminKey) {
