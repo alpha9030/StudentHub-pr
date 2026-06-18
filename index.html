@@ -726,6 +726,11 @@
                 return false;
             }
 
+            const confirmProceed = confirm("Please double-check and confirm that your email address is correct:\n\n" + emailValue + "\n\nClick OK to create your account.");
+            if (!confirmProceed) {
+                return false;
+            }
+
             const isBackendAvailable = window.location.protocol.startsWith('http');
             if (isBackendAvailable) {
                 try {
