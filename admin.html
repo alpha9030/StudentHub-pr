@@ -193,23 +193,55 @@
         }
 
         async function fetchUsers(key) {
-            try {
-                const apiBase = window.location.protocol.startsWith('http') ? '' : 'https://studenhub.pr';
-                const response = await fetch(`${apiBase}/api/admin/users`, {
-                    headers: { 'X-Admin-Key': key }
+            const isBackendAvailable = window.location.protocol.startsWith('http');
+            if (isBackendAvailable) {
+                try {
+                    const apiBase = window.location.protocol.startsWith('http') ? '' : 'https://studenhub.pr';
+                    const response = await fetch(`${apiBase}/api/admin/users`, {
+                        headers: { 'X-Admin-Key': key }
+                    });
+                    const data = await response.json().catch(() => ({}));
+                    if (response.status === 503) {
+                        console.warn("Backend admin panel disabled, falling back to local storage:", data.message);
+                    } else if (response.ok && data.success) {
+                        renderUsersTable(data.users);
+                        return true;
+                    }
+                } catch (e) {
+                    console.warn("Admin fetch failed, trying local storage fallback:", e);
+                }
+            }
+
+            // Fallback to local storage (either offline or backend admin disabled)
+            if (key === 'admin' || key === 'admin123') {
+                const localUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                const localDeleted = JSON.parse(localStorage.getItem('deletedUsers') || '[]');
+                
+                const formattedUsers = [];
+                localUsers.forEach(u => {
+                    formattedUsers.push({
+                        username: u.username,
+                        email: u.email,
+                        dept: u.dept || 'cse',
+                        grade: u.grade || 'freshman',
+                        progress_count: u.progress ? u.progress.length : 0,
+                        status: 'active'
+                    });
                 });
-                const data = await response.json().catch(() => ({}));
-                if (response.status === 503) {
-                    alert(data.message || "Admin panel is currently disabled.");
-                    return false;
-                }
-                if (!response.ok) return false;
-                if (data.success) {
-                    renderUsersTable(data.users);
-                    return true;
-                }
-            } catch (e) {
-                console.error("Admin fetch failed:", e);
+                
+                localDeleted.forEach(d => {
+                    formattedUsers.push({
+                        username: d.username,
+                        email: d.email,
+                        dept: d.dept || 'cse',
+                        grade: d.grade || 'freshman',
+                        progress_count: 0,
+                        status: 'deleted'
+                    });
+                });
+                
+                renderUsersTable(formattedUsers);
+                return true;
             }
             return false;
         }
@@ -226,20 +258,34 @@
             }
 
             let totalProgress = 0;
+            let totalActiveCount = 0;
             users.forEach(u => {
                 totalProgress += u.progress_count;
+                const isDeleted = u.status === 'deleted';
+                if (!isDeleted) {
+                    totalActiveCount++;
+                }
                 const tr = document.createElement('tr');
+                if (isDeleted) {
+                    tr.style.opacity = '0.75';
+                    tr.style.backgroundColor = 'rgba(239, 68, 68, 0.05)';
+                }
+                
+                const badgeHTML = isDeleted 
+                    ? `<span class="badge" style="background: #ef4444; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600;">Account Deleted</span>`
+                    : `<span class="badge" style="background: var(--primary-color); color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600;">${u.progress_count}</span>`;
+
                 tr.innerHTML = `
-                    <td><strong>${escapeHTML(u.username)}</strong></td>
+                    <td><strong>${escapeHTML(u.username)}</strong> ${isDeleted ? '<small style="color: #ef4444; font-weight: bold; margin-left: 5px;">(Deleted)</small>' : ''}</td>
                     <td>${escapeHTML(u.email)}</td>
                     <td>${escapeHTML(u.dept.toUpperCase())}</td>
                     <td>${escapeHTML(u.grade.charAt(0).toUpperCase() + u.grade.slice(1))}</td>
-                    <td style="text-align: center;"><span class="badge" style="background: var(--primary-color); color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600;">${u.progress_count}</span></td>
+                    <td style="text-align: center;">${badgeHTML}</td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            document.getElementById('stat-total-students').innerText = users.length;
+            document.getElementById('stat-total-students').innerText = totalActiveCount;
             document.getElementById('stat-active-progress').innerText = totalProgress;
         }
 

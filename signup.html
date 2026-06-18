@@ -89,47 +89,178 @@
 
         <!-- Standard Signup Form -->
         <div id="signup-form-container">
-            <h2>Student Enrollment Registry</h2>
-            <p>Create a secure profile to track your subject objectives and coursework goals.</p>
+            <h2>Enrollment Terminal</h2>
+            <p>Verify your scholastic credentials or create a new student log profile to begin tracking.</p>
+            
+            <div class="auth-tabs-row">
+                <button onclick="switchAuthTab('login')" id="btn-tab-login" class="btn btn-secondary auth-tab-button" style="border-radius: 4px 0 0 4px;">Student Sign In</button>
+                <button onclick="switchAuthTab('reg')" id="btn-tab-reg" class="btn btn-primary auth-tab-button" style="border-radius: 0 4px 4px 0;">Create Account</button>
+            </div>
 
-            <form onsubmit="return handleSignup(event)" autocomplete="off">
-            <label for="username">Scholar Name / Identity:</label>
-            <input type="text" id="username" placeholder="Enter your full name or ID" autocomplete="off" required>
+            <!-- Sign In Form -->
+            <form id="form-login" onsubmit="return doLogin(event)" style="display: none;" autocomplete="off">
+                <label for="login-id">Academic Identity (Email/ID):</label>
+                <input type="text" id="login-id" placeholder="Enter your academic email address" autocomplete="username" required>
 
-            <label for="email">Academic Email Address:</label>
-            <input type="email" id="email" placeholder="Enter your student email" autocomplete="off" required>
+                <label for="login-pwd">Access Key (Password):</label>
+                <input type="password" id="login-pwd" placeholder="Enter your password" autocomplete="current-password" required>
 
-            <label for="password">Profile Security Password:</label>
-            <input type="password" id="password" placeholder="Create a secure access code" autocomplete="new-password" required>
-            <small class="form-helper" style="display: block; margin-top: 4px; color: #888; font-size: 0.85em; margin-bottom: 12px;">Password must be at least 8 characters, containing letters, numbers, and special symbols.</small>
+                <input type="submit" value="Verify Identity & Enter Workspace">
+            </form>
 
-            <label for="dept">Department / Specialization:</label>
-            <select id="dept">
-                <option value="" disabled selected>-- Select your department --</option>
-                <option value="cse">Computer Science & Engineering (CSE)</option>
-                <option value="it">Information Technology (IT)</option>
-                <option value="ece">Electronics & Communication Engineering (ECE)</option>
-                <option value="eee">Electrical & Electronics Engineering (EEE)</option>
-                <option value="me">Mechanical Engineering (ME)</option>
-                <option value="ce">Civil Engineering (CE)</option>
-                <option value="bca">Bachelor of Computer Applications (BCA)</option>
-            </select>
+            <!-- Register Form -->
+            <form id="form-reg" onsubmit="return handleSignup(event)" autocomplete="off">
+                <label for="username">Scholar Name / Identity:</label>
+                <input type="text" id="username" placeholder="Enter your full name or ID" autocomplete="off" required>
 
-            <label for="grade-level">Academic Class Standing:</label>
-            <select id="grade-level">
-                <option value="" disabled selected>-- Select your academic year --</option>
-                <option value="freshman">1st Year</option>
-                <option value="sophomore">2nd Year</option>
-                <option value="junior">3rd Year</option>
-                <option value="senior">4th Year</option>
-            </select>
+                <label for="email">Academic Email Address:</label>
+                <input type="email" id="email" placeholder="Enter your student email" autocomplete="off" required>
 
-            <input type="submit" value="Enroll Identity & Enter Workspace">
-        </form>
+                <label for="password">Profile Security Password:</label>
+                <input type="password" id="password" placeholder="Create a secure access code" autocomplete="new-password" required>
+                <small class="form-helper" style="display: block; margin-top: 4px; color: #888; font-size: 0.85em; margin-bottom: 12px;">Password must be at least 8 characters, containing letters, numbers, and special symbols.</small>
+
+                <label for="dept">Department / Specialization:</label>
+                <select id="dept">
+                    <option value="" disabled selected>-- Select your department --</option>
+                    <option value="cse">Computer Science & Engineering (CSE)</option>
+                    <option value="it">Information Technology (IT)</option>
+                    <option value="ece">Electronics & Communication Engineering (ECE)</option>
+                    <option value="eee">Electrical & Electronics Engineering (EEE)</option>
+                    <option value="me">Mechanical Engineering (ME)</option>
+                    <option value="ce">Civil Engineering (CE)</option>
+                    <option value="bca">Bachelor of Computer Applications (BCA)</option>
+                </select>
+
+                <label for="grade-level">Academic Class Standing:</label>
+                <select id="grade-level">
+                    <option value="" disabled selected>-- Select your academic year --</option>
+                    <option value="freshman">1st Year</option>
+                    <option value="sophomore">2nd Year</option>
+                    <option value="junior">3rd Year</option>
+                    <option value="senior">4th Year</option>
+                </select>
+
+                <input type="submit" value="Enroll Identity & Enter Workspace">
+            </form>
         </div>
     </div>
     <script src="tracker.js?v=1.0.3"></script>
     <script>
+        function switchAuthTab(tabName) {
+            const btnLogin = document.getElementById('btn-tab-login');
+            const btnReg = document.getElementById('btn-tab-reg');
+            const formLogin = document.getElementById('form-login');
+            const formReg = document.getElementById('form-reg');
+
+            if (tabName === 'login') {
+                btnLogin.className = "btn btn-primary";
+                btnReg.className = "btn btn-secondary";
+                formLogin.style.display = "block";
+                formReg.style.display = "none";
+            } else {
+                btnLogin.className = "btn btn-secondary";
+                btnReg.className = "btn btn-primary";
+                formLogin.style.display = "none";
+                formReg.style.display = "block";
+            }
+        }
+
+        async function doLogin(event) {
+            if (event) event.preventDefault();
+            const idValue = document.getElementById('login-id').value || '';
+            const pwdValue = document.getElementById('login-pwd').value || '';
+
+            const isBackendAvailable = window.location.protocol.startsWith('http');
+            if (isBackendAvailable) {
+                try {
+                    const apiBase = window.location.protocol.startsWith('http') ? '' : 'https://studenhub.pr';
+                    const response = await fetch(`${apiBase}/api/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: idValue, password: pwdValue })
+                    });
+                    const resData = await response.json();
+                    if (resData.success) {
+                        const foundUser = resData.user;
+                        localStorage.setItem('studentName', foundUser.username);
+                        localStorage.setItem('studentGrade', foundUser.grade);
+                        localStorage.setItem('studentDept', foundUser.dept);
+                        localStorage.setItem('studentEmail', foundUser.email);
+                        localStorage.setItem('isLoggedIn', 'true');
+
+                        // Load progress from backend
+                        try {
+                            const progResp = await fetch(`${apiBase}/api/progress?email=${encodeURIComponent(foundUser.email)}`);
+                            const progData = await progResp.json();
+                            if (progData.success) {
+                                // Clear old local task progress
+                                for (let i = 0; i < localStorage.length; i++) {
+                                    const key = localStorage.key(i);
+                                    if (key && key.includes('-task-')) {
+                                        localStorage.removeItem(key);
+                                        i--;
+                                    }
+                                }
+                                // Set new progress
+                                progData.progress.forEach(ch => {
+                                    localStorage.setItem(ch, 'true');
+                                });
+                            }
+                        } catch (e) {
+                            console.warn("Could not sync progress from backend:", e);
+                        }
+
+                        // Load chatbot settings from backend
+                        try {
+                            const chatResp = await fetch(`${apiBase}/api/chatbot?email=${encodeURIComponent(foundUser.email)}`);
+                            const chatData = await chatResp.json();
+                            if (chatData.success && chatData.settings) {
+                                localStorage.setItem('aura_mode', chatData.settings.aura_mode);
+                                localStorage.setItem('aura_api_key', chatData.settings.aura_api_key);
+                                localStorage.setItem('aura_user_name', chatData.settings.aura_user_name);
+                            }
+                        } catch (e) {
+                            console.warn("Could not sync chatbot settings:", e);
+                        }
+
+                        // Redirect back to index.html #dashboard
+                        window.location.href = 'index.html#dashboard';
+                        return false;
+                    } else {
+                        alert("Access Denied: " + (resData.message || "Invalid credentials."));
+                        return false;
+                    }
+                } catch (err) {
+                    console.warn("Backend login failed, falling back to local storage:", err);
+                }
+            }
+
+            const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+            const foundUser = users.find(u => (u.email === idValue || u.username === idValue) && u.password === pwdValue);
+
+            if (!foundUser) {
+                alert("Access Denied: Invalid credentials or account does not exist. Please enroll first.");
+                return false;
+            }
+
+            localStorage.setItem('studentName', foundUser.username);
+            localStorage.setItem('studentGrade', foundUser.grade);
+            localStorage.setItem('studentDept', foundUser.dept);
+            localStorage.setItem('studentEmail', foundUser.email);
+            localStorage.setItem('isLoggedIn', 'true');
+
+            // Restore progress for this user in localStorage
+            if (foundUser.progress) {
+                foundUser.progress.forEach(ch => {
+                    localStorage.setItem(ch, 'true');
+                });
+            }
+
+            // Redirect back to index.html #dashboard
+            window.location.href = 'index.html#dashboard';
+            return false;
+        }
         function validatePasswordStrength(password) {
             const minLength = 8;
             const hasLetter = /[a-zA-Z]/.test(password);
@@ -229,7 +360,8 @@
                 email: emailVal,
                 password: pwdVal,
                 grade: gradeVal,
-                dept: deptVal
+                dept: deptVal,
+                progress: []
             };
             users.push(newUser);
             localStorage.setItem('registeredUsers', JSON.stringify(users));
@@ -246,14 +378,34 @@
         }
 
         function doSignOut() {
+            // Save current progress offline to this user's profile in registeredUsers
+            const email = localStorage.getItem('studentEmail');
+            if (email) {
+                const users = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+                const uIdx = users.findIndex(u => u.email === email);
+                if (uIdx !== -1) {
+                    const progressKeys = [];
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key && key.includes('-task-') && localStorage.getItem(key) === 'true') {
+                            progressKeys.push(key);
+                        }
+                    }
+                    users[uIdx].progress = progressKeys;
+                    localStorage.setItem('registeredUsers', JSON.stringify(users));
+                }
+            }
+
             // Clear all student-specific data from localStorage (keep theme, font size, and user database)
             const theme = localStorage.getItem('siteTheme');
             const fontSize = localStorage.getItem('siteFontSize');
             const users = localStorage.getItem('registeredUsers');
+            const deleted = localStorage.getItem('deletedUsers');
             localStorage.clear();
             if (theme) localStorage.setItem('siteTheme', theme);
             if (fontSize) localStorage.setItem('siteFontSize', fontSize);
             if (users) localStorage.setItem('registeredUsers', users);
+            if (deleted) localStorage.setItem('deletedUsers', deleted);
             window.location.reload();
         }
 
@@ -276,19 +428,34 @@
                     }
                 }
 
-                // Clear active session from localStorage (keep theme and font preferences)
+                // Clear active session from localStorage (keep theme, font preferences, and deleted users)
                 const theme = localStorage.getItem('siteTheme');
                 const fontSize = localStorage.getItem('siteFontSize');
                 const usersJson = localStorage.getItem('registeredUsers');
+                const deletedJson = localStorage.getItem('deletedUsers');
                 
                 localStorage.clear();
                 
                 if (theme) localStorage.setItem('siteTheme', theme);
                 if (fontSize) localStorage.setItem('siteFontSize', fontSize);
+                if (deletedJson) localStorage.setItem('deletedUsers', deletedJson);
                 
-                // Remove this user from the registered users list
+                // Remove this user from the registered users list and add to deleted list
                 if (usersJson && currentEmail) {
                     let users = JSON.parse(usersJson);
+                    const userToDelete = users.find(u => u.email === currentEmail);
+                    if (userToDelete) {
+                        const deletedUsers = JSON.parse(localStorage.getItem('deletedUsers') || '[]');
+                        if (!deletedUsers.some(d => d.email === currentEmail)) {
+                            deletedUsers.push({
+                                username: userToDelete.username,
+                                email: userToDelete.email,
+                                grade: userToDelete.grade,
+                                dept: userToDelete.dept
+                            });
+                            localStorage.setItem('deletedUsers', JSON.stringify(deletedUsers));
+                        }
+                    }
                     users = users.filter(u => u.email !== currentEmail);
                     localStorage.setItem('registeredUsers', JSON.stringify(users));
                 }

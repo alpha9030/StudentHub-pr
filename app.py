@@ -51,6 +51,16 @@ def init_db():
             FOREIGN KEY (email) REFERENCES users (email) ON DELETE CASCADE
         )
     ''')
+    # Create deleted users table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS deleted_users (
+            email TEXT PRIMARY KEY,
+            username TEXT NOT NULL,
+            grade TEXT NOT NULL,
+            dept TEXT NOT NULL,
+            deleted_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
     conn.commit()
     conn.close()
 
@@ -237,6 +247,14 @@ def api_delete_account():
         
     conn = get_db()
     cursor = conn.cursor()
+    # Archive user details first
+    cursor.execute('SELECT username, grade, dept FROM users WHERE email = ?', (email,))
+    user = cursor.fetchone()
+    if user:
+        cursor.execute(
+            'INSERT OR REPLACE INTO deleted_users (email, username, grade, dept) VALUES (?, ?, ?, ?)',
+            (email, user['username'], user['grade'], user['dept'])
+        )
     # Delete user (foreign key cascades will delete progress and chatbot settings)
     cursor.execute('DELETE FROM users WHERE email = ?', (email,))
     cursor.execute('DELETE FROM progress WHERE email = ?', (email,))
@@ -265,6 +283,9 @@ def api_admin_users():
     cursor.execute('SELECT username, email, grade, dept FROM users')
     users = cursor.fetchall()
     
+    cursor.execute('SELECT username, email, grade, dept FROM deleted_users')
+    deleted_users = cursor.fetchall()
+    
     user_list = []
     for u in users:
         cursor.execute('SELECT COUNT(*) FROM progress WHERE email = ?', (u['email'],))
@@ -274,7 +295,18 @@ def api_admin_users():
             'email': u['email'],
             'grade': u['grade'],
             'dept': u['dept'],
-            'progress_count': prog_count
+            'progress_count': prog_count,
+            'status': 'active'
+        })
+        
+    for d in deleted_users:
+        user_list.append({
+            'username': d['username'],
+            'email': d['email'],
+            'grade': d['grade'],
+            'dept': d['dept'],
+            'progress_count': 0,
+            'status': 'deleted'
         })
     conn.close()
     return jsonify({'success': True, 'users': user_list})
