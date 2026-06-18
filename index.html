@@ -329,6 +329,9 @@
                     <label for="reg-email">University Email Address:</label>
                     <input type="email" id="reg-email" placeholder="e.g., student@university.edu" autocomplete="off" required>
 
+                    <label for="reg-confirm-email">Confirm Email Address:</label>
+                    <input type="email" id="reg-confirm-email" placeholder="Re-enter your email to confirm" autocomplete="off" required>
+
                     <label for="reg-pwd">Secret Access Key:</label>
                     <input type="password" id="reg-pwd" placeholder="Enter a secure password" autocomplete="new-password" required>
                     <small class="form-helper" style="display: block; margin-top: 4px; color: #888; font-size: 0.85em; margin-bottom: 12px;">Password must be at least 8 characters, containing letters, numbers, and special symbols.</small>
@@ -693,11 +696,11 @@
             return emailRegex.test(email.trim());
         }
 
-        // Handle simulated registration
         async function doRegister(event) {
             if (event) event.preventDefault();
             const userValue = document.getElementById('reg-username').value || 'Scholar';
             const emailValue = (document.getElementById('reg-email').value || '').trim();
+            const confirmEmailValue = (document.getElementById('reg-confirm-email').value || '').trim();
             const gradeValue = document.getElementById('reg-grade').value || '';
             const deptValue = document.getElementById('reg-dept').value || '';
             const pwdValue = document.getElementById('reg-pwd').value || '';
@@ -708,13 +711,18 @@
                 return false;
             }
 
-            if (!gradeValue || !deptValue || !emailValue) {
+            if (!gradeValue || !deptValue || !emailValue || !confirmEmailValue) {
                 alert("Please complete all registration fields.");
                 return false;
             }
 
             if (!validateEmail(emailValue)) {
                 alert("Invalid Email: Please enter a valid email address (e.g., student@university.edu).");
+                return false;
+            }
+
+            if (emailValue.toLowerCase() !== confirmEmailValue.toLowerCase()) {
+                alert("Email Confirmation Failed: The email addresses do not match. Please verify them.");
                 return false;
             }
 

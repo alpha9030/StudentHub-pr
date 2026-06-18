@@ -116,6 +116,9 @@
                 <label for="email">Academic Email Address:</label>
                 <input type="email" id="email" placeholder="Enter your student email" autocomplete="off" required>
 
+                <label for="confirm-email">Confirm Email Address:</label>
+                <input type="email" id="confirm-email" placeholder="Re-enter your student email to confirm" autocomplete="off" required>
+
                 <label for="password">Profile Security Password:</label>
                 <input type="password" id="password" placeholder="Create a secure access code" autocomplete="new-password" required>
                 <small class="form-helper" style="display: block; margin-top: 4px; color: #888; font-size: 0.85em; margin-bottom: 12px;">Password must be at least 8 characters, containing letters, numbers, and special symbols.</small>
@@ -297,6 +300,7 @@
             if (event) event.preventDefault();
             const usernameVal = document.getElementById('username').value || 'Scholar';
             const emailVal = (document.getElementById('email').value || '').trim();
+            const confirmEmailVal = (document.getElementById('confirm-email').value || '').trim();
             const gradeVal = document.getElementById('grade-level').value || 'freshman';
             const deptVal = document.getElementById('dept').value || 'cse';
             const pwdVal = document.getElementById('password').value || '';
@@ -307,13 +311,18 @@
                 return false;
             }
             
-            if (!gradeVal || !deptVal || !emailVal) {
+            if (!gradeVal || !deptVal || !emailVal || !confirmEmailVal) {
                 alert("Please complete all registration fields.");
                 return false;
             }
 
             if (!validateEmail(emailVal)) {
                 alert("Invalid Email: Please enter a valid email address (e.g., student@university.edu).");
+                return false;
+            }
+
+            if (emailVal.toLowerCase() !== confirmEmailVal.toLowerCase()) {
+                alert("Email Confirmation Failed: The email addresses do not match. Please verify them.");
                 return false;
             }
 
