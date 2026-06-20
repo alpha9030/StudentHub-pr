@@ -757,6 +757,42 @@ def get_all_users_for_admin():
         conn.close()
         return user_list
 
+def update_user_profile(email, dept, grade):
+    email = email.strip().lower()
+    if SUPABASE_URL and SUPABASE_KEY:
+        try:
+            url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/users"
+            headers = {
+                "apikey": SUPABASE_KEY,
+                "Authorization": f"Bearer {SUPABASE_KEY}",
+                "Content-Type": "application/json"
+            }
+            params = {"email": f"eq.{email}"}
+            payload = {
+                "dept": dept,
+                "grade": grade
+            }
+            response = requests.patch(url, headers=headers, params=params, json=payload, timeout=10)
+            return response.status_code in (200, 204)
+        except Exception as e:
+            print(f"Supabase update_user_profile error: {e}")
+            return False
+    else:
+        conn = get_db()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                'UPDATE users SET dept = ?, grade = ? WHERE LOWER(email) = ?',
+                (dept, grade, email)
+            )
+            conn.commit()
+            return True
+        except sqlite3.Error as e:
+            print(f"SQLite update_user_profile error: {e}")
+            return False
+        finally:
+            conn.close()
+
 @app.route('/')
 def serve_index():
     return send_from_directory('.', 'index.html')
@@ -1009,6 +1045,26 @@ def api_admin_users():
     
     user_list = get_all_users_for_admin()
     return jsonify({'success': True, 'users': user_list})
+
+@app.route('/api/update-profile', methods=['POST', 'OPTIONS'])
+def api_update_profile():
+    if request.method == 'OPTIONS':
+        return '', 204
+    data = request.get_json()
+    if not data:
+        return jsonify({'success': False, 'message': 'No data provided'}), 400
+    email = data.get('email', '').strip().lower()
+    dept = data.get('dept', '').strip()
+    grade = data.get('grade', '').strip()
+    
+    if not all([email, dept, grade]):
+        return jsonify({'success': False, 'message': 'Email, department, and year are required'}), 400
+        
+    success = update_user_profile(email, dept, grade)
+    if success:
+        return jsonify({'success': True, 'message': 'Profile updated successfully'})
+    else:
+        return jsonify({'success': False, 'message': 'Failed to update profile'}), 500
 
 # Catch-all to serve any static asset (js, css, images)
 @app.route('/<path:path>')

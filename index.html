@@ -1534,6 +1534,26 @@
                     users[uIdx].grade = grade;
                     localStorage.setItem('registeredUsers', JSON.stringify(users));
                 }
+
+                // Sync with backend database (SQLite / Supabase)
+                const isBackendAvailable = window.location.protocol.startsWith('http');
+                if (isBackendAvailable) {
+                    const apiBase = window.location.protocol.startsWith('http') ? '' : 'https://studenhub.pr';
+                    fetch(`${apiBase}/api/update-profile`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email, dept: dept, grade: grade })
+                    })
+                    .then(res => res.json())
+                    .then(resData => {
+                        if (!resData.success) {
+                            console.warn("Backend profile update failed:", resData.message);
+                        }
+                    })
+                    .catch(err => {
+                        console.warn("Error updating profile on backend:", err);
+                    });
+                }
             }
 
             updateUserSession();
