@@ -123,6 +123,27 @@
                 <input type="password" id="password" placeholder="Create a secure access code" autocomplete="new-password" required>
                 <small class="form-helper" style="display: block; margin-top: 4px; color: #888; font-size: 0.85em; margin-bottom: 12px;">Password must be at least 8 characters, containing letters, numbers, and special symbols.</small>
 
+                <label for="reg-dept">Academic Department:</label>
+                <select id="reg-dept" required>
+                    <option value="" disabled selected>-- Choose your department --</option>
+                    <option value="cse">Computer Science & Engineering (CSE)</option>
+                    <option value="it">Information Technology (IT)</option>
+                    <option value="ece">Electronics & Communication Engineering (ECE)</option>
+                    <option value="eee">Electrical & Electronics Engineering (EEE)</option>
+                    <option value="me">Mechanical Engineering (ME)</option>
+                    <option value="ce">Civil Engineering (CE)</option>
+                    <option value="bca">Bachelor of Computer Applications (BCA)</option>
+                </select>
+
+                <label for="reg-grade">Academic Year Standing:</label>
+                <select id="reg-grade" required>
+                    <option value="" disabled selected>-- Choose your year --</option>
+                    <option value="freshman">1st Year (Freshman)</option>
+                    <option value="sophomore">2nd Year (Sophomore)</option>
+                    <option value="junior">3rd Year (Junior)</option>
+                    <option value="senior">4th Year (Senior)</option>
+                </select>
+
                 <input type="submit" value="Enroll Identity & Enter Workspace">
             </form>
             
@@ -296,8 +317,8 @@
             const usernameVal = document.getElementById('username').value || 'Scholar';
             const emailVal = (document.getElementById('email').value || '').trim();
             const confirmEmailVal = (document.getElementById('confirm-email').value || '').trim();
-            const gradeVal = 'freshman';
-            const deptVal = 'cse';
+            const gradeVal = document.getElementById('reg-grade').value;
+            const deptVal = document.getElementById('reg-dept').value;
             const pwdVal = document.getElementById('password').value || '';
             
             const pwdError = validatePasswordStrength(pwdVal);
@@ -546,7 +567,7 @@
                 else if (savedDept === "me") deptText = "Mechanical Engineering (ME)";
                 else if (savedDept === "ce") deptText = "Civil Engineering (CE)";
                 else if (savedDept === "bca") deptText = "Bachelor of Computer Applications (BCA)";
-                else deptText = savedDept || "Unspecified";
+                else deptText = (savedDept && savedDept !== 'unspecified') ? savedDept : "Unspecified";
 
                 document.getElementById('profile-dept').innerText = deptText;
 
@@ -555,7 +576,7 @@
                 else if (savedGrade === "sophomore") gradeText = "2nd Year";
                 else if (savedGrade === "junior") gradeText = "3rd Year";
                 else if (savedGrade === "senior") gradeText = "4th Year";
-                else gradeText = savedGrade || "Unspecified";
+                else gradeText = (savedGrade && savedGrade !== 'unspecified') ? savedGrade : "Unspecified";
 
                 document.getElementById('profile-grade').innerText = gradeText;
             } else {
@@ -640,8 +661,8 @@
                     username: name,
                     email: cleanEmail,
                     password: "google_oauth_placeholder",
-                    grade: "freshman",
-                    dept: "cse",
+                    grade: "unspecified",
+                    dept: "unspecified",
                     progress: []
                 };
                 users.push(foundUser);

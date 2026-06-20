@@ -4,9 +4,26 @@ import hashlib
 import re
 import random
 import smtplib
+import requests
+import json
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from flask import Flask, request, jsonify, send_from_directory
+
+def get_config():
+    config = {}
+    try:
+        if os.path.exists('config.json'):
+            with open('config.json', 'r') as f:
+                config = json.load(f)
+    except Exception as e:
+        print(f"Error loading config.json: {e}")
+    return config
+
+config_data = get_config()
+ORDS_BASE_URL = config_data.get('ORDS_BASE_URL', '').strip()
+SUPABASE_URL = config_data.get('SUPABASE_URL', '').strip()
+SUPABASE_KEY = config_data.get('SUPABASE_KEY', '').strip()
 
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
 
@@ -113,6 +130,12 @@ def get_db():
     return conn
 
 def init_db():
+    if SUPABASE_URL and SUPABASE_KEY:
+        print("Using Supabase cloud database. Local SQLite initialization skipped.")
+        return
+    if ORDS_BASE_URL:
+        print("Using Oracle APEX/ORDS database endpoints. Local SQLite initialization skipped.")
+        return
     conn = get_db()
     cursor = conn.cursor()
     # Create users table
@@ -160,6 +183,580 @@ def init_db():
 def hash_password(password):
     return hashlib.sha256(password.encode('utf-8')).hexdigest()
 
+# Cloud Database & Local Fallback Integration Helpers
+def get_user_by_email(email):
+    email = email.strip().lower()
+    if SUPABASE_URL and SUPABASE_KEY:
+        try:
+            url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/users"
+            headers = {
+                "apikey": SUPABASE_KEY,
+                "Authorization": f"Bearer {SUPABASE_KEY}",
+                "Content-Type": "application/json"
+            }
+            params = {"email": f"eq.{email}"}
+            response = requests.get(url, headers=headers, params=params, timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                if data and len(data) > 0:
+                    user = data[0]
+                    return {
+                        'email': user.get('email'),
+                        'username': user.get('username'),
+                        'password': user.get('password'),
+                        'grade': user.get('grade'),
+                        'dept': user.get('dept')
+                    }
+        except Exception as e:
+            print(f"Supabase get_user_by_email error: {e}")
+        return None
+    elif ORDS_BASE_URL:
+        try:
+            url = f"{ORDS_BASE_URL.rstrip('/')}/users/{email}"
+            response = requests.get(url, timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                if data:
+                    return {
+                        'email': data.get('email') or data.get('EMAIL'),
+                        'username': data.get('username') or data.get('USERNAME'),
+                        'password': data.get('password') or data.get('PASSWORD'),
+                        'grade': data.get('grade') or data.get('GRADE'),
+                        'dept': data.get('dept') or data.get('DEPT')
+                    }
+        except Exception as e:
+            print(f"ORDS get_user_by_email error: {e}")
+        return None
+    else:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('SELECT username, email, password, grade, dept FROM users WHERE LOWER(email) = ?', (email,))
+        row = cursor.fetchone()
+        conn.close()
+        if row:
+            return {
+                'email': row['email'],
+                'username': row['username'],
+                'password': row['password'],
+                'grade': row['grade'],
+                'dept': row['dept']
+            }
+        return None
+
+def get_user_by_email_or_username(identifier):
+    identifier = identifier.strip().lower()
+    if SUPABASE_URL and SUPABASE_KEY:
+        try:
+            url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/users"
+            headers = {
+                "apikey": SUPABASE_KEY,
+                "Authorization": f"Bearer {SUPABASE_KEY}",
+                "Content-Type": "application/json"
+            }
+            params = {"or": f"(email.eq.{identifier},username.eq.{identifier})"}
+            response = requests.get(url, headers=headers, params=params, timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                if data and len(data) > 0:
+                    user = data[0]
+                    return {
+                        'email': user.get('email'),
+                        'username': user.get('username'),
+                        'password': user.get('password'),
+                        'grade': user.get('grade'),
+                        'dept': user.get('dept')
+                    }
+        except Exception as e:
+            print(f"Supabase get_user_by_email_or_username error: {e}")
+        return None
+    elif ORDS_BASE_URL:
+        try:
+            if '@' in identifier:
+                u = get_user_by_email(identifier)
+                if u:
+                    return u
+            url = f"{ORDS_BASE_URL.rstrip('/')}/users/"
+            response = requests.get(url, timeout=10)
+            if response.status_code == 200:
+                items = response.json().get('items', [])
+                for item in items:
+                    email_val = (item.get('email') or item.get('EMAIL') or '').strip().lower()
+                    username_val = (item.get('username') or item.get('USERNAME') or '').strip().lower()
+                    if email_val == identifier or username_val == identifier:
+                        return get_user_by_email(email_val)
+        except Exception as e:
+            print(f"ORDS get_user_by_email_or_username error: {e}")
+        return None
+    else:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('SELECT username, email, password, grade, dept FROM users WHERE LOWER(email) = ? OR LOWER(username) = ?', (identifier, identifier))
+        row = cursor.fetchone()
+        conn.close()
+        if row:
+            return {
+                'email': row['email'],
+                'username': row['username'],
+                'password': row['password'],
+                'grade': row['grade'],
+                'dept': row['dept']
+            }
+        return None
+
+def register_user(email, username, password_hash, grade, dept):
+    if SUPABASE_URL and SUPABASE_KEY:
+        try:
+            headers = {
+                "apikey": SUPABASE_KEY,
+                "Authorization": f"Bearer {SUPABASE_KEY}",
+                "Content-Type": "application/json",
+                "Prefer": "return=representation"
+            }
+            # 1. Insert user
+            url_users = f"{SUPABASE_URL.rstrip('/')}/rest/v1/users"
+            payload_user = {
+                'email': email,
+                'username': username,
+                'password': password_hash,
+                'grade': grade,
+                'dept': dept
+            }
+            res_user = requests.post(url_users, headers=headers, json=payload_user, timeout=10)
+            if res_user.status_code not in (200, 201):
+                return False
+                
+            # 2. Insert default chatbot settings
+            url_chatbot = f"{SUPABASE_URL.rstrip('/')}/rest/v1/chatbot_settings"
+            payload_chatbot = {
+                'email': email,
+                'aura_mode': 'offline',
+                'aura_api_key': '',
+                'aura_user_name': username
+            }
+            requests.post(url_chatbot, headers=headers, json=payload_chatbot, timeout=10)
+            return True
+        except Exception as e:
+            print(f"Supabase register_user error: {e}")
+            return False
+    elif ORDS_BASE_URL:
+        try:
+            url = f"{ORDS_BASE_URL.rstrip('/')}/users/"
+            payload = {
+                'email': email,
+                'username': username,
+                'password': password_hash,
+                'grade': grade,
+                'dept': dept
+            }
+            response = requests.post(url, json=payload, timeout=10)
+            return response.status_code in (200, 201)
+        except Exception as e:
+            print(f"ORDS register_user error: {e}")
+            return False
+    else:
+        conn = get_db()
+        cursor = conn.cursor()
+        try:
+            cursor.execute(
+                'INSERT INTO users (email, username, password, grade, dept) VALUES (?, ?, ?, ?, ?)',
+                (email, username, password_hash, grade, dept)
+            )
+            cursor.execute(
+                'INSERT INTO chatbot_settings (email, aura_mode, aura_api_key, aura_user_name) VALUES (?, ?, ?, ?)',
+                (email, 'offline', '', username)
+            )
+            conn.commit()
+            return True
+        except sqlite3.IntegrityError:
+            return False
+        finally:
+            conn.close()
+
+def get_user_progress(email):
+    email = email.strip().lower()
+    if SUPABASE_URL and SUPABASE_KEY:
+        try:
+            url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/progress"
+            headers = {
+                "apikey": SUPABASE_KEY,
+                "Authorization": f"Bearer {SUPABASE_KEY}",
+                "Content-Type": "application/json"
+            }
+            params = {"email": f"eq.{email}"}
+            response = requests.get(url, headers=headers, params=params, timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                return [item.get('checkpoint_id') for item in data]
+        except Exception as e:
+            print(f"Supabase get_user_progress error: {e}")
+        return []
+    elif ORDS_BASE_URL:
+        try:
+            url = f"{ORDS_BASE_URL.rstrip('/')}/progress/"
+            params = {'email': email}
+            response = requests.get(url, params=params, timeout=10)
+            if response.status_code == 200:
+                items = response.json().get('items', [])
+                return [item.get('checkpoint_id') or item.get('CHECKPOINT_ID') for item in items]
+        except Exception as e:
+            print(f"ORDS get_user_progress error: {e}")
+        return []
+    else:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('SELECT checkpoint_id FROM progress WHERE LOWER(email) = ?', (email,))
+        rows = cursor.fetchall()
+        conn.close()
+        return [row['checkpoint_id'] for row in rows]
+
+def update_user_progress(email, checkpoint_id, checked):
+    email = email.strip().lower()
+    if SUPABASE_URL and SUPABASE_KEY:
+        try:
+            headers = {
+                "apikey": SUPABASE_KEY,
+                "Authorization": f"Bearer {SUPABASE_KEY}",
+                "Content-Type": "application/json"
+            }
+            if checked:
+                url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/progress"
+                payload = {
+                    'email': email,
+                    'checkpoint_id': checkpoint_id
+                }
+                headers["Prefer"] = "resolution=merge-duplicates"
+                response = requests.post(url, headers=headers, json=payload, timeout=10)
+                return response.status_code in (200, 201)
+            else:
+                url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/progress"
+                params = {
+                    "email": f"eq.{email}",
+                    "checkpoint_id": f"eq.{checkpoint_id}"
+                }
+                response = requests.delete(url, headers=headers, params=params, timeout=10)
+                return response.status_code in (200, 204)
+        except Exception as e:
+            print(f"Supabase update_user_progress error: {e}")
+            return False
+    elif ORDS_BASE_URL:
+        try:
+            url = f"{ORDS_BASE_URL.rstrip('/')}/progress/"
+            payload = {
+                'email': email,
+                'checkpoint_id': checkpoint_id,
+                'checked': 'true' if checked else 'false'
+            }
+            response = requests.post(url, json=payload, timeout=10)
+            return response.status_code == 200
+        except Exception as e:
+            print(f"ORDS update_user_progress error: {e}")
+            return False
+    else:
+        conn = get_db()
+        cursor = conn.cursor()
+        try:
+            if checked:
+                cursor.execute('INSERT OR IGNORE INTO progress (email, checkpoint_id) VALUES (?, ?)', (email, checkpoint_id))
+            else:
+                cursor.execute('DELETE FROM progress WHERE LOWER(email) = ? AND checkpoint_id = ?', (email, checkpoint_id))
+            conn.commit()
+            return True
+        except sqlite3.Error as e:
+            print(f"SQLite progress error: {e}")
+            return False
+        finally:
+            conn.close()
+
+def get_chatbot_settings(email):
+    email = email.strip().lower()
+    if SUPABASE_URL and SUPABASE_KEY:
+        try:
+            url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/chatbot_settings"
+            headers = {
+                "apikey": SUPABASE_KEY,
+                "Authorization": f"Bearer {SUPABASE_KEY}",
+                "Content-Type": "application/json"
+            }
+            params = {"email": f"eq.{email}"}
+            response = requests.get(url, headers=headers, params=params, timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                if data and len(data) > 0:
+                    item = data[0]
+                    return {
+                        'aura_mode': item.get('aura_mode') or 'offline',
+                        'aura_api_key': item.get('aura_api_key') or '',
+                        'aura_user_name': item.get('aura_user_name') or ''
+                    }
+        except Exception as e:
+            print(f"Supabase get_chatbot_settings error: {e}")
+        return None
+    elif ORDS_BASE_URL:
+        try:
+            url = f"{ORDS_BASE_URL.rstrip('/')}/chatbot-settings/"
+            params = {'email': email}
+            response = requests.get(url, params=params, timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                if data:
+                    return {
+                        'aura_mode': data.get('aura_mode') or data.get('AURA_MODE') or 'offline',
+                        'aura_api_key': data.get('aura_api_key') or data.get('AURA_API_KEY') or '',
+                        'aura_user_name': data.get('aura_user_name') or data.get('AURA_USER_NAME') or ''
+                    }
+        except Exception as e:
+            print(f"ORDS get_chatbot_settings error: {e}")
+        return None
+    else:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('SELECT aura_mode, aura_api_key, aura_user_name FROM chatbot_settings WHERE LOWER(email) = ?', (email,))
+        row = cursor.fetchone()
+        conn.close()
+        if row:
+            return {
+                'aura_mode': row['aura_mode'],
+                'aura_api_key': row['aura_api_key'],
+                'aura_user_name': row['aura_user_name']
+            }
+        return None
+
+def save_chatbot_settings(email, aura_mode, aura_api_key, aura_user_name):
+    email = email.strip().lower()
+    if SUPABASE_URL and SUPABASE_KEY:
+        try:
+            url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/chatbot_settings"
+            headers = {
+                "apikey": SUPABASE_KEY,
+                "Authorization": f"Bearer {SUPABASE_KEY}",
+                "Content-Type": "application/json",
+                "Prefer": "resolution=merge-duplicates"
+            }
+            payload = {
+                'email': email,
+                'aura_mode': aura_mode,
+                'aura_api_key': aura_api_key,
+                'aura_user_name': aura_user_name
+            }
+            response = requests.post(url, headers=headers, json=payload, timeout=10)
+            return response.status_code in (200, 201)
+        except Exception as e:
+            print(f"Supabase save_chatbot_settings error: {e}")
+            return False
+    elif ORDS_BASE_URL:
+        try:
+            url = f"{ORDS_BASE_URL.rstrip('/')}/chatbot-settings/"
+            payload = {
+                'email': email,
+                'aura_mode': aura_mode,
+                'aura_api_key': aura_api_key,
+                'aura_user_name': aura_user_name
+            }
+            response = requests.post(url, json=payload, timeout=10)
+            return response.status_code == 200
+        except Exception as e:
+            print(f"ORDS save_chatbot_settings error: {e}")
+            return False
+    else:
+        conn = get_db()
+        cursor = conn.cursor()
+        try:
+            cursor.execute('''
+                INSERT OR REPLACE INTO chatbot_settings (email, aura_mode, aura_api_key, aura_user_name)
+                VALUES (?, ?, ?, ?)
+            ''', (email, aura_mode, aura_api_key, aura_user_name))
+            conn.commit()
+            return True
+        except sqlite3.Error as e:
+            print(f"SQLite save_chatbot_settings error: {e}")
+            return False
+        finally:
+            conn.close()
+
+def delete_user_account(email):
+    email = email.strip().lower()
+    if SUPABASE_URL and SUPABASE_KEY:
+        try:
+            user = get_user_by_email(email)
+            headers = {
+                "apikey": SUPABASE_KEY,
+                "Authorization": f"Bearer {SUPABASE_KEY}",
+                "Content-Type": "application/json"
+            }
+            if user:
+                url_archive = f"{SUPABASE_URL.rstrip('/')}/rest/v1/deleted_users"
+                requests.post(url_archive, headers=headers, json={
+                    'email': user['email'],
+                    'username': user['username'],
+                    'grade': user['grade'],
+                    'dept': user['dept']
+                }, timeout=10)
+            url_delete = f"{SUPABASE_URL.rstrip('/')}/rest/v1/users"
+            params = {"email": f"eq.{email}"}
+            response = requests.delete(url_delete, headers=headers, params=params, timeout=10)
+            return response.status_code in (200, 204)
+        except Exception as e:
+            print(f"Supabase delete_user_account error: {e}")
+            return False
+    elif ORDS_BASE_URL:
+        try:
+            user = get_user_by_email(email)
+            if user:
+                url_archive = f"{ORDS_BASE_URL.rstrip('/')}/deleted-users/"
+                requests.post(url_archive, json={
+                    'email': user['email'],
+                    'username': user['username'],
+                    'grade': user['grade'],
+                    'dept': user['dept']
+                }, timeout=10)
+            url_delete = f"{ORDS_BASE_URL.rstrip('/')}/users/{email}"
+            response = requests.delete(url_delete, timeout=10)
+            return response.status_code == 200
+        except Exception as e:
+            print(f"ORDS delete_user_account error: {e}")
+            return False
+    else:
+        conn = get_db()
+        cursor = conn.cursor()
+        try:
+            cursor.execute('SELECT username, grade, dept FROM users WHERE LOWER(email) = ?', (email,))
+            user = cursor.fetchone()
+            if user:
+                cursor.execute(
+                    'INSERT OR REPLACE INTO deleted_users (email, username, grade, dept) VALUES (?, ?, ?, ?)',
+                    (email, user['username'], user['grade'], user['dept'])
+                )
+            cursor.execute('DELETE FROM users WHERE LOWER(email) = ?', (email,))
+            cursor.execute('DELETE FROM progress WHERE LOWER(email) = ?', (email,))
+            cursor.execute('DELETE FROM chatbot_settings WHERE LOWER(email) = ?', (email,))
+            conn.commit()
+            return True
+        except sqlite3.Error as e:
+            print(f"SQLite delete_user_account error: {e}")
+            return False
+        finally:
+            conn.close()
+
+def get_all_users_for_admin():
+    if SUPABASE_URL and SUPABASE_KEY:
+        try:
+            headers = {
+                "apikey": SUPABASE_KEY,
+                "Authorization": f"Bearer {SUPABASE_KEY}",
+                "Content-Type": "application/json"
+            }
+            url_users = f"{SUPABASE_URL.rstrip('/')}/rest/v1/users"
+            res_users = requests.get(url_users, headers=headers, timeout=10)
+            active_users = []
+            if res_users.status_code == 200:
+                active_users = res_users.json()
+                
+            url_deleted = f"{SUPABASE_URL.rstrip('/')}/rest/v1/deleted_users"
+            res_deleted = requests.get(url_deleted, headers=headers, timeout=10)
+            deleted_users = []
+            if res_deleted.status_code == 200:
+                deleted_users = res_deleted.json()
+                
+            user_list = []
+            for u in active_users:
+                email = u.get('email')
+                progress = get_user_progress(email)
+                user_list.append({
+                    'username': u.get('username'),
+                    'email': email,
+                    'grade': u.get('grade'),
+                    'dept': u.get('dept'),
+                    'progress_count': len(progress),
+                    'status': 'active'
+                })
+                
+            for d in deleted_users:
+                user_list.append({
+                    'username': d.get('username'),
+                    'email': d.get('email'),
+                    'grade': d.get('grade'),
+                    'dept': d.get('dept'),
+                    'progress_count': 0,
+                    'status': 'deleted'
+                })
+            return user_list
+        except Exception as e:
+            print(f"Supabase get_all_users_for_admin error: {e}")
+            return []
+    elif ORDS_BASE_URL:
+        try:
+            url_users = f"{ORDS_BASE_URL.rstrip('/')}/users/"
+            response_users = requests.get(url_users, timeout=10)
+            active_users = []
+            if response_users.status_code == 200:
+                active_users = response_users.json().get('items', [])
+            
+            url_deleted = f"{ORDS_BASE_URL.rstrip('/')}/deleted-users/"
+            response_deleted = requests.get(url_deleted, timeout=10)
+            deleted_users = []
+            if response_deleted.status_code == 200:
+                deleted_users = response_deleted.json().get('items', [])
+                
+            user_list = []
+            for u in active_users:
+                email = u.get('email') or u.get('EMAIL')
+                progress = get_user_progress(email)
+                user_list.append({
+                    'username': u.get('username') or u.get('USERNAME'),
+                    'email': email,
+                    'grade': u.get('grade') or u.get('GRADE'),
+                    'dept': u.get('dept') or u.get('DEPT'),
+                    'progress_count': len(progress),
+                    'status': 'active'
+                })
+                
+            for d in deleted_users:
+                user_list.append({
+                    'username': d.get('username') or d.get('USERNAME'),
+                    'email': d.get('email') or d.get('EMAIL'),
+                    'grade': d.get('grade') or d.get('GRADE'),
+                    'dept': d.get('dept') or d.get('DEPT'),
+                    'progress_count': 0,
+                    'status': 'deleted'
+                })
+            return user_list
+        except Exception as e:
+            print(f"ORDS get_all_users_for_admin error: {e}")
+            return []
+    else:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('SELECT username, email, grade, dept FROM users')
+        users = cursor.fetchall()
+        
+        cursor.execute('SELECT username, email, grade, dept FROM deleted_users')
+        deleted_users = cursor.fetchall()
+        
+        user_list = []
+        for u in users:
+            cursor.execute('SELECT COUNT(*) FROM progress WHERE email = ?', (u['email'],))
+            prog_count = cursor.fetchone()[0]
+            user_list.append({
+                'username': u['username'],
+                'email': u['email'],
+                'grade': u['grade'],
+                'dept': u['dept'],
+                'progress_count': prog_count,
+                'status': 'active'
+            })
+            
+        for d in deleted_users:
+            user_list.append({
+                'username': d['username'],
+                'email': d['email'],
+                'grade': d['grade'],
+                'dept': d['dept'],
+                'progress_count': 0,
+                'status': 'deleted'
+            })
+        conn.close()
+        return user_list
+
 @app.route('/')
 def serve_index():
     return send_from_directory('.', 'index.html')
@@ -182,11 +779,7 @@ def api_send_otp():
         return jsonify({'success': False, 'message': 'Invalid email address format'}), 400
 
     # Check if user already exists
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute('SELECT email FROM users WHERE LOWER(email) = ?', (email,))
-    user = cursor.fetchone()
-    conn.close()
+    user = get_user_by_email(email)
     if user:
         return jsonify({'success': False, 'message': 'An account with this email already exists'}), 400
 
@@ -234,24 +827,11 @@ def api_register():
         
     hashed = hash_password(password)
     
-    conn = get_db()
-    cursor = conn.cursor()
-    try:
-        cursor.execute(
-            'INSERT INTO users (email, username, password, grade, dept) VALUES (?, ?, ?, ?, ?)',
-            (email, username, hashed, grade, dept)
-        )
-        # Initialize default chatbot settings
-        cursor.execute(
-            'INSERT INTO chatbot_settings (email, aura_mode, aura_api_key, aura_user_name) VALUES (?, ?, ?, ?)',
-            (email, 'offline', '', username)
-        )
-        conn.commit()
+    success = register_user(email, username, hashed, grade, dept)
+    if success:
         return jsonify({'success': True, 'message': 'Scholar enrolled successfully'})
-    except sqlite3.IntegrityError:
+    else:
         return jsonify({'success': False, 'message': 'An account with this email already exists'}), 400
-    finally:
-        conn.close()
 
 @app.route('/api/google-login', methods=['POST', 'OPTIONS'])
 def api_google_login():
@@ -267,16 +847,11 @@ def api_google_login():
     if not email or not username:
         return jsonify({'success': False, 'message': 'Email and username are required'}), 400
         
-    conn = get_db()
-    cursor = conn.cursor()
-    
     # Check if user already exists
-    cursor.execute('SELECT username, email, grade, dept FROM users WHERE LOWER(email) = ?', (email,))
-    user = cursor.fetchone()
+    user = get_user_by_email(email)
     
     if user:
         # User exists, log them in!
-        conn.close()
         return jsonify({
             'success': True,
             'message': 'Logged in successfully via Google',
@@ -291,19 +866,10 @@ def api_google_login():
         # User does not exist, register them!
         # Use a random password string since they authenticate via Google
         placeholder_pwd = hash_password(os.urandom(24).hex())
-        grade = 'freshman'
-        dept = 'cse'
-        try:
-            cursor.execute(
-                'INSERT INTO users (email, username, password, grade, dept) VALUES (?, ?, ?, ?, ?)',
-                (email, username, placeholder_pwd, grade, dept)
-            )
-            # Initialize default chatbot settings
-            cursor.execute(
-                'INSERT INTO chatbot_settings (email, aura_mode, aura_api_key, aura_user_name) VALUES (?, ?, ?, ?)',
-                (email, 'offline', '', username)
-            )
-            conn.commit()
+        grade = 'unspecified'
+        dept = 'unspecified'
+        success = register_user(email, username, placeholder_pwd, grade, dept)
+        if success:
             return jsonify({
                 'success': True,
                 'message': 'Account created successfully via Google',
@@ -314,10 +880,8 @@ def api_google_login():
                     'dept': dept
                 }
             })
-        except sqlite3.IntegrityError:
+        else:
             return jsonify({'success': False, 'message': 'Failed to create account'}), 400
-        finally:
-            conn.close()
 
 @app.route('/api/login', methods=['POST', 'OPTIONS'])
 def api_login():
@@ -334,14 +898,9 @@ def api_login():
         return jsonify({'success': False, 'message': 'Email and password are required'}), 400
         
     hashed = hash_password(password)
+    user = get_user_by_email_or_username(email)
     
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute('SELECT username, email, grade, dept FROM users WHERE (LOWER(email) = ? OR LOWER(username) = ?) AND password = ?', (email.lower(), email.lower(), hashed))
-    user = cursor.fetchone()
-    conn.close()
-    
-    if user:
+    if user and user['password'] == hashed:
         return jsonify({
             'success': True,
             'user': {
@@ -363,13 +922,7 @@ def api_progress():
         if not email:
             return jsonify({'success': False, 'message': 'Email required'}), 400
             
-        conn = get_db()
-        cursor = conn.cursor()
-        cursor.execute('SELECT checkpoint_id FROM progress WHERE LOWER(email) = ?', (email,))
-        rows = cursor.fetchall()
-        conn.close()
-        
-        checkpoints = [row['checkpoint_id'] for row in rows]
+        checkpoints = get_user_progress(email)
         return jsonify({'success': True, 'progress': checkpoints})
         
     elif request.method == 'POST':
@@ -383,22 +936,11 @@ def api_progress():
         if not email or not checkpoint_id:
             return jsonify({'success': False, 'message': 'Email and checkpoint_id required'}), 400
             
-        conn = get_db()
-        cursor = conn.cursor()
-        if checked:
-            try:
-                cursor.execute('INSERT OR IGNORE INTO progress (email, checkpoint_id) VALUES (?, ?)', (email, checkpoint_id))
-                conn.commit()
-            except sqlite3.Error as e:
-                return jsonify({'success': False, 'message': str(e)}), 500
+        success = update_user_progress(email, checkpoint_id, checked)
+        if success:
+            return jsonify({'success': True})
         else:
-            try:
-                cursor.execute('DELETE FROM progress WHERE LOWER(email) = ? AND checkpoint_id = ?', (email, checkpoint_id))
-                conn.commit()
-            except sqlite3.Error as e:
-                return jsonify({'success': False, 'message': str(e)}), 500
-        conn.close()
-        return jsonify({'success': True})
+            return jsonify({'success': False, 'message': 'Failed to update progress'}), 500
 
 @app.route('/api/chatbot', methods=['GET', 'POST', 'OPTIONS'])
 def api_chatbot():
@@ -409,20 +951,11 @@ def api_chatbot():
         if not email:
             return jsonify({'success': False, 'message': 'Email required'}), 400
             
-        conn = get_db()
-        cursor = conn.cursor()
-        cursor.execute('SELECT aura_mode, aura_api_key, aura_user_name FROM chatbot_settings WHERE LOWER(email) = ?', (email,))
-        row = cursor.fetchone()
-        conn.close()
-        
-        if row:
+        settings = get_chatbot_settings(email)
+        if settings:
             return jsonify({
                 'success': True,
-                'settings': {
-                    'aura_mode': row['aura_mode'],
-                    'aura_api_key': row['aura_api_key'],
-                    'aura_user_name': row['aura_user_name']
-                }
+                'settings': settings
             })
         return jsonify({'success': False, 'message': 'Settings not found'}), 404
         
@@ -438,15 +971,11 @@ def api_chatbot():
         if not email or not aura_mode:
             return jsonify({'success': False, 'message': 'Email and aura_mode required'}), 400
             
-        conn = get_db()
-        cursor = conn.cursor()
-        cursor.execute('''
-            INSERT OR REPLACE INTO chatbot_settings (email, aura_mode, aura_api_key, aura_user_name)
-            VALUES (?, ?, ?, ?)
-        ''', (email, aura_mode, aura_api_key, aura_user_name))
-        conn.commit()
-        conn.close()
-        return jsonify({'success': True})
+        success = save_chatbot_settings(email, aura_mode, aura_api_key, aura_user_name)
+        if success:
+            return jsonify({'success': True})
+        else:
+            return jsonify({'success': False, 'message': 'Failed to save settings'}), 500
 
 @app.route('/api/delete-account', methods=['POST', 'OPTIONS'])
 def api_delete_account():
@@ -459,23 +988,11 @@ def api_delete_account():
     if not email:
         return jsonify({'success': False, 'message': 'Email required'}), 400
         
-    conn = get_db()
-    cursor = conn.cursor()
-    # Archive user details first
-    cursor.execute('SELECT username, grade, dept FROM users WHERE LOWER(email) = ?', (email,))
-    user = cursor.fetchone()
-    if user:
-        cursor.execute(
-            'INSERT OR REPLACE INTO deleted_users (email, username, grade, dept) VALUES (?, ?, ?, ?)',
-            (email, user['username'], user['grade'], user['dept'])
-        )
-    # Delete user (foreign key cascades will delete progress and chatbot settings)
-    cursor.execute('DELETE FROM users WHERE LOWER(email) = ?', (email,))
-    cursor.execute('DELETE FROM progress WHERE LOWER(email) = ?', (email,))
-    cursor.execute('DELETE FROM chatbot_settings WHERE LOWER(email) = ?', (email,))
-    conn.commit()
-    conn.close()
-    return jsonify({'success': True, 'message': 'Account and all data permanently deleted'})
+    success = delete_user_account(email)
+    if success:
+        return jsonify({'success': True, 'message': 'Account and all data permanently deleted'})
+    else:
+        return jsonify({'success': False, 'message': 'Failed to delete account'}), 500
 
 # Admin Views and APIs
 
@@ -490,37 +1007,7 @@ def api_admin_users():
     if admin_key != expected_key:
         return jsonify({'success': False, 'message': 'Unauthorized'}), 401
     
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute('SELECT username, email, grade, dept FROM users')
-    users = cursor.fetchall()
-    
-    cursor.execute('SELECT username, email, grade, dept FROM deleted_users')
-    deleted_users = cursor.fetchall()
-    
-    user_list = []
-    for u in users:
-        cursor.execute('SELECT COUNT(*) FROM progress WHERE email = ?', (u['email'],))
-        prog_count = cursor.fetchone()[0]
-        user_list.append({
-            'username': u['username'],
-            'email': u['email'],
-            'grade': u['grade'],
-            'dept': u['dept'],
-            'progress_count': prog_count,
-            'status': 'active'
-        })
-        
-    for d in deleted_users:
-        user_list.append({
-            'username': d['username'],
-            'email': d['email'],
-            'grade': d['grade'],
-            'dept': d['dept'],
-            'progress_count': 0,
-            'status': 'deleted'
-        })
-    conn.close()
+    user_list = get_all_users_for_admin()
     return jsonify({'success': True, 'users': user_list})
 
 # Catch-all to serve any static asset (js, css, images)
