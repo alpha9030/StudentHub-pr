@@ -900,10 +900,13 @@ def api_google_login():
         })
     else:
         # User does not exist, register them!
+        dept = data.get('dept', '').strip()
+        grade = data.get('grade', '').strip()
+        if not dept or not grade:
+            return jsonify({'success': False, 'message': 'Academic Department and Year are required for registration'}), 400
+            
         # Use a random password string since they authenticate via Google
         placeholder_pwd = hash_password(os.urandom(24).hex())
-        grade = 'unspecified'
-        dept = 'unspecified'
         success = register_user(email, username, placeholder_pwd, grade, dept)
         if success:
             return jsonify({
