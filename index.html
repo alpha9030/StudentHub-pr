@@ -199,7 +199,7 @@
                 <div class="curriculum-filters-container">
                     <div class="curriculum-filter-item dept">
                         <label for="dept-select">Department / Specialization:</label>
-                        <select id="dept-select" onchange="filterCurriculum()">
+                        <select id="dept-select" onchange="filterCurriculum(); handleDropdownChange();">
                             <option value="" disabled selected>-- Select your department --</option>
                             <option value="cse">Computer Science & Engineering (CSE)</option>
                             <option value="it">Information Technology (IT)</option>
@@ -212,7 +212,7 @@
                     </div>
                     <div class="curriculum-filter-item year">
                         <label for="year-select">Academic Year:</label>
-                        <select id="year-select" onchange="filterCurriculum()">
+                        <select id="year-select" onchange="filterCurriculum(); handleDropdownChange();">
                             <option value="" disabled selected>-- Select your academic year --</option>
                             <option value="1">1st Year</option>
                             <option value="2">2nd Year</option>
@@ -1218,6 +1218,25 @@
                     authFormsContainer.style.display = 'block';
                 }
             }
+            
+            // Sync dashboard filter dropdowns with logged-in user details if available
+            const deptSelect = document.getElementById('dept-select');
+            const yearSelect = document.getElementById('year-select');
+            if (deptSelect && yearSelect) {
+                if (loggedIn && savedDept && savedDept !== 'unspecified' && savedGrade && savedGrade !== 'unspecified') {
+                    let yearNum = "";
+                    if (savedGrade === 'freshman') yearNum = "1";
+                    else if (savedGrade === 'sophomore') yearNum = "2";
+                    else if (savedGrade === 'junior') yearNum = "3";
+                    else if (savedGrade === 'senior') yearNum = "4";
+
+                    deptSelect.value = savedDept;
+                    yearSelect.value = yearNum;
+                } else if (!loggedIn) {
+                    deptSelect.value = "";
+                    yearSelect.value = "";
+                }
+            }
         }
 
         // Curriculum Database for Engineering & BCA
@@ -1499,8 +1518,8 @@
             }
         };
 
-        // Save curriculum settings manually
-        function saveCurriculumSettings() {
+        // Save curriculum settings manually or automatically
+        function saveCurriculumSettings(isManual = true) {
             const deptSelect = document.getElementById('dept-select');
             const yearSelect = document.getElementById('year-select');
             if (!deptSelect || !yearSelect) return;
@@ -1509,7 +1528,9 @@
             const year = yearSelect.value;
 
             if (!dept || !year) {
-                alert("Please select both a department and academic year before saving changes.");
+                if (isManual) {
+                    alert("Please select both a department and academic year before saving changes.");
+                }
                 return;
             }
 
@@ -1557,7 +1578,16 @@
             }
 
             updateUserSession();
-            alert("Department and Academic Year settings saved successfully!");
+            if (isManual) {
+                alert("Department and Academic Year settings saved successfully!");
+            }
+        }
+
+        function handleDropdownChange() {
+            const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (loggedIn) {
+                saveCurriculumSettings(false);
+            }
         }
 
         // Filter and display curriculum
@@ -1613,15 +1643,25 @@
                 themeSelect.value = savedTheme;
             }
 
-            // Donot show any default department and grading on load
+            // Do not show default values for guest/unspecified, but load saved details if logged in
+            const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const savedDept = localStorage.getItem('studentDept');
+            const savedGrade = localStorage.getItem('studentGrade');
             const deptSelect = document.getElementById('dept-select');
             const yearSelect = document.getElementById('year-select');
 
-            if (deptSelect) {
-                deptSelect.value = "";
-            }
-            if (yearSelect) {
-                yearSelect.value = "";
+            if (loggedIn && savedDept && savedDept !== 'unspecified' && savedGrade && savedGrade !== 'unspecified') {
+                let yearNum = "";
+                if (savedGrade === 'freshman') yearNum = "1";
+                else if (savedGrade === 'sophomore') yearNum = "2";
+                else if (savedGrade === 'junior') yearNum = "3";
+                else if (savedGrade === 'senior') yearNum = "4";
+
+                if (deptSelect) deptSelect.value = savedDept;
+                if (yearSelect) yearSelect.value = yearNum;
+            } else {
+                if (deptSelect) deptSelect.value = "";
+                if (yearSelect) yearSelect.value = "";
             }
 
             filterCurriculum();
