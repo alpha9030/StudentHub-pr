@@ -107,7 +107,7 @@
                 <hr>
                 <nav>
                     <a href="index.html">Home</a>
-                    <a href="signup.html">Signup</a>
+                    <a href="account.html">Account</a>
                     <a href="reference.html">References</a>
                 </nav>
                 <hr>

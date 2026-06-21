@@ -409,14 +409,13 @@ def serve_index():
 @app.route('/signup')
 @app.route('/signup.html')
 def serve_signup():
-    return send_from_directory('.', 'signup.html')
+    return send_from_directory('.', 'account.html')
 
 @app.route('/account')
 @app.route('/account.html')
 @app.route('/auth')
 def serve_account():
-    from flask import redirect
-    return redirect('/#auth')
+    return send_from_directory('.', 'account.html')
 
 # API Endpoints
 
