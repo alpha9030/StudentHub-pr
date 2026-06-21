@@ -179,9 +179,23 @@ def init_db():
             username TEXT NOT NULL,
             grade TEXT NOT NULL,
             dept TEXT NOT NULL,
-            deleted_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            deleted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            last_login_at DATETIME,
+            login_count INTEGER DEFAULT 0,
+            progress_count INTEGER DEFAULT 0
         )
     ''')
+    
+    # Safely alter table to add columns in case the table already existed in database file
+    for col_def in [
+        ("last_login_at", "DATETIME"),
+        ("login_count", "INTEGER DEFAULT 0"),
+        ("progress_count", "INTEGER DEFAULT 0")
+    ]:
+        try:
+            cursor.execute(f"ALTER TABLE deleted_users ADD COLUMN {col_def[0]} {col_def[1]}")
+        except sqlite3.OperationalError:
+            pass
     conn.commit()
     conn.close()
 
@@ -311,12 +325,15 @@ def delete_user_account(email):
     conn = get_db()
     cursor = conn.cursor()
     try:
-        cursor.execute('SELECT username, grade, dept FROM users WHERE LOWER(email) = ?', (email,))
+        cursor.execute('SELECT username, grade, dept, last_login_at, login_count FROM users WHERE LOWER(email) = ?', (email,))
         user = cursor.fetchone()
         if user:
+            cursor.execute('SELECT COUNT(*) FROM progress WHERE LOWER(email) = ?', (email,))
+            prog_count = cursor.fetchone()[0]
+            
             cursor.execute(
-                'INSERT OR REPLACE INTO deleted_users (email, username, grade, dept) VALUES (?, ?, ?, ?)',
-                (email, user['username'], user['grade'], user['dept'])
+                'INSERT OR REPLACE INTO deleted_users (email, username, grade, dept, last_login_at, login_count, progress_count) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                (email, user['username'], user['grade'], user['dept'], user['last_login_at'], user['login_count'], prog_count)
             )
         cursor.execute('DELETE FROM users WHERE LOWER(email) = ?', (email,))
         cursor.execute('DELETE FROM progress WHERE LOWER(email) = ?', (email,))
@@ -335,7 +352,7 @@ def get_all_users_for_admin():
     cursor.execute('SELECT username, email, grade, dept, last_login_at, login_count FROM users')
     users = cursor.fetchall()
     
-    cursor.execute('SELECT username, email, grade, dept FROM deleted_users')
+    cursor.execute('SELECT username, email, grade, dept, last_login_at, login_count, progress_count FROM deleted_users')
     deleted_users = cursor.fetchall()
     
     user_list = []
@@ -359,8 +376,10 @@ def get_all_users_for_admin():
             'email': d['email'],
             'grade': d['grade'],
             'dept': d['dept'],
-            'progress_count': 0,
-            'status': 'deleted'
+            'progress_count': d['progress_count'] if d['progress_count'] is not None else 0,
+            'status': 'deleted',
+            'last_login_at': d['last_login_at'],
+            'login_count': d['login_count'] if d['login_count'] is not None else 0
         })
     conn.close()
     return user_list

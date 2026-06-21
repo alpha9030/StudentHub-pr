@@ -284,7 +284,7 @@
                         email: d.email,
                         dept: d.dept || 'cse',
                         grade: d.grade || 'freshman',
-                        progress_count: 0,
+                        progress_count: d.progress_count !== undefined ? d.progress_count : (d.progress ? d.progress.length : 0),
                         status: 'deleted',
                         last_login_at: d.last_login_at || null,
                         login_count: d.login_count || 0

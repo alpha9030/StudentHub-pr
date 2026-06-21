@@ -542,11 +542,22 @@
                     if (userToDelete) {
                         const deletedUsers = JSON.parse(localStorage.getItem('deletedUsers') || '[]');
                         if (!deletedUsers.some(d => d.email === currentEmail)) {
+                            // Find all progress keys in local storage
+                            let localProgressCount = 0;
+                            for (let i = 0; i < localStorage.length; i++) {
+                                const key = localStorage.key(i);
+                                if (key && key.includes('-task-')) {
+                                    localProgressCount++;
+                                }
+                            }
                             deletedUsers.push({
                                 username: userToDelete.username,
                                 email: userToDelete.email,
                                 grade: userToDelete.grade,
-                                dept: userToDelete.dept
+                                dept: userToDelete.dept,
+                                last_login_at: userToDelete.last_login_at || new Date().toISOString(),
+                                login_count: userToDelete.login_count || 1,
+                                progress_count: userToDelete.progress ? userToDelete.progress.length : localProgressCount
                             });
                             localStorage.setItem('deletedUsers', JSON.stringify(deletedUsers));
                         }
