@@ -22,6 +22,57 @@ def get_config():
 
 config_data = get_config()
 
+def is_supabase_enabled():
+    config = get_config()
+    url = os.environ.get('SUPABASE_URL') or config.get('SUPABASE_URL')
+    key = os.environ.get('SUPABASE_KEY') or config.get('SUPABASE_KEY')
+    return bool(url and key)
+
+def supabase_request(method, table, query=None, body=None, single=False):
+    import urllib.request
+    import json
+    import ssl
+    
+    config = get_config()
+    url = os.environ.get('SUPABASE_URL') or config.get('SUPABASE_URL')
+    key = os.environ.get('SUPABASE_KEY') or config.get('SUPABASE_KEY')
+    if not url or not key:
+        return None
+        
+    url = url.rstrip('/')
+    endpoint = f"{url}/rest/v1/{table}"
+    if query:
+        endpoint = f"{endpoint}?{query}"
+        
+    headers = {
+        "apikey": key,
+        "Authorization": f"Bearer {key}",
+        "Content-Type": "application/json"
+    }
+    if single:
+        headers["Accept"] = "application/vnd.pgrst.object+json"
+        
+    req_data = None
+    if body is not None:
+        req_data = json.dumps(body).encode('utf-8')
+        
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    
+    try:
+        req = urllib.request.Request(endpoint, data=req_data, headers=headers, method=method)
+        with urllib.request.urlopen(req, context=ctx) as response:
+            res_body = response.read().decode('utf-8')
+            if res_body:
+                return json.loads(res_body)
+            return True
+    except Exception as e:
+        print(f"Supabase request error ({method} {table}): {e}")
+        if hasattr(e, 'code') and e.code == 406 and single:
+            return None
+        return None
+
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
 
 pending_otps = {}
@@ -242,9 +293,25 @@ def init_db():
 def hash_password(password):
     return hashlib.sha256(password.encode('utf-8')).hexdigest()
 
-# Database Helper Functions (SQLite only)
+# Database Helper Functions (Supabase + SQLite fallback)
 def get_user_by_email(email):
     email = email.strip().lower()
+    if is_supabase_enabled():
+        user = supabase_request("GET", "users", f"email=ilike.{email}", single=True)
+        if user:
+            return {
+                'email': user['email'],
+                'username': user['username'],
+                'password': user['password'],
+                'grade': user['grade'],
+                'dept': user['dept'],
+                'created_at': user.get('created_at'),
+                'last_login_at': user.get('last_login_at'),
+                'login_count': user.get('login_count', 0) or 0,
+                'status': user.get('status', 'active') or 'active'
+            }
+        return None
+
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute('SELECT username, email, password, grade, dept, created_at, last_login_at, login_count, status FROM users WHERE LOWER(email) = ?', (email,))
@@ -266,6 +333,22 @@ def get_user_by_email(email):
 
 def get_user_by_email_or_username(identifier):
     identifier = identifier.strip().lower()
+    if is_supabase_enabled():
+        user = supabase_request("GET", "users", f"or=(email.ilike.{identifier},username.ilike.{identifier})", single=True)
+        if user:
+            return {
+                'email': user['email'],
+                'username': user['username'],
+                'password': user['password'],
+                'grade': user['grade'],
+                'dept': user['dept'],
+                'created_at': user.get('created_at'),
+                'last_login_at': user.get('last_login_at'),
+                'login_count': user.get('login_count', 0) or 0,
+                'status': user.get('status', 'active') or 'active'
+            }
+        return None
+
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute('SELECT username, email, password, grade, dept, created_at, last_login_at, login_count, status FROM users WHERE LOWER(email) = ? OR LOWER(username) = ?', (identifier, identifier))
@@ -286,6 +369,33 @@ def get_user_by_email_or_username(identifier):
     return None
 
 def register_user(email, username, password_hash, grade, dept):
+    email = email.strip().lower()
+    if is_supabase_enabled():
+        exist = get_user_by_email(email)
+        if exist:
+            return False
+            
+        user_body = {
+            "email": email,
+            "username": username,
+            "password": password_hash,
+            "grade": grade,
+            "dept": dept,
+            "status": "active",
+            "login_count": 0
+        }
+        res = supabase_request("POST", "users", body=user_body)
+        if res:
+            settings_body = {
+                "email": email,
+                "aura_mode": "offline",
+                "aura_api_key": "",
+                "aura_user_name": username
+            }
+            supabase_request("POST", "chatbot_settings", body=settings_body)
+            return True
+        return False
+
     conn = get_db()
     cursor = conn.cursor()
     try:
@@ -306,6 +416,12 @@ def register_user(email, username, password_hash, grade, dept):
 
 def get_user_progress(email):
     email = email.strip().lower()
+    if is_supabase_enabled():
+        res = supabase_request("GET", "progress", f"email=ilike.{email}")
+        if isinstance(res, list):
+            return [item['checkpoint_id'] for item in res]
+        return []
+
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute('SELECT checkpoint_id FROM progress WHERE LOWER(email) = ?', (email,))
@@ -315,6 +431,18 @@ def get_user_progress(email):
 
 def update_user_progress(email, checkpoint_id, checked):
     email = email.strip().lower()
+    if is_supabase_enabled():
+        if checked:
+            progress_body = {
+                "email": email,
+                "checkpoint_id": checkpoint_id
+            }
+            supabase_request("POST", "progress", body=progress_body)
+            return True
+        else:
+            supabase_request("DELETE", "progress", f"email=ilike.{email}&checkpoint_id=eq.{checkpoint_id}")
+            return True
+
     conn = get_db()
     cursor = conn.cursor()
     try:
@@ -332,6 +460,16 @@ def update_user_progress(email, checkpoint_id, checked):
 
 def get_chatbot_settings(email):
     email = email.strip().lower()
+    if is_supabase_enabled():
+        res = supabase_request("GET", "chatbot_settings", f"email=ilike.{email}", single=True)
+        if res:
+            return {
+                'aura_mode': res['aura_mode'],
+                'aura_api_key': res.get('aura_api_key', ''),
+                'aura_user_name': res.get('aura_user_name', '')
+            }
+        return None
+
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute('SELECT aura_mode, aura_api_key, aura_user_name FROM chatbot_settings WHERE LOWER(email) = ?', (email,))
@@ -347,6 +485,20 @@ def get_chatbot_settings(email):
 
 def save_chatbot_settings(email, aura_mode, aura_api_key, aura_user_name):
     email = email.strip().lower()
+    if is_supabase_enabled():
+        settings_body = {
+            "email": email,
+            "aura_mode": aura_mode,
+            "aura_api_key": aura_api_key,
+            "aura_user_name": aura_user_name
+        }
+        exists = supabase_request("GET", "chatbot_settings", f"email=ilike.{email}", single=True)
+        if exists:
+            supabase_request("PATCH", "chatbot_settings", f"email=ilike.{email}", body=settings_body)
+        else:
+            supabase_request("POST", "chatbot_settings", body=settings_body)
+        return True
+
     conn = get_db()
     cursor = conn.cursor()
     try:
@@ -364,6 +516,20 @@ def save_chatbot_settings(email, aura_mode, aura_api_key, aura_user_name):
 
 def reactivate_user(email, username, password_hash, grade, dept):
     email = email.strip().lower()
+    if is_supabase_enabled():
+        update_body = {
+            "username": username,
+            "password": password_hash,
+            "grade": grade,
+            "dept": dept,
+            "status": "active",
+            "login_count": 0,
+            "last_login_at": None
+        }
+        res = supabase_request("PATCH", "users", f"email=ilike.{email}", body=update_body)
+        supabase_request("DELETE", "progress", f"email=ilike.{email}")
+        return bool(res)
+
     conn = get_db()
     cursor = conn.cursor()
     try:
@@ -384,6 +550,10 @@ def reactivate_user(email, username, password_hash, grade, dept):
 
 def delete_user_account(email):
     email = email.strip().lower()
+    if is_supabase_enabled():
+        res = supabase_request("PATCH", "users", f"email=ilike.{email}", body={"status": "deleted"})
+        return bool(res)
+
     conn = get_db()
     cursor = conn.cursor()
     try:
@@ -398,6 +568,30 @@ def delete_user_account(email):
         conn.close()
 
 def get_all_users_for_admin():
+    if is_supabase_enabled():
+        users = supabase_request("GET", "users")
+        progress = supabase_request("GET", "progress")
+        prog_counts = {}
+        if isinstance(progress, list):
+            for p in progress:
+                email = p['email'].lower()
+                prog_counts[email] = prog_counts.get(email, 0) + 1
+                
+        user_list = []
+        if isinstance(users, list):
+            for u in users:
+                user_list.append({
+                    'username': u['username'],
+                    'email': u['email'],
+                    'grade': u['grade'],
+                    'dept': u['dept'],
+                    'progress_count': prog_counts.get(u['email'].lower(), 0),
+                    'status': u.get('status', 'active') or 'active',
+                    'last_login_at': u.get('last_login_at'),
+                    'login_count': u.get('login_count', 0) or 0
+                })
+        return user_list
+
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute('SELECT username, email, grade, dept, last_login_at, login_count, status FROM users')
@@ -444,6 +638,10 @@ def get_all_users_for_admin():
 
 def update_user_profile(email, dept, grade):
     email = email.strip().lower()
+    if is_supabase_enabled():
+        res = supabase_request("PATCH", "users", f"email=ilike.{email}", body={"dept": dept, "grade": grade})
+        return bool(res)
+
     conn = get_db()
     cursor = conn.cursor()
     try:
@@ -462,11 +660,11 @@ def update_user_profile(email, dept, grade):
 def log_user_login_to_csv(email):
     import csv
     csv_file = "student_logins.csv"
-    conn = get_db()
-    cursor = conn.cursor()
-    try:
-        cursor.execute("SELECT username, email, grade, dept, last_login_at, login_count FROM users WHERE LOWER(email) = ?", (email,))
-        row = cursor.fetchone()
+    
+    username, email_val, grade, dept, last_login_at, login_count = None, None, None, None, None, None
+    
+    if is_supabase_enabled():
+        row = get_user_by_email(email)
         if not row:
             return
         username = row['username']
@@ -475,11 +673,25 @@ def log_user_login_to_csv(email):
         dept = row['dept']
         last_login_at = row['last_login_at']
         login_count = row['login_count']
-    except sqlite3.Error as e:
-        print(f"SQLite retrieve for csv error: {e}")
-        return
-    finally:
-        conn.close()
+    else:
+        conn = get_db()
+        cursor = conn.cursor()
+        try:
+            cursor.execute("SELECT username, email, grade, dept, last_login_at, login_count FROM users WHERE LOWER(email) = ?", (email,))
+            row = cursor.fetchone()
+            if not row:
+                return
+            username = row['username']
+            email_val = row['email']
+            grade = row['grade']
+            dept = row['dept']
+            last_login_at = row['last_login_at']
+            login_count = row['login_count']
+        except sqlite3.Error as e:
+            print(f"SQLite retrieve for csv error: {e}")
+            return
+        finally:
+            conn.close()
 
     try:
         file_exists = os.path.exists(csv_file)
@@ -488,12 +700,26 @@ def log_user_login_to_csv(email):
             if not file_exists:
                 writer.writerow(["Timestamp (UTC)", "Username", "Email", "Department", "Grade", "Login Count"])
             writer.writerow([last_login_at, username, email_val, dept, grade, login_count])
+    except PermissionError:
+        print(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] [WARNING] Cannot write to '{csv_file}' because it is open in Excel or another program. Please close it to resume syncing.")
     except Exception as e:
         print(f"Error updating CSV sheet: {e}")
 
 def track_user_login(email):
     email = email.strip().lower()
     current_time = datetime.datetime.utcnow().isoformat()
+    
+    if is_supabase_enabled():
+        user = get_user_by_email(email)
+        if user:
+            current_count = user.get('login_count', 0) or 0
+            supabase_request("PATCH", "users", f"email=ilike.{email}", body={
+                "last_login_at": current_time,
+                "login_count": current_count + 1
+            })
+        log_user_login_to_csv(email)
+        return
+
     conn = get_db()
     cursor = conn.cursor()
     try:
