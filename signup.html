@@ -77,13 +77,30 @@
         <!-- Profile details view if logged in -->
         <div id="profile-details-panel" style="display: none; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 30px; margin-top: 20px;">
             <h2 style="margin-top: 0; border: none; padding-bottom: 12px; color: var(--text-body); font-weight: 700; border-bottom: 1px solid var(--border-color);">👤 Active Student Profile</h2>
-            <p style="color: var(--text-muted); margin-bottom: 24px;">You are currently signed in with the following academic credentials:</p>
-            <div style="display: grid; grid-template-columns: 140px 1fr; gap: 16px 12px; font-size: 15px; margin-bottom: 30px; color: var(--text-body);">
+            <p style="color: var(--text-muted); margin-bottom: 24px;">You can view and update your academic details below:</p>
+            <div style="display: grid; grid-template-columns: 140px 1fr; gap: 16px 12px; font-size: 15px; margin-bottom: 20px; color: var(--text-body); align-items: center;">
                 <strong>Scholar Name:</strong> <span id="profile-name" style="font-weight: 600;"></span>
-                <strong>Department:</strong> <span id="profile-dept" style="font-weight: 600;"></span>
-                <strong>Academic Year:</strong> <span id="profile-grade" style="font-weight: 600;"></span>
+                
+                <label for="profile-dept-select" style="font-weight: bold; margin: 0;">Department:</label>
+                <select id="profile-dept-select" style="padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-container); color: var(--text-body); font-size: 14px;" onchange="saveProfileDropdowns()">
+                    <option value="cse">Computer Science & Engineering (CSE)</option>
+                    <option value="it">Information Technology (IT)</option>
+                    <option value="ece">Electronics & Communication Engineering (ECE)</option>
+                    <option value="eee">Electrical & Electronics Engineering (EEE)</option>
+                    <option value="me">Mechanical Engineering (ME)</option>
+                    <option value="ce">Civil Engineering (CE)</option>
+                    <option value="bca">Bachelor of Computer Applications (BCA)</option>
+                </select>
+                
+                <label for="profile-grade-select" style="font-weight: bold; margin: 0;">Academic Year:</label>
+                <select id="profile-grade-select" style="padding: 8px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-container); color: var(--text-body); font-size: 14px;" onchange="saveProfileDropdowns()">
+                    <option value="freshman">1st Year (Freshman)</option>
+                    <option value="sophomore">2nd Year (Sophomore)</option>
+                    <option value="junior">3rd Year (Junior)</option>
+                    <option value="senior">4th Year (Senior)</option>
+                </select>
             </div>
-            <button onclick="doSignOut()" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 600; border-radius: 8px; border: none; cursor: pointer;">Log Out & Clear Profile</button>
+            <button onclick="doSignOut()" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 600; border-radius: 8px; border: none; cursor: pointer; margin-top: 10px;">Log Out & Clear Profile</button>
             <button onclick="doDeleteAccount()" class="btn" style="width: 100%; padding: 12px; font-weight: 600; border-radius: 8px; border: 1px solid #ef4444; background: transparent; color: #ef4444; margin-top: 10px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#ef4444'; this.style.color='white';" onmouseout="this.style.background='transparent'; this.style.color='#ef4444';">Delete Account & Clear Progress</button>
         </div>
 
@@ -210,11 +227,13 @@
                         localStorage.setItem('studentEmail', foundUser.email);
                         localStorage.setItem('isLoggedIn', 'true');
 
+                        let userProgress = [];
                         // Load progress from backend
                         try {
                             const progResp = await fetch(`${apiBase}/api/progress?email=${encodeURIComponent(foundUser.email)}`);
                             const progData = await progResp.json();
                             if (progData.success) {
+                                userProgress = progData.progress || [];
                                 // Clear old local task progress
                                 for (let i = 0; i < localStorage.length; i++) {
                                     const key = localStorage.key(i);
@@ -224,7 +243,7 @@
                                     }
                                 }
                                 // Set new progress
-                                progData.progress.forEach(ch => {
+                                userProgress.forEach(ch => {
                                     localStorage.setItem(ch, 'true');
                                 });
                             }
@@ -244,6 +263,28 @@
                         } catch (e) {
                             console.warn("Could not sync chatbot settings:", e);
                         }
+
+                        // Also add/update local registeredUsers list for offline admin panel
+                        let localUsers = [];
+                        try { localUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) { localUsers = []; }
+                        if (!Array.isArray(localUsers)) localUsers = [];
+                        const existingUserIdx = localUsers.findIndex(u => (u.email || '').toLowerCase() === foundUser.email.toLowerCase());
+                        const userEntry = {
+                            username: foundUser.username,
+                            email: foundUser.email,
+                            password: pwdValue, // Store entered credentials password
+                            grade: foundUser.grade,
+                            dept: foundUser.dept,
+                            last_login_at: foundUser.last_login_at || null,
+                            login_count: foundUser.login_count || 0,
+                            progress: userProgress
+                        };
+                        if (existingUserIdx >= 0) {
+                            localUsers[existingUserIdx] = userEntry;
+                        } else {
+                            localUsers.push(userEntry);
+                        }
+                        localStorage.setItem('registeredUsers', JSON.stringify(localUsers));
 
                         // Redirect back to index.html #dashboard
                         window.location.href = 'index.html#dashboard';
@@ -534,8 +575,7 @@
             return true;
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            // Check session status
+        function updateUserSession() {
             const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
             const name = localStorage.getItem('studentName') || 'Scholar';
             const savedGrade = localStorage.getItem('studentGrade');
@@ -546,45 +586,83 @@
             const signOutBtn = document.getElementById('signout-btn');
             const deleteBtn = document.getElementById('delete-btn');
 
-            // Set values on theme dropdown on load
-            const savedTheme = localStorage.getItem('siteTheme') || 'default';
-            const themeSelect = document.getElementById('theme-select');
-            if (themeSelect) themeSelect.value = savedTheme;
-
             if (loggedIn) {
                 if (profilePanel) profilePanel.style.display = 'block';
                 if (signupContainer) signupContainer.style.display = 'none';
                 if (signOutBtn) signOutBtn.style.display = 'block';
                 if (deleteBtn) deleteBtn.style.display = 'block';
 
-                document.getElementById('profile-name').innerText = name;
+                const profileName = document.getElementById('profile-name');
+                if (profileName) profileName.innerText = name;
 
-                let deptText = "";
-                if (savedDept === "cse") deptText = "Computer Science & Engineering (CSE)";
-                else if (savedDept === "it") deptText = "Information Technology (IT)";
-                else if (savedDept === "ece") deptText = "Electronics & Communication Engineering (ECE)";
-                else if (savedDept === "eee") deptText = "Electrical & Electronics Engineering (EEE)";
-                else if (savedDept === "me") deptText = "Mechanical Engineering (ME)";
-                else if (savedDept === "ce") deptText = "Civil Engineering (CE)";
-                else if (savedDept === "bca") deptText = "Bachelor of Computer Applications (BCA)";
-                else deptText = (savedDept && savedDept !== 'unspecified') ? savedDept : "Unspecified";
-
-                document.getElementById('profile-dept').innerText = deptText;
-
-                let gradeText = "";
-                if (savedGrade === "freshman") gradeText = "1st Year";
-                else if (savedGrade === "sophomore") gradeText = "2nd Year";
-                else if (savedGrade === "junior") gradeText = "3rd Year";
-                else if (savedGrade === "senior") gradeText = "4th Year";
-                else gradeText = (savedGrade && savedGrade !== 'unspecified') ? savedGrade : "Unspecified";
-
-                document.getElementById('profile-grade').innerText = gradeText;
+                const profileDeptSelect = document.getElementById('profile-dept-select');
+                const profileGradeSelect = document.getElementById('profile-grade-select');
+                if (profileDeptSelect && savedDept && savedDept !== 'unspecified') profileDeptSelect.value = savedDept;
+                if (profileGradeSelect && savedGrade && savedGrade !== 'unspecified') profileGradeSelect.value = savedGrade;
             } else {
                 if (profilePanel) profilePanel.style.display = 'none';
                 if (signupContainer) signupContainer.style.display = 'block';
                 if (signOutBtn) signOutBtn.style.display = 'none';
                 if (deleteBtn) deleteBtn.style.display = 'none';
             }
+        }
+
+        function saveProfileDropdowns() {
+            const profileDeptSelect = document.getElementById('profile-dept-select');
+            const profileGradeSelect = document.getElementById('profile-grade-select');
+            if (!profileDeptSelect || !profileGradeSelect) return;
+
+            const dept = profileDeptSelect.value;
+            const grade = profileGradeSelect.value;
+
+            // Update local storage
+            localStorage.setItem('studentDept', dept);
+            localStorage.setItem('studentGrade', grade);
+
+            // Sync with registeredUsers array in local storage
+            const email = localStorage.getItem('studentEmail');
+            if (email) {
+                let users = [];
+                try { users = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) { users = []; }
+                if (!Array.isArray(users)) users = [];
+                const uIdx = users.findIndex(u => (u.email || '').toLowerCase() === email.toLowerCase());
+                if (uIdx !== -1) {
+                    users[uIdx].dept = dept;
+                    users[uIdx].grade = grade;
+                    localStorage.setItem('registeredUsers', JSON.stringify(users));
+                }
+
+                // Sync with backend database (SQLite)
+                const isBackendAvailable = window.location.protocol.startsWith('http');
+                if (isBackendAvailable) {
+                    const apiBase = window.location.protocol.startsWith('http') ? '' : 'https://127.0.0.1';
+                    fetch(`${apiBase}/api/update-profile`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email, dept: dept, grade: grade })
+                    })
+                    .then(res => res.json())
+                    .then(resData => {
+                        if (!resData.success) {
+                            console.warn("Backend profile update failed:", resData.message);
+                        }
+                    })
+                    .catch(err => {
+                        console.warn("Error updating profile on backend:", err);
+                    });
+                }
+            }
+
+            updateUserSession();
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateUserSession();
+
+            // Set values on theme dropdown on load
+            const savedTheme = localStorage.getItem('siteTheme') || 'default';
+            const themeSelect = document.getElementById('theme-select');
+            if (themeSelect) themeSelect.value = savedTheme;
         });
         function triggerGoogleAuth() {
             // Clear inputs
