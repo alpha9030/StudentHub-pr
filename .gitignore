@@ -7,3 +7,6 @@ diff.txt
 check_project.py
 check_braces.py
 config.json
+*.xlsx
+*.xls
+*.csv

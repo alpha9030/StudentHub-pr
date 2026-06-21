@@ -114,7 +114,10 @@
     <div id="admin-view" class="admin-container" style="display: none;">
         <div class="admin-header">
             <h1>🛡️ Admin Control Panel</h1>
-            <button onclick="lockAdmin()" class="btn btn-secondary" style="padding: 8px 16px;">Lock Panel</button>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button onclick="downloadCSVLogs()" class="btn" style="padding: 8px 16px; background-color: var(--primary-color, #2b6cb0); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">Download Login Logs (CSV)</button>
+                <button onclick="lockAdmin()" class="btn btn-secondary" style="padding: 8px 16px;">Lock Panel</button>
+            </div>
         </div>
 
         <div class="stats-grid">
@@ -214,6 +217,16 @@
             } else {
                 alert("Authentication Failed: Invalid Access Key.");
             }
+        }
+
+        function downloadCSVLogs() {
+            const isBackendAvailable = window.location.protocol.startsWith('http');
+            if (!isBackendAvailable) {
+                alert("Cannot download CSV in local offline HTML mode.");
+                return;
+            }
+            const apiBase = window.location.protocol.startsWith('http') ? '' : 'https://127.0.0.1';
+            window.location.href = `${apiBase}/api/admin/download-csv?key=${encodeURIComponent(adminKey)}`;
         }
 
         function lockAdmin() {

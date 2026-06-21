@@ -107,7 +107,7 @@ def send_otp_email(to_email, otp):
         print(f"Error sending email: {e}")
         return False
 
-app = Flask(__name__, static_folder='.', static_url_path='')
+app = Flask(__name__, static_folder=None)
 
 @app.after_request
 def add_cors_headers(response):
@@ -421,6 +421,38 @@ def update_user_profile(email, dept, grade):
     finally:
         conn.close()
 
+def log_user_login_to_csv(email):
+    import csv
+    csv_file = "student_logins.csv"
+    conn = get_db()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT username, email, grade, dept, last_login_at, login_count FROM users WHERE LOWER(email) = ?", (email,))
+        row = cursor.fetchone()
+        if not row:
+            return
+        username = row['username']
+        email_val = row['email']
+        grade = row['grade']
+        dept = row['dept']
+        last_login_at = row['last_login_at']
+        login_count = row['login_count']
+    except sqlite3.Error as e:
+        print(f"SQLite retrieve for csv error: {e}")
+        return
+    finally:
+        conn.close()
+
+    try:
+        file_exists = os.path.exists(csv_file)
+        with open(csv_file, mode='a', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            if not file_exists:
+                writer.writerow(["Timestamp (UTC)", "Username", "Email", "Department", "Grade", "Login Count"])
+            writer.writerow([last_login_at, username, email_val, dept, grade, login_count])
+    except Exception as e:
+        print(f"Error updating CSV sheet: {e}")
+
 def track_user_login(email):
     email = email.strip().lower()
     current_time = datetime.datetime.utcnow().isoformat()
@@ -440,6 +472,9 @@ def track_user_login(email):
         print(f"SQLite track_user_login error: {e}")
     finally:
         conn.close()
+    
+    # Update CSV log after database connection is closed
+    log_user_login_to_csv(email)
 
 @app.route('/')
 def serve_index():
@@ -735,6 +770,19 @@ def api_admin_users():
     user_list = get_all_users_for_admin()
     return jsonify({'success': True, 'users': user_list})
 
+@app.route('/api/admin/download-csv')
+def api_admin_download_csv():
+    admin_key = request.args.get('key')
+    expected_key = os.environ.get('ADMIN_KEY') or 'admin'
+    if admin_key != expected_key:
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+    
+    csv_file = "student_logins.csv"
+    if not os.path.exists(csv_file):
+        return jsonify({'success': False, 'message': 'Log file not found'}), 404
+        
+    return send_from_directory('.', csv_file, as_attachment=True)
+
 @app.route('/api/update-profile', methods=['POST', 'OPTIONS'])
 def api_update_profile():
     if request.method == 'OPTIONS':
@@ -758,6 +806,10 @@ def api_update_profile():
 # Catch-all to serve any static asset (js, css, images)
 @app.route('/<path:path>')
 def serve_static(path):
+    # Block access to databases, Excel sheets, CSV logs, and scripts for security and to prevent Excel sync credential prompts
+    blocked_extensions = ('.db', '.xlsx', '.xls', '.csv', '.bat', '.git')
+    if any(path.lower().endswith(ext) for ext in blocked_extensions) or '..' in path:
+        return jsonify({'success': False, 'message': 'Access Denied'}), 403
     return send_from_directory('.', path)
 
 init_db()
