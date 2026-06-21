@@ -406,6 +406,18 @@ def track_user_login(email):
 def serve_index():
     return send_from_directory('.', 'index.html')
 
+@app.route('/signup')
+@app.route('/signup.html')
+def serve_signup():
+    return send_from_directory('.', 'signup.html')
+
+@app.route('/account')
+@app.route('/account.html')
+@app.route('/auth')
+def serve_account():
+    from flask import redirect
+    return redirect('/#auth')
+
 # API Endpoints
 
 @app.route('/api/send-otp', methods=['POST', 'OPTIONS'])
