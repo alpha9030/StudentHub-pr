@@ -312,7 +312,7 @@ h5 { margin-top: 16px; font-size: 14px; font-weight: 600; }
 .study-guide-container,
 .ref-page-container,
 .admin-container {
-    max-width: 1100px !important;
+    max-width: 1350px !important;
     margin: 40px auto !important;
     padding: 40px !important;
     box-sizing: border-box !important;
@@ -466,7 +466,33 @@ table tr:hover td {
     border: 1px solid var(--border-color);
     position: sticky;
     top: 20px;
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
     z-index: 10;
+}
+/* Sleek Scrollbar for Contents Sidebar */
+.reference-layout aside::-webkit-scrollbar {
+    width: 6px;
+}
+.reference-layout aside::-webkit-scrollbar-track {
+    background: transparent;
+}
+.reference-layout aside::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+.reference-layout aside::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+/* Interactive hover transition for company/resume cards */
+.company-btn {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.company-btn:hover {
+    background-color: var(--border-color) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    border-color: var(--primary-color) !important;
 }
 .reference-layout main {
     flex: 1;
@@ -2536,8 +2562,8 @@ input[type="submit"]:hover {
    ADDITIONAL RESPONSIVE OVERRIDES (PHONE, TABLET, LAPTOP)
    ========================================================================== */
 
-/* Laptop / Medium Screen Tweaks (max-width: 1200px) */
-@media (max-width: 1200px) {
+/* Laptop / Medium Screen Tweaks (max-width: 1450px) */
+@media (max-width: 1450px) {
     .app-container,
     .study-guide-container,
     .ref-page-container,

@@ -3016,16 +3016,43 @@
                             </div>
                         </div>
                         
-                        <!-- Right Side: Live Job Boards (Updated Daily) -->
-                        <div class="live-boards-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;">
-                            <h4 style="margin-top: 0; margin-bottom: 16px; color: var(--primary-dark); display: flex; align-items: center; gap: 8px; font-size: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-                                🔍 Live Daily Search
-                            </h4>
-                            <p style="font-size: 13px; color: var(--text-body); margin-bottom: 16px; line-height: 1.5; opacity: 0.8;">
-                                These search query links are pre-configured to fetch live listings daily on popular internship portals:
-                            </p>
-                            <div id="live-boards-list" style="display: flex; flex-direction: column; gap: 12px;">
-                                <!-- Search links will be dynamically populated -->
+                        <!-- Right Side: Live Job Boards & Resume Builder -->
+                        <div style="display: flex; flex-direction: column; gap: 24px;">
+                            <div class="live-boards-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;">
+                                <h4 style="margin-top: 0; margin-bottom: 16px; color: var(--primary-dark); display: flex; align-items: center; gap: 8px; font-size: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                                    🔍 Live Daily Search
+                                </h4>
+                                <p style="font-size: 13px; color: var(--text-body); margin-bottom: 16px; line-height: 1.5; opacity: 0.8;">
+                                    These search query links are pre-configured to fetch live listings daily on popular internship portals:
+                                </p>
+                                <div id="live-boards-list" style="display: flex; flex-direction: column; gap: 12px;">
+                                    <!-- Search links will be dynamically populated -->
+                                </div>
+                            </div>
+                            
+                            <div class="resume-builder-card" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;">
+                                <h4 style="margin-top: 0; margin-bottom: 16px; color: var(--primary-dark); display: flex; align-items: center; gap: 8px; font-size: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                                    📄 Build Your Resume
+                                </h4>
+                                <p style="font-size: 13px; color: var(--text-body); margin-bottom: 16px; line-height: 1.5; opacity: 0.8;">
+                                    Create a professional, ATS-friendly resume to stand out in internship applications:
+                                </p>
+                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                                    <a href="https://rxresu.me/" target="_blank" class="company-btn" style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); background: var(--bg-container); border-radius: 8px; cursor: pointer; text-align: left; text-decoration: none; box-sizing: border-box;">
+                                        <span style="font-size: 24px;">📝</span>
+                                        <div style="flex-grow: 1;">
+                                            <strong style="color: var(--text-title); font-size: 14px; display: block;">Reactive Resume</strong>
+                                            <span style="font-size: 11px; color: var(--primary-color); font-weight: 500;">Free, open-source, ATS-friendly builder</span>
+                                        </div>
+                                    </a>
+                                    <a href="https://www.flowcv.com/" target="_blank" class="company-btn" style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); background: var(--bg-container); border-radius: 8px; cursor: pointer; text-align: left; text-decoration: none; box-sizing: border-box;">
+                                        <span style="font-size: 24px;">✨</span>
+                                        <div style="flex-grow: 1;">
+                                            <strong style="color: var(--text-title); font-size: 14px; display: block;">FlowCV</strong>
+                                            <span style="font-size: 11px; color: var(--primary-color); font-weight: 500;">Modern templates & layout builder</span>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -12883,28 +12910,35 @@
                 const searchQInternshala = encodeURIComponent(data.title.toLowerCase().replace(/ /g, '-'));
                 boardsList.innerHTML = `
                     <a href="https://internshala.com/internships/matching-${searchQInternshala}" target="_blank" class="company-btn" style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); background: var(--bg-container); border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.2s; font-family: inherit; text-decoration: none; box-sizing: border-box;">
-                        <span style="font-size: 24px;">\ud83c\udf93</span>
+                        <span style="font-size: 24px;">🎓</span>
                         <div style="flex-grow: 1;">
                             <strong style="color: var(--text-title); font-size: 14px; display: block;">Live Internshala Search</strong>
                             <span style="font-size: 11px; color: var(--primary-color); font-weight: 500;">Search live ${data.title} internships</span>
                         </div>
                     </a>
                     <a href="https://www.linkedin.com/jobs/search/?keywords=${searchQ}+India" target="_blank" class="company-btn" style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); background: var(--bg-container); border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.2s; font-family: inherit; text-decoration: none; box-sizing: border-box;">
-                        <span style="font-size: 24px;">\ud83d\udcbc</span>
+                        <span style="font-size: 24px;">💼</span>
                         <div style="flex-grow: 1;">
                             <strong style="color: var(--text-title); font-size: 14px; display: block;">Live LinkedIn Search</strong>
                             <span style="font-size: 11px; color: var(--primary-color); font-weight: 500;">Search recent ${data.title} postings</span>
                         </div>
                     </a>
+                    <a href="https://wellfound.com/jobs?q=${searchQ}" target="_blank" class="company-btn" style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); background: var(--bg-container); border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.2s; font-family: inherit; text-decoration: none; box-sizing: border-box;">
+                        <span style="font-size: 24px;">🌱</span>
+                        <div style="flex-grow: 1;">
+                            <strong style="color: var(--text-title); font-size: 14px; display: block;">Live Wellfound Search</strong>
+                            <span style="font-size: 11px; color: var(--primary-color); font-weight: 500;">Search startup ${data.title} internships</span>
+                        </div>
+                    </a>
                     <a href="https://unstop.com/opportunities?search=${searchQ}" target="_blank" class="company-btn" style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); background: var(--bg-container); border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.2s; font-family: inherit; text-decoration: none; box-sizing: border-box;">
-                        <span style="font-size: 24px;">\ud83d\ude80</span>
+                        <span style="font-size: 24px;">🚀</span>
                         <div style="flex-grow: 1;">
                             <strong style="color: var(--text-title); font-size: 14px; display: block;">Live Unstop Search</strong>
                             <span style="font-size: 11px; color: var(--primary-color); font-weight: 500;">Search student challenges & internships</span>
                         </div>
                     </a>
                     <a href="https://in.indeed.com/jobs?q=${searchQ}" target="_blank" class="company-btn" style="display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 14px; border: 1px solid var(--border-color); background: var(--bg-container); border-radius: 8px; cursor: pointer; text-align: left; transition: all 0.2s; font-family: inherit; text-decoration: none; box-sizing: border-box;">
-                        <span style="font-size: 24px;">\ud83d\udd0d</span>
+                        <span style="font-size: 24px;">🔍</span>
                         <div style="flex-grow: 1;">
                             <strong style="color: var(--text-title); font-size: 14px; display: block;">Live Indeed Search</strong>
                             <span style="font-size: 11px; color: var(--primary-color); font-weight: 500;">Search live Indeed local postings</span>
