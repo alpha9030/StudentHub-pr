@@ -307,16 +307,19 @@ h3 { margin-top: 24px; font-size: 20px; font-weight: 600; color: var(--primary-c
 h4 { margin-top: 20px; font-size: 16px; padding-bottom: 6px; font-weight: 600; color: var(--primary-dark); border-bottom: 1px dashed var(--border-color); }
 h5 { margin-top: 16px; font-size: 14px; font-weight: 600; }
 
-/* Main App Wrapper */
-.app-container {
-    max-width: 1100px;
-    margin: 40px auto;
-    padding: 40px;
-    box-sizing: border-box;
-    border-radius: 16px;
-    background-color: var(--bg-container);
-    border: 1px solid var(--border-color);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+/* Main App Wrappers (Uniform size across all webpages) */
+.app-container,
+.study-guide-container,
+.ref-page-container,
+.admin-container {
+    max-width: 1100px !important;
+    margin: 40px auto !important;
+    padding: 40px !important;
+    box-sizing: border-box !important;
+    border-radius: 16px !important;
+    background-color: var(--bg-container) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04) !important;
 }
 
 /* ==========================================================================
@@ -726,11 +729,7 @@ input[type="submit"]:hover, .btn-submit:hover {
 /* ==========================================================================
    8. SPECIFIC REFERENCE PAGE AND TIMETABLE STYLES
    ========================================================================== */
-.ref-page-container {
-    max-width: 1400px !important;
-    border-radius: 20px;
-    padding: 40px;
-}
+/* ref-page-container styles grouped under standard container styling */
 .ref-sidebar-nav {
     list-style: none;
     padding-left: 0;
@@ -783,7 +782,7 @@ input[type="submit"]:hover, .btn-submit:hover {
 .ref-category-title span { vertical-align: middle; }
 .ref-links-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
     gap: 16px;
     padding: 0 !important;
     margin: 0 !important;
@@ -863,7 +862,7 @@ input[type="submit"]:hover, .btn-submit:hover {
 /* Practice Platforms Grid (using floated cards) */
 .platform-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
     gap: 20px;
     margin-top: 20px;
     margin-bottom: 30px;
@@ -1320,13 +1319,17 @@ input[type="submit"]:hover, .btn-submit:hover {
         width: 100% !important;
         margin: 0 !important;
     }
+}
+
+@media (max-width: 992px) {
     .reference-layout {
         flex-direction: column;
     }
     .reference-layout aside {
         width: 100% !important;
-        position: static;
+        position: static !important;
         margin-bottom: 20px;
+        top: 0;
     }
     .reference-layout main {
         margin-left: 0 !important;
@@ -1374,11 +1377,7 @@ input[type="submit"]:hover, .btn-submit:hover {
 /* ==========================================================================
    9. STUDY GUIDES STYLING
    ========================================================================== */
-.study-guide-container {
-    max-width: 900px !important; /* Narrower for reading comfort */
-    margin: 40px auto;
-    padding: 35px 45px !important;
-}
+/* study-guide-container styles grouped under standard container styling */
 
 .study-guide-container h3 {
     text-align: center;
@@ -1535,7 +1534,7 @@ input[type="submit"]:hover, .btn-submit:hover {
 /* Lists with links (Resource grids) */
 .study-guide-container ul:has(a) {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
     gap: 12px;
     padding-left: 0 !important;
     margin: 10px 0 25px 0 !important;
@@ -2374,7 +2373,7 @@ input[type="submit"]:hover, .btn-submit:hover {
 /* Track Card CSS Grid Overrides */
 .track-grid {
     display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)) !important;
+    grid-template-columns: repeat(auto-fit, minmax(min(310px, 100%), 1fr)) !important;
     gap: 24px !important;
     margin-top: 20px !important;
     text-align: left !important;
@@ -2539,11 +2538,11 @@ input[type="submit"]:hover {
 
 /* Laptop / Medium Screen Tweaks (max-width: 1200px) */
 @media (max-width: 1200px) {
-    .app-container {
-        max-width: 95%;
-    }
-    .ref-page-container {
-        max-width: 98% !important;
+    .app-container,
+    .study-guide-container,
+    .ref-page-container,
+    .admin-container {
+        max-width: 95% !important;
     }
 }
 
@@ -2637,9 +2636,9 @@ input[type="submit"]:hover {
 
     /* Admin header tweaks */
     .admin-header {
-        flex-direction: column;
-        text-align: center;
-        align-items: center;
+        flex-direction: column !important;
+        text-align: center !important;
+        align-items: center !important;
     }
 
     /* Reference search panel layouts */
@@ -3105,7 +3104,7 @@ body.view-mode-tab .filter-group {
 }
 .achievements-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
     gap: 16px;
     margin-top: 15px;
 }
@@ -3208,7 +3207,7 @@ body.view-mode-tab .filter-group {
 }
 .trivia-options {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
     gap: 12px;
 }
 .trivia-option {

@@ -170,15 +170,18 @@
                 <span>OR</span>
             </div>
             
-            <button type="button" class="btn-google-auth" onclick="triggerGoogleAuth()">
-                <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
-                    <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.69c-.29 1.5-1.14 2.78-2.4 3.62v3.02h3.87c2.27-2.08 3.58-5.15 3.58-8.49z"/>
-                    <path fill="#34A853" d="M12 24c3.24 0 5.97-1.08 7.96-2.91l-3.87-3.02c-1.08.72-2.45 1.16-4.09 1.16-3.15 0-5.81-2.13-6.76-5.01H1.27v3.13C3.26 20.21 7.37 24 12 24z"/>
-                    <path fill="#FBBC05" d="M5.24 14.22c-.24-.72-.38-1.5-.38-2.22s.14-1.5.38-2.22V6.65H1.27C.46 8.27 0 10.08 0 12s.46 3.73 1.27 5.35l3.97-3.13z"/>
-                    <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.96 1.19 15.24 0 12 0 7.37 0 3.26 3.79 1.27 7.78l3.97 3.13c.95-2.88 3.61-5.01 6.76-5.01z"/>
-                </svg>
-                <span>Continue with Google</span>
-            </button>
+            <div class="google-signin-container" style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <button type="button" class="btn-google-auth" onclick="triggerGoogleAuth()" style="width: 100%;">
+                    <svg class="google-icon" viewBox="0 0 24 24" width="20" height="20">
+                        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v3.92h6.69c-.29 1.5-1.14 2.78-2.4 3.62v3.02h3.87c2.27-2.08 3.58-5.15 3.58-8.49z"/>
+                        <path fill="#34A853" d="M12 24c3.24 0 5.97-1.08 7.96-2.91l-3.87-3.02c-1.08.72-2.45 1.16-4.09 1.16-3.15 0-5.81-2.13-6.76-5.01H1.27v3.13C3.26 20.21 7.37 24 12 24z"/>
+                        <path fill="#FBBC05" d="M5.24 14.22c-.24-.72-.38-1.5-.38-2.22s.14-1.5.38-2.22V6.65H1.27C.46 8.27 0 10.08 0 12s.46 3.73 1.27 5.35l3.97-3.13z"/>
+                        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.96 1.19 15.24 0 12 0 7.37 0 3.26 3.79 1.27 7.78l3.97 3.13c.95-2.88 3.61-5.01 6.76-5.01z"/>
+                    </svg>
+                    <span>Continue with Google</span>
+                </button>
+                <div class="google-signin-official" style="display: none; width: 100%; margin-top: 5px;"></div>
+            </div>
         </div>
 
         <footer class="app-footer" style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-muted); font-size: 13px;">
@@ -683,9 +686,224 @@
             const savedTheme = localStorage.getItem('siteTheme') || 'default';
             const themeSelect = document.getElementById('theme-select');
             if (themeSelect) themeSelect.value = savedTheme;
+
+            // Initialize Google Sign-In (real SDK if configured, else fallback)
+            initGoogleSignIn();
         });
+        // Google Sign-In (Real & Simulated Integration)
+        let googleClientId = '';
+        let googleSignInInitialized = false;
+        let realGoogleCredential = '';
+        let isRealGoogleReg = false;
+
+        async function initGoogleSignIn() {
+            try {
+                const apiBase = window.location.protocol.startsWith('http') ? '' : 'https://127.0.0.1';
+                const response = await fetch(`${apiBase}/api/config`);
+                const data = await response.json();
+                if (data.success && data.google_client_id) {
+                    googleClientId = data.google_client_id;
+                    
+                    if (googleClientId && googleClientId !== 'your-google-client-id.apps.googleusercontent.com') {
+                        const script = document.createElement('script');
+                        script.src = 'https://accounts.google.com/gsi/client';
+                        script.async = true;
+                        script.defer = true;
+                        script.onload = () => {
+                            if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+                                google.accounts.id.initialize({
+                                    client_id: googleClientId,
+                                    callback: handleRealGoogleCredential
+                                });
+                                const btnContainers = document.querySelectorAll('.google-signin-official');
+                                btnContainers.forEach(container => {
+                                    container.style.display = 'block';
+                                    google.accounts.id.renderButton(
+                                        container,
+                                        { theme: "outline", size: "large", width: "100%", text: "continue_with" }
+                                    );
+                                });
+                                const simButtons = document.querySelectorAll('.btn-google-auth');
+                                simButtons.forEach(btn => {
+                                    btn.style.display = 'none';
+                                });
+                                googleSignInInitialized = true;
+                            }
+                        };
+                        document.head.appendChild(script);
+                    }
+                }
+            } catch (e) {
+                console.warn("Error initializing real Google Sign-In:", e);
+            }
+        }
+
+        async function handleRealGoogleCredential(response) {
+            const credential = response.credential;
+            realGoogleCredential = credential;
+            
+            const isBackendAvailable = window.location.protocol.startsWith('http');
+            if (isBackendAvailable) {
+                try {
+                    const apiBase = window.location.protocol.startsWith('http') ? '' : 'https://127.0.0.1';
+                    const res = await fetch(`${apiBase}/api/google-login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ credential: credential })
+                    });
+                    const resData = await res.json();
+                    
+                    if (resData.success) {
+                        completeGoogleLoginSession(resData.user);
+                    } else if (resData.needs_registration) {
+                        promptGoogleRegistration();
+                    } else {
+                        alert("Google Sign-In Failed: " + (resData.message || "Unknown error"));
+                    }
+                } catch (e) {
+                    console.error("Error logging in via real Google token:", e);
+                    alert("Backend connection failed during Google Sign-In.");
+                }
+            } else {
+                alert("Offline Mode: Real Google Sign-In requires an active backend server connection.");
+            }
+        }
+
+        function promptGoogleRegistration() {
+            isRealGoogleReg = true;
+            
+            const nameInput = document.getElementById('google-custom-name');
+            const emailInput = document.getElementById('google-custom-email');
+            if (nameInput) {
+                nameInput.style.display = 'none';
+                const nameLabel = nameInput.previousElementSibling;
+                if (nameLabel && nameLabel.tagName === 'LABEL') nameLabel.style.display = 'none';
+            }
+            if (emailInput) {
+                emailInput.style.display = 'none';
+                const emailLabel = emailInput.previousElementSibling;
+                if (emailLabel && emailLabel.tagName === 'LABEL') emailLabel.style.display = 'none';
+            }
+            
+            const modalHeader = document.querySelector('#google-auth-modal .google-modal-header h3');
+            if (modalHeader) modalHeader.textContent = "Complete Google Registration";
+            
+            const modalSubHeader = document.querySelector('#google-auth-modal .google-modal-header p');
+            if (modalSubHeader) modalSubHeader.textContent = "Please select your department and academic year to finish enrolling";
+            
+            const modal = document.getElementById('google-auth-modal');
+            if (modal) modal.classList.add('active');
+        }
+
+        async function submitRealGoogleRegistration(dept, grade) {
+            closeGoogleAuthModal();
+            const isBackendAvailable = window.location.protocol.startsWith('http');
+            if (isBackendAvailable && realGoogleCredential) {
+                try {
+                    const apiBase = window.location.protocol.startsWith('http') ? '' : 'https://127.0.0.1';
+                    const response = await fetch(`${apiBase}/api/google-login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            credential: realGoogleCredential,
+                            dept: dept,
+                            grade: grade
+                        })
+                    });
+                    const resData = await response.json();
+                    if (resData.success) {
+                        completeGoogleLoginSession(resData.user);
+                    } else {
+                        alert("Google Sign-In Failed during registration: " + (resData.message || "Unknown error"));
+                    }
+                } catch (e) {
+                    console.error("Error registering Google account:", e);
+                    alert("Backend connection error during registration.");
+                }
+            }
+        }
+
+        async function completeGoogleLoginSession(user) {
+            localStorage.setItem('studentName', user.username);
+            localStorage.setItem('studentGrade', user.grade);
+            localStorage.setItem('studentDept', user.dept);
+            localStorage.setItem('studentEmail', user.email);
+            localStorage.setItem('isLoggedIn', 'true');
+            
+            const isBackendAvailable = window.location.protocol.startsWith('http');
+            const apiBase = isBackendAvailable ? '' : 'https://127.0.0.1';
+            if (isBackendAvailable) {
+                try {
+                    const progResp = await fetch(`${apiBase}/api/progress?email=${encodeURIComponent(user.email)}`);
+                    const progData = await progResp.json();
+                    if (progData.success) {
+                        for (let i = 0; i < localStorage.length; i++) {
+                            const key = localStorage.key(i);
+                            if (key && key.includes('-task-')) {
+                                localStorage.removeItem(key);
+                                i--;
+                            }
+                        }
+                        progData.progress.forEach(ch => {
+                            localStorage.setItem(ch, 'true');
+                        });
+                    }
+                } catch(e) {
+                    console.warn("Could not sync progress from backend:", e);
+                }
+                
+                try {
+                    const chatResp = await fetch(`${apiBase}/api/chatbot?email=${encodeURIComponent(user.email)}`);
+                    const chatData = await chatResp.json();
+                    if (chatData.success && chatData.settings) {
+                        localStorage.setItem('aura_mode', chatData.settings.aura_mode);
+                        localStorage.setItem('aura_api_key', chatData.settings.aura_api_key);
+                        localStorage.setItem('aura_user_name', chatData.settings.aura_user_name);
+                    }
+                } catch(e) {
+                    console.warn("Could not sync chatbot settings:", e);
+                }
+            }
+            
+            let users = [];
+            try { users = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) { users = []; }
+            if (!Array.isArray(users)) users = [];
+            if (!users.some(u => u.email.toLowerCase() === user.email.toLowerCase())) {
+                users.push({
+                    username: user.username,
+                    email: user.email,
+                    password: "google_oauth_placeholder",
+                    grade: user.grade,
+                    dept: user.dept
+                });
+                localStorage.setItem('registeredUsers', JSON.stringify(users));
+            }
+            
+            updateUserSession();
+            
+            const isIndex = window.location.pathname.endsWith("index.html") || 
+                            window.location.pathname.endsWith("/") || 
+                            window.location.pathname === "";
+            if (isIndex) {
+                const deptSelect = document.getElementById('dept-select');
+                const yearSelect = document.getElementById('year-select');
+                let yearNum = "";
+                if (user.grade === 'freshman') yearNum = "1";
+                else if (user.grade === 'sophomore') yearNum = "2";
+                else if (user.grade === 'junior') yearNum = "3";
+                else if (user.grade === 'senior') yearNum = "4";
+
+                if (deptSelect) deptSelect.value = user.dept;
+                if (yearSelect) yearSelect.value = yearNum;
+
+                if (typeof filterCurriculum === 'function') filterCurriculum();
+                if (typeof showView === 'function') showView('dashboard');
+            } else {
+                window.location.href = 'index.html#dashboard';
+            }
+        }
+
         function triggerGoogleAuth() {
-            // Clear inputs
             const nameField = document.getElementById('google-custom-name');
             const emailField = document.getElementById('google-custom-email');
             const deptField = document.getElementById('google-custom-dept');
@@ -695,14 +913,37 @@
             if (deptField) deptField.value = '';
             if (gradeField) gradeField.value = '';
             
-            document.getElementById('google-auth-modal').classList.add('active');
+            const modal = document.getElementById('google-auth-modal');
+            if (modal) modal.classList.add('active');
         }
         
         function closeGoogleAuthModal() {
-            document.getElementById('google-auth-modal').classList.remove('active');
+            const modal = document.getElementById('google-auth-modal');
+            if (modal) modal.classList.remove('active');
+            
+            setTimeout(() => {
+                isRealGoogleReg = false;
+                const nameInput = document.getElementById('google-custom-name');
+                const emailInput = document.getElementById('google-custom-email');
+                if (nameInput) {
+                    nameInput.style.display = 'block';
+                    const nameLabel = nameInput.previousElementSibling;
+                    if (nameLabel && nameLabel.tagName === 'LABEL') nameLabel.style.display = 'block';
+                }
+                if (emailInput) {
+                    emailInput.style.display = 'block';
+                    const emailLabel = emailInput.previousElementSibling;
+                    if (emailLabel && emailLabel.tagName === 'LABEL') emailLabel.style.display = 'block';
+                }
+                const modalHeader = document.querySelector('#google-auth-modal .google-modal-header h3');
+                if (modalHeader) modalHeader.textContent = "Sign in with Google";
+                
+                const modalSubHeader = document.querySelector('#google-auth-modal .google-modal-header p');
+                if (modalSubHeader) modalSubHeader.textContent = "to continue to Student Hub";
+            }, 300);
         }
         
-        async function selectGoogleAccount(name, email, dept, grade) {
+        async function selectGoogleAccount(name, email, dept, grade, credentialToken = '') {
             closeGoogleAuthModal();
             
             const isBackendAvailable = window.location.protocol.startsWith('http');
@@ -712,34 +953,17 @@
                     const response = await fetch(`${apiBase}/api/google-login`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username: name, email: email, dept: dept, grade: grade })
+                        body: JSON.stringify({ 
+                            username: name, 
+                            email: email, 
+                            dept: dept, 
+                            grade: grade,
+                            credential: credentialToken
+                        })
                     });
                     const resData = await response.json();
                     if (resData.success) {
-                        const user = resData.user;
-                        localStorage.setItem('studentName', user.username);
-                        localStorage.setItem('studentGrade', user.grade);
-                        localStorage.setItem('studentDept', user.dept);
-                        localStorage.setItem('studentEmail', user.email);
-                        localStorage.setItem('isLoggedIn', 'true');
-                        
-                        // Also add/update local registeredUsers list so offline works later
-                        let users = [];
-                        try { users = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) { users = []; }
-                        if (!Array.isArray(users)) users = [];
-                        if (!users.some(u => u.email.toLowerCase() === user.email.toLowerCase())) {
-                            users.push({
-                                username: user.username,
-                                email: user.email,
-                                password: "google_oauth_placeholder",
-                                grade: user.grade,
-                                dept: user.dept
-                            });
-                            localStorage.setItem('registeredUsers', JSON.stringify(users));
-                        }
-                        
-                        // Redirect to index.html #dashboard
-                        window.location.href = 'index.html#dashboard';
+                        completeGoogleLoginSession(resData.user);
                         return;
                     } else {
                         alert("Google Sign-In Failed: " + (resData.message || "Unknown error"));
@@ -750,7 +974,6 @@
                 }
             }
             
-            // Local Storage fallback
             let users = [];
             try { users = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) { users = []; }
             if (!Array.isArray(users)) users = [];
@@ -765,40 +988,64 @@
                     password: "google_oauth_placeholder",
                     grade: grade || "unspecified",
                     dept: dept || "unspecified",
-                    progress: []
+                    progress: [],
+                    status: 'active'
                 };
                 users.push(foundUser);
                 localStorage.setItem('registeredUsers', JSON.stringify(users));
+            } else if (foundUser.status === 'deleted') {
+                foundUser.status = 'active';
+                foundUser.username = name;
+                foundUser.grade = grade || foundUser.grade;
+                foundUser.dept = dept || foundUser.dept;
+                foundUser.progress = [];
+                foundUser.login_count = 0;
+                foundUser.last_login_at = null;
+                localStorage.setItem('registeredUsers', JSON.stringify(users));
             }
             
-            localStorage.setItem('studentName', foundUser.username);
-            localStorage.setItem('studentGrade', foundUser.grade);
-            localStorage.setItem('studentDept', foundUser.dept);
-            localStorage.setItem('studentEmail', foundUser.email);
-            localStorage.setItem('isLoggedIn', 'true');
-            
-            window.location.href = 'index.html#dashboard';
+            completeGoogleLoginSession(foundUser);
         }
         
         function submitGoogleCustomAccount() {
-            const name = (document.getElementById('google-custom-name').value || '').trim();
-            const email = (document.getElementById('google-custom-email').value || '').trim();
             const dept = document.getElementById('google-custom-dept').value;
             const grade = document.getElementById('google-custom-grade').value;
             
-            if (!name || !email || !dept || !grade) {
-                alert("Please fill in all fields (Name, Email, Department, and Academic Year).");
+            if (!dept || !grade) {
+                alert("Please select both Department and Academic Year.");
                 return;
             }
             
-            // Basic email validation
+            if (isRealGoogleReg) {
+                submitRealGoogleRegistration(dept, grade);
+                return;
+            }
+            
+            const name = (document.getElementById('google-custom-name').value || '').trim();
+            const email = (document.getElementById('google-custom-email').value || '').trim();
+            if (!name || !email) {
+                alert("Please fill in your Name and Email.");
+                return;
+            }
+            
             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             if (!emailRegex.test(email)) {
                 alert("Please enter a valid Google email address.");
                 return;
             }
             
-            selectGoogleAccount(name, email, dept, grade);
+            // For simulated token flow:
+            const simulatedPayload = {
+                name: name,
+                email: email,
+                dept: dept,
+                grade: grade,
+                iss: "accounts.google.com",
+                aud: "your-google-client-id.apps.googleusercontent.com"
+            };
+            const simulatedToken = "simulated_token_" + btoa(unescape(encodeURIComponent(JSON.stringify(simulatedPayload))));
+            
+            selectGoogleAccount(name, email, dept, grade, simulatedToken);
         }
     </script>
 

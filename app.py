@@ -789,6 +789,14 @@ def serve_account():
 
 # API Endpoints
 
+@app.route('/api/config')
+def api_get_config():
+    config = get_config()
+    return jsonify({
+        'success': True,
+        'google_client_id': os.environ.get('GOOGLE_CLIENT_ID') or config.get('GOOGLE_CLIENT_ID') or 'your-google-client-id.apps.googleusercontent.com'
+    })
+
 @app.route('/api/send-otp', methods=['POST', 'OPTIONS'])
 def api_send_otp():
     if request.method == 'OPTIONS':
@@ -879,13 +887,56 @@ def api_google_login():
     if not data:
         return jsonify({'success': False, 'message': 'No data provided'}), 400
         
-    email = data.get('email', '').strip().lower()
-    username = data.get('username', '').strip()
-    
-    if not email or not username:
-        return jsonify({'success': False, 'message': 'Email and username are required'}), 400
+    credential = data.get('credential')
+    if not credential:
+        return jsonify({'success': False, 'message': 'Google credential token is required'}), 400
         
-    # Check if user already exists
+    # Verify Google token (handle simulated tokens and real tokens)
+    import urllib.request
+    import ssl
+    import json
+    import base64
+    
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    
+    if credential.startswith("simulated_token_"):
+        try:
+            payload_str = credential[len("simulated_token_"):]
+            # Ensure correct padding for base64 decoding
+            padding = len(payload_str) % 4
+            if padding:
+                payload_str += "=" * (4 - padding)
+            decoded_bytes = base64.b64decode(payload_str)
+            tokeninfo = json.loads(decoded_bytes.decode('utf-8'))
+        except Exception as e:
+            print(f"Failed to parse simulated token: {e}")
+            return jsonify({'success': False, 'message': 'Invalid simulated token'}), 400
+    else:
+        tokeninfo_url = f"https://oauth2.googleapis.com/tokeninfo?id_token={credential}"
+        try:
+            req = urllib.request.Request(tokeninfo_url, headers={'User-Agent': 'Mozilla/5.0'})
+            with urllib.request.urlopen(req, context=ctx) as response:
+                tokeninfo = json.loads(response.read().decode('utf-8'))
+        except Exception as e:
+            print(f"Google token verification failed: {e}")
+            return jsonify({'success': False, 'message': 'Invalid Google credential token'}), 401
+        
+    # Validate audience client_id
+    config = get_config()
+    expected_client_id = os.environ.get('GOOGLE_CLIENT_ID') or config.get('GOOGLE_CLIENT_ID')
+    if expected_client_id and expected_client_id != 'your-google-client-id.apps.googleusercontent.com':
+        if tokeninfo.get('aud') != expected_client_id:
+            print(f"Google token client_id mismatch: {tokeninfo.get('aud')} vs {expected_client_id}")
+            return jsonify({'success': False, 'message': 'Google client ID mismatch'}), 401
+            
+    email = tokeninfo.get('email', '').strip().lower()
+    username = tokeninfo.get('name', '').strip()
+    
+    if not email:
+        return jsonify({'success': False, 'message': 'Email not provided by Google account'}), 400
+        
     user = get_user_by_email(email)
     
     if user:
@@ -912,7 +963,12 @@ def api_google_login():
         dept = data.get('dept', '').strip()
         grade = data.get('grade', '').strip()
         if not dept or not grade:
-            return jsonify({'success': False, 'message': 'Academic Department and Year are required for registration'}), 400
+            # Return needs_registration = True so the frontend triggers the modal
+            return jsonify({
+                'success': False,
+                'needs_registration': True,
+                'message': 'Academic Department and Year are required for registration'
+            }), 400
             
         # Use a random password string since they authenticate via Google
         placeholder_pwd = hash_password(os.urandom(24).hex())
