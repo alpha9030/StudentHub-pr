@@ -1,6 +1,6 @@
 /**
  * StudentHub AI Academic Success Agent (named Aura)
- * Acts as an autonomous context-aware educational counselor under 'Agents for Good'.
+ * Acts as an autonomous context-aware educational counselor.
  * Connects to Gemini and synchronizes with SQLite backend settings, chats, profiles, and interactive quizzes.
  */
 
@@ -680,7 +680,7 @@
         
         const welcomeText = `👋 Hello **${studentProfile.name}**! I am **Aura**, your **AI Academic Success Agent** 🎓
 
-I am configured to act as your autonomous learning counselor under the **Agents for Good** capstone category. I proactively monitor your profile data, recommend tailored resources, structure practice quizzes, and adapt study plans dynamically to fit your learning pace.
+I am configured to act as your autonomous learning counselor. I proactively monitor your profile data, recommend tailored resources, structure practice quizzes, and adapt study plans dynamically to fit your learning pace.
 
 How can I help you excel in your studies today?`;
 
@@ -840,7 +840,7 @@ How can I help you excel in your studies today?`;
         const statusSpan = document.getElementById('mentor-status');
         if (statusSpan) statusSpan.textContent = 'Thinking...';
 
-        const systemText = overrideSystemPrompt || `You are Aura, an autonomous AI Academic Success Agent acting under the "Agents for Good" category. 
+        const systemText = overrideSystemPrompt || `You are Aura, an autonomous AI Academic Success Agent. 
 Your goal is to guide students (${studentProfile.name}) in their academic journeys, career goals, study planning, and placements.
 Analyze their Success Profile:
 - Branch: ${successProfile.dept.toUpperCase()}

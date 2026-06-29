@@ -35,19 +35,28 @@
 </style>
 </head>
 <body>
+    <!-- Custom Cursor elements -->
+    <div class="custom-cursor" id="custom-cursor"></div>
+    <div class="custom-cursor-dot" id="custom-cursor-dot"></div>
+
     <div class="app-container ref-page-container">
         
-        <center>
-            <h1>Student Hub</h1>
-            <p>Your step-by-step guide to Computer Science and Web Development.</p>
-        </center>
-        <hr>
-
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="account.html">Account</a>
-            <a href="reference.html" class="active">References</a>
-        </nav>
+        <!-- Modern App Header (Unified with index.html) -->
+        <header class="app-header">
+            <div class="header-logo" onclick="window.location.href='index.html#landing'">
+                <span class="logo-icon">🎓</span>
+                <span class="logo-text">Student Hub</span>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html#landing" id="nav-landing">Home</a>
+                <a href="index.html#auth" id="nav-auth">Account</a>
+                <a href="index.html#mentor" id="nav-mentor">Aura</a>
+                <a href="reference.html" class="active" id="nav-references">References</a>
+            </nav>
+            <div class="header-controls">
+                <!-- Simple header actions wrapper -->
+            </div>
+        </header>
 
         <!-- Unified Controls Row: Search on Left, Theme Settings on Right -->
         <div class="control-row">
@@ -13161,5 +13170,6 @@ function applyFilters() {
             });
         });
     </script>
+    <script src="cursor.js"></script>
 </body>
 </html>
