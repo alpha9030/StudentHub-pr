@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
 
 /* ==========================================================================
    BEGINNER-FRIENDLY ACADEMIC STYLESHEET (CSS VARIABLES BASED)
@@ -385,9 +385,28 @@ nav a.active {
     border-color: var(--step-item-completed-bg);
 }
 
-/* Panel display control */
-.view-panel { display: none; }
-.view-panel.active { display: block; }
+/* Panel display control with premium fade-in/slide-up route transition */
+.view-panel {
+    display: none;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.view-panel.active {
+    display: block;
+    animation: slideUpFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUpFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
 /* Grid layout for Track Cards */
 .track-grid {
@@ -939,6 +958,148 @@ input[type="submit"]:hover, .btn-submit:hover {
     border-top: 1px dashed var(--border-color);
 }
 .platform-features li { margin-bottom: 8px !important; line-height: 1.4; }
+
+.mentor-profile-form {
+    background: var(--bg-container);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+}
+
+/* ==========================================================================
+   STUDENT HUB PREMIUM REDESIGN ELEMENTS
+   ========================================================================== */
+
+/* Premium Custom Cursor */
+.custom-cursor {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 100000;
+    transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1), height 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease, border-color 0.25s ease, opacity 0.25s ease;
+    mix-blend-mode: difference;
+    opacity: 0;
+}
+
+.custom-cursor-dot {
+    width: 6px;
+    height: 6px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 100001;
+    transition: transform 0.2s ease, opacity 0.25s ease;
+    opacity: 0;
+}
+
+.custom-cursor.hover {
+    width: 44px;
+    height: 44px;
+    background-color: rgba(20, 184, 166, 0.15);
+    border-color: var(--primary-color);
+}
+
+/* Cursor Ripple Effect */
+.cursor-ripple-effect {
+    position: fixed;
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 99999;
+    animation: cursorRippleAnim 0.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+@keyframes cursorRippleAnim {
+    0% {
+        width: 0px;
+        height: 0px;
+        opacity: 0.8;
+    }
+    100% {
+        width: 50px;
+        height: 50px;
+        opacity: 0;
+    }
+}
+
+/* Hide on touch screens */
+@media (pointer: coarse) {
+    .custom-cursor, .custom-cursor-dot, .cursor-ripple-effect {
+        display: none !important;
+    }
+}
+
+/* Global Font Override */
+h1, h2, h3, h4, h5, h6, .hero-title, .logo-text, .mentor-tab-btn, .btn {
+    font-family: 'Outfit', 'Inter', sans-serif !important;
+}
+
+/* Custom Premium Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+    border: 2px solid var(--bg-body);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Cards Hover Elevating Effects */
+.mentor-card, .track-card {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+}
+.mentor-card:hover, .track-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    border-color: var(--primary-color) !important;
+}
+
+/* Stepper Wizard Active Glow */
+.step-item.active {
+    box-shadow: 0 0 15px rgba(20, 184, 166, 0.25);
+    border-color: var(--primary-color);
+}
+
+/* Buttons Glow Effects */
+.btn {
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, background-color 0.2s ease;
+}
+.btn-primary:hover {
+    box-shadow: 0 4px 15px rgba(20, 184, 166, 0.35);
+}
+
+/* Float Animations for Cards */
+.hero-image svg {
+    animation: floatAnim 6s ease-in-out infinite;
+}
+
+@keyframes floatAnim {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-8px);
+    }
+}
 
 /* Dynamic Timetable/Syllabus layout overrides */
 .ref-table {
