@@ -1,7 +1,7 @@
 /**
- * StudentHub AI Academic Success Agent
+ * StudentHub AI Academic Success Agent (named Aura)
  * Acts as an autonomous context-aware educational counselor under 'Agents for Good'.
- * Connects to Gemini and synchronizes with SQLite backend settings, chats, and profiles.
+ * Connects to Gemini and synchronizes with SQLite backend settings, chats, profiles, and interactive quizzes.
  */
 
 (function() {
@@ -32,6 +32,201 @@
         study_hours: ''
     };
 
+    // Practice Quiz State Tracker
+    let quizState = {
+        active: false,
+        subject: '',
+        questions: [],
+        questionIndex: 0,
+        score: 0
+    };
+
+    // Quiz Banks ported from Aura AI Tutor
+    const QUIZ_BANKS = {
+        html: [
+            {
+                q: "Which HTML5 element is used for semantic main content?",
+                options: { A: "<content>", B: "<main>", C: "<section>" },
+                correct: "B",
+                exp: "The <main> element is the semantic container that wraps the primary dominant content of a document."
+            },
+            {
+                q: "What attribute is used to open a hyperlink in a new tab?",
+                options: { A: "target='_blank'", B: "rel='newtab'", C: "href='blank'" },
+                correct: "A",
+                exp: "Setting target='_blank' tells the browser to load the destination URL in a new window or tab."
+            },
+            {
+                q: "Which element is used to group related form controls together?",
+                options: { A: "<fieldset>", B: "<group>", C: "<formgroup>" },
+                correct: "A",
+                exp: "The <fieldset> element groups several controls and labels within a web form, often styled with a border."
+            },
+            {
+                q: "What is the correct tag for a line break?",
+                options: { A: "<break>", B: "<lb>", C: "<br>" },
+                correct: "C",
+                exp: "The <br> tag is an empty/self-closing element used to force a line break in text."
+            }
+        ],
+        css: [
+            {
+                q: "Which CSS property controls the text size?",
+                options: { A: "font-style", B: "font-size", C: "text-size" },
+                correct: "B",
+                exp: "The 'font-size' property adjusts the dimensions of text characters (e.g. in px, em, or rem)."
+            },
+            {
+                q: "How do you display a grid layout in CSS?",
+                options: { A: "display: grid;", B: "layout: grid;", C: "grid: active;" },
+                correct: "A",
+                exp: "Setting display: grid; turns an element into a grid container, enabling grid item placement."
+            },
+            {
+                q: "What does 'z-index' control in CSS layout?",
+                options: { A: "Horizontal overlap", B: "Vertical alignment", C: "Stack order depth" },
+                correct: "C",
+                exp: "The z-index property specifies the stack order of elements along the 3D depth Z-axis."
+            },
+            {
+                q: "Which selector selects all elements of a specific CSS class?",
+                options: { A: ".classname", B: "#classname", C: "classname" },
+                correct: "A",
+                exp: "A dot (.) prefix is used in CSS to target elements containing that class name."
+            }
+        ],
+        js: [
+            {
+                q: "What is the result of typeof null in JavaScript?",
+                options: { A: "'null'", B: "'undefined'", C: "'object'" },
+                correct: "C",
+                exp: "In JavaScript, typeof null returns 'object'. This is a legacy quirk of the language design."
+            },
+            {
+                q: "Which function converts a string representation of a number to an integer?",
+                options: { A: "parseInt()", B: "Number.cast()", C: "toInteger()" },
+                correct: "A",
+                exp: "The global parseInt() function parses a string argument and returns an integer of the specified radix."
+            },
+            {
+                q: "Which keyword declares a block-scoped local variable?",
+                options: { A: "let", B: "var", C: "const" },
+                correct: "A",
+                exp: "The 'let' keyword declares block-scoped variables. 'var' is function-scoped."
+            },
+            {
+                q: "How do you write a single-line comment in JavaScript?",
+                options: { A: "<!-- comment -->", B: "// comment", C: "# comment" },
+                correct: "B",
+                exp: "Double forward slashes (//) denote a single-line comment in JavaScript."
+            }
+        ],
+        python: [
+            {
+                q: "How do you define a function in Python?",
+                options: { A: "function name():", B: "def name():", C: "void name():" },
+                correct: "B",
+                exp: "Python uses the 'def' keyword followed by the function name, parentheses, and a colon."
+            },
+            {
+                q: "What is the output of len([1, 2, 3]) in Python?",
+                options: { A: "3", B: "2", C: "Error" },
+                correct: "A",
+                exp: "The len() function returns the total number of items in a list or characters in a string."
+            },
+            {
+                q: "Which Python data structure is mutable and stores key-value pairs?",
+                options: { A: "List", B: "Tuple", C: "Dictionary" },
+                correct: "C",
+                exp: "A Dictionary (dict) is a mutable data structure containing key-value associations enclosed in curly braces {}."
+            },
+            {
+                q: "How do you append an item to the end of a list in Python?",
+                options: { A: "list.add(item)", B: "list.append(item)", C: "list.insert(item)" },
+                correct: "B",
+                exp: "The .append() method adds a single element to the very end of an existing list."
+            }
+        ],
+        sql: [
+            {
+                q: "Which SQL clause filters groups after aggregation?",
+                options: { A: "WHERE", B: "HAVING", C: "GROUP BY" },
+                correct: "B",
+                exp: "HAVING filters summary/aggregated rows (after GROUP BY), whereas WHERE filters individual records before aggregation."
+            },
+            {
+                q: "What SQL statement removes all data from a table without deleting the schema?",
+                options: { A: "DELETE SCHEMA", B: "TRUNCATE TABLE", C: "DROP TABLE" },
+                correct: "B",
+                exp: "TRUNCATE TABLE quickly removes all rows from a table while keeping the table structure and indexes intact."
+            },
+            {
+                q: "Which JOIN returns all rows from the left table and matched rows from the right?",
+                options: { A: "LEFT JOIN", B: "RIGHT JOIN", C: "INNER JOIN" },
+                correct: "A",
+                exp: "LEFT JOIN returns all records from the left table, and the matched records from the right. Unmatched columns return NULL."
+            },
+            {
+                q: "What is a primary key constraint used for in SQL database schemas?",
+                options: { A: "Uniquely identifying rows", B: "Query indexing only", C: "Default values" },
+                correct: "A",
+                exp: "A PRIMARY KEY column uniquely identifies each row in a table. It cannot contain NULL values."
+            }
+        ],
+        c: [
+            {
+                q: "How do you declare a pointer variable in C?",
+                options: { A: "int &p;", B: "int *p;", C: "pointer p;" },
+                correct: "B",
+                exp: "An asterisk (*) prefix is used to declare a variable as a pointer of a specific data type."
+            },
+            {
+                q: "Which operator gets the memory address of a variable in C?",
+                options: { A: "*", B: "&", C: "@" },
+                correct: "B",
+                exp: "The ampersand (&) operator is the address-of operator, yielding the memory address of a variable."
+            },
+            {
+                q: "What C function allocates memory dynamically from the heap?",
+                options: { A: "alloc()", B: "malloc()", C: "call()" },
+                correct: "B",
+                exp: "malloc() (memory allocation) takes a byte size parameter and returns a void pointer to the allocated block."
+            },
+            {
+                q: "What does the C function free(p) do?",
+                options: { A: "Erases pointer value", B: "Deallocates memory block", C: "Sets pointer to null" },
+                correct: "B",
+                exp: "free() releases the dynamically allocated block of memory pointed to by its pointer parameter."
+            }
+        ],
+        dsa: [
+            {
+                q: "What is the average time complexity of a Binary Search?",
+                options: { A: "O(N)", B: "O(log N)", C: "O(1)" },
+                correct: "B",
+                exp: "Binary search halves the search space at each step, resulting in a logarithmic time complexity of O(log N)."
+            },
+            {
+                q: "Which data structure operates on a Last-In, First-Out (LIFO) basis?",
+                options: { A: "Queue", B: "Stack", C: "Heap" },
+                correct: "B",
+                exp: "A Stack processes items in LIFO order—insertions (push) and deletions (pop) occur at the top of the stack."
+            },
+            {
+                q: "What data structure has nodes containing a value and left/right child pointers?",
+                options: { A: "Graph", B: "Binary Tree", C: "Matrix" },
+                correct: "B",
+                exp: "A Binary Tree is a hierarchical structure where each node has at most two child nodes (left and right)."
+            },
+            {
+                q: "What is the worst-case time complexity of a Bubble Sort?",
+                options: { A: "O(N)", B: "O(N log N)", C: "O(N²)" },
+                correct: "C",
+                exp: "Bubble Sort compares adjacent elements and swaps them, requiring nested loops that yield O(N²) worst-case time complexity."
+            }
+        ]
+    };
+
     window.addEventListener('DOMContentLoaded', () => {
         initMentor();
     });
@@ -49,7 +244,6 @@
         
         const currentHash = window.location.hash.replace('#', '');
         if (currentHash === 'mentor' || (document.getElementById('mentor-panel') && document.getElementById('mentor-panel').classList.contains('active'))) {
-            // Already active on reload
             loadChatHistory();
             loadSavedPlans();
             loadSuccessProfile();
@@ -104,14 +298,12 @@
 
     // Switch Tabs inside Workspace
     window.switchMentorTab = function(tabId) {
-        // Toggle tab buttons
         const buttons = document.querySelectorAll('.mentor-tab-btn');
         buttons.forEach(btn => btn.classList.remove('active'));
         
         const activeBtn = document.getElementById('tab-btn-' + tabId);
         if (activeBtn) activeBtn.classList.add('active');
 
-        // Toggle tab contents
         const contents = document.querySelectorAll('.mentor-tab-content');
         contents.forEach(cnt => cnt.classList.remove('active'));
         
@@ -269,7 +461,7 @@
                 const res = await resp.json();
                 if (res.success) {
                     document.getElementById('chk-prof-complete').checked = true;
-                    alert("Academic Success Profile saved & synchronized with cloud database!");
+                    alert("Aura success configurations saved & synchronized successfully!");
                 } else {
                     alert("Profile saved locally (database sync failed: " + res.message + ")");
                 }
@@ -352,7 +544,7 @@
             strengthsHTML += '</ul>';
             strengthsList.innerHTML = strengthsHTML;
         } else {
-            strengthsList.innerHTML = '<p style="color: var(--text-muted); font-size: 13px; margin: 0;">Save profile details to let the Agent analyze your strengths.</p>';
+            strengthsList.innerHTML = '<p style="color: var(--text-muted); font-size: 13px; margin: 0;">Save profile details to let Aura analyze your strengths.</p>';
         }
 
         // Weaknesses
@@ -365,7 +557,7 @@
             weakHTML += '</ul>';
             weakList.innerHTML = weakHTML;
         } else {
-            weakList.innerHTML = '<p style="color: var(--text-muted); font-size: 13px; margin: 0;">Save profile details to let the Agent analyze your weaknesses.</p>';
+            weakList.innerHTML = '<p style="color: var(--text-muted); font-size: 13px; margin: 0;">Save profile details to let Aura analyze your weaknesses.</p>';
         }
     }
 
@@ -486,14 +678,9 @@
         if (!container) return;
         container.innerHTML = '';
         
-        const welcomeText = `👋 Hello **${studentProfile.name}**! I am your **AI Academic Success Agent** 🎓
+        const welcomeText = `👋 Hello **${studentProfile.name}**! I am **Aura**, your **AI Academic Success Agent** 🎓
 
-I am configured to act as an autonomous counselor under the **Agents for Good** capstone banner. Instead of a simple chatbot, I proactively monitor your profile data, recommend customized courses, certifications, placement guides, and adapt study planner timetables to suit your exact learning pace.
-
-To begin:
-1. Complete your profile details in the **Success Profile** tab.
-2. Visit the **Insights Dashboard** to monitor strengths, career readiness, and fetch weekly action items.
-3. Check the **Adapt Plans** tab to adapt or replan study schedules when you fall behind.
+I am configured to act as your autonomous learning counselor under the **Agents for Good** capstone category. I proactively monitor your profile data, recommend tailored resources, structure practice quizzes, and adapt study plans dynamically to fit your learning pace.
 
 How can I help you excel in your studies today?`;
 
@@ -653,7 +840,7 @@ How can I help you excel in your studies today?`;
         const statusSpan = document.getElementById('mentor-status');
         if (statusSpan) statusSpan.textContent = 'Thinking...';
 
-        const systemText = overrideSystemPrompt || `You are an autonomous AI Academic Success Agent acting under the "Agents for Good" category. 
+        const systemText = overrideSystemPrompt || `You are Aura, an autonomous AI Academic Success Agent acting under the "Agents for Good" category. 
 Your goal is to guide students (${studentProfile.name}) in their academic journeys, career goals, study planning, and placements.
 Analyze their Success Profile:
 - Branch: ${successProfile.dept.toUpperCase()}
@@ -666,7 +853,7 @@ Analyze their Success Profile:
 - College predictor parameters: category ${successProfile.category}, rank ${successProfile.exam_rank || 'unspecified'}, state ${successProfile.state || 'unspecified'}.
 
 Behavioral Guidelines:
-1. Reason using the student profile. Address them as ${studentProfile.name} in a supportive, mentor-like, encouraging tone.
+1. Reason using the student profile. Address them as ${studentProfile.name} in a supportive, tutor-like, encouraging tone.
 2. Provide concrete recommendations. If recommending a project or cert, explain WHY it benefits them.
 3. Reference external directories. Recommend links to local study guides (DSA.html, HTML.html, CSS.html, OS.html, Java.html, Python.html) and references.html when relevant.
 4. Keep memory. Reference previous comments where applicable.`;
@@ -712,7 +899,7 @@ Behavioral Guidelines:
             hideTyping();
             if (statusSpan) statusSpan.textContent = 'Error';
             chatMemory.pop();
-            appendMessageUI('bot', `🔴 **Agent Request Error:** ${e.message}`);
+            appendMessageUI('bot', `🔴 **Aura Agent Request Error:** ${e.message}`);
         }
     }
 
@@ -759,7 +946,7 @@ Behavioral Guidelines:
 
         const output = document.getElementById('dashboard-recommendations-list');
         if (!output) return;
-        output.innerHTML = '<p style="text-align: center; color: var(--text-muted);">🤖 Success Agent is analyzing your profile to compile weekly insights...</p>';
+        output.innerHTML = '<p style="text-align: center; color: var(--text-muted);">🤖 Aura Success Agent is analyzing your profile to compile weekly insights...</p>';
 
         const promptText = `Generate weekly academic goals, suggested learning activities, skill recommendations based on career goals, and placement readiness suggestions.
 Profile:
@@ -1002,7 +1189,6 @@ Please regenerate my hourly daily timetable study plan, prioritizing weak areas,
             // Adaptive view item (copy)
             if (overviewContainer) {
                 const clone = item.cloneNode(true);
-                // Re-bind events to clone
                 clone.querySelector('.plan-item-info').addEventListener('click', () => {
                     openPlanViewerModal(plan.title, plan.plan_data);
                 });
@@ -1051,6 +1237,152 @@ Please regenerate my hourly daily timetable study plan, prioritizing weak areas,
 
     window.closePlanViewerModal = function() {
         document.getElementById('plan-viewer-modal').classList.remove('active');
+    };
+
+
+    // ==========================================
+    // PRACTICE QUIZZES PORTED CONTROLLERS
+    // ==========================================
+    
+    function shuffleArray(arr) {
+        let copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    }
+
+    window.startAuraQuiz = function(subject) {
+        const bank = QUIZ_BANKS[subject];
+        if (!bank || bank.length === 0) {
+            alert("Subject quiz bank not configured.");
+            return;
+        }
+
+        const shuffled = shuffleArray(bank);
+        quizState.active = true;
+        quizState.subject = subject;
+        quizState.questions = shuffled.slice(0, 3); // Quiz draws 3 questions
+        quizState.questionIndex = 0;
+        quizState.score = 0;
+
+        document.getElementById('quiz-selection-area').style.display = 'none';
+        document.getElementById('quiz-results-box').style.display = 'none';
+        document.getElementById('active-quiz-box').style.display = 'block';
+
+        presentAuraQuestion();
+    };
+
+    function presentAuraQuestion() {
+        const currentQ = quizState.questions[quizState.questionIndex];
+        const subjectNames = {
+            html: "HTML basics",
+            css: "CSS grids and layouts",
+            js: "JavaScript core",
+            python: "Python scripts",
+            sql: "SQL database queries",
+            c: "C pointers & memory",
+            dsa: "Data structures & algorithms"
+        };
+
+        document.getElementById('quiz-subject-header').textContent = `✏️ ${subjectNames[quizState.subject].toUpperCase()}`;
+        document.getElementById('quiz-progress-text').textContent = `Question ${quizState.questionIndex + 1}/3`;
+        document.getElementById('quiz-question-text').textContent = currentQ.q;
+
+        const optionsContainer = document.getElementById('quiz-options-container');
+        optionsContainer.innerHTML = '';
+        document.getElementById('quiz-feedback-box').style.display = 'none';
+        document.getElementById('quiz-next-btn').style.display = 'none';
+
+        // Render Options A, B, C
+        Object.keys(currentQ.options).forEach(key => {
+            const optBtn = document.createElement('button');
+            optBtn.className = 'aura-quiz-option';
+            optBtn.innerHTML = `<strong>${key})</strong> ${currentQ.options[key]}`;
+            optBtn.addEventListener('click', () => submitAuraQuizAnswer(key));
+            optionsContainer.appendChild(optBtn);
+        });
+    }
+
+    function submitAuraQuizAnswer(choice) {
+        const currentQ = quizState.questions[quizState.questionIndex];
+        const optionsContainer = document.getElementById('quiz-options-container');
+        const feedbackBox = document.getElementById('quiz-feedback-box');
+        const nextBtn = document.getElementById('quiz-next-btn');
+
+        // Disable all option clicks and add feedback color classes
+        const optButtons = optionsContainer.querySelectorAll('.aura-quiz-option');
+        optButtons.forEach(btn => {
+            btn.disabled = true;
+            const letter = btn.innerText.substring(0, 1);
+            if (letter === currentQ.correct) {
+                btn.className = 'aura-quiz-option correct';
+            } else if (letter === choice) {
+                btn.className = 'aura-quiz-option incorrect';
+            }
+        });
+
+        const isCorrect = (choice === currentQ.correct);
+        if (isCorrect) {
+            quizState.score++;
+            feedbackBox.style.background = '#d1fae5';
+            feedbackBox.style.color = '#065f46';
+            feedbackBox.style.border = '1px solid #10b981';
+            feedbackBox.innerHTML = `🟢 <strong>Correct Answer!</strong><br>${currentQ.exp}`;
+        } else {
+            feedbackBox.style.background = '#fee2e2';
+            feedbackBox.style.color = '#991b1b';
+            feedbackBox.style.border = '1px solid #ef4444';
+            feedbackBox.innerHTML = `🔴 <strong>Incorrect.</strong> The correct answer was <strong>${currentQ.correct}) ${currentQ.options[currentQ.correct]}</strong>.<br>${currentQ.exp}`;
+        }
+
+        feedbackBox.style.display = 'block';
+        nextBtn.style.display = 'block';
+    }
+
+    window.nextAuraQuizQuestion = function() {
+        quizState.questionIndex++;
+        if (quizState.questionIndex >= 3) {
+            finishAuraQuiz();
+        } else {
+            presentAuraQuestion();
+        }
+    };
+
+    function finishAuraQuiz() {
+        document.getElementById('active-quiz-box').style.display = 'none';
+        
+        const resultsBox = document.getElementById('quiz-results-box');
+        const scoreSummary = document.getElementById('quiz-score-summary');
+        const scoreMessage = document.getElementById('quiz-score-message');
+        const retryBtn = document.getElementById('quiz-retry-btn');
+
+        scoreSummary.textContent = `You scored ${quizState.score}/3`;
+        
+        let msg = '';
+        if (quizState.score === 3) {
+            msg = "Perfect score! You are mastering this subject perfectly! 🌟 Keep it up.";
+        } else if (quizState.score >= 2) {
+            msg = "Good job! Check the curriculum checklists and guides to patch up any minor gaps. 📚";
+        } else {
+            msg = "Keep practicing! Repeating checkoffs and reviewing guides is key to solid learning. 💪";
+        }
+        scoreMessage.textContent = msg;
+
+        // Configure Retry Button
+        retryBtn.onclick = () => {
+            startAuraQuiz(quizState.subject);
+        };
+
+        resultsBox.style.display = 'block';
+    }
+
+    window.exitAuraQuiz = function() {
+        quizState.active = false;
+        document.getElementById('active-quiz-box').style.display = 'none';
+        document.getElementById('quiz-results-box').style.display = 'none';
+        document.getElementById('quiz-selection-area').style.display = 'grid';
     };
 
 

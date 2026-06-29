@@ -112,7 +112,7 @@
             <nav class="main-nav">
                 <a href="#" id="nav-landing" onclick="showView('landing'); return false;" class="active">Home</a>
                 <a href="#" id="nav-auth" onclick="showView('auth'); return false;">Account</a>
-                <a href="#" id="nav-mentor" onclick="showView('mentor'); return false;">AI Mentor</a>
+                <a href="#" id="nav-mentor" onclick="showView('mentor'); return false;">Aura</a>
                 <a href="reference.html" onclick="return checkReferenceAccess(event)" id="nav-references">References</a>
             </nav>
             <div class="header-controls">
@@ -630,7 +630,7 @@
         <div id="mentor-panel" class="view-panel">
             <div class="mentor-header-title-row" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 10px;">
                 <div>
-                    <h2 id="mentor-heading" style="margin-bottom: 5px;">Academic Success Agent 🎓</h2>
+                    <h2 id="mentor-heading" style="margin-bottom: 5px;">Aura - Academic Success Agent 🎓</h2>
                     <p style="color: var(--text-muted); margin: 0 0 15px 0; font-size: 13.5px;">Your autonomous, context-aware student counseling and planning agent for the capstone journey.</p>
                 </div>
                 <div class="mentor-badge-badge" style="background: var(--primary-color); color: white; padding: 6px 12px; border-radius: 20px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;">Agents for Good</div>
@@ -711,6 +711,7 @@
                         <button onclick="switchMentorTab('profile')" id="tab-btn-profile" class="mentor-tab-btn">👤 Success Profile</button>
                         <button onclick="switchMentorTab('resources')" id="tab-btn-resources" class="mentor-tab-btn">📚 Resources</button>
                         <button onclick="switchMentorTab('plans')" id="tab-btn-plans" class="mentor-tab-btn">⏳ Adapt Plans</button>
+                        <button onclick="switchMentorTab('quizzes')" id="tab-btn-quizzes" class="mentor-tab-btn">✏️ Aura Quizzes</button>
                     </div>
 
                     <!-- Tab Content: Chat -->
@@ -720,7 +721,7 @@
                                 <div class="mentor-chat-header-info">
                                     <div class="mentor-avatar">🤖</div>
                                     <div class="mentor-chat-title">
-                                        <h4 style="margin: 0; font-size: 14px; font-weight: 600; color: var(--text-body);">Academic Success Agent</h4>
+                                        <h4 style="margin: 0; font-size: 14px; font-weight: 600; color: var(--text-body);">Aura AI Agent</h4>
                                         <span id="mentor-status" class="mentor-status">Ready to assist you</span>
                                     </div>
                                 </div>
@@ -953,6 +954,52 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Tab Content: Practice Quizzes (Aura Ported) -->
+                    <div id="mentor-tab-quizzes" class="mentor-tab-content">
+                        <div class="mentor-dashboard-card mentor-card">
+                            <h3 style="margin-top:0; color: var(--primary-color); font-size: 16px; font-weight: 700;">✏️ Aura Practice Quizzes</h3>
+                            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Test your knowledge in Web Tech, Python, SQL, C, and DSA. Select a subject below to take a quick 3-question quiz with explanations.</p>
+                            
+                            <div id="quiz-selection-area" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px;">
+                                <button onclick="startAuraQuiz('html')" class="btn btn-secondary" style="padding: 10px; border-radius: 8px; font-weight: 600;">🌐 HTML</button>
+                                <button onclick="startAuraQuiz('css')" class="btn btn-secondary" style="padding: 10px; border-radius: 8px; font-weight: 600;">🎨 CSS</button>
+                                <button onclick="startAuraQuiz('js')" class="btn btn-secondary" style="padding: 10px; border-radius: 8px; font-weight: 600;">⚡ JavaScript</button>
+                                <button onclick="startAuraQuiz('python')" class="btn btn-secondary" style="padding: 10px; border-radius: 8px; font-weight: 600;">🐍 Python</button>
+                                <button onclick="startAuraQuiz('sql')" class="btn btn-secondary" style="padding: 10px; border-radius: 8px; font-weight: 600;">🗄️ SQL</button>
+                                <button onclick="startAuraQuiz('c')" class="btn btn-secondary" style="padding: 10px; border-radius: 8px; font-weight: 600;">🎯 C Pointers</button>
+                                <button onclick="startAuraQuiz('dsa')" class="btn btn-secondary" style="padding: 10px; border-radius: 8px; font-weight: 600;">💡 DSA</button>
+                            </div>
+                            
+                            <!-- Active Quiz Box -->
+                            <div id="active-quiz-box" style="display: none; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px;">
+                                    <h4 id="quiz-subject-header" style="margin: 0; color: var(--primary-color);">Subject Quiz</h4>
+                                    <span id="quiz-progress-text" style="font-size: 13px; font-weight: bold; color: var(--text-muted);">Question 1/3</span>
+                                </div>
+                                <p id="quiz-question-text" style="font-weight: 600; line-height: 1.5; font-size: 14.5px; margin-bottom: 15px; color: var(--text-body);"></p>
+                                <div id="quiz-options-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                                    <!-- Dynamic Options (A, B, C) -->
+                                </div>
+                                <div id="quiz-feedback-box" style="display: none; padding: 12px; border-radius: 8px; font-size: 13.5px; margin-bottom: 15px; line-height: 1.5;"></div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <button onclick="exitAuraQuiz()" class="btn btn-secondary" style="padding: 8px 16px; border-radius: 8px; margin: 0;">Exit Quiz</button>
+                                    <button id="quiz-next-btn" onclick="nextAuraQuizQuestion()" class="btn btn-primary" style="display: none; padding: 8px 20px; border-radius: 8px; margin: 0;">Next Question</button>
+                                </div>
+                            </div>
+
+                            <!-- Quiz Results Box -->
+                            <div id="quiz-results-box" style="display: none; text-align: center; padding: 30px 20px;">
+                                <h3 style="color: var(--primary-color); margin-top: 0; font-size: 20px;">🏆 Quiz Complete!</h3>
+                                <p id="quiz-score-summary" style="font-size: 18px; font-weight: bold; margin-bottom: 10px; color: var(--text-body);">You scored 3/3</p>
+                                <p id="quiz-score-message" style="color: var(--text-muted); font-size: 14px; margin-bottom: 25px; line-height: 1.5;"></p>
+                                <div style="display: flex; justify-content: center; gap: 12px;">
+                                    <button onclick="exitAuraQuiz()" class="btn btn-secondary" style="padding: 10px 20px; border-radius: 8px; margin: 0;">Choose Subject</button>
+                                    <button id="quiz-retry-btn" class="btn btn-primary" style="padding: 10px 20px; border-radius: 8px; margin: 0;">Try Again</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -999,7 +1046,6 @@
         </footer>
     </div>
     <script src="tracker.js?v=1.0.3"></script>
-    <script src="chatbot.js"></script>
     <script src="mentor.js"></script>
     <script>
         // Simple page view switching logic
