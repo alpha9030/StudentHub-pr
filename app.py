@@ -285,6 +285,31 @@ def init_db():
             cursor.execute(f"ALTER TABLE deleted_users ADD COLUMN {col_def[0]} {col_def[1]}")
         except sqlite3.OperationalError:
             pass
+
+    # Create mentor_chats table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS mentor_chats (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL,
+            sender TEXT NOT NULL,
+            message TEXT NOT NULL,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (email) REFERENCES users (email) ON DELETE CASCADE
+        )
+    ''')
+
+    # Create mentor_study_plans table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS mentor_study_plans (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT NOT NULL,
+            title TEXT NOT NULL,
+            plan_data TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (email) REFERENCES users (email) ON DELETE CASCADE
+        )
+    ''')
+
     conn.commit()
     conn.close()
     
@@ -1096,6 +1121,144 @@ def api_chatbot():
             return jsonify({'success': True})
         else:
             return jsonify({'success': False, 'message': 'Failed to save settings'}), 500
+
+# ==========================================
+# AI MENTOR API ENDPOINTS
+# ==========================================
+
+@app.route('/api/mentor/chats', methods=['GET', 'POST', 'DELETE', 'OPTIONS'])
+def api_mentor_chats():
+    if request.method == 'OPTIONS':
+        return '', 204
+        
+    if request.method == 'GET':
+        email = request.args.get('email', '').strip().lower()
+        if not email:
+            return jsonify({'success': False, 'message': 'Email required'}), 400
+            
+        conn = get_db()
+        cursor = conn.cursor()
+        try:
+            cursor.execute('SELECT sender, message, timestamp FROM mentor_chats WHERE LOWER(email) = ? ORDER BY timestamp ASC', (email,))
+            rows = cursor.fetchall()
+            chats = [{'sender': r['sender'], 'message': r['message'], 'timestamp': r['timestamp']} for r in rows]
+            return jsonify({'success': True, 'chats': chats})
+        except sqlite3.Error as e:
+            print(f"SQLite mentor chats GET error: {e}")
+            return jsonify({'success': False, 'message': 'Database error'}), 500
+        finally:
+            conn.close()
+            
+    elif request.method == 'POST':
+        data = request.get_json()
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+        email = data.get('email', '').strip().lower()
+        sender = data.get('sender', '').strip()
+        message = data.get('message', '').strip()
+        
+        if not all([email, sender, message]):
+            return jsonify({'success': False, 'message': 'Email, sender, and message are required'}), 400
+            
+        conn = get_db()
+        cursor = conn.cursor()
+        try:
+            cursor.execute('INSERT INTO mentor_chats (email, sender, message) VALUES (?, ?, ?)', (email, sender, message))
+            conn.commit()
+            return jsonify({'success': True})
+        except sqlite3.Error as e:
+            print(f"SQLite mentor chats POST error: {e}")
+            return jsonify({'success': False, 'message': 'Database error'}), 500
+        finally:
+            conn.close()
+            
+    elif request.method == 'DELETE':
+        email = request.args.get('email', '').strip().lower()
+        if not email:
+            return jsonify({'success': False, 'message': 'Email required'}), 400
+            
+        conn = get_db()
+        cursor = conn.cursor()
+        try:
+            cursor.execute('DELETE FROM mentor_chats WHERE LOWER(email) = ?', (email,))
+            conn.commit()
+            return jsonify({'success': True, 'message': 'Chat history cleared'})
+        except sqlite3.Error as e:
+            print(f"SQLite mentor chats DELETE error: {e}")
+            return jsonify({'success': False, 'message': 'Database error'}), 500
+        finally:
+            conn.close()
+
+@app.route('/api/mentor/plans', methods=['GET', 'POST', 'DELETE', 'OPTIONS'])
+def api_mentor_plans():
+    if request.method == 'OPTIONS':
+        return '', 204
+        
+    if request.method == 'GET':
+        email = request.args.get('email', '').strip().lower()
+        if not email:
+            return jsonify({'success': False, 'message': 'Email required'}), 400
+            
+        conn = get_db()
+        cursor = conn.cursor()
+        try:
+            cursor.execute('SELECT id, title, plan_data, created_at FROM mentor_study_plans WHERE LOWER(email) = ? ORDER BY created_at DESC', (email,))
+            rows = cursor.fetchall()
+            plans = [{
+                'id': r['id'],
+                'title': r['title'],
+                'plan_data': r['plan_data'],
+                'created_at': r['created_at']
+            } for r in rows]
+            return jsonify({'success': True, 'plans': plans})
+        except sqlite3.Error as e:
+            print(f"SQLite mentor plans GET error: {e}")
+            return jsonify({'success': False, 'message': 'Database error'}), 500
+        finally:
+            conn.close()
+            
+    elif request.method == 'POST':
+        data = request.get_json()
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+        email = data.get('email', '').strip().lower()
+        title = data.get('title', '').strip()
+        plan_data = data.get('plan_data', '').strip()
+        
+        if not all([email, title, plan_data]):
+            return jsonify({'success': False, 'message': 'Email, title, and plan_data are required'}), 400
+            
+        conn = get_db()
+        cursor = conn.cursor()
+        try:
+            cursor.execute('INSERT INTO mentor_study_plans (email, title, plan_data) VALUES (?, ?, ?)', (email, title, plan_data))
+            conn.commit()
+            new_id = cursor.lastrowid
+            return jsonify({'success': True, 'id': new_id})
+        except sqlite3.Error as e:
+            print(f"SQLite mentor plans POST error: {e}")
+            return jsonify({'success': False, 'message': 'Database error'}), 500
+        finally:
+            conn.close()
+            
+    elif request.method == 'DELETE':
+        email = request.args.get('email', '').strip().lower()
+        plan_id = request.args.get('id')
+        
+        if not email or not plan_id:
+            return jsonify({'success': False, 'message': 'Email and plan ID required'}), 400
+            
+        conn = get_db()
+        cursor = conn.cursor()
+        try:
+            cursor.execute('DELETE FROM mentor_study_plans WHERE LOWER(email) = ? AND id = ?', (email, plan_id))
+            conn.commit()
+            return jsonify({'success': True, 'message': 'Study plan deleted'})
+        except sqlite3.Error as e:
+            print(f"SQLite mentor plans DELETE error: {e}")
+            return jsonify({'success': False, 'message': 'Database error'}), 500
+        finally:
+            conn.close()
 
 @app.route('/api/delete-account', methods=['POST', 'OPTIONS'])
 def api_delete_account():

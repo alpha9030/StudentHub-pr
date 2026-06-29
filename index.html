@@ -112,6 +112,7 @@
             <nav class="main-nav">
                 <a href="#" id="nav-landing" onclick="showView('landing'); return false;" class="active">Home</a>
                 <a href="#" id="nav-auth" onclick="showView('auth'); return false;">Account</a>
+                <a href="#" id="nav-mentor" onclick="showView('mentor'); return false;">AI Mentor</a>
                 <a href="reference.html" onclick="return checkReferenceAccess(event)" id="nav-references">References</a>
             </nav>
             <div class="header-controls">
@@ -625,12 +626,210 @@
             </p>
         </div>
 
+        <!-- ==================== VIEW 4: AI MENTOR ==================== -->
+        <div id="mentor-panel" class="view-panel">
+            <h2 id="mentor-heading">AI Academic Mentor 🎓</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Your friendly, personalized academic counselor for career guidance, study planning, college recommendations, and doubts.</p>
+            
+            <!-- API Key Status Banner -->
+            <div id="mentor-api-banner" class="api-key-banner" style="display: none;">
+                <span>🔑 <strong>Gemini API Key Required:</strong> To enable the AI Mentor, please enter a valid Gemini API Key from Google AI Studio.</span>
+                <button onclick="openMentorKeyModal()" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px; margin: 0; background-color: var(--primary-color); border: none; color: white;">Configure Key</button>
+            </div>
+
+            <div class="mentor-container">
+                <!-- Left Sidebar: Parameters & Actions -->
+                <div class="mentor-sidebar">
+                    <!-- Profile Preferences Card -->
+                    <div class="mentor-card">
+                        <h3>👤 Mentor Preferences</h3>
+                        
+                        <div class="mentor-form-group">
+                            <label for="mentor-interests">Academic/Career Interests:</label>
+                            <input type="text" id="mentor-interests" class="mentor-input" placeholder="e.g. Web Dev, AI/ML, Cybersecurity">
+                        </div>
+                        
+                        <div class="mentor-form-group">
+                            <label for="mentor-marks">Current GPA / Marks (%):</label>
+                            <input type="text" id="mentor-marks" class="mentor-input" placeholder="e.g. 8.5 CGPA, 85%">
+                        </div>
+                        
+                        <div class="mentor-form-group">
+                            <label for="mentor-goals">Career / Academic Goals:</label>
+                            <input type="text" id="mentor-goals" class="mentor-input" placeholder="e.g. FAANG internship, Higher Studies">
+                        </div>
+                        
+                        <!-- College Admission Predictor Section -->
+                        <div style="border-top: 1px solid var(--border-color); margin-top: 15px; padding-top: 15px;">
+                            <label style="font-weight: bold; font-size: 13px; color: var(--primary-color); display: block; margin-bottom: 8px;">College Predictor Details</label>
+                            
+                            <div class="mentor-form-group">
+                                <label for="mentor-rank">Exam Rank / Percentile:</label>
+                                <input type="number" id="mentor-rank" class="mentor-input" placeholder="e.g. 15000">
+                            </div>
+                            
+                            <div class="mentor-form-group">
+                                <label for="mentor-branch">Preferred Branch:</label>
+                                <select id="mentor-branch" class="mentor-select">
+                                    <option value="cse">CSE (Computer Science)</option>
+                                    <option value="it">IT (Information Technology)</option>
+                                    <option value="ece">ECE (Electronics & Comm)</option>
+                                    <option value="eee">EEE (Electrical & Electronics)</option>
+                                    <option value="me">ME (Mechanical)</option>
+                                    <option value="ce">CE (Civil)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mentor-form-group">
+                                <label for="mentor-state">Preferred State / Region:</label>
+                                <input type="text" id="mentor-state" class="mentor-input" placeholder="e.g. Telangana, Maharashtra">
+                            </div>
+                            
+                            <div class="mentor-form-group">
+                                <label for="mentor-category">Admission Category:</label>
+                                <select id="mentor-category" class="mentor-select">
+                                    <option value="General">General / Open</option>
+                                    <option value="OBC">OBC</option>
+                                    <option value="SC">SC</option>
+                                    <option value="ST">ST</option>
+                                    <option value="EWS">EWS</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Study Planner Section -->
+                        <div style="border-top: 1px solid var(--border-color); margin-top: 15px; padding-top: 15px;">
+                            <label style="font-weight: bold; font-size: 13px; color: var(--primary-color); display: block; margin-bottom: 8px;">Study Planner Details</label>
+                            
+                            <div class="mentor-form-group">
+                                <label for="mentor-exam-date">Target Exam Date:</label>
+                                <input type="date" id="mentor-exam-date" class="mentor-input">
+                            </div>
+                            
+                            <div class="mentor-form-group">
+                                <label for="mentor-exam-subjects">Subjects to Cover:</label>
+                                <input type="text" id="mentor-exam-subjects" class="mentor-input" placeholder="e.g. DSA, DBMS, OS">
+                            </div>
+                            
+                            <div class="mentor-form-group">
+                                <label for="mentor-weak-areas">Weak Areas:</label>
+                                <input type="text" id="mentor-weak-areas" class="mentor-input" placeholder="e.g. Trees, SQL Joins">
+                            </div>
+                            
+                            <div class="mentor-form-group">
+                                <label for="mentor-study-hours">Available Hours / Day:</label>
+                                <input type="number" id="mentor-study-hours" class="mentor-input" placeholder="e.g. 4" min="1" max="24">
+                            </div>
+                        </div>
+                        
+                        <button onclick="saveMentorPreferences()" class="btn btn-primary" style="width: 100%; margin-top: 12px; padding: 8px; font-weight: 600; border-radius: 8px;">💾 Save Preferences</button>
+                    </div>
+
+                    <!-- Quick Action Cards -->
+                    <div class="mentor-card">
+                        <h3>⚡ Quick Mentor Actions</h3>
+                        <div class="mentor-quick-actions">
+                            <button onclick="triggerQuickAction('career')" class="quick-action-btn">
+                                <span class="icon">🚀</span>
+                                <span>Career Guide</span>
+                            </button>
+                            <button onclick="triggerQuickAction('planner')" class="quick-action-btn">
+                                <span class="icon">📅</span>
+                                <span>Study Planner</span>
+                            </button>
+                            <button onclick="triggerQuickAction('predictor')" class="quick-action-btn">
+                                <span class="icon">🏫</span>
+                                <span>College Predictor</span>
+                            </button>
+                            <button onclick="triggerQuickAction('doubt')" class="quick-action-btn">
+                                <span class="icon">❓</span>
+                                <span>Ask a Doubt</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Saved Study Plans Card -->
+                    <div class="mentor-card">
+                        <h3>📁 Saved Study Plans</h3>
+                        <div id="saved-plans-list" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
+                            <p style="font-size: 12px; color: var(--text-muted); margin: 0; text-align: center; padding: 10px 0;">No saved study plans yet.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Pane: Active Counselor Chat -->
+                <div class="mentor-chat-area">
+                    <div class="mentor-chat-header">
+                        <div class="mentor-chat-header-info">
+                            <div class="mentor-avatar">🤖</div>
+                            <div class="mentor-chat-title">
+                                <h4 style="margin: 0; font-size: 15px; font-weight: 600; color: var(--text-body);">Academic Mentor</h4>
+                                <span id="mentor-status" class="mentor-status">Ready to assist you</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button onclick="openMentorKeyModal()" class="btn btn-secondary" style="padding: 6px 10px; font-size: 12px; margin: 0;" title="Configure Gemini Key">⚙️ Key</button>
+                            <button onclick="clearMentorChat()" class="btn btn-secondary" style="padding: 6px 10px; font-size: 12px; margin: 0; background: transparent; color: #ef4444; border-color: rgba(239,68,68,0.4);" onmouseover="this.style.background='#ef4444'; this.style.color='white'" onmouseout="this.style.background='transparent'; this.style.color='#ef4444'">🗑️ Clear</button>
+                        </div>
+                    </div>
+                    
+                    <div id="mentor-messages-container" class="mentor-chat-messages">
+                        <!-- Welcome message will be injected dynamically -->
+                    </div>
+
+                    <!-- Input Section -->
+                    <div class="mentor-chat-input-area">
+                        <input type="text" id="mentor-chat-input" class="mentor-chat-input" placeholder="Type a message to your mentor..." onkeydown="handleMentorInputKey(event)">
+                        <button onclick="sendMentorMessage()" class="mentor-send-btn">➔</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== MODAL: GEMINI KEY CONFIGURATION ==================== -->
+        <div id="mentor-key-modal" class="mentor-modal">
+            <div class="mentor-modal-content">
+                <div class="mentor-modal-header">
+                    <h3>🔑 Configure Gemini API Key</h3>
+                    <button onclick="closeMentorKeyModal()" class="mentor-modal-close">&times;</button>
+                </div>
+                <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
+                    This feature uses the Gemini API. Please paste your Gemini API Key below. Your key is stored locally in your browser and synced securely with your profile settings. You can obtain a free key from <a href="https://aistudio.google.com/" target="_blank" style="font-weight: 600; text-decoration: underline; color: var(--primary-color);">Google AI Studio</a>.
+                </p>
+                <div class="mentor-form-group">
+                    <label for="mentor-key-input">Gemini API Key:</label>
+                    <input type="password" id="mentor-key-input" class="mentor-input" placeholder="Paste your API key here...">
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end;">
+                    <button onclick="closeMentorKeyModal()" class="btn btn-secondary" style="padding: 8px 16px; border-radius: 8px;">Cancel</button>
+                    <button onclick="saveMentorKey()" class="btn btn-primary" style="padding: 8px 20px; border-radius: 8px;">Save Key</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== MODAL: PLAN DETAIL VIEWER ==================== -->
+        <div id="plan-viewer-modal" class="mentor-modal">
+            <div class="mentor-modal-content" style="max-width: 700px; max-height: 85vh;">
+                <div class="mentor-modal-header">
+                    <h3 id="plan-viewer-title">Study Plan</h3>
+                    <button onclick="closePlanViewerModal()" class="mentor-modal-close">&times;</button>
+                </div>
+                <div id="plan-viewer-body" style="font-size: 14.5px; line-height: 1.6; overflow-y: auto; max-height: 60vh; padding: 15px; background: var(--bg-card); border-radius: 8px; border: 1px solid var(--border-color); color: var(--text-body);">
+                    <!-- Dynamic plan content (rendered markdown) -->
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 20px; justify-content: flex-end;">
+                    <button onclick="closePlanViewerModal()" class="btn btn-primary" style="padding: 8px 20px; border-radius: 8px;">Close</button>
+                </div>
+            </div>
+        </div>
+
         <footer class="app-footer" style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-muted); font-size: 13px;">
             <p>&copy; 2026 Student Hub. All Rights Reserved. Protected by Academic and Software Copyright.</p>
         </footer>
     </div>
     <script src="tracker.js?v=1.0.3"></script>
     <script src="chatbot.js"></script>
+    <script src="mentor.js"></script>
     <script>
         // Simple page view switching logic
         function showView(viewId) {
