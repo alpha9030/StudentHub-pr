@@ -1801,9 +1801,9 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
                         name: "web_search",
                         description: "Retrieve search summary or facts from Wikipedia for a given query",
                         parameters: {
-                            type: "OBJECT",
+                            type: "object",
                             properties: {
-                                query: { type: "STRING", description: "Search query" }
+                                query: { type: "string", description: "Search query" }
                             },
                             required: ["query"]
                         }
@@ -1812,9 +1812,9 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
                         name: "calculator",
                         description: "Evaluate a mathematical expression securely",
                         parameters: {
-                            type: "OBJECT",
+                            type: "object",
                             properties: {
-                                expression: { type: "STRING", description: "Expression to calculate (e.g. '3.14159 * Math.pow(5, 2)')" }
+                                expression: { type: "string", description: "Expression to calculate (e.g. '3.14159 * Math.pow(5, 2)')" }
                             },
                             required: ["expression"]
                         }
@@ -1823,9 +1823,9 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
                         name: "execute_code",
                         description: "Run Javascript code and capture logs and return values",
                         parameters: {
-                            type: "OBJECT",
+                            type: "object",
                             properties: {
-                                code: { type: "STRING", description: "Javascript code block" }
+                                code: { type: "string", description: "Javascript code block" }
                             },
                             required: ["code"]
                         }
@@ -1834,9 +1834,9 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
                         name: "generate_image",
                         description: "Generate a custom image for a description",
                         parameters: {
-                            type: "OBJECT",
+                            type: "object",
                             properties: {
-                                prompt: { type: "STRING", description: "Image generation prompt description" }
+                                prompt: { type: "string", description: "Image generation prompt description" }
                             },
                             required: ["prompt"]
                         }
@@ -1845,9 +1845,9 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
                         name: "read_file",
                         description: "Read text contents of an attached file",
                         parameters: {
-                            type: "OBJECT",
+                            type: "object",
                             properties: {
-                                filename: { type: "STRING", description: "Filename of the attached file" }
+                                filename: { type: "string", description: "Filename of the attached file" }
                             },
                             required: ["filename"]
                         }
@@ -2009,8 +2009,8 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
                         name: "web_search",
                         description: "Retrieve search summary or facts from Wikipedia for a given query",
                         parameters: {
-                            type: "OBJECT",
-                            properties: { query: { type: "STRING" } },
+                            type: "object",
+                            properties: { query: { type: "string" } },
                             required: ["query"]
                         }
                     },
@@ -2018,8 +2018,8 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
                         name: "calculator",
                         description: "Evaluate a mathematical expression securely",
                         parameters: {
-                            type: "OBJECT",
-                            properties: { expression: { type: "STRING" } },
+                            type: "object",
+                            properties: { expression: { type: "string" } },
                             required: ["expression"]
                         }
                     },
@@ -2027,8 +2027,8 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
                         name: "execute_code",
                         description: "Run Javascript code",
                         parameters: {
-                            type: "OBJECT",
-                            properties: { code: { type: "STRING" } },
+                            type: "object",
+                            properties: { code: { type: "string" } },
                             required: ["code"]
                         }
                     },
@@ -2036,8 +2036,8 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
                         name: "generate_image",
                         description: "Generate a custom image for a description",
                         parameters: {
-                            type: "OBJECT",
-                            properties: { prompt: { type: "STRING" } },
+                            type: "object",
+                            properties: { prompt: { type: "string" } },
                             required: ["prompt"]
                         }
                     },
@@ -2045,8 +2045,8 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
                         name: "read_file",
                         description: "Read text contents of an attached file",
                         parameters: {
-                            type: "OBJECT",
-                            properties: { filename: { type: "STRING" } },
+                            type: "object",
+                            properties: { filename: { type: "string" } },
                             required: ["filename"]
                         }
                     }
