@@ -7,6 +7,7 @@ import random
 import smtplib
 import json
 import datetime
+import threading
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from flask import Flask, request, jsonify, send_from_directory
@@ -23,6 +24,56 @@ def get_config():
     return config
 
 config_data = get_config()
+
+def get_gemini_api_key():
+    key = os.environ.get('GEMINI_API_KEY')
+    if key:
+        return key
+    config = get_config()
+    key = config.get('GEMINI_API_KEY')
+    if key:
+        return key
+    if os.path.exists('.env'):
+        try:
+            with open('.env', 'r') as f:
+                for line in f:
+                    if line.strip() and not line.startswith('#') and '=' in line:
+                        k, v = line.strip().split('=', 1)
+                        if k.strip() == 'GEMINI_API_KEY':
+                            return v.strip().strip('"').strip("'")
+        except Exception:
+            pass
+    return None
+
+def validate_gemini_key():
+    key = get_gemini_api_key()
+    if not key:
+        print("[WARNING] GEMINI_API_KEY environment variable is missing!")
+        return False
+    
+    import urllib.request
+    import json
+    import ssl
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash?key={key}"
+    try:
+        req = urllib.request.Request(url, method="GET")
+        with urllib.request.urlopen(req, context=ctx) as response:
+            if response.status == 200:
+                print("[SUCCESS] Gemini API Key is VALID. Connection successful.")
+                return True
+    except Exception as e:
+        print(f"[ERROR] Gemini API Key Validation Failed: {e}")
+        return False
+
+# Global cache and lock for deduplicating, queueing, and caching Gemini requests
+prompt_cache = {}
+cache_lock = threading.Lock()
+active_requests = {}
+active_req_lock = threading.Lock()
 
 def is_supabase_enabled():
     config = get_config()
@@ -1121,6 +1172,8 @@ def api_chatbot():
             
         settings = get_chatbot_settings(email)
         if settings:
+            if settings.get('aura_api_key'):
+                settings['aura_api_key'] = '•' * len(settings['aura_api_key'])
             return jsonify({
                 'success': True,
                 'settings': settings
@@ -1211,6 +1264,197 @@ def api_mentor_chats():
             return jsonify({'success': False, 'message': 'Database error'}), 500
         finally:
             conn.close()
+
+def get_payload_hash(contents):
+    try:
+        serialized = json.dumps(contents, sort_keys=True)
+        return hashlib.md5(serialized.encode('utf-8')).hexdigest()
+    except Exception:
+        return None
+
+@app.route('/api/chatbot/status', methods=['GET', 'OPTIONS'])
+def api_chatbot_status():
+    if request.method == 'OPTIONS':
+        return '', 204
+    key = get_gemini_api_key()
+    return jsonify({
+        'success': True,
+        'gemini_available': bool(key)
+    })
+
+@app.route('/api/mentor/chat', methods=['POST', 'OPTIONS'])
+def api_mentor_chat():
+    if request.method == 'OPTIONS':
+        return '', 204
+        
+    data = request.get_json()
+    if not data:
+        return jsonify({'success': False, 'message': 'No request body provided'}), 400
+        
+    key = get_gemini_api_key()
+    email = data.get('email', '').strip().lower()
+    if not key and email:
+        settings = get_chatbot_settings(email)
+        if settings:
+            key = settings.get('aura_api_key')
+            
+    if not key:
+        return jsonify({
+            'success': False, 
+            'message': 'No API key configured. Please set the GEMINI_API_KEY environment variable on the server.'
+        }), 400
+        
+    stream = request.args.get('stream', 'true').lower() == 'true'
+    action = "streamGenerateContent" if stream else "generateContent"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:{action}?key={key}"
+    
+    headers = {
+        "Content-Type": "application/json"
+    }
+    
+    import ssl
+    import urllib.request
+    import urllib.error
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    
+    contents = data.get("contents", [])
+    payload_hash = get_payload_hash(contents)
+    
+    if payload_hash:
+        with cache_lock:
+            if payload_hash in prompt_cache:
+                print("[CACHE] Serving Gemini response from cache.")
+                cached_bytes = prompt_cache[payload_hash]
+                if stream:
+                    def generate_cached():
+                        chunk_size = 512
+                        for i in range(0, len(cached_bytes), chunk_size):
+                            yield cached_bytes[i:i+chunk_size]
+                            time.sleep(0.05)
+                    return app.response_class(generate_cached(), mimetype='application/json')
+                else:
+                    return app.response_class(cached_bytes.decode('utf-8'), mimetype='application/json')
+                    
+    if payload_hash:
+        wait_event = None
+        is_first = False
+        with active_req_lock:
+            if payload_hash in active_requests:
+                wait_event = active_requests[payload_hash]
+            else:
+                wait_event = threading.Event()
+                active_requests[payload_hash] = wait_event
+                is_first = True
+                
+        if not is_first:
+            print("[PENDING] Duplicate request detected. Queueing and waiting for first request to complete...")
+            finished = wait_event.wait(timeout=30)
+            with cache_lock:
+                if payload_hash in prompt_cache:
+                    print("[CACHE] Serving duplicate request from cache.")
+                    cached_bytes = prompt_cache[payload_hash]
+                    if stream:
+                        def generate_cached():
+                            chunk_size = 512
+                            for i in range(0, len(cached_bytes), chunk_size):
+                                yield cached_bytes[i:i+chunk_size]
+                                time.sleep(0.05)
+                        return app.response_class(generate_cached(), mimetype='application/json')
+                    else:
+                        return app.response_class(cached_bytes.decode('utf-8'), mimetype='application/json')
+                        
+    req_body = json.dumps({
+        "contents": data.get("contents", []),
+        "system_instruction": data.get("system_instruction"),
+        "tools": data.get("tools")
+    }).encode('utf-8')
+    
+    max_retries = 3
+    backoff = 1.0
+    response = None
+    
+    for attempt in range(max_retries):
+        try:
+            req = urllib.request.Request(url, data=req_body, headers=headers, method="POST")
+            response = urllib.request.urlopen(req, context=ctx)
+            break
+        except urllib.error.HTTPError as e:
+            if e.code == 429:
+                print(f"[WARNING] Gemini API rate limited (429). Attempt {attempt + 1}/{max_retries}. Retrying in {backoff}s...")
+                time.sleep(backoff)
+                backoff *= 2.0
+                continue
+            else:
+                if payload_hash:
+                    with active_req_lock:
+                        if payload_hash in active_requests:
+                            active_requests[payload_hash].set()
+                            del active_requests[payload_hash]
+                try:
+                    err_content = e.read().decode('utf-8')
+                except Exception:
+                    err_content = str(e)
+                print(f"[ERROR] Gemini API HTTP error {e.code}: {err_content}")
+                return jsonify({'success': False, 'message': f"Gemini API returned HTTP {e.code}", 'error': err_content}), e.code
+        except Exception as e:
+            if payload_hash:
+                with active_req_lock:
+                    if payload_hash in active_requests:
+                        active_requests[payload_hash].set()
+                        del active_requests[payload_hash]
+            print(f"[ERROR] Gemini API request error: {e}")
+            return jsonify({'success': False, 'message': str(e)}), 500
+            
+    if not response:
+        if payload_hash:
+            with active_req_lock:
+                if payload_hash in active_requests:
+                    active_requests[payload_hash].set()
+                    del active_requests[payload_hash]
+        return jsonify({
+            'success': False,
+            'message': 'Gemini API is currently rate-limited. Please try again in a few moments.'
+        }), 429
+        
+    if stream:
+        def generate():
+            response_buffer = bytearray()
+            try:
+                while True:
+                    chunk = response.read(2048)
+                    if not chunk:
+                        break
+                    response_buffer.extend(chunk)
+                    yield chunk
+                if payload_hash:
+                    with cache_lock:
+                        prompt_cache[payload_hash] = bytes(response_buffer)
+            finally:
+                response.close()
+                if payload_hash:
+                    with active_req_lock:
+                        if payload_hash in active_requests:
+                            active_requests[payload_hash].set()
+                            del active_requests[payload_hash]
+        return app.response_class(generate(), mimetype='application/json')
+    else:
+        try:
+            res_data = response.read()
+            if payload_hash:
+                with cache_lock:
+                    prompt_cache[payload_hash] = res_data
+            return app.response_class(res_data.decode('utf-8'), mimetype='application/json')
+        finally:
+            response.close()
+            if payload_hash:
+                with active_req_lock:
+                    if payload_hash in active_requests:
+                        active_requests[payload_hash].set()
+                        del active_requests[payload_hash]
+
+
 
 @app.route('/api/mentor/plans', methods=['GET', 'POST', 'DELETE', 'OPTIONS'])
 def api_mentor_plans():
@@ -1493,6 +1737,7 @@ init_db()
 
 if __name__ == '__main__':
     print("Database initialized.")
+    validate_gemini_key()
     port = int(os.environ.get('PORT', 443))
     if 'PORT' in os.environ:
         app.run(host='0.0.0.0', port=port, debug=False)

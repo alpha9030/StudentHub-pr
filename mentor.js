@@ -251,7 +251,7 @@
 
         window.addEventListener('storage', (e) => {
             if (e.key === 'aura_api_key') {
-                checkApiKeyStatus();
+                checkBackendGeminiStatus();
             }
         });
     }
@@ -274,7 +274,7 @@
             studentProfile.grade = '';
             loadSuccessProfileLocal();
         }
-        checkApiKeyStatus();
+        checkBackendGeminiStatus();
         loadChatHistory();
         loadSavedPlans();
     }
@@ -285,10 +285,15 @@
             const resp = await fetch(`/api/chatbot?email=${encodeURIComponent(studentProfile.email)}`);
             const data = await resp.json();
             if (data.success && data.settings && data.settings.aura_api_key) {
+                const incomingKey = data.settings.aura_api_key;
+                if (incomingKey.includes('•') || incomingKey.includes('*')) {
+                    checkBackendGeminiStatus();
+                    return;
+                }
                 const currentKey = localStorage.getItem('aura_api_key');
-                if (!currentKey || currentKey !== data.settings.aura_api_key) {
-                    localStorage.setItem('aura_api_key', data.settings.aura_api_key);
-                    checkApiKeyStatus();
+                if (!currentKey || currentKey !== incomingKey) {
+                    localStorage.setItem('aura_api_key', incomingKey);
+                    checkBackendGeminiStatus();
                 }
             }
         } catch (e) {
@@ -561,6 +566,22 @@
         }
     }
 
+    let isGeminiAvailable = false;
+
+    async function checkBackendGeminiStatus() {
+        try {
+            const res = await fetch('/api/chatbot/status');
+            if (res.ok) {
+                const data = await res.json();
+                isGeminiAvailable = data.gemini_available;
+            }
+        } catch(e) {
+            console.warn("Error checking Gemini status:", e);
+            isGeminiAvailable = false;
+        }
+        checkApiKeyStatus();
+    }
+
     // Check API Key
     function checkApiKeyStatus() {
         const key = localStorage.getItem('aura_api_key') || '';
@@ -574,10 +595,12 @@
         if (sendBtn) sendBtn.disabled = false;
         quickBtns.forEach(btn => btn.disabled = false);
 
-        if (!key) {
+        const available = isGeminiAvailable || !!key;
+
+        if (!available) {
             if (banner) {
                 banner.style.display = 'flex';
-                banner.innerHTML = `<span>💡 Aura is running in Offline Heuristic Mode. Click <b>⚙️ Key</b> to configure your Gemini API Key for advanced AI features.</span>`;
+                banner.innerHTML = `<span>💡 Aura is running in Offline Heuristic Mode. Click <b>⚙️ Key</b> to configure your Gemini API Key or set GEMINI_API_KEY on the server.</span>`;
             }
             if (gkeyCheck) gkeyCheck.checked = false;
         } else {
@@ -619,8 +642,8 @@
             }).catch(err => console.warn("Failed to sync key to backend:", err));
         }
 
-        checkApiKeyStatus();
-closeMentorKeyModal();
+        checkBackendGeminiStatus();
+        closeMentorKeyModal();
         alert("API Key saved successfully!");
         if (chatMemory.length === 0) {
             loadChatHistory();
@@ -1066,8 +1089,9 @@ How can I help you today?`;
             await saveChatMessage('user', displayPrompt);
         }
 
-        const apiKey = localStorage.getItem('aura_api_key');
-        if (!apiKey) {
+        const key = localStorage.getItem('aura_api_key') || '';
+        const hasKey = isGeminiAvailable || !!key;
+        if (!hasKey) {
             await callOfflineMentorResponse(text);
         } else {
             await callGeminiMentorAPI(text);
@@ -1109,9 +1133,9 @@ For students in **${branch} Branch**, pursuing **${goals}**, here are the recomm
 1. 💡 **Portfolio Projects**: Build 2-3 full-stack applications or specialized branch-related projects (e.g. local simulations).
 2. 📄 **Key Certifications**: Consider pursuing relevant certifications in Python/Java/Web Development.
 3. 🎯 **Placement Prep**: Master Data Structures & Algorithms (DSA). We highly recommend visiting our local study guides:
-   * [DSA Study Guide](file:///C:/Users/alasa/OneDrive/ドキュメント/IMP/project/StudentHub-pr/DSA.html)
-   * [Python Reference](file:///C:/Users/alasa/OneDrive/ドキュメント/IMP/project/StudentHub-pr/Python.html)
-   * [Java reference](file:///C:/Users/alasa/OneDrive/ドキュメント/IMP/project/StudentHub-pr/Java.html)
+   * [DSA Study Guide](/DSA.html)
+   * [Python Reference](/Python.html)
+   * [Java reference](/Java.html)
 
 Would you like advice on a specific career path?`;
         }
@@ -1141,10 +1165,10 @@ For full explanatory capabilities, programming tutorials, and real-time debuggin
 
 **Offline Resources Quick Links:**
 To study core programming languages and system design, use our local interactive guides:
-* 🌐 [HTML & CSS Guide](file:///C:/Users/alasa/OneDrive/ドキュメント/IMP/project/StudentHub-pr/HTML.html)
-* 💻 [JavaScript interactive tutorial](file:///C:/Users/alasa/OneDrive/ドキュメント/IMP/project/StudentHub-pr/CSS.html)
-* 🐧 [Operating Systems (OS) Guide](file:///C:/Users/alasa/OneDrive/ドキュメント/IMP/project/StudentHub-pr/OS.html)
-* 🐍 [Python Programming](file:///C:/Users/alasa/OneDrive/ドキュメント/IMP/project/StudentHub-pr/Python.html)
+* 🌐 [HTML & CSS Guide](/HTML.html)
+* 💻 [JavaScript interactive tutorial](/CSS.html)
+* 🐧 [Operating Systems (OS) Guide](/OS.html)
+* 🐍 [Python Programming](/Python.html)
 
 How can I assist you further offline?`;
         }
@@ -1973,8 +1997,6 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
         ];
 
         try {
-            const streamUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?key=${apiKey}`;
-            
             let currentContent = chatMemory[chatMemory.length - 1];
             if (attachedFiles.length > 0) {
                 const imageParts = attachedFiles
@@ -1990,10 +2012,11 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
                 }
             }
 
-            const response = await fetch(streamUrl, {
+            const response = await fetch('/api/mentor/chat?stream=true', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    email: studentProfile.email,
                     contents: sanitizeChatHistory(chatMemory),
                     system_instruction: system_instruction,
                     tools: tools
@@ -2183,11 +2206,11 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
             
             while (!isDone && iteration < maxIterations) {
                 iteration++;
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-                const response = await fetch(url, {
+                const response = await fetch('/api/mentor/chat?stream=false', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        email: studentProfile.email,
                         contents: sanitizeChatHistory(chatMemory),
                         system_instruction: system_instruction,
                         tools: tools
@@ -2372,11 +2395,11 @@ Return the results as brief, structured bullet points grouped into:
 4. **Placement Readiness & Exam Prep**`;
 
         try {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-            const response = await fetch(url, {
+            const response = await fetch('/api/mentor/chat?stream=false', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    email: studentProfile.email,
                     contents: [{ role: 'user', parts: [{ text: promptText }] }]
                 })
             });
@@ -2436,11 +2459,11 @@ Profile:
 Format with bold headers and structured bullet points.`;
 
         try {
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-            const response = await fetch(url, {
+            const response = await fetch('/api/mentor/chat?stream=false', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    email: studentProfile.email,
                     contents: [{ role: 'user', parts: [{ text: promptText }] }]
                 })
             });
