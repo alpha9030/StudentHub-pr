@@ -570,17 +570,18 @@
         const quickBtns = document.querySelectorAll('.quick-action-btn');
         const gkeyCheck = document.getElementById('chk-gkey');
 
+        if (chatInput) chatInput.disabled = false;
+        if (sendBtn) sendBtn.disabled = false;
+        quickBtns.forEach(btn => btn.disabled = false);
+
         if (!key) {
-            if (banner) banner.style.display = 'flex';
-            if (chatInput) chatInput.disabled = true;
-            if (sendBtn) sendBtn.disabled = true;
-            quickBtns.forEach(btn => btn.disabled = true);
+            if (banner) {
+                banner.style.display = 'flex';
+                banner.innerHTML = `<span>💡 Aura is running in Offline Heuristic Mode. Click <b>⚙️ Key</b> to configure your Gemini API Key for advanced AI features.</span>`;
+            }
             if (gkeyCheck) gkeyCheck.checked = false;
         } else {
             if (banner) banner.style.display = 'none';
-            if (chatInput) chatInput.disabled = false;
-            if (sendBtn) sendBtn.disabled = false;
-            quickBtns.forEach(btn => btn.disabled = false);
             if (gkeyCheck) gkeyCheck.checked = true;
         }
         updateConsistency();
@@ -1065,8 +1066,123 @@ How can I help you today?`;
             await saveChatMessage('user', displayPrompt);
         }
 
-        await callGeminiMentorAPI(text);
+        const apiKey = localStorage.getItem('aura_api_key');
+        if (!apiKey) {
+            await callOfflineMentorResponse(text);
+        } else {
+            await callGeminiMentorAPI(text);
+        }
     };
+
+    async function callOfflineMentorResponse(query) {
+        showTyping();
+        await new Promise(resolve => setTimeout(resolve, 800));
+        hideTyping();
+        
+        const text = query.toLowerCase().trim();
+        let reply = "";
+        
+        if (text.includes('plan') || text.includes('schedule') || text.includes('timetable') || text.includes('routine')) {
+            const hours = successProfile.study_hours || '4';
+            const subjs = successProfile.exam_subjects || 'programming, mathematics, logic';
+            reply = `📅 **Offline Study Plan for ${studentProfile.name}**
+            
+Based on your success profile, here is a suggested weekly schedule prioritizing your subjects:
+* **Current Standing:** Year ${successProfile.grade} (${successProfile.dept.toUpperCase()} Branch)
+* **Weekly Focus subjects:** ${subjs}
+* **Suggested Study hours:** ${hours} hours daily
+
+| Time Slot | Activity | Focus Area |
+| :--- | :--- | :--- |
+| **08:00 AM - 10:00 AM** | Core subjects Study | Deep review of ${subjs.split(',')[0] || 'Core topics'} |
+| **02:00 PM - 03:30 PM** | Practice & Coding | Active problem solving / coding assignments |
+| **07:00 PM - 09:00 PM** | Revision & Quiz | Attempting mock quizzes and weak area reviews |
+
+*Tip: You can configure your target exam date and hours in the **Success Profile** tab to customize this plan!*`;
+        }
+        else if (text.includes('career') || text.includes('job') || text.includes('placement') || text.includes('resume')) {
+            const branch = successProfile.dept.toUpperCase();
+            const goals = successProfile.target_goals || 'Software Engineering / Tech Roles';
+            reply = `🎓 **Career Counseling (Aura Offline Assistant)**
+            
+For students in **${branch} Branch**, pursuing **${goals}**, here are the recommended industry milestones:
+1. 💡 **Portfolio Projects**: Build 2-3 full-stack applications or specialized branch-related projects (e.g. local simulations).
+2. 📄 **Key Certifications**: Consider pursuing relevant certifications in Python/Java/Web Development.
+3. 🎯 **Placement Prep**: Master Data Structures & Algorithms (DSA). We highly recommend visiting our local study guides:
+   * [DSA Study Guide](file:///C:/Users/alasa/OneDrive/ドキュメント/IMP/project/StudentHub-pr/DSA.html)
+   * [Python Reference](file:///C:/Users/alasa/OneDrive/ドキュメント/IMP/project/StudentHub-pr/Python.html)
+   * [Java reference](file:///C:/Users/alasa/OneDrive/ドキュメント/IMP/project/StudentHub-pr/Java.html)
+
+Would you like advice on a specific career path?`;
+        }
+        else if (text.includes('predict') || text.includes('college') || text.includes('rank')) {
+            const rank = successProfile.exam_rank || 'unspecified';
+            const state = successProfile.state || 'local state';
+            const category = successProfile.category || 'General';
+            reply = `🏫 **College Predictor Insights**
+            
+Based on your rank parameters:
+* **Your Rank:** ${rank}
+* **Category:** ${category}
+* **State quota:** ${state}
+
+**Offline Predictions:**
+1. 🌟 **Premium Choices**: Top Engineering Colleges in your state (safety threshold: rank < 5,000).
+2. 📈 **Realistic Targets**: State university departments and private institutions for branch: ${successProfile.dept.toUpperCase()}.
+3. 🛡️ **Safety options**: Local engineering and technology campuses.
+
+*Please save your precise state rank in the Success Profile to generate detailed lists!*`;
+        }
+        else if (text.includes('doubt') || text.includes('explain') || text.includes('what is') || text.includes('how to')) {
+            reply = `📚 **Concept Explainer (Aura Offline Mode)**
+            
+I am currently operating in **Offline Mode** because no Gemini API key is configured.
+For full explanatory capabilities, programming tutorials, and real-time debugging, please enter your Gemini API Key in the **⚙️ Key** settings.
+
+**Offline Resources Quick Links:**
+To study core programming languages and system design, use our local interactive guides:
+* 🌐 [HTML & CSS Guide](file:///C:/Users/alasa/OneDrive/ドキュメント/IMP/project/StudentHub-pr/HTML.html)
+* 💻 [JavaScript interactive tutorial](file:///C:/Users/alasa/OneDrive/ドキュメント/IMP/project/StudentHub-pr/CSS.html)
+* 🐧 [Operating Systems (OS) Guide](file:///C:/Users/alasa/OneDrive/ドキュメント/IMP/project/StudentHub-pr/OS.html)
+* 🐍 [Python Programming](file:///C:/Users/alasa/OneDrive/ドキュメント/IMP/project/StudentHub-pr/Python.html)
+
+How can I assist you further offline?`;
+        }
+        else if (text.includes('quiz') || text.includes('test') || text.includes('exam')) {
+            reply = `📝 **Practice Quiz Engine**
+            
+Would you like to start a practice quiz? We support instant interactive quizzes in the dashboard.
+Please click the **Quizzes** tab in the StudentHub dashboard to start an interactive quiz on:
+* HTML / CSS
+* Data Structures (DSA)
+* Operating Systems (OS)
+* Python / Java`;
+        }
+        else {
+            reply = `✨ **Aura Academic Assistant (Offline Mode)**
+            
+Hi **${studentProfile.name}**! I am running in **Offline Heuristic Mode** (no API key configured).
+I can still help you structure study plans, explore career roadmaps, or locate study resources.
+
+*   To get a customized schedule, type: **"Show my study plan"**
+*   To explore job fields, type: **"Show career options"**
+*   To predict college placement, type: **"Predict colleges"**
+*   To write complex code, explain concepts, or query Wikipedia, please configure your **Gemini API Key** by clicking the **⚙️ Key** button in the chat header.`;
+        }
+        
+        chatMemory.push({
+            role: 'model',
+            parts: [{ text: reply }]
+        });
+        
+        appendMessageUI('bot', reply);
+        updateActiveConversationHistory();
+        
+        if (activeConversationId === 'default_academic' && studentProfile.isLoggedIn) {
+            await saveChatMessage('bot', reply);
+        }
+        renderSuggestedFollowUps(reply);
+    }
 
     function showTyping() {
         if (isTyping) return;
@@ -2194,14 +2310,36 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
 
     // Proactive Recommendations on Dashboard
     window.fetchProactiveRecommendations = async function() {
+        const output = document.getElementById('dashboard-recommendations-list');
+        if (!output) return;
+
         const apiKey = localStorage.getItem('aura_api_key');
         if (!apiKey) {
-            alert("Configure your Gemini API key first!");
+            output.innerHTML = `
+                <div style="padding: 10px; border-left: 3px solid var(--primary-color); background: rgba(139,92,246,0.05); margin-bottom: 12px; font-size: 12.5px;">
+                    💡 Aura is in Offline Mode. Configure your Gemini API Key in the <b>Chat Tab</b> settings to generate real-time AI-tailored goals.
+                </div>
+                <p><b>1. Weekly Academic Goals</b></p>
+                <ul>
+                    <li>Review class lectures and syllabus for <b>${successProfile.dept.toUpperCase()} Branch</b> (Year ${successProfile.grade}).</li>
+                    <li>Solve previous year's exam questions.</li>
+                </ul>
+                <p><b>2. Suggested Learning Activities</b></p>
+                <ul>
+                    <li>Attempt the HTML / CSS / OS practice tests in our local **Quizzes** tab.</li>
+                </ul>
+                <p><b>3. Skill Recommendations</b></p>
+                <ul>
+                    <li>Familiarize yourself with basic programming concepts (Python, Javascript, OS internals).</li>
+                </ul>
+                <p><b>4. Placement Readiness & Exam Prep</b></p>
+                <ul>
+                    <li>Setup your goals and study focus in your Success Profile to prioritize your weaknesses.</li>
+                </ul>
+            `;
             return;
         }
 
-        const output = document.getElementById('dashboard-recommendations-list');
-        if (!output) return;
         output.innerHTML = '<p style="text-align: center; color: var(--text-muted);">🤖 Aura Success Agent is analyzing your profile to compile weekly insights...</p>';
 
         const promptText = `Generate weekly academic goals, suggested learning activities, skill recommendations based on career goals, and placement readiness suggestions.
@@ -2243,14 +2381,33 @@ Return the results as brief, structured bullet points grouped into:
 
     // Load Resource recommendations
     window.fetchMentorResourceRecommendations = async function() {
+        const output = document.getElementById('resources-recommendation-output');
+        if (!output) return;
+
         const apiKey = localStorage.getItem('aura_api_key');
         if (!apiKey) {
-            alert("Configure your Gemini API key first!");
+            output.innerHTML = `
+                <div style="padding: 10px; border-left: 3px solid var(--primary-color); background: rgba(139,92,246,0.05); margin-bottom: 12px; font-size: 12.5px;">
+                    💡 Aura is in Offline Mode. Configure your Gemini API Key in the <b>Chat Tab</b> settings to fetch live web courses.
+                </div>
+                <p><b>Recommended Local Study Guides</b></p>
+                <ul>
+                    <li>💡 <a href="DSA.html" style="color: var(--primary-color); font-weight: 600;">Data Structures & Algorithms (DSA) Study Guide</a></li>
+                    <li>🌐 <a href="HTML.html" style="color: var(--primary-color); font-weight: 600;">HTML5 & Web Development Reference</a></li>
+                    <li>💻 <a href="CSS.html" style="color: var(--primary-color); font-weight: 600;">CSS Grid & Layout Sandbox</a></li>
+                    <li>🐧 <a href="OS.html" style="color: var(--primary-color); font-weight: 600;">Operating Systems (OS) Reference Sheet</a></li>
+                    <li>🐍 <a href="Python.html" style="color: var(--primary-color); font-weight: 600;">Python Cheat Sheet & Sandboxed IDE</a></li>
+                    <li>☕ <a href="Java.html" style="color: var(--primary-color); font-weight: 600;">Java Reference Guide</a></li>
+                </ul>
+                <p><b>External Online Platforms</b></p>
+                <ul>
+                    <li><b>Coding Practice</b>: LeetCode / HackerRank / GeeksforGeeks</li>
+                    <li><b>Courses</b>: Coursera, edX, or NPTEL courses for ${successProfile.dept.toUpperCase()} engineering</li>
+                </ul>
+            `;
             return;
         }
 
-        const output = document.getElementById('resources-recommendation-output');
-        if (!output) return;
         output.innerHTML = '<p style="text-align: center; color: var(--text-muted);">🤖 Fetching tailored courses, tutorials, and certifications...</p>';
 
         const promptText = `Recommend tailored online courses, certifications, textbooks, coding practice platforms, and portfolio project ideas based on the following profile. Explain WHY each resource is recommended.
