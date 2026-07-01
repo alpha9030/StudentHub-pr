@@ -1874,7 +1874,7 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
                     appendToolCallUI(fc.name, fc.args);
                     const result = await executeTool(fc.name, fc.args);
                     chatMemory.push({
-                        role: 'user',
+                        role: 'function',
                         parts: [ { functionResponse: { name: fc.name, response: result } } ]
                     });
                     updateToolCallUI(fc.name, result);
@@ -2000,7 +2000,7 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
                     appendToolCallUI(fc.name, fc.args);
                     const result = await executeTool(fc.name, fc.args);
                     chatMemory.push({
-                        role: 'user',
+                        role: 'function',
                         parts: [ { functionResponse: { name: fc.name, response: result } } ]
                     });
                     updateToolCallUI(fc.name, result);
