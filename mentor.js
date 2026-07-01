@@ -1885,8 +1885,16 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
             });
 
             if (!response.ok) {
-                const errData = await response.json().catch(() => ({}));
-                throw new Error(errData.error?.message || `HTTP error! status: ${response.status}`);
+                const errText = await response.text().catch(() => "");
+                console.error("Gemini API error raw response:", errText);
+                let errMsg = `HTTP error! status: ${response.status}`;
+                try {
+                    const errJson = JSON.parse(errText);
+                    if (errJson.error?.message) {
+                        errMsg = errJson.error.message;
+                    }
+                } catch(e) {}
+                throw new Error(errMsg);
             }
 
             const reader = response.body.getReader();
@@ -2066,8 +2074,16 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
                 });
 
                 if (!response.ok) {
-                    const errData = await response.json().catch(() => ({}));
-                    throw new Error(errData.error?.message || `HTTP error! status: ${response.status}`);
+                    const errText = await response.text().catch(() => "");
+                    console.error("Gemini API error raw response:", errText);
+                    let errMsg = `HTTP error! status: ${response.status}`;
+                    try {
+                        const errJson = JSON.parse(errText);
+                        if (errJson.error?.message) {
+                            errMsg = errJson.error.message;
+                        }
+                    } catch(e) {}
+                    throw new Error(errMsg);
                 }
 
                 const data = await response.json();
