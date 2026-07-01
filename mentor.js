@@ -2098,7 +2098,12 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
         } catch(e) {
             hideTyping();
             if (statusSpan) statusSpan.textContent = 'Ready';
-            appendMessageUI('bot', `⚠️ Error calling Aura: ${e.message}`);
+            if (e.message.includes('429')) {
+                appendMessageUI('bot', `⚠️ **Aura is temporarily rate-limited by Google (HTTP 429).** Falling back to offline heuristic mode to answer your question...`);
+                await callOfflineMentorResponse(lastUserMsg);
+            } else {
+                appendMessageUI('bot', `⚠️ Error calling Aura: ${e.message}`);
+            }
         }
     }
 
@@ -2239,7 +2244,17 @@ Always respond with beautiful, readable Markdown including code blocks, lists, h
         } catch(e) {
             hideTyping();
             if (statusSpan) statusSpan.textContent = 'Ready';
-            appendMessageUI('bot', `⚠️ Error calling Aura: ${e.message}`);
+            if (e.message.includes('429')) {
+                appendMessageUI('bot', `⚠️ **Aura is temporarily rate-limited by Google (HTTP 429).** Falling back to offline heuristic mode to answer your question...`);
+                let lastPrompt = "studies";
+                const lastUserItem = chatMemory.slice().reverse().find(m => m.role === 'user');
+                if (lastUserItem && lastUserItem.parts?.[0]?.text) {
+                    lastPrompt = lastUserItem.parts[0].text;
+                }
+                await callOfflineMentorResponse(lastPrompt);
+            } else {
+                appendMessageUI('bot', `⚠️ Error calling Aura: ${e.message}`);
+            }
         }
     }
 
