@@ -6,96 +6,736 @@
     <title>Student Hub - Academic Workspace (V2)</title>
     <link rel="stylesheet" href="style.css?v=1.0.3">
     <style>
-        /* Custom Curriculum Filters Layout */
-        .curriculum-filters-container {
-            display: flex !important;
-            flex-direction: row !important;
-            align-items: flex-end !important;
-            flex-wrap: wrap !important;
-            gap: 16px !important;
-            margin-top: 15px !important;
-            margin-bottom: 20px !important;
+        /* Consolidated Premium styles for homepage redesign */
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        .curriculum-filter-item {
-            display: flex !important;
-            flex-direction: column !important;
-            gap: 6px !important;
-            margin-right: 0 !important;
+
+        @keyframes floatAnimation {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(1deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
         }
-        .curriculum-filter-item.dept {
-            flex: 0 1 300px !important;
-            min-width: 200px !important;
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1) translate(0, 0); opacity: 0.15; }
+            50% { transform: scale(1.1) translate(10px, -10px); opacity: 0.25; }
+            100% { transform: scale(1) translate(0, 0); opacity: 0.15; }
         }
-        .curriculum-filter-item.year {
-            flex: 0 1 200px !important;
-            min-width: 140px !important;
+
+        /* Float effects for SVG illustration elements */
+        .svg-float {
+            animation: floatAnimation 4s ease-in-out infinite;
         }
-        .curriculum-filter-item.action {
-            flex: 0 0 auto !important;
-            margin-bottom: 0 !important;
+
+        .svg-float-delayed {
+            animation: floatAnimation 4.5s ease-in-out infinite;
+            animation-delay: 1.5s;
         }
-        .curriculum-filter-item label {
-            font-size: 12px !important;
-            font-weight: 600 !important;
-            color: var(--text-muted) !important;
-            margin: 0 !important;
+
+        /* Hero Section */
+        .premium-hero {
+            display: flex;
+            align-items: center;
+            gap: 48px;
+            padding: 70px 48px;
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(20, 184, 166, 0.04) 100%);
+            border-radius: 28px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            flex-wrap: wrap;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-        .curriculum-filter-item select {
-            height: 36px !important;
-            padding: 6px 12px !important;
-            border-radius: 6px !important;
+
+        /* Decorative Glow Blobs */
+        .glow-blob {
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            pointer-events: none;
+            filter: blur(80px);
+            z-index: 1;
+        }
+        
+        .blob-teal {
+            background: radial-gradient(circle, rgba(20, 184, 166, 0.25) 0%, transparent 70%);
+            top: -120px;
+            left: -120px;
+            animation: pulseGlow 8s ease-in-out infinite;
+        }
+
+        .blob-orange {
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.12) 0%, transparent 70%);
+            bottom: -80px;
+            right: -80px;
+            animation: pulseGlow 8s ease-in-out infinite;
+            animation-delay: 2s;
+        }
+
+        .hero-content {
+            flex: 1.2;
+            min-width: 320px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-badge-modern {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(20, 184, 166, 0.1);
+            color: var(--primary-color);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            border: 1px solid rgba(20, 184, 166, 0.15);
+        }
+
+        .hero-title-modern {
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin: 0 0 20px 0;
+            color: var(--text-body);
+            letter-spacing: -0.5px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle-modern {
+            font-size: 16.5px;
+            line-height: 1.6;
+            color: var(--text-muted);
+            margin: 0 0 36px 0;
+            max-width: 600px;
+        }
+
+        .hero-actions-modern {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        /* Modernized Buttons */
+        .btn-primary-modern {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--btn-primary-bg);
+            color: var(--btn-primary-text);
+            padding: 14px 32px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 18px rgba(20, 184, 166, 0.25);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary-modern:hover {
+            background: var(--btn-primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(20, 184, 166, 0.35);
+        }
+
+        .btn-primary-modern:active {
+            transform: translateY(0);
+        }
+
+        .btn-icon {
+            width: 18px;
+            height: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-primary-modern:hover .btn-icon {
+            transform: translateX(4px);
+        }
+
+        .btn-secondary-modern {
+            display: inline-flex;
+            align-items: center;
+            background: var(--btn-secondary-bg);
+            color: var(--btn-secondary-text);
+            padding: 14px 32px;
+            font-size: 15px;
+            font-weight: 700;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-secondary-modern:hover {
+            background: var(--btn-secondary-hover-bg);
+            color: var(--btn-secondary-hover-text);
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Hero Image/Illustration Wrapper */
+        .hero-image-modern {
+            flex: 0.9;
+            min-width: 320px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .graphic-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 460px;
+        }
+
+        .premium-illustration {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.06));
+        }
+
+        .floating-badge {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            padding: 10px 16px;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            z-index: 3;
+        }
+
+        body.theme-dark .floating-badge {
+            background: rgba(30, 41, 59, 0.85);
+            border-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .badge-emoji {
+            font-size: 18px;
+        }
+
+        .badge-label {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--text-body);
+        }
+
+        .badge-code {
+            top: 20px;
+            left: -30px;
+        }
+
+        .badge-stats {
+            bottom: 40px;
+            right: -20px;
+        }
+
+        .badge-book {
+            top: 45%;
+            right: -40px;
+        }
+
+        /* Platform Statistics */
+        .stats-grid-modern {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 48px;
+        }
+
+        .stat-card-modern {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .stat-card-modern:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+            border-color: var(--primary-color);
+        }
+
+        .stat-icon-wrapper {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .stat-icon-wrapper svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .stat-icon-wrapper.teal {
+            background: rgba(20, 184, 166, 0.1);
+            color: var(--primary-color);
+        }
+
+        .stat-icon-wrapper.orange {
+            background: rgba(249, 115, 22, 0.1);
+            color: #ea580c;
+        }
+
+        .stat-icon-wrapper.green {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+        }
+
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-size: 30px;
+            font-weight: 800;
+            margin: 0;
+            color: var(--text-body);
+            line-height: 1.1;
+        }
+
+        .stat-label {
+            margin: 4px 0 0 0;
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Animation delays for stats cards */
+        .anim-delay-1 { animation-delay: 0.1s; }
+        .anim-delay-2 { animation-delay: 0.2s; }
+        .anim-delay-3 { animation-delay: 0.3s; }
+        .anim-delay-4 { animation-delay: 0.4s; }
+
+        /* Features Section */
+        .features-section-modern {
+            text-align: center;
+            margin-bottom: 48px;
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+            animation-delay: 0.3s;
+        }
+
+        .features-section-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-body);
+            margin: 0 0 10px 0;
+        }
+
+        .features-section-subtitle {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin: 0 0 36px 0;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .feature-cards-grid-modern {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-card-modern {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 28px;
+            text-align: left;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card-modern:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+            border-color: var(--primary-color);
+        }
+
+        .feature-card-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .feature-card-icon-box svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .box-teal { background: rgba(20, 184, 166, 0.1); color: var(--primary-color); }
+        .box-orange { background: rgba(249, 115, 22, 0.1); color: #ea580c; }
+        .box-green { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .box-purple { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+
+        .feature-card-title {
+            margin: 0;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-body);
+        }
+
+        .feature-card-desc {
+            margin: 0;
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        /* Premium Curriculum Card */
+        .premium-curriculum-card {
+            background: var(--bg-card) !important;
             border: 1px solid var(--border-color) !important;
-            background-color: var(--input-bg) !important;
-            color: var(--input-text) !important;
-            font-size: 13.5px !important;
-            cursor: pointer !important;
-            box-sizing: border-box !important;
-            width: 100% !important;
+            border-radius: 24px !important;
+            padding: 36px !important;
+            margin-bottom: 40px !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.01) !important;
+            animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+            animation-delay: 0.4s;
+        }
+
+        .curriculum-header-modern {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 28px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        .curriculum-icon-badge {
+            font-size: 32px;
+            background: rgba(20, 184, 166, 0.1);
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .curriculum-title-group {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .curriculum-title-modern {
+            margin: 0 0 4px 0 !important;
+            font-size: 22px !important;
+            font-weight: 800 !important;
+            color: var(--primary-color) !important;
+        }
+
+        .curriculum-subtitle-modern {
             margin: 0 !important;
+            font-size: 14px !important;
+            color: var(--text-muted) !important;
         }
-        .curriculum-filter-item select:focus {
-            border-color: var(--primary-color) !important;
+
+        /* Curriculum Filters container */
+        .curriculum-filters-container-modern {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            margin-bottom: 24px;
+        }
+
+        .curriculum-filter-item-modern {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-align: left;
+        }
+
+        .curriculum-filter-item-modern.dept {
+            flex: 2 1 280px;
+        }
+
+        .curriculum-filter-item-modern.year {
+            flex: 1 1 180px;
+        }
+
+        .curriculum-filter-item-modern.action {
+            flex: 0 0 auto;
+        }
+
+        .curriculum-filter-item-modern label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-body);
+        }
+
+        /* Styled modern selects */
+        .select-wrapper-modern {
+            position: relative;
+            width: 100%;
+        }
+
+        .select-wrapper-modern select {
+            width: 100% !important;
+            height: 44px !important;
+            padding: 8px 16px !important;
+            border-radius: 10px !important;
+            border: 1px solid var(--border-color) !important;
+            background-color: var(--bg-container) !important;
+            color: var(--text-body) !important;
+            font-size: 14.5px !important;
+            cursor: pointer !important;
+            appearance: none;
             outline: none !important;
+            transition: border-color 0.2s ease !important;
         }
-        #save-curriculum-btn {
-            height: 28px !important;
-            padding: 0 !important;
-            font-size: 11px !important;
-            font-weight: 600 !important;
-            border-radius: 4px !important;
+
+        .select-wrapper-modern select:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15) !important;
+        }
+
+        /* Custom dropdown arrow for modern select */
+        .select-wrapper-modern::after {
+            content: "▼";
+            font-size: 10px;
+            color: var(--text-muted);
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        .save-btn-modern {
+            height: 44px !important;
+            padding: 0 24px !important;
+            font-size: 14px !important;
+            font-weight: 700 !important;
+            border-radius: 10px !important;
             border: none !important;
             background-color: var(--btn-primary-bg) !important;
             color: var(--btn-primary-text) !important;
             cursor: pointer !important;
             transition: all 0.2s ease !important;
-            box-sizing: border-box !important;
             display: inline-flex !important;
             align-items: center !important;
             justify-content: center !important;
-            width: 70px !important;
-            margin: 0 !important;
-        }
-        #save-curriculum-btn:hover {
-            background-color: var(--btn-primary-hover) !important;
+            box-shadow: 0 4px 12px rgba(20, 184, 166, 0.15) !important;
         }
 
-        /* Responsive adjustments */
+        .save-btn-modern:hover {
+            background-color: var(--btn-primary-hover) !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 6px 16px rgba(20, 184, 166, 0.25) !important;
+        }
+
+        /* Bottom CTA section */
+        .bottom-cta-section-modern {
+            text-align: center;
+            padding: 48px;
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.03) 0%, var(--bg-card) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            margin-top: 40px;
+        }
+
+        .bottom-cta-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-body);
+            margin: 0 0 8px 0;
+        }
+
+        .bottom-cta-subtitle {
+            font-size: 15px;
+            color: var(--text-muted);
+            margin: 0 0 28px 0;
+        }
+
+        .bottom-cta-actions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+        }
+
+        .bottom-cta-actions .cta-btn {
+            margin: 0 !important;
+        }
+
+        .directory-link-p-modern {
+            margin: 16px 0 0 0;
+            font-size: 13.5px;
+            color: var(--text-muted);
+        }
+
+        .directory-link-modern {
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--primary-color);
+            border-bottom: 1.5px solid var(--primary-color);
+            transition: all 0.2s ease;
+        }
+
+        .directory-link-modern:hover {
+            color: var(--primary-dark);
+            border-bottom-color: var(--primary-dark);
+        }
+
+        /* Dynamic result styling overrides */
+        .curriculum-results-modern {
+            margin-top: 24px;
+            text-align: left;
+        }
+
+        /* Responsive Layout Overrides */
         @media (max-width: 768px) {
-            .curriculum-filters-container {
-                flex-direction: column !important;
-                align-items: stretch !important;
-                gap: 12px !important;
+            .premium-hero {
+                padding: 40px 24px;
+                gap: 32px;
             }
-            .curriculum-filter-item.dept,
-            .curriculum-filter-item.year,
-            .curriculum-filter-item.action {
-                flex: 1 1 100% !important;
+
+            .hero-title-modern {
+                font-size: 32px;
+            }
+
+            .hero-subtitle-modern {
+                font-size: 15px;
+                margin-bottom: 24px;
+            }
+
+            .hero-actions-modern {
+                flex-direction: column;
+                gap: 12px;
+                width: 100%;
+            }
+
+            .hero-actions-modern button, 
+            .hero-actions-modern a {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .floating-badge {
+                display: none !important; /* Hide floating badges on smaller screens */
+            }
+
+            .stats-grid-modern {
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+
+            .stat-label {
+                font-size: 11px;
+            }
+
+            .features-section-title {
+                font-size: 22px;
+            }
+
+            .feature-cards-grid-modern {
+                grid-template-columns: 1fr;
+            }
+
+            .premium-curriculum-card {
+                padding: 24px !important;
+            }
+
+            .curriculum-header-modern {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .curriculum-filters-container-modern {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 16px;
+            }
+
+            .curriculum-filter-item-modern.dept,
+            .curriculum-filter-item-modern.year,
+            .curriculum-filter-item-modern.action {
+                flex: 1 1 100%;
+            }
+
+            .save-btn-modern {
                 width: 100% !important;
             }
-            #save-curriculum-btn {
-                width: 100% !important;
-                height: 32px !important;
-                margin-top: 5px !important;
+
+            .bottom-cta-section-modern {
+                padding: 32px 20px;
+            }
+
+            .bottom-cta-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .bottom-cta-actions .cta-btn {
+                width: 100%;
             }
         }
     </style>
@@ -184,162 +824,263 @@
 
         <!-- ==================== VIEW 1: WELCOME GATEWAY ==================== -->
         <div id="landing-panel" class="view-panel active">
-            <!-- Modern Hero Section -->
-            <div class="hero-section" style="display: flex; align-items: center; gap: 40px; padding: 60px 40px; background: linear-gradient(135deg, var(--bg-card) 0%, rgba(20, 184, 166, 0.05) 100%); border-radius: 24px; border: 1px solid var(--border-color); margin-bottom: 30px; position: relative; overflow: hidden; flex-wrap: wrap;">
-                
-                <!-- Glow Effects -->
-                <div style="position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(20, 184, 166, 0.15) 0%, transparent 70%); top: -100px; left: -100px; pointer-events: none;"></div>
-                <div style="position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(249, 115, 22, 0.08) 0%, transparent 70%); bottom: -50px; right: -50px; pointer-events: none;"></div>
-
-                <div class="hero-content" style="flex: 1; min-width: 300px; position: relative; z-index: 2;">
-                    <div class="hero-badge" style="display: inline-block; background: rgba(20, 184, 166, 0.1); color: var(--primary-color); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 15px;">🚀 Academic Workspace</div>
-                    <h2 class="hero-title" style="font-size: 38px; font-weight: 800; line-height: 1.25; margin: 0 0 16px 0; background: linear-gradient(135deg, var(--text-body) 0%, var(--primary-color) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Your Intelligent Space for CS & Web Dev Excellence</h2>
-                    <p class="hero-subtitle" style="font-size: 15.5px; line-height: 1.6; color: var(--text-muted); margin: 0 0 28px 0; max-width: 550px;">Align your learning goals, track course syllabus checklists, and practice interactive quizzes to accelerate your academic growth.</p>
-                    <div class="hero-actions" style="display: flex; gap: 12px; flex-wrap: wrap;">
-                        <button onclick="showView('auth')" class="btn btn-primary btn-hero" style="padding: 12px 28px; font-size: 14.5px; font-weight: 700; border-radius: 10px; margin: 0; box-shadow: 0 4px 15px rgba(20, 184, 166, 0.3);">Enroll Student Profile</button>
-                        <button onclick="showView('dashboard')" class="btn btn-secondary btn-hero" style="padding: 12px 28px; font-size: 14.5px; font-weight: 700; border-radius: 10px; margin: 0;">Enter Workspace (Guest)</button>
-                    </div>
-                </div>
-
-                <!-- Premium SVG Illustration -->
-                <div class="hero-image" style="flex: 1; min-width: 300px; display: flex; justify-content: center; align-items: center; position: relative; z-index: 2;">
-                    <svg viewBox="0 0 500 380" width="100%" height="auto" style="max-width: 440px; filter: drop-shadow(0 15px 30px rgba(0,0,0,0.06));">
-                        <!-- Background Shapes -->
-                        <rect x="50" y="50" width="400" height="280" rx="20" fill="var(--bg-container)" stroke="var(--border-color)" stroke-width="2" />
-                        <circle cx="90" cy="90" r="30" fill="rgba(20, 184, 166, 0.08)" />
-                        <circle cx="410" cy="290" r="45" fill="rgba(249, 115, 22, 0.06)" />
-                        
-                        <!-- Tech Grid Lines -->
-                        <path d="M 50 150 L 450 150 M 50 250 L 450 250 M 150 50 L 150 330 M 350 50 L 350 330" stroke="var(--border-color)" stroke-width="0.8" stroke-dasharray="4 4" opacity="0.6" />
-                        
-                        <!-- Dashboard UI Frame -->
-                        <rect x="90" y="100" width="320" height="180" rx="10" fill="var(--bg-card)" stroke="var(--border-color)" stroke-width="1.5" />
-                        <circle cx="110" cy="115" r="4" fill="#ef4444" />
-                        <circle cx="120" cy="115" r="4" fill="#fbbf24" />
-                        <circle cx="130" cy="115" r="4" fill="#10b981" />
-                        <line x1="145" y1="115" x2="390" y2="115" stroke="var(--border-color)" stroke-width="1.5" />
-                        
-                        <!-- Chart Inside Dashboard -->
-                        <path d="M 120 240 Q 180 180 240 210 T 360 150" fill="none" stroke="var(--primary-color)" stroke-width="3.5" stroke-linecap="round" />
-                        <circle cx="360" cy="150" r="5" fill="#f97316" stroke="white" stroke-width="1.5" />
-                        <circle cx="240" cy="210" r="5" fill="var(--primary-color)" stroke="white" stroke-width="1.5" />
-                        
-                        <!-- Bars -->
-                        <rect x="120" y="150" width="12" height="40" rx="2" fill="rgba(20, 184, 166, 0.2)" />
-                        <rect x="140" y="130" width="12" height="60" rx="2" fill="rgba(20, 184, 166, 0.4)" />
-                        <rect x="160" y="110" width="12" height="80" rx="2" fill="var(--primary-color)" />
-                        
-                        <!-- Floating Study Objects -->
-                        <g transform="translate(320, 70) scale(0.8)">
-                            <path d="M 30 15 L 60 5 L 90 15 L 60 25 Z" fill="#f97316" />
-                            <path d="M 42 21 L 42 32 C 42 38 78 38 78 32 L 78 21" fill="#ea580c" />
-                            <path d="M 85 17 L 85 28 C 85 30 83 31 83 28 Z" fill="#ea580c" />
-                        </g>
-                        <g transform="translate(60, 240) scale(0.9)">
-                            <rect x="0" y="0" width="50" height="30" rx="8" fill="var(--bg-container)" stroke="var(--border-color)" stroke-width="1" />
-                            <text x="25" y="20" font-family="monospace" font-size="12" font-weight="700" fill="var(--primary-color)" text-anchor="middle">&lt;/&gt;</text>
-                        </g>
-                        <g transform="translate(390, 220) scale(0.8)">
-                            <polygon points="25,1 32,15 47,18 36,28 39,43 25,36 11,43 14,28 3,18 18,15" fill="#facc15" />
-                        </g>
-                    </svg>
-                </div>
-            </div>
-
-            <!-- Platform Statistics Row -->
-            <div class="stats-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; margin-bottom: 40px; text-align: center;">
-                <div class="mentor-card" style="padding: 20px; border-radius: 16px;">
-                    <h3 style="font-size: 28px; font-weight: 800; color: var(--primary-color); margin: 0 0 4px 0;">15K+</h3>
-                    <p style="margin: 0; font-size: 13px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Active Students</p>
-                </div>
-                <div class="mentor-card" style="padding: 20px; border-radius: 16px;">
-                    <h3 style="font-size: 28px; font-weight: 800; color: #f97316; margin: 0 0 4px 0;">85K+</h3>
-                    <p style="margin: 0; font-size: 13px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Courses Completed</p>
-                </div>
-                <div class="mentor-card" style="padding: 20px; border-radius: 16px;">
-                    <h3 style="font-size: 28px; font-weight: 800; color: #10b981; margin: 0 0 4px 0;">18%</h3>
-                    <p style="margin: 0; font-size: 13px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Avg. GPA Boost</p>
-                </div>
-                <div class="mentor-card" style="padding: 20px; border-radius: 16px;">
-                    <h3 style="font-size: 28px; font-weight: 800; color: var(--primary-color); margin: 0 0 4px 0;">94%</h3>
-                    <p style="margin: 0; font-size: 13px; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Placement Rate</p>
-                </div>
-            </div>
-
-            <!-- Features Showcase Grid -->
-            <h3 style="font-size: 20px; font-weight: 800; text-align: center; margin-bottom: 25px; color: var(--text-body);">💡 Modern AI-Powered Student Ecosystem</h3>
-            <div class="feature-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 40px;">
-                <div class="mentor-card" style="padding: 20px; border-radius: 16px; transition: transform 0.3s;">
-                    <div style="font-size: 24px; margin-bottom: 12px;">👤</div>
-                    <h4 style="margin: 0 0 8px 0; font-size: 15px; font-weight: 700; color: var(--text-body);">Success Profile</h4>
-                    <p style="margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--text-muted);">Configure your departments, GPA, target companies, and strengths to get completely customized AI support.</p>
-                </div>
-                <div class="mentor-card" style="padding: 20px; border-radius: 16px; transition: transform 0.3s;">
-                    <div style="font-size: 24px; margin-bottom: 12px;">📈</div>
-                    <h4 style="margin: 0 0 8px 0; font-size: 15px; font-weight: 700; color: var(--text-body);">Insights Dashboard</h4>
-                    <p style="margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--text-muted);">Monitor your calculated learning consistency, career readiness meters, and fetch weekly proactive objectives.</p>
-                </div>
-                <div class="mentor-card" style="padding: 20px; border-radius: 16px; transition: transform 0.3s;">
-                    <div style="font-size: 24px; margin-bottom: 12px;">✏️</div>
-                    <h4 style="margin: 0 0 8px 0; font-size: 15px; font-weight: 700; color: var(--text-body);">Interactive Quizzes</h4>
-                    <p style="margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--text-muted);">Test knowledge in Web Tech, C, Python, and DSA with instant color-coded evaluations and feedback loops.</p>
-                </div>
-                <div class="mentor-card" style="padding: 20px; border-radius: 16px; transition: transform 0.3s;">
-                    <div style="font-size: 24px; margin-bottom: 12px;">⏳</div>
-                    <h4 style="margin: 0 0 8px 0; font-size: 15px; font-weight: 700; color: var(--text-body);">Adaptive Planner</h4>
-                    <p style="margin: 0; font-size: 12.5px; line-height: 1.5; color: var(--text-muted);">Missed a class? Describe your delays and let the agent adaptively reschedule your timetable goals.</p>
-                </div>
-            </div>
-
-
             
-            <!-- ==================== CURRICULUM SECTION (PRESERVED) ==================== -->
-            <div class="notice-box dashboard-curriculum-box">
-                <h3 style="margin-top: 0; font-size: 21px; font-weight: 700; color: var(--primary-dark);">🎓 Department Curriculum (By Year & Course)</h3>
-                <p>Align your studies by choosing your department and current year of study to see recommended subjects and materials:</p>
+            <!-- Premium Hero Section -->
+            <div class="hero-section premium-hero">
+                <!-- Decorative Glow Blobs -->
+                <div class="glow-blob blob-teal"></div>
+                <div class="glow-blob blob-orange"></div>
                 
-                <div class="curriculum-filters-container">
-                    <div class="curriculum-filter-item dept">
-                        <label for="dept-select">Department / Specialization:</label>
-                        <select id="dept-select" onchange="filterCurriculum(); handleDropdownChange();">
-                            <option value="" disabled selected>-- Select your department --</option>
-                            <option value="cse">Computer Science & Engineering (CSE)</option>
-                            <option value="it">Information Technology (IT)</option>
-                            <option value="ece">Electronics & Communication Engineering (ECE)</option>
-                            <option value="eee">Electrical & Electronics Engineering (EEE)</option>
-                            <option value="me">Mechanical Engineering (ME)</option>
-                            <option value="ce">Civil Engineering (CE)</option>
-                            <option value="bca">Bachelor of Computer Applications (BCA)</option>
-                        </select>
+                <div class="hero-content">
+                    <div class="hero-badge-modern">
+                        <span class="badge-icon">🚀</span>
+                        <span class="badge-text">Academic Workspace V2</span>
                     </div>
-                    <div class="curriculum-filter-item year">
-                        <label for="year-select">Year of Study:</label>
-                        <select id="year-select" onchange="filterCurriculum(); handleDropdownChange();">
-                            <option value="" disabled selected>-- Select academic year --</option>
-                            <option value="1">1st Year (Freshman)</option>
-                            <option value="2">2nd Year (Sophomore)</option>
-                            <option value="3">3rd Year (Junior)</option>
-                            <option value="4">4th Year (Senior)</option>
-                        </select>
-                    </div>
-                    <div class="curriculum-filter-item action">
-                        <button type="button" onclick="saveCurriculumSettings()" id="save-curriculum-btn">Save</button>
+                    <h2 class="hero-title-modern">
+                        Empower Your Academic Journey. <br>
+                        <span class="gradient-text">Master CS & Web Development.</span>
+                    </h2>
+                    <p class="hero-subtitle-modern">
+                        StudentHub is your all-in-one personalized platform designed to help you track syllabus checklists, configure learning goals, practice interactive coding quizzes, and access curriculum materials—all structured to accelerate your technical and academic growth.
+                    </p>
+                    <div class="hero-actions-modern">
+                        <button onclick="showView('auth')" class="btn-primary-modern">
+                            <span>Get Started</span>
+                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </button>
+                        <button onclick="showView('dashboard')" class="btn-secondary-modern">
+                            <span>Explore as Guest</span>
+                        </button>
                     </div>
                 </div>
 
-                <div id="curriculum-output" class="curriculum-results" style="display: none;">
+                <!-- Modern Interactive Graphic -->
+                <div class="hero-image-modern">
+                    <div class="graphic-wrapper">
+                        <!-- Floating Badges -->
+                        <div class="floating-badge badge-code svg-float">
+                            <span class="badge-emoji">💻</span>
+                            <span class="badge-label">console.log("Success")</span>
+                        </div>
+                        <div class="floating-badge badge-stats svg-float-delayed">
+                            <span class="badge-emoji">📈</span>
+                            <span class="badge-label">GPA +18%</span>
+                        </div>
+                        <div class="floating-badge badge-book svg-float">
+                            <span class="badge-emoji">📚</span>
+                            <span class="badge-label">Reference Guides</span>
+                        </div>
+                        
+                        <!-- Main Graphic SVG -->
+                        <svg viewBox="0 0 500 400" class="premium-illustration">
+                            <defs>
+                                <linearGradient id="grad-teal" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#0f766e" />
+                                    <stop offset="100%" stop-color="#14b8a6" />
+                                </linearGradient>
+                                <linearGradient id="grad-orange" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#ea580c" />
+                                    <stop offset="100%" stop-color="#f97316" />
+                                </linearGradient>
+                                <linearGradient id="grad-card" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#ffffff" />
+                                    <stop offset="100%" stop-color="#f0fdfa" />
+                                </linearGradient>
+                            </defs>
+                            
+                            <!-- Central Glow -->
+                            <circle cx="250" cy="200" r="120" fill="url(#grad-teal)" opacity="0.08" filter="blur(20px)" />
+                            
+                            <!-- Laptop Base & Screen Frame -->
+                            <rect x="70" y="80" width="360" height="230" rx="16" fill="url(#grad-card)" stroke="var(--border-color)" stroke-width="2.5" />
+                            <rect x="85" y="95" width="330" height="185" rx="8" fill="#1e293b" />
+                            
+                            <!-- Screen Top Camera & Dot -->
+                            <circle cx="250" cy="88" r="3" fill="#64748b" />
+                            <circle cx="260" cy="88" r="1.5" fill="#10b981" />
+                            
+                            <!-- Code Lines Inside Editor -->
+                            <rect x="105" y="115" width="60" height="8" rx="4" fill="#38bdf8" opacity="0.8" />
+                            <rect x="105" y="130" width="120" height="8" rx="4" fill="#34d399" opacity="0.8" />
+                            <rect x="125" y="145" width="90" height="8" rx="4" fill="#fb7185" opacity="0.8" />
+                            <rect x="125" y="160" width="140" height="8" rx="4" fill="#facc15" opacity="0.8" />
+                            <rect x="105" y="175" width="40" height="8" rx="4" fill="#38bdf8" opacity="0.8" />
+                            
+                            <!-- Laptop Keyboard Platform -->
+                            <path d="M 50 310 L 450 310 L 470 330 L 30 330 Z" fill="#e2e8f0" stroke="var(--border-color)" stroke-width="2.5" />
+                            <line x1="210" y1="320" x2="290" y2="320" stroke="#cbd5e1" stroke-width="4" stroke-linecap="round" />
+                            
+                            <!-- Isometric Shield / Quiz Icon floating -->
+                            <g class="svg-float" transform="translate(320, 130) scale(0.9)">
+                                <rect x="0" y="0" width="80" height="80" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" filter="drop-shadow(0 8px 16px rgba(0,0,0,0.08))" />
+                                <circle cx="40" cy="40" r="22" fill="url(#grad-teal)" />
+                                <path d="M 33 40 L 38 45 L 47 35" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                            </g>
+                            
+                            <!-- Graphic Chart floating -->
+                            <g class="svg-float-delayed" transform="translate(60, 190) scale(0.85)">
+                                <rect x="0" y="0" width="100" height="90" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="2" filter="drop-shadow(0 8px 16px rgba(0,0,0,0.08))" />
+                                <path d="M 15 70 L 35 45 L 55 55 L 85 25" fill="none" stroke="url(#grad-orange)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+                                <circle cx="85" cy="25" r="4.5" fill="#ea580c" stroke="white" stroke-width="1.5" />
+                                <circle cx="35" cy="45" r="4.5" fill="#f97316" stroke="white" stroke-width="1.5" />
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Platform Statistics Grid -->
+            <div class="stats-grid-modern">
+                <div class="stat-card-modern anim-delay-1">
+                    <div class="stat-icon-wrapper teal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <h3 class="stat-value">15K+</h3>
+                        <p class="stat-label">Active Students</p>
+                    </div>
+                </div>
+                <div class="stat-card-modern anim-delay-2">
+                    <div class="stat-icon-wrapper orange">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <h3 class="stat-value">85K+</h3>
+                        <p class="stat-label">Courses Completed</p>
+                    </div>
+                </div>
+                <div class="stat-card-modern anim-delay-3">
+                    <div class="stat-icon-wrapper green">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <h3 class="stat-value">18%</h3>
+                        <p class="stat-label">Avg. GPA Boost</p>
+                    </div>
+                </div>
+                <div class="stat-card-modern anim-delay-4">
+                    <div class="stat-icon-wrapper teal">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <h3 class="stat-value">94%</h3>
+                        <p class="stat-label">Placement Rate</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Showcase Section -->
+            <div class="features-section-modern">
+                <h3 class="features-section-title">💡 Modern AI-Powered Student Ecosystem</h3>
+                <p class="features-section-subtitle">A unified platform built specifically for modern technical education and career roadmap planning.</p>
+                
+                <div class="feature-cards-grid-modern">
+                    <div class="feature-card-modern">
+                        <div class="feature-card-header">
+                            <div class="feature-card-icon-box box-teal">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                            <h4 class="feature-card-title">Success Profile</h4>
+                        </div>
+                        <p class="feature-card-desc">Configure your departments, GPA targets, dream companies, and current strengths to unlock personalized academic resources and roadmap optimizations.</p>
+                    </div>
+                    <div class="feature-card-modern">
+                        <div class="feature-card-header">
+                            <div class="feature-card-icon-box box-orange">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
+                            </div>
+                            <h4 class="feature-card-title">Insights Dashboard</h4>
+                        </div>
+                        <p class="feature-card-desc">Keep track of your calculated syllabus consistency, task progress meters, exam milestone goals, and receive weekly proactive objectives dynamically.</p>
+                    </div>
+                    <div class="feature-card-modern">
+                        <div class="feature-card-header">
+                            <div class="feature-card-icon-box box-green">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                            </div>
+                            <h4 class="feature-card-title">Interactive Quizzes</h4>
+                        </div>
+                        <p class="feature-card-desc">Test your understanding in core domains like Frontend Dev, C, Python, and DSA with real-time feedback, grading metrics, and instant error reviews.</p>
+                    </div>
+                    <div class="feature-card-modern">
+                        <div class="feature-card-header">
+                            <div class="feature-card-icon-box box-purple">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            </div>
+                            <h4 class="feature-card-title">Adaptive Planner</h4>
+                        </div>
+                        <p class="feature-card-desc">Fell behind schedule? Describe your delays or study blocks, and let the assistant rebuild and balance your syllabus objectives automatically.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Curriculum Alignment Section (PRESERVED FUNCTIONALITY WITH PREMIUM LOOK) -->
+            <div class="notice-box dashboard-curriculum-box premium-curriculum-card">
+                <div class="curriculum-header-modern">
+                    <span class="curriculum-icon-badge">🎓</span>
+                    <div class="curriculum-title-group">
+                        <h3 class="curriculum-title-modern">Department Curriculum</h3>
+                        <p class="curriculum-subtitle-modern">Choose your specialization and current year to view curriculum syllabus and learning roadmaps.</p>
+                    </div>
+                </div>
+                
+                <div class="curriculum-filters-container-modern">
+                    <div class="curriculum-filter-item-modern dept">
+                        <label for="dept-select">Department / Specialization</label>
+                        <div class="select-wrapper-modern">
+                            <select id="dept-select" onchange="filterCurriculum(); handleDropdownChange();">
+                                <option value="" disabled selected>-- Select your department --</option>
+                                <option value="cse">Computer Science & Engineering (CSE)</option>
+                                <option value="it">Information Technology (IT)</option>
+                                <option value="ece">Electronics & Communication Engineering (ECE)</option>
+                                <option value="eee">Electrical & Electronics Engineering (EEE)</option>
+                                <option value="me">Mechanical Engineering (ME)</option>
+                                <option value="ce">Civil Engineering (CE)</option>
+                                <option value="bca">Bachelor of Computer Applications (BCA)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="curriculum-filter-item-modern year">
+                        <label for="year-select">Year of Study</label>
+                        <div class="select-wrapper-modern">
+                            <select id="year-select" onchange="filterCurriculum(); handleDropdownChange();">
+                                <option value="" disabled selected>-- Select academic year --</option>
+                                <option value="1">1st Year (Freshman)</option>
+                                <option value="2">2nd Year (Sophomore)</option>
+                                <option value="3">3rd Year (Junior)</option>
+                                <option value="4">4th Year (Senior)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="curriculum-filter-item-modern action">
+                        <button type="button" onclick="saveCurriculumSettings()" id="save-curriculum-btn" class="save-btn-modern">
+                            <span>Save Settings</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="curriculum-output" class="curriculum-results-modern" style="display: none;">
                     <!-- Results dynamically loaded by filterCurriculum() in index.html scripts -->
                 </div>
             </div>
             
-            <div style="margin: 30px 0; text-align: center;">
-                <button onclick="showView('auth')" class="btn btn-primary" style="padding: 12px 28px; font-size: 14.5px; font-weight: 700; border-radius: 10px; margin: 0; box-shadow: 0 4px 15px rgba(20, 184, 166, 0.3);">Enroll Academic Account</button>
-                <button onclick="showView('dashboard')" class="btn btn-secondary" style="margin-left: 12px; padding: 12px 28px; font-size: 14.5px; font-weight: 700; border-radius: 10px;">Enter Workspace (Guest Access)</button>
+            <!-- Bottom CTA Section -->
+            <div class="bottom-cta-section-modern">
+                <h3 class="bottom-cta-title">Ready to take control of your studies?</h3>
+                <p class="bottom-cta-subtitle">Enroll now to track your progress and boost your academic score.</p>
+                <div class="bottom-cta-actions">
+                    <button onclick="showView('auth')" class="btn-primary-modern cta-btn">
+                        <span>Enroll Academic Account</span>
+                    </button>
+                    <button onclick="showView('dashboard')" class="btn-secondary-modern cta-btn">
+                        <span>Enter Workspace (Guest Access)</span>
+                    </button>
+                </div>
+                
+                <p class="directory-link-p-modern">
+                    Access offline syllabus reference lists: <a href="reference.html" onclick="return checkReferenceAccess(event)" class="directory-link-modern">Reference Materials Directory</a>.
+                </p>
             </div>
-            
-            <p style="text-align: center; font-size: 13px; color: var(--text-muted);">
-                Access offline syllabus reference lists: <a href="reference.html" onclick="return checkReferenceAccess(event)" style="font-weight: 600; text-decoration: underline; color: var(--primary-color);">Reference Materials Directory</a>.
-            </p>
         </div>
 
         <!-- ==================== VIEW 2: ENROLLMENT TERMINAL ==================== -->
