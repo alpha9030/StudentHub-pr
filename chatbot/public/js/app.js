@@ -666,7 +666,7 @@ function renderChatMessages() {
     const isUser = msg.role === 'user';
     const alignClass = isUser ? 'user' : 'model';
     const avatarIcon = isUser ? '<i class="far fa-user"></i>' : '🎓';
-    const senderName = isUser ? 'You' : 'Student Hub AI';
+    const senderName = isUser ? 'You' : 'Pravio AI';
     const formattedText = isUser ? escapeHTML(msg.text) : renderMarkdown(msg.text);
     
     // Format message bubble attachments if any exist
@@ -853,7 +853,7 @@ async function submitUserMessage() {
       <div class="avatar ai-avatar" style="font-size:1.15rem; line-height:1; display:flex; align-items:center; justify-content:center;">🎓</div>
       <div class="message-bubble">
         <div class="message-meta">
-          <span class="message-sender">Student Hub AI</span>
+          <span class="message-sender">Pravio AI</span>
           <span class="message-time">${formatTime(aiMsg.timestamp)}</span>
         </div>
         <div class="bubble-content"></div>

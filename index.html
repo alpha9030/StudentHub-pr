@@ -890,7 +890,7 @@
                 <a href="#" id="nav-landing" onclick="showView('landing'); return false;" class="active">Home</a>
                 <a href="#" id="nav-auth" onclick="showView('auth'); return false;">Account</a>
                 <a href="reference.html" onclick="return checkReferenceAccess(event)" id="nav-references">References</a>
-                <a href="/chatbot/public/index.html" target="_blank" id="nav-chatbot">Student Hub AI</a>
+                <a href="#" id="nav-chatbot" onclick="showView('chatbot'); return false;">Pravio AI</a>
             </nav>
             <div class="header-controls">
                 <div class="settings-trigger-btn" onclick="toggleSettingsMenu(event)">
@@ -1511,8 +1511,10 @@
             </p>
         </div>
 
-        <!-- ==================== VIEW 4: AI MENTOR ==================== -->
-        
+        <!-- ==================== VIEW 4: STUDENT HUB AI CHATBOT ==================== -->
+        <div id="chatbot-panel" class="view-panel" style="width: 100%; height: calc(100vh - 120px); min-height: 500px; padding: 0; margin: 0; overflow: hidden; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); background: var(--bg-secondary);">
+            <iframe src="/chatbot/public/index.html" style="width: 100%; height: 100%; border: none; overflow: hidden;" id="chatbot-iframe"></iframe>
+        </div>
 
         <!-- ==================== MODAL: GEMINI KEY CONFIGURATION ==================== -->
         
@@ -2689,6 +2691,8 @@
                 } else {
                     showView('landing');
                 }
+            } else if (currentHash === 'chatbot') {
+                showView('chatbot');
             } else {
                 if (loggedIn) {
                     showView('dashboard');
