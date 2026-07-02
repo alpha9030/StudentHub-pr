@@ -1159,10 +1159,34 @@ def api_update_profile():
 
 from flask import Response, stream_with_context
 
+def get_chatbot_connection(timeout=60):
+    import urllib.parse
+    import http.client
+    import ssl
+    
+    url = os.environ.get("CHATBOT_BACKEND_URL", "http://127.0.0.1:3008")
+    parsed = urllib.parse.urlparse(url)
+    host = parsed.netloc
+    
+    if parsed.scheme == "https":
+        ctx = ssl.create_default_context()
+        conn = http.client.HTTPSConnection(host, timeout=timeout, context=ctx)
+    else:
+        conn = http.client.HTTPConnection(host, timeout=timeout)
+        
+    path_prefix = parsed.path.rstrip('/')
+    return conn, path_prefix
+
 def start_chatbot_service():
     import subprocess
     import time
     
+    url = os.environ.get("CHATBOT_BACKEND_URL", "http://127.0.0.1:3008")
+    # If using an external remote service (e.g. Render https://...), skip starting Node locally
+    if "127.0.0.1" not in url and "localhost" not in url:
+        print(f"[INFO] CHATBOT_BACKEND_URL is external ({url}). Background Node.js startup bypassed.")
+        return
+        
     def run():
         chatbot_dir = os.path.join(os.path.dirname(__file__), 'chatbot')
         server_path = os.path.join(chatbot_dir, 'server.js')
@@ -1183,15 +1207,14 @@ def start_chatbot_service():
 
 @app.route('/api/chat', methods=['POST'])
 def proxy_chat():
-    import http.client
     body = request.get_data()
     headers = {
         "Content-Type": request.headers.get("Content-Type", "application/json"),
         "Accept": request.headers.get("Accept", "text/event-stream")
     }
     try:
-        conn = http.client.HTTPConnection("127.0.0.1", 3008, timeout=60)
-        conn.request("POST", "/api/chat", body, headers)
+        conn, prefix = get_chatbot_connection(timeout=60)
+        conn.request("POST", f"{prefix}/api/chat", body, headers)
         resp = conn.getresponse()
         
         def generate():
@@ -1217,15 +1240,14 @@ def proxy_chat():
 
 @app.route('/api/upload', methods=['POST'])
 def proxy_upload():
-    import http.client
     content_type = request.headers.get("Content-Type")
     body = request.get_data()
     headers = {
         "Content-Type": content_type
     }
     try:
-        conn = http.client.HTTPConnection("127.0.0.1", 3008, timeout=60)
-        conn.request("POST", "/api/upload", body, headers)
+        conn, prefix = get_chatbot_connection(timeout=60)
+        conn.request("POST", f"{prefix}/api/upload", body, headers)
         resp = conn.getresponse()
         res_data = resp.read()
         conn.close()
@@ -1241,10 +1263,9 @@ def proxy_upload():
 
 @app.route('/health', methods=['GET'])
 def proxy_health():
-    import http.client
     try:
-        conn = http.client.HTTPConnection("127.0.0.1", 3008, timeout=5)
-        conn.request("GET", "/health")
+        conn, prefix = get_chatbot_connection(timeout=5)
+        conn.request("GET", f"{prefix}/health")
         resp = conn.getresponse()
         res_data = resp.read()
         conn.close()
