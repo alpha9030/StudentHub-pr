@@ -33,8 +33,16 @@
                     <i class="fas fa-cog"></i>
                 </button>
                 
-                <!-- Dropdown Menu containing Font Size, View Mode, and Account preferences -->
+                <!-- Dropdown Menu containing Appearance, Font Size, View Mode, Reset Preferences, Sign Out & Delete Account -->
                 <div id="settings-dropdown-menu" class="settings-dropdown">
+                    <div class="settings-dropdown-item">
+                        <label for="theme-appearance-select"><i class="fas fa-palette"></i> Appearance</label>
+                        <select id="theme-appearance-select" onchange="changeAppearanceMode(this.value)">
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                            <option value="system">System</option>
+                        </select>
+                    </div>
                     <div class="settings-dropdown-item">
                         <label for="font-size-select"><i class="fas fa-font"></i> Font Size</label>
                         <select id="font-size-select" onchange="changeFontSize(this.value)">
@@ -46,11 +54,11 @@
                     <div class="settings-dropdown-item">
                         <label for="view-mode-select"><i class="fas fa-display"></i> View Mode</label>
                         <select id="view-mode-select" onchange="changeViewMode(this.value)">
-                            <option value="laptop">Desktop (Wide)</option>
-                            <option value="tab">Tablet (Compact)</option>
-                            <option value="phone">Mobile (Phone)</option>
+                            <option value="laptop">Desktop</option>
+                            <option value="tab">Compact</option>
                         </select>
                     </div>
+                    <button onclick="resetPreferences()" class="btn btn-secondary reset-prefs-btn" style="width: 100%; margin-top: 4px; margin-bottom: 8px; padding: 6px; font-size: 13px; font-weight: 600; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-body); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='var(--border-color)'" onmouseout="this.style.background='var(--bg-card)'">Reset Preferences</button>
                     <div class="settings-dropdown-divider"></div>
                     <button id="signout-btn" onclick="doSignOut()" class="btn btn-secondary signout-dropdown-btn" style="display: none; width: 100%;">Sign Out</button>
                     <button id="delete-btn" onclick="doDeleteAccount()" class="btn delete-dropdown-btn" style="display: none; width: 100%; margin-top: 8px; background-color: #ef4444; color: white; border: none; padding: 8px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">Delete Account</button>
@@ -657,10 +665,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             updateUserSession();
 
-            // Set values on theme dropdown on load
-            const savedTheme = localStorage.getItem('siteTheme') || 'default';
-            const themeSelect = document.getElementById('theme-select');
-            if (themeSelect) themeSelect.value = savedTheme;
+
 
             // Initialize Google Sign-In (real SDK if configured, else fallback)
             initGoogleSignIn();

@@ -1344,9 +1344,7 @@ html {
 /* ==========================================================================
    10. OTHER HELPER UTILITY CLASSES
    ========================================================================= */
-#site-settings-bar { text-align: right; margin-top: -10px; margin-bottom: 15px; font-size: 13px; }
-.settings-select { width: auto; padding: 2px 5px; font-size: 12px; margin: 0 10px 0 0; height: 28px; display: inline-block; vertical-align: middle; }
-.settings-label { font-weight: bold; margin-right: 5px; display: inline-block; color: var(--primary-dark); }
+
 
 .control-row {
     display: flex;

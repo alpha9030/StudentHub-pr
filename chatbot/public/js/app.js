@@ -51,9 +51,9 @@ function updateThemeIcons(theme) {
   const icons = document.querySelectorAll('.theme-icon');
   icons.forEach(icon => {
     if (theme === 'dark') {
-      icon.className = 'fas fa-sun theme-icon';
-    } else {
       icon.className = 'fas fa-moon theme-icon';
+    } else {
+      icon.className = 'fas fa-sun theme-icon';
     }
   });
 }

@@ -4,20 +4,50 @@
     window.addEventListener('message', function(event) {
         if (event.data && event.data.type === 'sync-theme') {
             const newTheme = event.data.theme;
+            localStorage.setItem('siteAppearanceMode', newTheme);
             localStorage.setItem('siteTheme', newTheme);
             applySettings();
-            updateToggleIcons(newTheme);
         }
     });
 
+    // Listen to OS prefers-color-scheme changes
+    const systemMedia = window.matchMedia('(prefers-color-scheme: dark)');
+    try {
+        systemMedia.addEventListener('change', () => {
+            const appearance = localStorage.getItem('siteAppearanceMode') || 'system';
+            if (appearance === 'system') {
+                applySettings();
+            }
+        });
+    } catch (e) {
+        systemMedia.addListener(() => {
+            const appearance = localStorage.getItem('siteAppearanceMode') || 'system';
+            if (appearance === 'system') {
+                applySettings();
+            }
+        });
+    }
+
     function applySettings() {
-        const savedTheme = localStorage.getItem('siteTheme') || 'default';
+        const savedAppearance = localStorage.getItem('siteAppearanceMode') || 'system';
         const savedFontSize = localStorage.getItem('siteFontSize') || 'medium';
         const savedViewMode = localStorage.getItem('siteViewMode') || 'laptop';
 
+        // Resolve active theme based on appearance mode
+        let resolvedTheme = 'light';
+        if (savedAppearance === 'dark') {
+            resolvedTheme = 'dark';
+        } else if (savedAppearance === 'light') {
+            resolvedTheme = 'light';
+        } else {
+            const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            resolvedTheme = systemDark ? 'dark' : 'light';
+        }
+
         // Apply theme and font size classes to body
+        localStorage.setItem('siteTheme', resolvedTheme);
         document.body.classList.remove('theme-light', 'theme-dark', 'font-size-small', 'font-size-medium', 'font-size-large');
-        if (savedTheme === 'dark') {
+        if (resolvedTheme === 'dark') {
             document.body.classList.add('theme-dark');
         } else {
             document.body.classList.add('theme-light');
@@ -26,18 +56,16 @@
 
         // Apply view mode classes to body
         document.body.classList.remove('view-mode-phone', 'view-mode-tab', 'view-mode-laptop', 'view-mode-active-body');
-        if (savedViewMode === 'phone') {
-            document.body.classList.add('view-mode-phone', 'view-mode-active-body');
-        } else if (savedViewMode === 'tab') {
+        if (savedViewMode === 'phone' || savedViewMode === 'tab') {
             document.body.classList.add('view-mode-tab', 'view-mode-active-body');
         } else {
             document.body.classList.add('view-mode-laptop');
         }
 
         // Sync dropdown selectors on the current page if they exist
-        const themeSelect = document.getElementById('theme-select');
-        if (themeSelect) {
-            themeSelect.value = savedTheme;
+        const appearanceSelect = document.getElementById('theme-appearance-select');
+        if (appearanceSelect) {
+            appearanceSelect.value = savedAppearance;
         }
         const fontSelect = document.getElementById('font-size-select');
         if (fontSelect) {
@@ -45,36 +73,43 @@
         }
         const viewModeSelect = document.getElementById('view-mode-select');
         if (viewModeSelect) {
-            viewModeSelect.value = savedViewMode;
+            viewModeSelect.value = savedViewMode === 'phone' ? 'tab' : savedViewMode;
         }
+
+        // Update Sun/Moon icon toggle
+        updateToggleIcons(resolvedTheme);
     }
 
     // Expose change settings functions globally
     window.changeTheme = function(themeName) {
-        localStorage.setItem('siteTheme', themeName);
+        window.changeAppearanceMode(themeName);
+    };
+
+    window.changeAppearanceMode = function(appearanceMode) {
+        localStorage.setItem('siteAppearanceMode', appearanceMode);
         applySettings();
-        updateToggleIcons(themeName);
         
-        // Sync to Pravio AI iframe if present on the page
+        // Sync to Pravio AI iframe if present
+        const resolvedTheme = localStorage.getItem('siteTheme') || 'light';
         const iframe = document.getElementById('chatbot-iframe');
         if (iframe && iframe.contentWindow) {
-            iframe.contentWindow.postMessage({ type: 'sync-theme', theme: themeName }, '*');
+            iframe.contentWindow.postMessage({ type: 'sync-theme', theme: resolvedTheme }, '*');
         }
     };
 
     window.toggleGlobalTheme = function() {
-        const savedTheme = localStorage.getItem('siteTheme') || 'default';
-        const newTheme = savedTheme === 'dark' ? 'light' : 'dark';
-        window.changeTheme(newTheme);
+        const resolvedTheme = localStorage.getItem('siteTheme') || 'light';
+        const newTheme = resolvedTheme === 'dark' ? 'light' : 'dark';
+        window.changeAppearanceMode(newTheme);
     };
 
     function updateToggleIcons(theme) {
         const icons = document.querySelectorAll('.theme-icon');
         icons.forEach(icon => {
             if (theme === 'dark') {
-                icon.className = 'fas fa-sun theme-icon';
-            } else {
                 icon.className = 'fas fa-moon theme-icon';
+            } else {
+                icon.className = 'fas fa-sun theme-icon';
             }
         });
     }
@@ -82,6 +117,20 @@
     window.changeFontSize = function(fontSizeName) {
         localStorage.setItem('siteFontSize', fontSizeName);
         applySettings();
+    };
+
+    window.changeViewMode = function(viewModeName) {
+        localStorage.setItem('siteViewMode', viewModeName);
+        applySettings();
+    };
+
+    window.resetPreferences = function() {
+        localStorage.removeItem('siteTheme');
+        localStorage.removeItem('siteAppearanceMode');
+        localStorage.removeItem('siteFontSize');
+        localStorage.removeItem('siteViewMode');
+        alert("Preferences reset successfully! Reloading page...");
+        window.location.reload();
     };
 
     window.changeViewMode = function(viewModeName) {
@@ -185,49 +234,7 @@
         }
     }
 
-    function injectSettingsBar() {
-        // If theme-select is already in the DOM, just sync and return
-        if (document.getElementById('theme-select')) {
-            applySettings();
-            return;
-        }
 
-        // Find the nav element on the page to append settings bar
-        const nav = document.querySelector('nav');
-        if (!nav) return;
-
-        const settingsBar = document.createElement('div');
-        settingsBar.id = 'site-settings-bar';
-
-        const savedTheme = localStorage.getItem('siteTheme') || 'default';
-        const savedFontSize = localStorage.getItem('siteFontSize') || 'medium';
-        const savedViewMode = localStorage.getItem('siteViewMode') || 'laptop';
-
-        settingsBar.innerHTML = `
-            <label for="theme-select" class="settings-label">Theme: </label>
-            <select id="theme-select" onchange="changeTheme(this.value)" class="settings-select">
-                <option value="default">Light Teal & Sage</option>
-                <option value="dark">Dark Charcoal</option>
-            </select>
-            <label for="font-size-select" class="settings-label">Font Size: </label>
-            <select id="font-size-select" onchange="changeFontSize(this.value)" class="settings-select">
-                <option value="small">Small</option>
-                <option value="medium">Medium</option>
-                <option value="large">Large</option>
-            </select>
-            <label for="view-mode-select" class="settings-label">View Mode: </label>
-            <select id="view-mode-select" onchange="changeViewMode(this.value)" class="settings-select">
-                <option value="laptop">Laptop</option>
-                <option value="tab">Tablet</option>
-                <option value="phone">Phone</option>
-            </select>
-        `;
-
-        // Insert after nav
-        nav.parentNode.insertBefore(settingsBar, nav.nextSibling);
-
-        applySettings();
-    }
     
     function injectViewModeStyles() {
         if (document.getElementById('view-mode-styles')) return;
@@ -403,7 +410,6 @@
 
     function initPage() {
         standardizeSubjectPage();
-        injectSettingsBar();
         injectViewModeStyles();
         injectThemeToggle();
     }
