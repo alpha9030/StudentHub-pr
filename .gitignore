@@ -10,3 +10,9 @@ config.json
 *.xlsx
 *.xls
 *.csv
+
+# Chatbot local files
+chatbot/node_modules/
+chatbot/uploads/
+chatbot/server.log
+chatbot/.env

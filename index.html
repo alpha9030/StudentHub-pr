@@ -890,6 +890,7 @@
                 <a href="#" id="nav-landing" onclick="showView('landing'); return false;" class="active">Home</a>
                 <a href="#" id="nav-auth" onclick="showView('auth'); return false;">Account</a>
                 <a href="reference.html" onclick="return checkReferenceAccess(event)" id="nav-references">References</a>
+                <a href="/chatbot/public/index.html" target="_blank" id="nav-chatbot">Student Hub AI</a>
             </nav>
             <div class="header-controls">
                 <div class="settings-trigger-btn" onclick="toggleSettingsMenu(event)">
@@ -2909,12 +2910,6 @@
                     }
                 } catch(e) {
                     console.warn("Could not sync progress from backend:", e);
-                }
-                
-                try {
-
-                } catch(e) {
-                    console.warn("Could not sync chatbot settings:", e);
                 }
             }
             

@@ -1,0 +1,126 @@
+/* ==========================================================================
+   CODE BLOCK & SYNTAX HIGHLIGHTING STYLES (LUMINA CHAT)
+   ========================================================================== */
+
+/* Container wrapper for syntax-highlighted code block */
+.code-block-wrapper {
+  margin: 16px 0;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background-color: #0b0d16;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+[data-theme="light"] .code-block-wrapper {
+  background-color: #1e1e24; /* Keep code dark for readability even in light mode */
+}
+
+/* Header bar inside code blocks */
+.code-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.code-block-lang {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.code-copy-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #9ca3af;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+.code-copy-btn:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.code-copy-btn.copied {
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.3);
+  background-color: rgba(16, 185, 129, 0.05);
+}
+
+/* Pre and Code tags */
+.code-block-wrapper pre {
+  margin: 0;
+  padding: 16px;
+  overflow-x: auto;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+.code-block-wrapper code {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #e5e7eb;
+  white-space: pre;
+  word-break: normal;
+  word-wrap: normal;
+}
+
+/* ==========================================================================
+   TOKEN SYNTAX STYLES (Light & Dark uses same theme inside dark blocks)
+   ========================================================================== */
+.hl-comment {
+  color: #6b7280;
+  font-style: italic;
+}
+.hl-keyword {
+  color: #f472b6;
+  font-weight: 600;
+}
+.hl-string {
+  color: #a78bfa;
+}
+.hl-number {
+  color: #fb7185;
+}
+.hl-function {
+  color: #60a5fa;
+}
+.hl-operator {
+  color: #38bdf8;
+}
+.hl-class {
+  color: #fbbf24;
+}
+.hl-tag {
+  color: #f472b6;
+}
+.hl-attr-name {
+  color: #60a5fa;
+}
+.hl-attr-val {
+  color: #a78bfa;
+}
+.hl-property {
+  color: #38bdf8;
+}
+.hl-variable {
+  color: #cbd5e1;
+}

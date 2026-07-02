@@ -1153,6 +1153,112 @@ def api_update_profile():
     else:
         return jsonify({'success': False, 'message': 'Failed to update profile'}), 500
 
+# ==========================================================================
+# Chatbot Reverse Proxy & Daemon Process Manager
+# ==========================================================================
+
+from flask import Response, stream_with_context
+
+def start_chatbot_service():
+    import subprocess
+    import time
+    
+    def run():
+        chatbot_dir = os.path.join(os.path.dirname(__file__), 'chatbot')
+        server_path = os.path.join(chatbot_dir, 'server.js')
+        if os.path.exists(server_path):
+            print("[INFO] Starting integrated Node.js chatbot service...")
+            try:
+                # Redirect stdout/stderr to log file to keep console clean
+                log_file = open(os.path.join(chatbot_dir, 'server.log'), 'a')
+                subprocess.Popen(["npm", "start"], cwd=chatbot_dir, stdout=log_file, stderr=log_file, shell=True)
+                print("[INFO] Chatbot service spawned successfully.")
+            except Exception as e:
+                print(f"[ERROR] Failed to start chatbot service: {e}")
+        else:
+            print("[WARNING] chatbot/server.js not found. Integrated chatbot service will not start.")
+            
+    t = threading.Thread(target=run, daemon=True)
+    t.start()
+
+@app.route('/api/chat', methods=['POST'])
+def proxy_chat():
+    import http.client
+    body = request.get_data()
+    headers = {
+        "Content-Type": request.headers.get("Content-Type", "application/json"),
+        "Accept": request.headers.get("Accept", "text/event-stream")
+    }
+    try:
+        conn = http.client.HTTPConnection("127.0.0.1", 3008, timeout=60)
+        conn.request("POST", "/api/chat", body, headers)
+        resp = conn.getresponse()
+        
+        def generate():
+            try:
+                while True:
+                    chunk = resp.read(1024)
+                    if not chunk:
+                        break
+                    yield chunk
+            except Exception as e:
+                print(f"Proxy stream error: {e}")
+            finally:
+                conn.close()
+                
+        flask_resp = Response(stream_with_context(generate()), status=resp.status)
+        for k, v in resp.getheaders():
+            if k.lower() in ['content-type', 'cache-control', 'connection', 'x-accel-buffering']:
+                flask_resp.headers[k] = v
+        return flask_resp
+    except Exception as e:
+        print(f"Proxy connection failed: {e}")
+        return jsonify({"error": "Chatbot backend is temporarily offline.", "status": 503}), 503
+
+@app.route('/api/upload', methods=['POST'])
+def proxy_upload():
+    import http.client
+    content_type = request.headers.get("Content-Type")
+    body = request.get_data()
+    headers = {
+        "Content-Type": content_type
+    }
+    try:
+        conn = http.client.HTTPConnection("127.0.0.1", 3008, timeout=60)
+        conn.request("POST", "/api/upload", body, headers)
+        resp = conn.getresponse()
+        res_data = resp.read()
+        conn.close()
+        
+        flask_resp = Response(res_data, status=resp.status)
+        for k, v in resp.getheaders():
+            if k.lower() in ['content-type']:
+                flask_resp.headers[k] = v
+        return flask_resp
+    except Exception as e:
+        print(f"Proxy upload connection failed: {e}")
+        return jsonify({"error": "Failed to connect to file extraction service.", "status": 503}), 503
+
+@app.route('/health', methods=['GET'])
+def proxy_health():
+    import http.client
+    try:
+        conn = http.client.HTTPConnection("127.0.0.1", 3008, timeout=5)
+        conn.request("GET", "/health")
+        resp = conn.getresponse()
+        res_data = resp.read()
+        conn.close()
+        
+        flask_resp = Response(res_data, status=resp.status)
+        flask_resp.headers["Content-Type"] = "application/json"
+        return flask_resp
+    except Exception as e:
+        return jsonify({
+            "status": "offline",
+            "geminiConfigured": False,
+            "error": str(e)
+        }), 200
+
 # Catch-all to serve any static asset (js, css, images)
 @app.route('/<path:path>')
 def serve_static(path):
@@ -1167,6 +1273,7 @@ init_db()
 if __name__ == '__main__':
     print("Database initialized.")
     validate_gemini_key()
+    start_chatbot_service()
     port = int(os.environ.get('PORT', 443))
     if 'PORT' in os.environ:
         app.run(host='0.0.0.0', port=port, debug=False)
