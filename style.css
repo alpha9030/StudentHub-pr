@@ -3808,6 +3808,22 @@ body.theme-dark .api-key-banner {
     -webkit-appearance: none;
 }
 
+/* Explicit color fixes for career dropdown options */
+.career-wrapper .career-select option {
+    background-color: var(--bg-container) !important;
+    color: var(--text-body) !important;
+}
+
+body.theme-dark .career-wrapper .career-select option {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+}
+
+body.theme-light .career-wrapper .career-select option {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+}
+
 /* Custom dropdown chevron for Career select */
 .career-wrapper::after {
     content: '\f078';
