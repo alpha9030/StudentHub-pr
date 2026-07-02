@@ -898,36 +898,30 @@
                     <i class="fas fa-moon theme-icon"></i>
                 </button>
                 
-                <!-- Font Size Selector (Icon wrapper) -->
-                <div class="toolbar-item" title="Font Size">
-                    <i class="fas fa-font toolbar-icon"></i>
-                    <select id="font-size-select" onchange="changeFontSize(this.value)" class="toolbar-select">
-                        <option value="small">S</option>
-                        <option value="medium" selected>M</option>
-                        <option value="large">L</option>
-                    </select>
-                </div>
-                
-                <!-- View Mode Selector (Icon wrapper) -->
-                <div class="toolbar-item" title="View Mode">
-                    <i class="fas fa-display toolbar-icon"></i>
-                    <select id="view-mode-select" onchange="changeViewMode(this.value)" class="toolbar-select">
-                        <option value="laptop">Desk</option>
-                        <option value="tab">Tab</option>
-                        <option value="phone">Mob</option>
-                    </select>
-                </div>
-                
                 <!-- Settings Trigger Button (Gear icon-only) -->
-                <button class="toolbar-btn settings-btn" onclick="toggleSettingsMenu(event)" title="Account Settings" aria-label="Account Settings">
+                <button class="toolbar-btn settings-btn" onclick="toggleSettingsMenu(event)" title="Settings" aria-label="Settings">
                     <i class="fas fa-cog"></i>
                 </button>
                 
-                <!-- Dropdown Menu containing Sign Out & Delete Account -->
+                <!-- Dropdown Menu containing Font Size, View Mode, and Account preferences -->
                 <div id="settings-dropdown-menu" class="settings-dropdown">
-                    <div class="settings-dropdown-item" style="padding: 4px 10px; font-size: 12px; color: var(--text-muted); text-align: center; border-bottom: 1px solid var(--border-color); margin-bottom: 8px;">
-                        Account Preferences
+                    <div class="settings-dropdown-item">
+                        <label for="font-size-select"><i class="fas fa-font"></i> Font Size</label>
+                        <select id="font-size-select" onchange="changeFontSize(this.value)">
+                            <option value="small">Small</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="large">Large</option>
+                        </select>
                     </div>
+                    <div class="settings-dropdown-item">
+                        <label for="view-mode-select"><i class="fas fa-display"></i> View Mode</label>
+                        <select id="view-mode-select" onchange="changeViewMode(this.value)">
+                            <option value="laptop">Desktop (Wide)</option>
+                            <option value="tab">Tablet (Compact)</option>
+                            <option value="phone">Mobile (Phone)</option>
+                        </select>
+                    </div>
+                    <div class="settings-dropdown-divider"></div>
                     <button id="signout-btn" onclick="doSignOut()" class="btn btn-secondary signout-dropdown-btn" style="display: none; width: 100%;">Sign Out</button>
                     <button id="delete-btn" onclick="doDeleteAccount()" class="btn delete-dropdown-btn" style="display: none; width: 100%; margin-top: 8px; background-color: #ef4444; color: white; border: none; padding: 8px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">Delete Account</button>
                 </div>
