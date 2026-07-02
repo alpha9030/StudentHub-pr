@@ -324,7 +324,9 @@ function setupEventListeners() {
   DOMElements.btnThemeToggle.addEventListener('click', toggleTheme);
   
   // Screen Router
-  DOMElements.btnHeroLaunch.addEventListener('click', switchToChatScreen);
+  if (DOMElements.btnHeroLaunch) {
+    DOMElements.btnHeroLaunch.addEventListener('click', switchToChatScreen);
+  }
   DOMElements.btnStartChat.addEventListener('click', switchToChatScreen);
   DOMElements.btnLeaveChat.addEventListener('click', switchToLandingScreen);
   
