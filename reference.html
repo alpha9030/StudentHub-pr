@@ -50,26 +50,41 @@
                 <a href="reference.html" class="active" id="nav-references">References</a>
                 <a href="index.html#chatbot" id="nav-chatbot">Pravio AI</a>
             </nav>
-            <div class="header-controls">
-                <div class="settings-trigger-btn" onclick="toggleSettingsMenu(event)">
-                    ⚙️ <span class="btn-text">Settings</span>
+            <div class="header-controls unified-toolbar">
+                <!-- Theme Toggle Button -->
+                <button class="toolbar-btn theme-toggle-btn" onclick="toggleGlobalTheme()" title="Toggle Theme" aria-label="Toggle Theme">
+                    <i class="fas fa-moon theme-icon"></i>
+                </button>
+                
+                <!-- Font Size Selector (Icon wrapper) -->
+                <div class="toolbar-item" title="Font Size">
+                    <i class="fas fa-font toolbar-icon"></i>
+                    <select id="font-size-select" onchange="changeFontSize(this.value)" class="toolbar-select">
+                        <option value="small">S</option>
+                        <option value="medium" selected>M</option>
+                        <option value="large">L</option>
+                    </select>
                 </div>
+                
+                <!-- View Mode Selector (Icon wrapper) -->
+                <div class="toolbar-item" title="View Mode">
+                    <i class="fas fa-display toolbar-icon"></i>
+                    <select id="view-mode-select" onchange="changeViewMode(this.value)" class="toolbar-select">
+                        <option value="laptop">Desk</option>
+                        <option value="tab">Tab</option>
+                        <option value="phone">Mob</option>
+                    </select>
+                </div>
+                
+                <!-- Settings Trigger Button (Gear icon-only) -->
+                <button class="toolbar-btn settings-btn" onclick="toggleSettingsMenu(event)" title="Account Settings" aria-label="Account Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+                
+                <!-- Dropdown Menu containing Sign Out & Delete Account if needed -->
                 <div id="settings-dropdown-menu" class="settings-dropdown">
-                    <div class="settings-dropdown-item">
-                        <label for="font-size-select">Font Size</label>
-                        <select id="font-size-select" onchange="changeFontSize(this.value)">
-                            <option value="small">Small</option>
-                            <option value="medium">Medium</option>
-                            <option value="large">Large</option>
-                        </select>
-                    </div>
-                    <div class="settings-dropdown-item">
-                        <label for="view-mode-select">View Mode</label>
-                        <select id="view-mode-select" onchange="changeViewMode(this.value)">
-                            <option value="laptop">Laptop (Desktop)</option>
-                            <option value="tab">Tablet (Portrait)</option>
-                            <option value="phone">Phone (Portrait)</option>
-                        </select>
+                    <div class="settings-dropdown-item" style="padding: 4px 10px; font-size: 12px; color: var(--text-muted); text-align: center;">
+                        Account Preferences
                     </div>
                 </div>
             </div>

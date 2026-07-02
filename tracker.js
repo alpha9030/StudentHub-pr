@@ -370,7 +370,7 @@
     }
 
     function injectThemeToggle() {
-        if (document.querySelector('.site-theme-toggle')) return;
+        if (document.querySelector('.site-theme-toggle') || document.querySelector('.theme-toggle-btn')) return;
 
         const controls = document.querySelector('.header-controls');
         if (controls) {
