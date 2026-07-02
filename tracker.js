@@ -1,5 +1,15 @@
 // Load and apply theme & font size on start so all pages stay synchronized
 (function() {
+    // Bidirectional theme synchronization with iframe
+    window.addEventListener('message', function(event) {
+        if (event.data && event.data.type === 'sync-theme') {
+            const newTheme = event.data.theme;
+            localStorage.setItem('siteTheme', newTheme);
+            applySettings();
+            updateToggleIcons(newTheme);
+        }
+    });
+
     function applySettings() {
         const savedTheme = localStorage.getItem('siteTheme') || 'default';
         const savedFontSize = localStorage.getItem('siteFontSize') || 'medium';
@@ -7,8 +17,10 @@
 
         // Apply theme and font size classes to body
         document.body.classList.remove('theme-light', 'theme-dark', 'font-size-small', 'font-size-medium', 'font-size-large');
-        if (savedTheme !== 'default') {
-            document.body.classList.add('theme-' + savedTheme);
+        if (savedTheme === 'dark') {
+            document.body.classList.add('theme-dark');
+        } else {
+            document.body.classList.add('theme-light');
         }
         document.body.classList.add('font-size-' + savedFontSize);
 
@@ -41,7 +53,31 @@
     window.changeTheme = function(themeName) {
         localStorage.setItem('siteTheme', themeName);
         applySettings();
+        updateToggleIcons(themeName);
+        
+        // Sync to Pravio AI iframe if present on the page
+        const iframe = document.getElementById('chatbot-iframe');
+        if (iframe && iframe.contentWindow) {
+            iframe.contentWindow.postMessage({ type: 'sync-theme', theme: themeName }, '*');
+        }
     };
+
+    window.toggleGlobalTheme = function() {
+        const savedTheme = localStorage.getItem('siteTheme') || 'default';
+        const newTheme = savedTheme === 'dark' ? 'light' : 'dark';
+        window.changeTheme(newTheme);
+    };
+
+    function updateToggleIcons(theme) {
+        const icons = document.querySelectorAll('.theme-icon');
+        icons.forEach(icon => {
+            if (theme === 'dark') {
+                icon.className = 'fas fa-sun theme-icon';
+            } else {
+                icon.className = 'fas fa-moon theme-icon';
+            }
+        });
+    }
 
     window.changeFontSize = function(fontSizeName) {
         localStorage.setItem('siteFontSize', fontSizeName);
@@ -52,6 +88,22 @@
         localStorage.setItem('siteViewMode', viewModeName);
         applySettings();
     };
+
+    window.toggleSettingsMenu = function(event) {
+        if (event) event.stopPropagation();
+        const menu = document.getElementById('settings-dropdown-menu');
+        if (menu) {
+            menu.classList.toggle('active');
+        }
+    };
+
+    document.addEventListener('click', function(e) {
+        const controls = document.querySelector('.header-controls');
+        const menu = document.getElementById('settings-dropdown-menu');
+        if (menu && controls && !controls.contains(e.target)) {
+            menu.classList.remove('active');
+        }
+    });
 
     function standardizeSubjectPage() {
         try {
@@ -109,6 +161,7 @@
                     <a href="index.html">Home</a>
                     <a href="account.html">Account</a>
                     <a href="reference.html">References</a>
+                    <a href="index.html#chatbot">Pravio AI</a>
                 </nav>
                 <hr>
             `;
@@ -316,10 +369,43 @@
         applySettings();
     }
 
+    function injectThemeToggle() {
+        if (document.querySelector('.site-theme-toggle')) return;
+
+        const controls = document.querySelector('.header-controls');
+        if (controls) {
+            const toggleBtn = document.createElement('button');
+            toggleBtn.className = 'site-theme-toggle icon-btn';
+            toggleBtn.setAttribute('aria-label', 'Toggle Theme');
+            toggleBtn.setAttribute('title', 'Toggle Theme');
+            toggleBtn.onclick = window.toggleGlobalTheme;
+            toggleBtn.innerHTML = '<i class="fas fa-moon theme-icon"></i>';
+            controls.insertBefore(toggleBtn, controls.firstChild);
+        } else {
+            const nav = document.querySelector('.standard-header nav') || document.querySelector('nav');
+            if (nav) {
+                const toggleBtn = document.createElement('button');
+                toggleBtn.className = 'site-theme-toggle icon-btn';
+                toggleBtn.style.verticalAlign = 'middle';
+                toggleBtn.style.marginLeft = '15px';
+                toggleBtn.setAttribute('aria-label', 'Toggle Theme');
+                toggleBtn.setAttribute('title', 'Toggle Theme');
+                toggleBtn.onclick = window.toggleGlobalTheme;
+                toggleBtn.innerHTML = '<i class="fas fa-moon theme-icon"></i>';
+                nav.appendChild(toggleBtn);
+            }
+        }
+        
+        const savedTheme = localStorage.getItem('siteTheme') || 'default';
+        const activeTheme = savedTheme === 'dark' ? 'dark' : 'light';
+        updateToggleIcons(activeTheme);
+    }
+
     function initPage() {
         standardizeSubjectPage();
         injectSettingsBar();
         injectViewModeStyles();
+        injectThemeToggle();
     }
 
     if (document.body) {

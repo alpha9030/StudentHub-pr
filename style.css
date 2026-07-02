@@ -990,74 +990,7 @@ input[type="submit"]:hover, .btn-submit:hover {
    STUDENT HUB PREMIUM REDESIGN ELEMENTS
    ========================================================================== */
 
-/* Premium Custom Cursor */
-.custom-cursor {
-    width: 22px;
-    height: 22px;
-    border: 2px solid var(--primary-color);
-    background-color: rgba(20, 184, 166, 0.08);
-    border-radius: 50%;
-    position: fixed;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: 100000;
-    transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1), height 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s ease, border-color 0.25s ease, opacity 0.25s ease;
-    box-shadow: 0 0 10px rgba(20, 184, 166, 0.2);
-    opacity: 0;
-}
-
-.custom-cursor-dot {
-    width: 6px;
-    height: 6px;
-    background-color: var(--primary-color);
-    border-radius: 50%;
-    position: fixed;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: 100001;
-    transition: transform 0.2s ease, opacity 0.25s ease;
-    opacity: 0;
-}
-
-.custom-cursor.hover {
-    width: 48px;
-    height: 48px;
-    background-color: rgba(20, 184, 166, 0.12);
-    border-color: var(--primary-color);
-    box-shadow: 0 0 18px rgba(20, 184, 166, 0.35);
-}
-
-/* Cursor Ripple Effect */
-.cursor-ripple-effect {
-    position: fixed;
-    border: 2.5px solid var(--primary-color);
-    background-color: rgba(20, 184, 166, 0.15);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: 99999;
-    animation: cursorRippleAnim 0.45s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
-}
-
-@keyframes cursorRippleAnim {
-    0% {
-        width: 0px;
-        height: 0px;
-        opacity: 0.9;
-    }
-    100% {
-        width: 65px;
-        height: 65px;
-        opacity: 0;
-    }
-}
-
-/* Hide on touch screens */
-@media (pointer: coarse) {
-    .custom-cursor, .custom-cursor-dot, .cursor-ripple-effect {
-        display: none !important;
-    }
-}
+/* Premium Custom Cursor Removed */
 
 /* Global Font Override */
 h1, h2, h3, h4, h5, h6, .hero-title, .logo-text, .mentor-tab-btn, .btn {

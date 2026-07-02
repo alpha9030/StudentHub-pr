@@ -202,6 +202,18 @@
           </div>
         </div>
 
+        <!-- To-Do Productivity Widget -->
+        <div class="todo-section">
+          <div class="todo-title font-outfit"><i class="fas fa-tasks"></i> Active Goals & Tasks</div>
+          <div class="todo-input-wrapper">
+            <input type="text" id="todo-new-task" class="todo-input" placeholder="Add study goal..." aria-label="New study goal">
+            <button type="button" id="btn-add-todo" class="todo-add-btn" title="Add Goal"><i class="fas fa-plus"></i></button>
+          </div>
+          <ul id="todo-tasks-list" class="todo-list">
+            <!-- Injected dynamically -->
+          </ul>
+        </div>
+
         <!-- Sidebar Footer -->
         <div class="sidebar-footer">
           <!-- Connection Status Info -->
@@ -333,6 +345,21 @@
           <!-- File Previews Container -->
           <div id="file-previews-container" class="file-previews-container hidden"></div>
 
+          <!-- Input Quick Actions Bar -->
+          <div id="input-quick-actions" class="input-quick-actions-bar">
+            <button type="button" class="quick-action-chip" data-tool="study-planner"><i class="fas fa-calendar-alt"></i> Study Planner</button>
+            <button type="button" class="quick-action-chip" data-tool="roadmap"><i class="fas fa-map-signs"></i> Career Roadmaps</button>
+            <button type="button" class="quick-action-chip" data-tool="resume"><i class="fas fa-file-invoice"></i> Resume Assistant</button>
+            <button type="button" class="quick-action-chip" data-tool="career"><i class="fas fa-compass"></i> Career Guide</button>
+            <button type="button" class="quick-action-chip" data-tool="interview"><i class="fas fa-user-tie"></i> Interview Prep</button>
+            <button type="button" class="quick-action-chip" data-tool="college"><i class="fas fa-university"></i> College Advisor</button>
+            <button type="button" class="quick-action-chip" data-tool="notes"><i class="fas fa-sticky-note"></i> Smart Notes</button>
+            <button type="button" class="quick-action-chip" data-tool="doc-intel"><i class="fas fa-brain"></i> Document Intel</button>
+            <button type="button" class="quick-action-chip" data-tool="coding"><i class="fas fa-code"></i> Coding Assistant</button>
+            <button type="button" class="quick-action-chip" data-tool="research"><i class="fas fa-microscope"></i> Research Assistant</button>
+            <button type="button" class="quick-action-chip" data-tool="productivity"><i class="fas fa-tasks"></i> Productivity</button>
+          </div>
+
           <!-- Active Generation Control -->
           <div id="generation-control-panel" class="generation-control hidden">
             <button id="btn-stop-generation" class="btn btn-stop font-outfit">
@@ -395,6 +422,23 @@
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <!-- Pravio AI Assistant Modal -->
+  <div id="assistant-modal" class="modal-overlay hidden">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 id="modal-title" class="font-outfit">AI Assistant Tool</h3>
+        <button id="btn-close-modal" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-content-area">
+        <!-- Form elements injected dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button id="btn-modal-cancel" class="btn btn-secondary font-outfit">Cancel</button>
+        <button id="btn-modal-submit" class="btn btn-primary font-outfit">Generate</button>
+      </div>
+    </div>
+  </div>
 
   <!-- App logic scripts -->
   <script src="js/app.js"></script>

@@ -20,7 +20,7 @@
             background: var(--nav-hover-bg) !important;
             border-color: var(--primary-color) !important;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
         }
         .company-btn {
             transition: all 0.2s ease-in-out !important;
@@ -51,7 +51,27 @@
                 <a href="index.html#chatbot" id="nav-chatbot">Pravio AI</a>
             </nav>
             <div class="header-controls">
-                <!-- Simple header actions wrapper -->
+                <div class="settings-trigger-btn" onclick="toggleSettingsMenu(event)">
+                    ⚙️ <span class="btn-text">Settings</span>
+                </div>
+                <div id="settings-dropdown-menu" class="settings-dropdown">
+                    <div class="settings-dropdown-item">
+                        <label for="font-size-select">Font Size</label>
+                        <select id="font-size-select" onchange="changeFontSize(this.value)">
+                            <option value="small">Small</option>
+                            <option value="medium">Medium</option>
+                            <option value="large">Large</option>
+                        </select>
+                    </div>
+                    <div class="settings-dropdown-item">
+                        <label for="view-mode-select">View Mode</label>
+                        <select id="view-mode-select" onchange="changeViewMode(this.value)">
+                            <option value="laptop">Laptop (Desktop)</option>
+                            <option value="tab">Tablet (Portrait)</option>
+                            <option value="phone">Phone (Portrait)</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </header>
 
@@ -108,27 +128,6 @@
                     <optgroup label="Public Sector & Academics">
                         <option value="government-exams">Government Exams & PSUs (ISRO, BARC, NIC, GATE)</option>
                     </optgroup>
-                </select>
-            </div>
-
-            <!-- Right Side: Theme Settings -->
-            <div class="ref-control-right">
-                <label for="theme-select" class="settings-label">Theme: </label>
-                <select id="theme-select" onchange="changeTheme(this.value)" class="settings-select">
-                    <option value="default">Light Teal & Sage</option>
-                    <option value="dark">Dark Charcoal</option>
-                </select>
-                <label for="font-size-select" class="settings-label">Font Size: </label>
-                <select id="font-size-select" onchange="changeFontSize(this.value)" class="settings-select">
-                    <option value="small">Small</option>
-                    <option value="medium">Medium</option>
-                    <option value="large">Large</option>
-                </select>
-                <label for="view-mode-select" class="settings-label">View Mode: </label>
-                <select id="view-mode-select" onchange="changeViewMode(this.value)" class="settings-select">
-                    <option value="laptop">Laptop</option>
-                    <option value="tab">Tablet</option>
-                    <option value="phone">Phone</option>
                 </select>
             </div>
         </div>

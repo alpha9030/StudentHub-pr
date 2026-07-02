@@ -21,7 +21,7 @@ const API_BASE = window.location.protocol.startsWith('file:') ? 'http://localhos
 const THEME_KEY = 'siteTheme';
 function initTheme() {
   const savedTheme = localStorage.getItem(THEME_KEY) || 'default';
-  const resolvedTheme = savedTheme === 'light' ? 'light' : 'dark';
+  const resolvedTheme = savedTheme === 'dark' ? 'dark' : 'light';
   document.documentElement.setAttribute('data-theme', resolvedTheme);
   updateThemeIcons(resolvedTheme);
 }
@@ -30,9 +30,22 @@ function toggleTheme() {
   const currentTheme = document.documentElement.getAttribute('data-theme');
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', newTheme);
-  localStorage.setItem(THEME_KEY, newTheme === 'light' ? 'light' : 'default');
+  localStorage.setItem(THEME_KEY, newTheme);
   updateThemeIcons(newTheme);
+  
+  // Post message to parent window to sync theme
+  window.parent.postMessage({ type: 'sync-theme', theme: newTheme }, '*');
 }
+
+// Listen to theme sync messages from parent window
+window.addEventListener('message', function(event) {
+  if (event.data && event.data.type === 'sync-theme') {
+    const newTheme = event.data.theme;
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem(THEME_KEY, newTheme);
+    updateThemeIcons(newTheme);
+  }
+});
 
 function updateThemeIcons(theme) {
   const icons = document.querySelectorAll('.theme-icon');
@@ -744,8 +757,7 @@ async function submitUserMessage() {
 
   // If first user message, update title dynamically
   if (chat.messages.length === 0) {
-    const defaultTitle = text || (attachedFiles.length > 0 ? `Analyzed ${attachedFiles[0].name}` : 'New Conversation');
-    chat.title = defaultTitle.length > 25 ? defaultTitle.substring(0, 25) + '...' : defaultTitle;
+    chat.title = generateSmartTitle(text, attachedFiles);
     DOMElements.activeChatTitle.innerText = chat.title;
     renderSidebarChats();
   }
@@ -1540,4 +1552,622 @@ window.speakMessage = function(button, messageId) {
   
   window.speechSynthesis.speak(currentUtterance);
 };
+
+// ==========================================
+// SMART CONVERSATION TITLES GENERATOR
+// ==========================================
+function generateSmartTitle(text, files) {
+  if (!text) {
+    if (files && files.length > 0) {
+      return `Analyzed: ${files[0].name}`;
+    }
+    return 'New Conversation';
+  }
+  
+  const lowerText = text.toLowerCase();
+  if (lowerText.includes('study plan') || lowerText.includes('study schedule')) return 'Study Planner';
+  if (lowerText.includes('roadmap') || lowerText.includes('career roadmap')) return 'Learning Roadmap';
+  if (lowerText.includes('resume') || lowerText.includes('cover letter')) return 'Resume Assistant';
+  if (lowerText.includes('interview') || lowerText.includes('mock interview')) return 'Interview Prep';
+  if (lowerText.includes('college') || lowerText.includes('eligibility')) return 'College Advisor';
+  if (lowerText.includes('smart notes') || lowerText.includes('flashcard') || lowerText.includes('mind map')) return 'Smart Notes';
+  if (lowerText.includes('summarize') && files.length > 0) return 'Doc Summary';
+  if (lowerText.includes('optimize') || lowerText.includes('dsa') || lowerText.includes('debug')) return 'Coding Assistant';
+  
+  // Extract core concepts for other general questions
+  let cleaned = text.trim();
+  cleaned = cleaned.replace(/^(explain|what is|how to|write a|create a|give me a|help me|tell me about|analyze|summarize)\s+/i, '');
+  cleaned = cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+  cleaned = cleaned.replace(/[?.,!]+$/, '');
+  
+  if (cleaned.length > 22) {
+    return cleaned.substring(0, 22) + '...';
+  }
+  return cleaned;
+}
+
+// ==========================================
+// TO-DO GOALS SIDEBAR WIDGET
+// ==========================================
+let todoTasks = [];
+
+function loadTodoTasks() {
+  try {
+    const saved = localStorage.getItem('pravioTodoTasks');
+    todoTasks = saved ? JSON.parse(saved) : [];
+  } catch (e) {
+    todoTasks = [];
+  }
+  renderTodoTasks();
+}
+
+function saveTodoTasks() {
+  localStorage.setItem('pravioTodoTasks', JSON.stringify(todoTasks));
+}
+
+function renderTodoTasks() {
+  const listEl = document.getElementById('todo-tasks-list');
+  if (!listEl) return;
+  
+  if (todoTasks.length === 0) {
+    listEl.innerHTML = '<li class="todo-item" style="color: var(--text-muted); justify-content: center; width: 100%;">No active goals</li>';
+    return;
+  }
+  
+  listEl.innerHTML = todoTasks.map((task, idx) => `
+    <li class="todo-item ${task.completed ? 'completed' : ''}">
+      <label>
+        <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTodoTask(${idx})">
+        <span>${escapeHTML(task.text)}</span>
+      </label>
+      <button class="todo-del-btn" onclick="deleteTodoTask(${idx})" title="Delete"><i class="far fa-trash-alt"></i></button>
+    </li>
+  `).join('');
+}
+
+window.toggleTodoTask = function(index) {
+  if (todoTasks[index]) {
+    todoTasks[index].completed = !todoTasks[index].completed;
+    saveTodoTasks();
+    renderTodoTasks();
+  }
+};
+
+window.deleteTodoTask = function(index) {
+  todoTasks.splice(index, 1);
+  saveTodoTasks();
+  renderTodoTasks();
+};
+
+function addTodoTask() {
+  const inputEl = document.getElementById('todo-new-task');
+  if (!inputEl) return;
+  const text = inputEl.value.trim();
+  if (!text) return;
+  
+  todoTasks.push({ text: text, completed: false });
+  inputEl.value = '';
+  saveTodoTasks();
+  renderTodoTasks();
+}
+
+// Bind To-Do UI trigger actions
+document.addEventListener('DOMContentLoaded', () => {
+  const addBtn = document.getElementById('btn-add-todo');
+  const inputEl = document.getElementById('todo-new-task');
+  if (addBtn) addBtn.addEventListener('click', addTodoTask);
+  if (inputEl) {
+    inputEl.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        addTodoTask();
+      }
+    });
+  }
+  // Initialize tasks
+  loadTodoTasks();
+});
+
+// ==========================================
+// AI ASSISTANT MODALS & QUICK ACTIONS
+// ==========================================
+let activeModalTool = '';
+
+const toolFormConfigs = {
+  'study-planner': {
+    title: 'Study Planner Generator',
+    render: () => `
+      <label for="planner-type">Plan Duration & Type</label>
+      <select id="planner-type">
+        <option value="Daily Study Plan">Daily Study Plan</option>
+        <option value="Weekly Study Schedule">Weekly Study Schedule</option>
+        <option value="Exam Preparation Planner">Exam Preparation Planner</option>
+        <option value="Revision Planner">Revision Planner</option>
+      </select>
+      
+      <label for="planner-subjects">Subjects to Study (Comma-separated)</label>
+      <input type="text" id="planner-subjects" placeholder="e.g. Data Structures, Database Systems, Computer Networks" value="">
+      
+      <label for="planner-priority">Subject Prioritization (Highest Priority)</label>
+      <input type="text" id="planner-priority" placeholder="e.g. Data Structures" value="">
+      
+      <label for="planner-hours">Custom Study Hours Per Day</label>
+      <select id="planner-hours">
+        <option value="2 hours">2 hours</option>
+        <option value="4 hours" selected>4 hours</option>
+        <option value="6 hours">6 hours</option>
+        <option value="8 hours">8 hours</option>
+      </select>
+    `,
+    buildPrompt: () => {
+      const type = document.getElementById('planner-type').value;
+      const subjects = document.getElementById('planner-subjects').value.trim() || 'Core Subjects';
+      const priority = document.getElementById('planner-priority').value.trim() || 'None';
+      const hours = document.getElementById('planner-hours').value;
+      return `Act as a premium AI academic advisor. Generate a highly structured study plan for subjects: "${subjects}" with priority: "${priority}" and "${hours}" of study per day, in the form of a "${type}". Format the output with clear hourly schedules, milestones, objectives, and time-management tips. Include suggestions to take relevant mock tests on the StudentHub dashboard whenever applicable.`;
+    }
+  },
+  'roadmap': {
+    title: 'Learning Roadmap Generator',
+    render: () => `
+      <label for="roadmap-career">Target Career Path</label>
+      <select id="roadmap-career">
+        <option value="Full Stack Development">Full Stack Development</option>
+        <option value="Artificial Intelligence">Artificial Intelligence</option>
+        <option value="Machine Learning">Machine Learning</option>
+        <option value="Data Science">Data Science</option>
+        <option value="Cybersecurity">Cybersecurity</option>
+        <option value="Cloud Computing">Cloud Computing</option>
+        <option value="DevOps">DevOps</option>
+        <option value="UI/UX Design">UI/UX Design</option>
+        <option value="Mobile App Development">Mobile App Development</option>
+      </select>
+      
+      <label for="roadmap-level">Current Skill Level</label>
+      <select id="roadmap-level">
+        <option value="Beginner">Beginner (No prior knowledge)</option>
+        <option value="Intermediate" selected>Intermediate (Some basic knowledge)</option>
+        <option value="Advanced">Advanced (Looking to specialize)</option>
+      </select>
+    `,
+    buildPrompt: () => {
+      const career = document.getElementById('roadmap-career').value;
+      const level = document.getElementById('roadmap-level').value;
+      return `Act as a senior engineering mentor. Generate a comprehensive, step-by-step learning roadmap for a "${level}" student pursuing a career in "${career}". Break it down into clear sequential stages, listing: 1. Core skills to learn in recommended order. 2. Practice resources (books, docs, tutorials). 3. Practical hands-on projects to build at each stage. 4. Industry-standard certifications. Additionally, suggest relevant learning roadmaps and study resources inside the StudentHub platform.`;
+    }
+  },
+  'resume': {
+    title: 'Resume Assistant & Critic',
+    render: () => {
+      const hasFiles = attachedFiles.length > 0;
+      return `
+        ${!hasFiles ? `
+        <div class="modal-alert">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Tip: For best results, attach your resume file (PDF, DOCX, TXT) first using the paperclip button in the chat area!</span>
+        </div>` : `
+        <div class="modal-alert" style="background: rgba(16, 185, 129, 0.1); border-color: #10b981;">
+          <i class="fas fa-check-circle" style="color: #10b981;"></i>
+          <span>Resume file detected. Ready to analyze!</span>
+        </div>`}
+        
+        <label for="resume-job">Target Job / Role</label>
+        <input type="text" id="resume-job" placeholder="e.g. Frontend React Engineer" value="">
+        
+        <label for="resume-action">Assistance Type</label>
+        <select id="resume-action">
+          <option value="Analyze my resume, score it, and suggest general improvements">Analyze Resume & Suggest Improvements</option>
+          <option value="Improve my resume formatting and suggest modern phrasing">Improve Formatting & Phrasing</option>
+          <option value="Conduct a skill gap analysis and recommend missing skills">Recommend Missing Skills</option>
+          <option value="Generate a high-impact, professional summary for my profile">Generate Professional Summary</option>
+          <option value="Generate a tailored, professional cover letter matching my details">Generate Cover Letter</option>
+        </select>
+      `;
+    },
+    buildPrompt: () => {
+      const job = document.getElementById('resume-job').value.trim() || 'Software Engineer';
+      const action = document.getElementById('resume-action').value;
+      return `Act as a professional recruitment consultant. Using the provided resume details, perform the following action: "${action}" targeting the role: "${job}". Evaluate the experience, suggest modern styling improvements, specify missing skills, and output high-impact bullet points. Advise me to practice mock tests and refer to subject notes on the StudentHub platform to boost placement preparation.`;
+    }
+  },
+  'career': {
+    title: 'Career Guidance Advisor',
+    render: () => `
+      <label for="career-focus">Focus Guidance Area</label>
+      <select id="career-focus">
+        <option value="Career path recommendations based on my background">Career Path Suggestions</option>
+        <option value="Skill gap analysis and recommendation list">Skill Gap Analysis</option>
+        <option value="Internship applications, timelines, and guidance">Internship Guidance</option>
+        <option value="Placement preparation strategy and standard templates">Placement Preparation</option>
+        <option value="Higher education guidance (GATE, MS, MBA, PhD)">Higher Education Guidance</option>
+      </select>
+      
+      <label for="career-skills">My Current Skills & Interests</label>
+      <textarea id="career-skills" rows="3" placeholder="e.g. B.Tech Computer Science student, know basic Java, Python. Interested in Web Development."></textarea>
+    `,
+    buildPrompt: () => {
+      const focus = document.getElementById('career-focus').value;
+      const skills = document.getElementById('career-skills').value.trim() || 'Computer Science student';
+      return `Act as a premium academic counselor. Help me with: "${focus}". Based on my skills and background: "${skills}", provide a highly tailored, step-by-step career path suggestion, internship/placement guides, skill gap details, or higher education timelines. Intelligently recommend visiting StudentHub's References directory for study resources.`;
+    }
+  },
+  'interview': {
+    title: 'Interview Preparation Prep',
+    render: () => `
+      <label for="interview-role">Target Role / Specialty</label>
+      <input type="text" id="interview-role" placeholder="e.g. Java Spring Boot Developer" value="">
+      
+      <label for="interview-type">Preparation Mode</label>
+      <select id="interview-type">
+        <option value="HR Interview Questions (Behavioral & general)">HR Interview Questions</option>
+        <option value="Technical Interview Questions (Core concepts)">Technical Interview Questions</option>
+        <option value="Coding & Algorithm preparation challenges">Coding Interview & Algorithms</option>
+        <option value="Behavioral situation prep (using STAR method)">Behavioral Situations</option>
+        <option value="Interactive Mock Interview session (Ask questions one by one)">Interactive Mock Interview (Interactive)</option>
+      </select>
+    `,
+    buildPrompt: () => {
+      const role = document.getElementById('interview-role').value.trim() || 'Software Engineer';
+      const type = document.getElementById('interview-type').value;
+      const isInteractive = type.includes('Interactive');
+      
+      if (isInteractive) {
+        return `Act as an expert technical interviewer. I want to start an interactive mock interview for the role of "${role}". Please ask me only the first question (technical or HR) and wait for my response before asking the next one. Keep your questions professional, concise, and wait for my answer.`;
+      }
+      return `Act as an expert technical interviewer. Provide a high-yield preparation guide for a "${role}" interview, focusing on: "${type}". Give 5 standard questions, detailed explanations, coding/algorithms challenges, and behavioural tips. Suggest practicing mock tests and referring to notes on the StudentHub platform.`;
+    }
+  },
+  'college': {
+    title: 'College Admissions Advisor',
+    render: () => `
+      <label for="college-score">Entrance Rank / Exam Scores</label>
+      <input type="text" id="college-score" placeholder="e.g. GATE Score 650, JEE Rank 15000" value="">
+      
+      <label for="college-budget">Budget Preference</label>
+      <select id="college-budget">
+        <option value="Affordable / Low budget">Affordable / Low budget</option>
+        <option value="Medium budget" selected>Medium budget</option>
+        <option value="Premium / No budget constraint">Premium / No budget constraint</option>
+      </select>
+      
+      <label for="college-location">Preferred Location</label>
+      <input type="text" id="college-location" placeholder="e.g. Bangalore, Mumbai, or No Preference" value="">
+    `,
+    buildPrompt: () => {
+      const score = document.getElementById('college-score').value.trim() || 'General Score';
+      const budget = document.getElementById('college-budget').value;
+      const location = document.getElementById('college-location').value.trim() || 'No Preference';
+      return `Act as a premium college admissions advisor. Suggest and compare top colleges for me based on entrance scores: "${score}", budget constraints: "${budget}", and preferred location: "${location}". Explain the eligibility, admission criteria, and placement records. Guide me to use the StudentHub College Predictor tool to check precise cut-offs and predictions.`;
+    }
+  },
+  'notes': {
+    title: 'Smart Notes & Summaries',
+    render: () => {
+      const hasFiles = attachedFiles.length > 0;
+      return `
+        ${hasFiles ? `
+        <div class="modal-alert" style="background: rgba(16, 185, 129, 0.1); border-color: #10b981;">
+          <i class="fas fa-check-circle" style="color: #10b981;"></i>
+          <span>Document detected! Notes will be generated based on the file content.</span>
+        </div>` : ''}
+        
+        <label for="notes-topic">Topic or Concepts (If not uploading file)</label>
+        <input type="text" id="notes-topic" placeholder="e.g. Dijkstra's Algorithm or Neural Networks" value="">
+        
+        <label for="notes-format">Notes Output Format</label>
+        <select id="notes-format">
+          <option value="Detailed Study Notes with explanations">Detailed Study Notes</option>
+          <option value="Interactive Study Flashcards (Q&A style)">Interactive Flashcards</option>
+          <option value="Text-based Mind Map hierarchy visualization">Mind Map Hierarchy</option>
+          <option value="Quick bullet-point Chapter Summary">Chapter Summary</option>
+          <option value="Rapid Exam Revision Notes">Revision Notes</option>
+        </select>
+      `;
+    },
+    buildPrompt: () => {
+      const topic = document.getElementById('notes-topic').value.trim() || 'Main Topic';
+      const format = document.getElementById('notes-format').value;
+      return `Act as an academic tutor. Create high-yield "${format}" for the topic/material: "${topic}". Structure them clearly with key concepts, definitions, mind maps (using text-based hierarchical layout), and exam points. Suggest referencing notes and references in StudentHub's References directory for deep study.`;
+    }
+  },
+  'doc-intel': {
+    title: 'Document Intelligence',
+    render: () => {
+      const hasFiles = attachedFiles.length > 0;
+      return `
+        ${!hasFiles ? `
+        <div class="modal-alert">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Please attach your document file (PDF, DOCX, PPTX, TXT, CSV, XLSX) first using the paperclip button!</span>
+        </div>` : `
+        <div class="modal-alert" style="background: rgba(16, 185, 129, 0.1); border-color: #10b981;">
+          <i class="fas fa-check-circle" style="color: #10b981;"></i>
+          <span>Documents ready for analysis!</span>
+        </div>`}
+        
+        <label for="doc-action">Action to Perform</label>
+        <select id="doc-action">
+          <option value="Summarize the key findings and goals of the document">Summarize Document</option>
+          <option value="Explain the presentation slides structure and content in simple terms">Explain Presentation Slides</option>
+          <option value="Generate a 5-question multiple-choice quiz based on the document text">Generate Quiz from Document</option>
+          <option value="Extract all core bullet-points, data lists, and figures from this text">Extract Key Points & Highlights</option>
+          <option value="Compare the documents and summarize key commonalities and conflicts">Compare Documents</option>
+        </select>
+        
+        <label for="doc-query">Custom Question / Query (Optional)</label>
+        <input type="text" id="doc-query" placeholder="e.g. What does section 3 say about..." value="">
+      `;
+    },
+    buildPrompt: () => {
+      const action = document.getElementById('doc-action').value;
+      const query = document.getElementById('doc-query').value.trim();
+      let prompt = `Analyze the attached document content. ${action}.`;
+      if (query) {
+        prompt += ` Specifically answer this custom query: "${query}".`;
+      }
+      prompt += ` Guide me to relevant study resources on StudentHub references for more context.`;
+      return prompt;
+    }
+  },
+  'coding': {
+    title: 'Coding Assistant & Helper',
+    render: () => `
+      <label for="coding-lang">Programming Language</label>
+      <input type="text" id="coding-lang" placeholder="e.g. Python, Java, JavaScript, SQL" value="">
+      
+      <label for="coding-task">Task Type</label>
+      <select id="coding-task">
+        <option value="Generate clean, well-commented code snippet for">Code Generation</option>
+        <option value="Debug, locate bugs, and explain fixes for this code snippet">Debugging & Fix Errors</option>
+        <option value="Optimize runtime, space complexity, and refactor this code">Code Optimization</option>
+        <option value="Explain how this algorithm works step-by-step">Algorithm Explanation</option>
+        <option value="Provide standard Data Structures & Algorithms (DSA) solution for">DSA Solutions</option>
+        <option value="Generate clean, compliant SQL query for">SQL Query Generation</option>
+        <option value="Provide 3 creative, modern project ideas for">Project Ideas</option>
+      </select>
+      
+      <label for="coding-desc">Description / Code Snippet</label>
+      <textarea id="coding-desc" rows="4" placeholder="e.g. Implement a binary search tree insertion, or paste your error message/code snippet here..."></textarea>
+    `,
+    buildPrompt: () => {
+      const lang = document.getElementById('coding-lang').value.trim() || 'Any Language';
+      const task = document.getElementById('coding-task').value;
+      const desc = document.getElementById('coding-desc').value.trim() || 'Core Algorithm';
+      return `Act as an expert software architect. For language: "${lang}", perform this task: "${task}". Details/snippet:\n\`\`\`\n${desc}\n\`\`\`\nOutput clean code, optimizations, debugging notes, or step-by-step algorithms. Suggest studying relevant programming references in StudentHub's References directory.`;
+    }
+  },
+  'research': {
+    title: 'Research Assistant',
+    render: () => `
+      <label for="research-topic">Research Paper / Technical Topic</label>
+      <input type="text" id="research-topic" placeholder="e.g. Transformer models in NLP, or paper title" value="">
+      
+      <label for="research-goal">Research Objective</label>
+      <select id="research-goal">
+        <option value="Summarize the core abstract, contributions, and findings of the research paper">Summarize Research Paper</option>
+        <option value="Explain this complex technical research topic in simple terms">Explain Technical Topics</option>
+        <option value="Compare the competing technologies and summarize the pros/cons of each">Compare Technologies</option>
+        <option value="Generate a structured, professional research brief summarizing">Generate Structured Research Summary</option>
+      </select>
+    `,
+    buildPrompt: () => {
+      const topic = document.getElementById('research-topic').value.trim() || 'General NLP / AI Research';
+      const goal = document.getElementById('research-goal').value;
+      return `Act as a senior computer science researcher. Help me with this task: "${goal}" on the topic: "${topic}". Structure the output with research summaries, methodology overviews, technology comparisons, and structured briefs. Suggest study materials in StudentHub for further learning.`;
+    }
+  },
+  'productivity': {
+    title: 'Productivity Planner',
+    render: () => `
+      <label for="prod-type">Planning Tool</label>
+      <select id="prod-type">
+        <option value="Create a structured, prioritize study To-Do List for">To-Do List Generation</option>
+        <option value="Outline key milestones and tracking points for this Goal Plan">Goal Planning & Milestones</option>
+        <option value="Design an hourly weekly study planner for">Weekly Planner</option>
+        <option value="Suggest practical, high-yield time management tips (like Pomodoro)">Time Management Suggestions</option>
+      </select>
+      
+      <label for="prod-desc">Plan Details & Description</label>
+      <input type="text" id="prod-desc" placeholder="e.g. Master React Hooks and deploy a small mock app" value="">
+    `,
+    buildPrompt: () => {
+      const type = document.getElementById('prod-type').value;
+      const desc = document.getElementById('prod-desc').value.trim() || 'My study goals';
+      return `Act as a productivity coach. Generate a high-yield productivity layout: "${type}" for: "${desc}". Provide actionable tips, time management suggestions, and weekly milestones. Remind me that I can track my academic study goals in the scholastic dashboard on StudentHub.`;
+    }
+  }
+};
+
+function openAssistantModal(toolId) {
+  const config = toolFormConfigs[toolId];
+  if (!config) return;
+  
+  activeModalTool = toolId;
+  document.getElementById('modal-title').innerText = config.title;
+  document.getElementById('modal-content-area').innerHTML = config.render();
+  document.getElementById('assistant-modal').classList.remove('hidden');
+}
+
+function closeAssistantModal() {
+  document.getElementById('assistant-modal').classList.add('hidden');
+  activeModalTool = '';
+}
+
+// Bind quick actions chips
+document.addEventListener('click', (e) => {
+  const chip = e.target.closest('.quick-action-chip');
+  if (chip) {
+    const toolId = chip.getAttribute('data-tool');
+    if (toolId) openAssistantModal(toolId);
+  }
+});
+
+// Modal button listeners
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('btn-close-modal')?.addEventListener('click', closeAssistantModal);
+  document.getElementById('btn-modal-cancel')?.addEventListener('click', closeAssistantModal);
+  document.getElementById('btn-modal-submit')?.addEventListener('click', () => {
+    const config = toolFormConfigs[activeModalTool];
+    if (config) {
+      const prompt = config.buildPrompt();
+      closeAssistantModal();
+      
+      // Auto-fill textarea and trigger submit
+      DOMElements.chatTextarea.value = prompt;
+      // Auto resize textarea
+      DOMElements.chatTextarea.style.height = 'auto';
+      submitUserMessage();
+    }
+  });
+});
+
+// ==========================================
+// STUDENT HUB RECOMMENDATION CARD ENGINE
+// ==========================================
+// Intercept messages on render to insert visual cards pointing back to StudentHub
+const originalRenderMarkdown = window.renderMarkdown;
+window.renderMarkdown = function(markdownText) {
+  let html = originalRenderMarkdown ? originalRenderMarkdown(markdownText) : markdownText;
+  
+  // Look for keywords and append recommendation chips/cards
+  const lower = markdownText.toLowerCase();
+  let recommendations = [];
+  
+  if (lower.includes('mock test') || lower.includes('practice test') || lower.includes('exam preparation')) {
+    recommendations.push(`
+      <a href="/index.html#dashboard" target="_parent" class="sh-rec-card">
+        <div class="sh-rec-icon">📝</div>
+        <div class="sh-rec-info">
+          <div class="sh-rec-title">Practice Mock Tests</div>
+          <div class="sh-rec-desc">Open StudentHub Scholastic Assessment Terminal to take full mock tests.</div>
+        </div>
+      </a>
+    `);
+  }
+  
+  if (lower.includes('college predictor') || lower.includes('suggest colleges') || lower.includes('cutoff') || lower.includes('cut-off')) {
+    recommendations.push(`
+      <a href="/index.html#dashboard" target="_parent" class="sh-rec-card">
+        <div class="sh-rec-icon">🔮</div>
+        <div class="sh-rec-info">
+          <div class="sh-rec-title">College Predictor</div>
+          <div class="sh-rec-desc">Use the StudentHub College Rank Predictor tool to analyze your ranks.</div>
+        </div>
+      </a>
+    `);
+  }
+
+  if (lower.includes('dsa') || lower.includes('data structures') || lower.includes('algorithms') || lower.includes('dijkstra')) {
+    recommendations.push(`
+      <a href="/DSA.html" target="_parent" class="sh-rec-card">
+        <div class="sh-rec-icon">💻</div>
+        <div class="sh-rec-info">
+          <div class="sh-rec-title">DSA Study Guide</div>
+          <div class="sh-rec-desc">Open StudentHub Data Structures and Algorithms learning module.</div>
+        </div>
+      </a>
+    `);
+  }
+  
+  if (lower.includes('python')) {
+    recommendations.push(`
+      <a href="/Python.html" target="_parent" class="sh-rec-card">
+        <div class="sh-rec-icon">🐍</div>
+        <div class="sh-rec-info">
+          <div class="sh-rec-title">Python learning module</div>
+          <div class="sh-rec-desc">Open the Python learning course notes and syntax compiler guide.</div>
+        </div>
+      </a>
+    `);
+  }
+
+  if (lower.includes('reference') || lower.includes('syllabus') || lower.includes('placement preparation')) {
+    recommendations.push(`
+      <a href="/reference.html" target="_parent" class="sh-rec-card">
+        <div class="sh-rec-icon">📚</div>
+        <div class="sh-rec-info">
+          <div class="sh-rec-title">References Directory</div>
+          <div class="sh-rec-desc">Access GATE subject notes, IT Specialties roadmaps, and Interview guides.</div>
+        </div>
+      </a>
+    `);
+  }
+  
+  if (recommendations.length > 0) {
+    html += `
+      <div class="sh-recommendations-wrapper">
+        <div class="sh-rec-header"><i class="fas fa-graduation-cap"></i> Recommended StudentHub Tools:</div>
+        <div class="sh-rec-list">
+          ${recommendations.join('')}
+        </div>
+      </div>
+    `;
+  }
+  
+  return html;
+};
+
+// CSS styling helper for recommendation cards (inserted dynamically)
+(function() {
+  const style = document.createElement('style');
+  style.textContent = `
+    .sh-recommendations-wrapper {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--border-color);
+    }
+    .sh-rec-header {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sh-rec-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .sh-rec-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .sh-rec-card:hover {
+      border-color: var(--primary-color);
+      background: rgba(20, 184, 166, 0.05);
+      transform: translateY(-1.5px);
+      box-shadow: 0 4px 12px rgba(20, 184, 166, 0.05);
+    }
+    .sh-rec-icon {
+      font-size: 1.5rem;
+    }
+    .sh-rec-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .sh-rec-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-body);
+    }
+    .sh-rec-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+  `;
+  document.head.appendChild(style);
+})();
 
