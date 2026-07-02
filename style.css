@@ -3725,4 +3725,99 @@ body.theme-dark .api-key-banner {
     }
 }
 
+/* Modern References Control Row Styling */
+.control-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 20px;
+    margin-bottom: 24px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+}
+
+.ref-control-left {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    width: 100%;
+}
+
+.search-wrapper, .career-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: var(--input-bg, var(--bg-body));
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    height: 38px;
+    box-sizing: border-box;
+    transition: all 0.25s ease;
+}
+
+.search-wrapper:focus-within, .career-wrapper:focus-within,
+.search-wrapper:hover, .career-wrapper:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.search-wrapper {
+    width: 320px;
+}
+
+.career-wrapper {
+    width: 240px;
+}
+
+.search-wrapper .search-icon, .career-wrapper .career-icon {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-left: 12px;
+    margin-right: 4px;
+    flex-shrink: 0;
+}
+
+.search-wrapper .search-input {
+    width: 100% !important;
+    height: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 12px 0 4px !important;
+    font-size: 14px !important;
+    color: var(--text-body) !important;
+    outline: none !important;
+}
+
+.career-wrapper .career-select {
+    width: 100% !important;
+    height: 100% !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 24px 0 4px !important;
+    font-size: 13px !important;
+    color: var(--text-body) !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    outline: none !important;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+/* Custom dropdown chevron for Career select */
+.career-wrapper::after {
+    content: '\f078';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 10px;
+    color: var(--text-muted);
+    position: absolute;
+    right: 12px;
+    pointer-events: none;
+}
+
 

@@ -96,10 +96,14 @@
         <div class="control-row">
             <!-- Left Side: Real-time Filter Search Input & Career Choice Dropdown -->
             <div class="ref-control-left">
-                <input id="ref-search-custom" class="search-input" type="search" placeholder="🔍 Filter references, subjects..." />
-                <label for="career-select" class="settings-label">Career Path: </label>
-                <select id="career-select" class="settings-select">
-                    <option value="all">All Specialties</option>
+                <div class="search-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input id="ref-search-custom" class="search-input" type="search" placeholder="Search references, subjects..." />
+                </div>
+                <div class="career-wrapper">
+                    <i class="fas fa-briefcase career-icon"></i>
+                    <select id="career-select" class="career-select">
+                        <option value="all">All Specialties</option>
                     <optgroup label="IT / Technical Roles">
                         <option value="frontend">Frontend Developer</option>
                         <option value="backend">Backend Developer</option>
@@ -148,6 +152,7 @@
                 </select>
             </div>
         </div>
+    </div>
 
         
         <!-- Career Info Panel: Dynamic description & guidelines -->
