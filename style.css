@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 /* ==========================================================================
    BEGINNER-FRIENDLY ACADEMIC STYLESHEET (CSS VARIABLES BASED)
@@ -17,198 +17,214 @@
    1. THEME VARIABLES DEFINITIONS
    ========================================================================== */
 :root {
-    /* DEFAULT LIGHT TEAL & SAGE THEME COLORS */
-    --bg-body: #d9e5e5;
-    --text-body: #1f2937;
-    --text-muted: #627272;
+    /* Pravio AI Light Theme Colors */
+    --bg-body: #f9fafb;
+    --text-body: #111827;
+    --text-muted: #4b5563;
     
-    --primary-color: #0f766e;       /* Teal */
-    --primary-dark: #0d9488;        /* Soft Teal */
-    --border-color: #7fa5a3;        /* Sage border */
+    --primary-color: #6366f1;       /* Indigo */
+    --primary-dark: #4f46e5;        /* Darker Indigo */
+    --accent-color: #a855f7;        /* Purple */
+    --border-color: rgba(0, 0, 0, 0.08);
+    --border-focus: rgba(139, 92, 246, 0.4);
     
-    --bg-container: #ffffff;
-    --bg-card: #edf4f4;
+    --bg-container: #ffffff;        /* Secondary */
+    --bg-card: #f3f4f6;             /* Tertiary */
     
     /* Navigation Bar */
-    --nav-color: #0d9488;
-    --nav-hover-bg: #c0d4d4;
-    --nav-hover-color: #0f766e;
-    --nav-active-bg: #0d9488;
+    --nav-color: #6366f1;
+    --nav-hover-bg: rgba(99, 102, 241, 0.1);
+    --nav-hover-color: #4f46e5;
+    --nav-active-bg: #6366f1;
     --nav-active-color: #ffffff;
     
     /* Stepper Wizard */
-    --stepper-bg: #c0d4d4;
+    --stepper-bg: #f3f4f6;
     --step-item-bg: #ffffff;
-    --step-item-text: #1f2937;
-    --step-item-active-bg: #0f766e;
+    --step-item-text: #111827;
+    --step-item-active-bg: #6366f1;
     --step-item-active-text: #ffffff;
-    --step-item-completed-bg: #1b5247;
+    --step-item-completed-bg: #4f46e5;
     --step-item-completed-text: #ffffff;
     
     /* Tables */
-    --table-th-bg: #c0d4d4;
-    --table-th-text: #0d9488;
-    --table-tr-even-bg: #edf4f4;
-    --table-tr-hover-bg: #d9e5e5;
+    --table-th-bg: #f3f4f6;
+    --table-th-text: #4f46e5;
+    --table-tr-even-bg: #f9fafb;
+    --table-tr-hover-bg: rgba(99, 102, 241, 0.05);
     
     /* Buttons */
-    --btn-bg: #edf4f4;
-    --btn-text: #0d9488;
-    --btn-primary-bg: #0f766e;
+    --btn-bg: #f3f4f6;
+    --btn-text: #6366f1;
+    --btn-primary-bg: #6366f1;
     --btn-primary-text: #ffffff;
-    --btn-primary-hover: #0d9488;
-    --btn-secondary-bg: #c0d4d4;
-    --btn-secondary-text: #0d9488;
-    --btn-secondary-hover-bg: #0f766e;
+    --btn-primary-hover: #4f46e5;
+    --btn-secondary-bg: #e0e7ff;
+    --btn-secondary-text: #4f46e5;
+    --btn-secondary-hover-bg: #6366f1;
     --btn-secondary-hover-text: #ffffff;
-    --submit-btn-bg: #1b5247;
-    --submit-btn-hover: #113f36;
+    --submit-btn-bg: #4f46e5;
+    --submit-btn-hover: #3730a3;
     
     /* Alerts and Progress bars */
-    --notice-border-style: 1px dashed #0f766e;
-    --progress-container-bg: #c0d4d4;
-    --progress-fill-bg: #1b5247;
+    --notice-border-style: 1px dashed #6366f1;
+    --progress-container-bg: #f3f4f6;
+    --progress-fill-bg: #a855f7;
     
-    --status-completed-bg: #c0d4d4;
-    --status-completed-text: #1b5247;
-    --status-progress-bg: #c0d4d4;
-    --status-progress-text: #b2862c;
-    --status-notstarted-bg: #d9e5e5;
-    --status-notstarted-text: #627272;
+    --status-completed-bg: #dcfce7;
+    --status-completed-text: #166534;
+    --status-progress-bg: #fef9c3;
+    --status-progress-text: #854d0e;
+    --status-notstarted-bg: #f3f4f6;
+    --status-notstarted-text: #4b5563;
     
-    --badge-local-bg: #0f766e;
-    --badge-external-bg: #b2862c;
+    --badge-local-bg: #6366f1;
+    --badge-external-bg: #a855f7;
     --badge-local-text: #ffffff;
     --badge-external-text: #ffffff;
     
     /* References list items */
-    --ref-sidebar-hover-bg: #d9e5e5;
-    --ref-sidebar-hover-text: #0f766e;
-    --ref-sidebar-active-bg: #c0d4d4;
-    --ref-sidebar-active-text: #0d9488;
-    --ref-link-icon-bg: #d9e5e5;
+    --ref-sidebar-hover-bg: #f3f4f6;
+    --ref-sidebar-hover-text: #6366f1;
+    --ref-sidebar-active-bg: #e0e7ff;
+    --ref-sidebar-active-text: #4f46e5;
+    --ref-link-icon-bg: #f3f4f6;
     
-    --platform-rank-bg: #c0d4d4;
-    --platform-rank-text: #0d9488;
+    --platform-rank-bg: #e0e7ff;
+    --platform-rank-text: #4f46e5;
     
-    --syllabus-link-bg: #c0d4d4;
-    --syllabus-link-text: #0d9488;
-    --syllabus-link-hover-bg: #0f766e;
+    --syllabus-link-bg: #e0e7ff;
+    --syllabus-link-text: #4f46e5;
+    --syllabus-link-hover-bg: #6366f1;
     --syllabus-link-hover-text: #ffffff;
     
     /* Modals */
-    --modal-header-bg: #edf4f4;
-    --modal-tabs-bg: #edf4f4;
-    --modal-close-hover: #0f766e;
+    --modal-header-bg: #f3f4f6;
+    --modal-tabs-bg: #f3f4f6;
+    --modal-close-hover: #6366f1;
  
     /* Inputs & Search Buttons */
     --input-bg: #ffffff;
-    --input-text: #1f2937;
-    --input-focus-border: #0f766e;
-    --search-btn-bg: #c0d4d4;
-    --search-btn-text: #0d9488;
-    --search-btn-hover: #0f766e;
+    --input-text: #111827;
+    --input-focus-border: #6366f1;
+    --search-btn-bg: #e0e7ff;
+    --search-btn-text: #4f46e5;
+    --search-btn-hover: #6366f1;
+
+    /* Extra Design Tokens */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-full: 9999px;
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-glow: 0 0 20px rgba(139, 92, 246, 0.25);
 }
 
 body.theme-dark {
-    /* DARK CHARCOAL THEME COLORS */
-    --bg-body: #111618;
+    /* Pravio AI Dark Theme Colors */
+    --bg-body: #0a0b10;
     --text-body: #f3f4f6;
-    --text-muted: #90a4ae;
+    --text-muted: #6b7280;
     
-    --primary-color: #14b8a6;       /* Minty Teal */
-    --primary-dark: #2dd4bf;        /* Lighter Mint */
-    --border-color: #4a565a;        /* Charcoal border */
+    --primary-color: #6366f1;       /* Indigo */
+    --primary-dark: #4f46e5;        /* Darker Indigo */
+    --accent-color: #a855f7;        /* Purple */
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-focus: rgba(147, 51, 234, 0.4);
     
-    --bg-container: #1b2022;
-    --bg-card: #232a2c;
+    --bg-container: #121420;        /* Secondary */
+    --bg-card: #191c2b;             /* Tertiary */
     
     /* Navigation Bar */
-    --nav-color: #2dd4bf;
-    --nav-hover-bg: #232b2e;
-    --nav-hover-color: #14b8a6;
-    --nav-active-bg: #2dd4bf;
-    --nav-active-color: #1b2022;
+    --nav-color: #6366f1;
+    --nav-hover-bg: rgba(99, 102, 241, 0.15);
+    --nav-hover-color: #a855f7;
+    --nav-active-bg: #6366f1;
+    --nav-active-color: #f3f4f6;
     
     /* Stepper Wizard */
-    --stepper-bg: #232b2e;
-    --step-item-bg: #1b2022;
+    --stepper-bg: #191c2b;
+    --step-item-bg: #121420;
     --step-item-text: #f3f4f6;
-    --step-item-active-bg: #14b8a6;
-    --step-item-active-text: #111618;
-    --step-item-completed-bg: #81c784;
-    --step-item-completed-text: #111618;
+    --step-item-active-bg: #6366f1;
+    --step-item-active-text: #ffffff;
+    --step-item-completed-bg: #a855f7;
+    --step-item-completed-text: #ffffff;
     
     /* Tables */
-    --table-th-bg: #232b2e;
-    --table-th-text: #2dd4bf;
-    --table-tr-even-bg: #232a2c;
-    --table-tr-hover-bg: #111618;
+    --table-th-bg: #191c2b;
+    --table-th-text: #6366f1;
+    --table-tr-even-bg: #0a0b10;
+    --table-tr-hover-bg: rgba(99, 102, 241, 0.1);
     
     /* Buttons */
-    --btn-bg: #232a2c;
-    --btn-text: #2dd4bf;
-    --btn-primary-bg: #14b8a6;
-    --btn-primary-text: #111618;
-    --btn-primary-hover: #2dd4bf;
-    --btn-secondary-bg: #232b2e;
-    --btn-secondary-text: #2dd4bf;
-    --btn-secondary-hover-bg: #14b8a6;
-    --btn-secondary-hover-text: #111618;
-    --submit-btn-bg: #00695c;
-    --submit-btn-hover: #004d40;
+    --btn-bg: #191c2b;
+    --btn-text: #6366f1;
+    --btn-primary-bg: #6366f1;
+    --btn-primary-text: #ffffff;
+    --btn-primary-hover: #4f46e5;
+    --btn-secondary-bg: rgba(168, 85, 247, 0.1);
+    --btn-secondary-text: #a855f7;
+    --btn-secondary-hover-bg: #a855f7;
+    --btn-secondary-hover-text: #ffffff;
+    --submit-btn-bg: #6366f1;
+    --submit-btn-hover: #4f46e5;
     
     /* Alerts and Progress bars */
-    --notice-border-style: 1px dashed #14b8a6;
-    --progress-container-bg: #232b2e;
-    --progress-fill-bg: #81c784;
+    --notice-border-style: 1px dashed rgba(168, 85, 247, 0.3);
+    --progress-container-bg: #191c2b;
+    --progress-fill-bg: #a855f7;
     
-    --status-completed-bg: #232b2e;
-    --status-completed-text: #81c784;
-    --status-progress-bg: #232b2e;
-    --status-progress-text: #ffd54f;
-    --status-notstarted-bg: #111618;
-    --status-notstarted-text: #90a4ae;
+    --status-completed-bg: rgba(16, 185, 129, 0.1);
+    --status-completed-text: #34d399;
+    --status-progress-bg: rgba(245, 158, 11, 0.1);
+    --status-progress-text: #fbbf24;
+    --status-notstarted-bg: #191c2b;
+    --status-notstarted-text: #6b7280;
     
-    --badge-local-bg: #14b8a6;
-    --badge-external-bg: #ffd54f;
-    --badge-local-text: #111618;
-    --badge-external-text: #111618;
+    --badge-local-bg: #6366f1;
+    --badge-external-bg: #a855f7;
+    --badge-local-text: #ffffff;
+    --badge-external-text: #ffffff;
     
     /* References list items */
-    --ref-sidebar-hover-bg: #111618;
-    --ref-sidebar-hover-text: #14b8a6;
-    --ref-sidebar-active-bg: #232b2e;
-    --ref-sidebar-active-text: #2dd4bf;
-    --ref-link-icon-bg: #111618;
+    --ref-sidebar-hover-bg: #191c2b;
+    --ref-sidebar-hover-text: #6366f1;
+    --ref-sidebar-active-bg: rgba(99, 102, 241, 0.15);
+    --ref-sidebar-active-text: #a855f7;
+    --ref-link-icon-bg: #191c2b;
     
-    --platform-rank-bg: #232b2e;
-    --platform-rank-text: #2dd4bf;
+    --nav-hover-bg: rgba(99, 102, 241, 0.15);
+    --platform-rank-bg: rgba(99, 102, 241, 0.15);
+    --platform-rank-text: #6366f1;
     
-    --syllabus-link-bg: #232b2e;
-    --syllabus-link-text: #2dd4bf;
-    --syllabus-link-hover-bg: #14b8a6;
-    --syllabus-link-hover-text: #111618;
+    --syllabus-link-bg: rgba(99, 102, 241, 0.15);
+    --syllabus-link-text: #6366f1;
+    --syllabus-link-hover-bg: #6366f1;
+    --syllabus-link-hover-text: #ffffff;
     
     /* Modals */
-    --modal-header-bg: #232a2c;
-    --modal-tabs-bg: #232a2c;
-    --modal-close-hover: #14b8a6;
-
+    --modal-header-bg: #191c2b;
+    --modal-tabs-bg: #191c2b;
+    --modal-close-hover: #a855f7;
+ 
     /* Inputs & Search Buttons */
-    --input-bg: #232a2c;
+    --input-bg: #121420;
     --input-text: #f3f4f6;
-    --input-focus-border: #14b8a6;
-    --search-btn-bg: #232b2e;
-    --search-btn-text: #2dd4bf;
-    --search-btn-hover: #14b8a6;
+    --input-focus-border: #6366f1;
+    --search-btn-bg: #191c2b;
+    --search-btn-text: #6366f1;
+    --search-btn-hover: #a855f7;
 }
 
 /* ==========================================================================
    2. GENERAL LAYOUT, SPACING, & TYPOGRAPHY
    ========================================================================== */
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     margin: 20px;
     line-height: 1.6;
     font-size: 14px;
@@ -218,6 +234,10 @@ body {
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
+}
+
+code, pre, kbd, samp, .mono-text {
+    font-family: 'JetBrains Mono', 'Courier New', Courier, monospace !important;
 }
 
 /* Dynamic ambient backgrounds and tech grid */
