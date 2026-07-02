@@ -3705,4 +3705,57 @@ body.theme-dark .api-key-banner {
     }
 }
 
+/* Global Navbar Custom Styling */
+.global-navbar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: var(--bg-body);
+    padding: 10px 24px;
+    border-bottom: 1px solid var(--border-color);
+    box-sizing: border-box;
+    height: 65px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.global-navbar .header-logo {
+    justify-self: start;
+}
+
+.global-navbar .main-nav {
+    justify-self: center;
+    display: flex;
+    gap: 8px;
+}
+
+.global-navbar .header-controls {
+    justify-self: end;
+}
+
+/* Responsive adjustment for global navbar */
+@media (max-width: 850px) {
+    .global-navbar {
+        grid-template-columns: 1fr 1fr;
+        height: auto;
+        gap: 12px;
+        padding: 10px 16px;
+    }
+    .global-navbar .main-nav {
+        grid-column: span 2;
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        margin-top: 6px;
+    }
+    .global-navbar .header-controls {
+        justify-self: end;
+    }
+}
+
 

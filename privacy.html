@@ -61,17 +61,57 @@
     <div class="app-container">
         
         <!-- Modern App Header -->
-        <header class="app-header">
-            <div class="header-logo" onclick="window.location.href='index.html'">
+        <header class="app-header global-navbar">
+            <div class="header-logo" onclick="window.location.href='index.html#landing'">
                 <span class="logo-icon">🎓</span>
                 <span class="logo-text">Student Hub</span>
             </div>
             <nav class="main-nav">
-                <a href="index.html">Home</a>
-                <a href="account.html">Account</a>
-                <a href="reference.html">References</a>
+                <a href="index.html#landing" id="nav-landing">Home</a>
+                <a href="index.html#auth" id="nav-auth">Account</a>
+                <a href="reference.html" onclick="return checkReferenceAccess(event)" id="nav-references">References</a>
                 <a href="index.html#chatbot" id="nav-chatbot">Pravio AI</a>
             </nav>
+            <div class="header-controls unified-toolbar">
+                <!-- Theme Toggle Button -->
+                <button class="toolbar-btn theme-toggle-btn" onclick="toggleGlobalTheme()" title="Toggle Theme" aria-label="Toggle Theme">
+                    <i class="fas fa-moon theme-icon"></i>
+                </button>
+                
+                <!-- Font Size Selector (Icon wrapper) -->
+                <div class="toolbar-item" title="Font Size">
+                    <i class="fas fa-font toolbar-icon"></i>
+                    <select id="font-size-select" onchange="changeFontSize(this.value)" class="toolbar-select">
+                        <option value="small">S</option>
+                        <option value="medium" selected>M</option>
+                        <option value="large">L</option>
+                    </select>
+                </div>
+                
+                <!-- View Mode Selector (Icon wrapper) -->
+                <div class="toolbar-item" title="View Mode">
+                    <i class="fas fa-display toolbar-icon"></i>
+                    <select id="view-mode-select" onchange="changeViewMode(this.value)" class="toolbar-select">
+                        <option value="laptop">Desk</option>
+                        <option value="tab">Tab</option>
+                        <option value="phone">Mob</option>
+                    </select>
+                </div>
+                
+                <!-- Settings Trigger Button (Gear icon-only) -->
+                <button class="toolbar-btn settings-btn" onclick="toggleSettingsMenu(event)" title="Account Settings" aria-label="Account Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+                
+                <!-- Dropdown Menu containing Sign Out & Delete Account -->
+                <div id="settings-dropdown-menu" class="settings-dropdown">
+                    <div class="settings-dropdown-item" style="padding: 4px 10px; font-size: 12px; color: var(--text-muted); text-align: center; border-bottom: 1px solid var(--border-color); margin-bottom: 8px;">
+                        Account Preferences
+                    </div>
+                    <button id="signout-btn" onclick="doSignOut()" class="btn btn-secondary signout-dropdown-btn" style="display: none; width: 100%;">Sign Out</button>
+                    <button id="delete-btn" onclick="doDeleteAccount()" class="btn delete-dropdown-btn" style="display: none; width: 100%; margin-top: 8px; background-color: #ef4444; color: white; border: none; padding: 8px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='#ef4444'">Delete Account</button>
+                </div>
+            </div>
         </header>
 
         <!-- Privacy Policy Card -->
