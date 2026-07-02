@@ -50,6 +50,7 @@ def validate_gemini_key():
     if not key:
         print("[WARNING] GEMINI_API_KEY environment variable is missing!")
         return False
+    os.environ['GEMINI_API_KEY'] = key
     
     import urllib.request
     import json

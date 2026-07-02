@@ -13,10 +13,14 @@ const AdmZip = require('adm-zip');
 const XLSX = require('xlsx');
 
 // Load environment variables
-dotenv.config();
+const envConfig = dotenv.config();
+// Explicitly override PORT if defined in chatbot/.env to prevent inheriting parent process PORT (which causes EADDRINUSE on Render)
+if (envConfig.parsed && envConfig.parsed.PORT) {
+  process.env.PORT = envConfig.parsed.PORT;
+}
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3008;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Ensure upload folder exists
@@ -102,7 +106,8 @@ app.use('/api/', apiLimiter);
 app.get('/health', (req, res) => {
   const hasApiKey = !!process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here';
   res.status(200).json({
-    status: 'healthy',
+    status: 'ok',
+    ai: hasApiKey ? 'connected' : 'disconnected',
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
     environment: NODE_ENV,

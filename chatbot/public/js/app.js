@@ -677,10 +677,23 @@ function renderChatMessages() {
   
   const messagesHTML = chat.messages.map(msg => {
     const isUser = msg.role === 'user';
+    // Skip rendering empty model message if it is currently generating
+    if (!isUser && !msg.text && isGenerating) {
+      return '';
+    }
+
     const alignClass = isUser ? 'user' : 'model';
     const avatarIcon = isUser ? '<i class="far fa-user"></i>' : '🎓';
     const senderName = isUser ? 'You' : 'Pravio AI';
-    const formattedText = isUser ? escapeHTML(msg.text) : renderMarkdown(msg.text);
+    
+    let formattedText = '';
+    if (isUser) {
+      formattedText = escapeHTML(msg.text);
+    } else if (msg.text.startsWith('Error:')) {
+      formattedText = `<span style="color: #ef4444; font-weight: 500; display: inline-flex; align-items: center; gap: 6px;"><i class="fas fa-exclamation-triangle"></i> ${escapeHTML(msg.text)}</span>`;
+    } else {
+      formattedText = renderMarkdown(msg.text);
+    }
     
     // Format message bubble attachments if any exist
     let attachmentsHTML = '';
@@ -849,7 +862,11 @@ async function submitUserMessage() {
     if (!response.ok) {
       // Handle server error responses
       const errorJson = await response.json().catch(() => ({}));
-      throw new Error(errorJson.error || `Server responded with status ${response.status}`);
+      let errMsg = errorJson.error || `Server responded with status ${response.status}`;
+      if (response.status === 401 || response.status === 403 || errMsg.includes('API key') || errMsg.includes('api_key_invalid') || errMsg.includes('not configured')) {
+        errMsg = 'AI service is temporarily unavailable. Please try again later.';
+      }
+      throw new Error(errMsg);
     }
 
     // Process Stream responses
@@ -936,13 +953,12 @@ async function submitUserMessage() {
       console.error('Fetch error:', error);
       DOMElements.aiTypingIndicator.classList.add('hidden');
       
-      // Inject friendly error display in bubble
-      const textBubble = document.querySelector(`[data-msg-id="${aiMsgId}"] .bubble-content`);
-      if (textBubble) {
-        textBubble.innerHTML = `<span style="color: #ef4444; font-weight: 500;"><i class="fas fa-exclamation-triangle"></i> Error: ${error.message}</span>`;
-        aiMsg.text = `Error: ${error.message}`;
-        saveConversations();
+      let errMsg = error.message;
+      if (errMsg.includes('API key') || errMsg.includes('401') || errMsg.includes('403') || errMsg.includes('not configured')) {
+        errMsg = 'AI service is temporarily unavailable. Please try again later.';
       }
+      aiMsg.text = `Error: ${errMsg}`;
+      saveConversations();
     }
   } finally {
     isGenerating = false;
@@ -1122,8 +1138,9 @@ async function checkServerHealth() {
   try {
     const res = await fetch(API_BASE + '/health');
     const data = await res.json();
-    if (data.status === 'healthy') {
-      updateServerStatus(true, data.geminiConfigured);
+    if (data.status === 'healthy' || data.status === 'ok') {
+      const isConfigured = !!(data.geminiConfigured || data.ai === 'connected');
+      updateServerStatus(true, isConfigured);
     } else {
       updateServerStatus(false);
     }
