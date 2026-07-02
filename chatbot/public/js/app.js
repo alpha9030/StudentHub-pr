@@ -261,7 +261,6 @@ const DOMElements = {
   landingPage: document.getElementById('landing-page'),
   chatDashboard: document.getElementById('chat-dashboard'),
   
-  landingThemeToggle: document.getElementById('landing-theme-toggle'),
   btnHeroLaunch: document.getElementById('btn-hero-launch'),
   btnStartChat: document.getElementById('btn-start-chat'),
   
@@ -333,7 +332,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // Event Listeners Routing
 function setupEventListeners() {
   // Theme Switches
-  DOMElements.landingThemeToggle.addEventListener('click', toggleTheme);
   DOMElements.btnThemeToggle.addEventListener('click', toggleTheme);
   
   // Screen Router
