@@ -14,10 +14,7 @@ let recognition = null; // SpeechRecognition reference
 let isListening = false; // Speech state reference
 const HEALTH_CHECK_INTERVAL = 30000; // Check server health every 30s
 
-// Resolve backend port or cross-origin URLs dynamically
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-  ? (window.location.port === '3008' ? '' : 'http://localhost:3008')
-  : 'https://studenthub-pr.onrender.com';
+const API_BASE = '';
 
 // Theme Management
 const THEME_KEY = 'siteTheme';
