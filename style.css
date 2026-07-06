@@ -4040,4 +4040,39 @@ a, button, .dash-stat-card, .btn, input, select {
     background: var(--bg-secondary);
 }
 
+/* IDE Curriculum Tree styles */
+.curr-folder {
+    margin-bottom: 4px;
+}
+
+.folder-header {
+    user-select: none;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.folder-header:hover {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.folder-contents {
+    border-left: 1px solid var(--border-color);
+    margin-left: 6px;
+}
+
+.tree-item {
+    padding: 6px 12px;
+    margin: 2px 0;
+    font-size: 12.5px;
+    color: var(--text-body);
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.tree-item:hover {
+    background: rgba(59, 130, 246, 0.04);
+    color: var(--primary-color);
+    border-left-color: var(--primary-color);
+}
+
+
 

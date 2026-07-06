@@ -1528,18 +1528,129 @@
         <!-- ==================== VIEW 3.5: PRAVIO VISUALIZER ==================== -->
         <div id="visualizer-panel" class="view-panel" style="width: 100%; height: calc(100vh - 120px); min-height: 500px; padding: 0; margin: 0; overflow: hidden; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); background: var(--bg-secondary);">
             <div class="viz-layout" style="display: flex; height: 100%; width: 100%; background: var(--bg-body);">
-                <!-- Viz Sidebar -->
-                <div class="viz-sidebar" style="width: 240px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; background: var(--bg-secondary); flex-shrink: 0; height: 100%;">
-                    <div style="padding: 16px; border-bottom: 1px solid var(--border-color);">
-                        <button onclick="createVizSession('New Visualization')" class="btn btn-primary" style="width: 100%; font-size: 13px; padding: 10px; border-radius: 8px; justify-content: center; gap: 6px;"><i class="fas fa-plus"></i> New Session</button>
+                
+                <!-- IDE Curriculum Sidebar -->
+                <div class="viz-sidebar" style="width: 260px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; background: var(--bg-secondary); flex-shrink: 0; height: 100%;">
+                    <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-color); display:flex; flex-direction:column; gap:8px;">
+                        <input type="text" id="viz-curriculum-search" placeholder="Search curriculum..." oninput="searchVizCurriculum(this.value)" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-container); color: var(--text-body); font-size: 12.5px; outline: none;">
                     </div>
-                    <div style="padding: 12px 16px; border-bottom: 1px solid var(--border-color);">
-                        <input type="text" placeholder="Search sessions..." oninput="searchVizSessions(this.value)" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-container); color: var(--text-body); font-size: 12px; outline: none;">
+                    
+                    <!-- Curriculum Tree View -->
+                    <div id="viz-curriculum-tree" style="flex: 1; overflow-y: auto; padding: 12px 8px; font-size: 13px;">
+                        <!-- Programming Languages Expandable Folder -->
+                        <div class="curr-folder">
+                            <div class="folder-header" onclick="toggleFolder(this)" style="display:flex; align-items:center; gap:6px; padding:6px 8px; border-radius:6px; cursor:pointer; font-weight:700; color:var(--text-body);">
+                                <i class="fas fa-chevron-down folder-chevron" style="font-size:10px; transition:transform 0.2s;"></i>
+                                <i class="fas fa-code" style="color:var(--primary-color);"></i>
+                                <span>Programming Languages</span>
+                            </div>
+                            <div class="folder-contents" style="padding-left:14px; display:block;">
+                                <!-- C -->
+                                <div class="curr-folder">
+                                    <div class="folder-header" onclick="toggleFolder(this)" style="display:flex; align-items:center; gap:6px; padding:4px 6px; border-radius:6px; cursor:pointer; font-weight:600; color:var(--text-body);">
+                                        <i class="fas fa-chevron-right folder-chevron" style="font-size:8px;"></i>
+                                        <span>C</span>
+                                    </div>
+                                    <div class="folder-contents" style="padding-left:10px; display:none;">
+                                        <div class="tree-item" onclick="loadCurriculumTopic('languages', 'c', 'C (Pointers)')" style="padding:4px 8px; cursor:pointer; border-radius:4px;">Pointers & Memory</div>
+                                        <div class="tree-item" onclick="loadCurriculumTopic('languages', 'c', 'C (Variables)')" style="padding:4px 8px; cursor:pointer; border-radius:4px;">Variables & Loops</div>
+                                    </div>
+                                </div>
+                                <!-- C++ -->
+                                <div class="curr-folder">
+                                    <div class="folder-header" onclick="toggleFolder(this)" style="display:flex; align-items:center; gap:6px; padding:4px 6px; border-radius:6px; cursor:pointer; font-weight:600; color:var(--text-body);">
+                                        <i class="fas fa-chevron-right folder-chevron" style="font-size:8px;"></i>
+                                        <span>C++</span>
+                                    </div>
+                                    <div class="folder-contents" style="padding-left:10px; display:none;">
+                                        <div class="tree-item" onclick="loadCurriculumTopic('languages', 'cpp', 'C++ (OOP)')" style="padding:4px 8px; cursor:pointer; border-radius:4px;">Classes & Constructors</div>
+                                    </div>
+                                </div>
+                                <!-- Java -->
+                                <div class="curr-folder">
+                                    <div class="folder-header" onclick="toggleFolder(this)" style="display:flex; align-items:center; gap:6px; padding:4px 6px; border-radius:6px; cursor:pointer; font-weight:600; color:var(--text-body);">
+                                        <i class="fas fa-chevron-right folder-chevron" style="font-size:8px;"></i>
+                                        <span>Java</span>
+                                    </div>
+                                    <div class="folder-contents" style="padding-left:10px; display:none;">
+                                        <div class="tree-item" onclick="loadCurriculumTopic('languages', 'java', 'Java (GC)')" style="padding:4px 8px; cursor:pointer; border-radius:4px;">Garbage Collection</div>
+                                    </div>
+                                </div>
+                                <!-- Python -->
+                                <div class="curr-folder">
+                                    <div class="folder-header" onclick="toggleFolder(this)" style="display:flex; align-items:center; gap:6px; padding:4px 6px; border-radius:6px; cursor:pointer; font-weight:600; color:var(--text-body);">
+                                        <i class="fas fa-chevron-right folder-chevron" style="font-size:8px;"></i>
+                                        <span>Python</span>
+                                    </div>
+                                    <div class="folder-contents" style="padding-left:10px; display:none;">
+                                        <div class="tree-item" onclick="loadCurriculumTopic('languages', 'python', 'Python (Comprehension)')" style="padding:4px 8px; cursor:pointer; border-radius:4px;">List Comprehension</div>
+                                    </div>
+                                </div>
+                                <!-- JavaScript & TS -->
+                                <div class="curr-folder">
+                                    <div class="folder-header" onclick="toggleFolder(this)" style="display:flex; align-items:center; gap:6px; padding:4px 6px; border-radius:6px; cursor:pointer; font-weight:600; color:var(--text-body);">
+                                        <i class="fas fa-chevron-right folder-chevron" style="font-size:8px;"></i>
+                                        <span>JavaScript & TS</span>
+                                    </div>
+                                    <div class="folder-contents" style="padding-left:10px; display:none;">
+                                        <div class="tree-item" onclick="loadCurriculumTopic('languages', 'javascript', 'JavaScript (Destructuring)')" style="padding:4px 8px; cursor:pointer; border-radius:4px;">Destructuring</div>
+                                        <div class="tree-item" onclick="loadCurriculumTopic('languages', 'typescript', 'TypeScript (Interfaces)')" style="padding:4px 8px; cursor:pointer; border-radius:4px;">Interfaces</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Data Structures Expandable Folder -->
+                        <div class="curr-folder">
+                            <div class="folder-header" onclick="toggleFolder(this)" style="display:flex; align-items:center; gap:6px; padding:6px 8px; border-radius:6px; cursor:pointer; font-weight:700; color:var(--text-body);">
+                                <i class="fas fa-chevron-down folder-chevron" style="font-size:10px; transition:transform 0.2s;"></i>
+                                <i class="fas fa-project-diagram" style="color:var(--primary-color);"></i>
+                                <span>Data Structures</span>
+                            </div>
+                            <div class="folder-contents" style="padding-left:14px; display:block;">
+                                <div class="tree-item" onclick="loadCurriculumTopic('structures', 'array', 'Arrays (Insertion)')" style="padding:4px 8px; cursor:pointer; border-radius:4px;">Arrays (Insertion)</div>
+                                <div class="tree-item" onclick="loadCurriculumTopic('structures', 'linked_list', 'Linked List Insertion')" style="padding:4px 8px; cursor:pointer; border-radius:4px;">Linked Lists</div>
+                            </div>
+                        </div>
+
+                        <!-- Algorithms Expandable Folder -->
+                        <div class="curr-folder">
+                            <div class="folder-header" onclick="toggleFolder(this)" style="display:flex; align-items:center; gap:6px; padding:6px 8px; border-radius:6px; cursor:pointer; font-weight:700; color:var(--text-body);">
+                                <i class="fas fa-chevron-down folder-chevron" style="font-size:10px; transition:transform 0.2s;"></i>
+                                <i class="fas fa-random" style="color:var(--primary-color);"></i>
+                                <span>Algorithms</span>
+                            </div>
+                            <div class="folder-contents" style="padding-left:14px; display:block;">
+                                <div class="tree-item" onclick="loadCurriculumTopic('algorithms', 'bubble_sort', 'Bubble Sort Simulation')" style="padding:4px 8px; cursor:pointer; border-radius:4px;">Sorting (Bubble Sort)</div>
+                            </div>
+                        </div>
+
+                        <!-- Database & SQL -->
+                        <div class="curr-folder">
+                            <div class="folder-header" onclick="toggleFolder(this)" style="display:flex; align-items:center; gap:6px; padding:6px 8px; border-radius:6px; cursor:pointer; font-weight:700; color:var(--text-body);">
+                                <i class="fas fa-chevron-down folder-chevron" style="font-size:10px; transition:transform 0.2s;"></i>
+                                <i class="fas fa-database" style="color:var(--primary-color);"></i>
+                                <span>Database & SQL</span>
+                            </div>
+                            <div class="folder-contents" style="padding-left:14px; display:block;">
+                                <div class="tree-item" onclick="loadCurriculumTopic('sql', 'select', 'SQL SELECT WHERE')" style="padding:4px 8px; cursor:pointer; border-radius:4px;">SELECT & WHERE</div>
+                            </div>
+                        </div>
+
+                        <!-- Web Development -->
+                        <div class="curr-folder">
+                            <div class="folder-header" onclick="toggleFolder(this)" style="display:flex; align-items:center; gap:6px; padding:6px 8px; border-radius:6px; cursor:pointer; font-weight:700; color:var(--text-body);">
+                                <i class="fas fa-chevron-down folder-chevron" style="font-size:10px; transition:transform 0.2s;"></i>
+                                <i class="fas fa-globe" style="color:var(--primary-color);"></i>
+                                <span>Web Development</span>
+                            </div>
+                            <div class="folder-contents" style="padding-left:14px; display:block;">
+                                <div class="tree-item" onclick="loadCurriculumTopic('webdev', 'boxmodel', 'CSS Box Model layers')" style="padding:4px 8px; cursor:pointer; border-radius:4px;">CSS Box Model</div>
+                            </div>
+                        </div>
                     </div>
-                    <div id="viz-sessions-list" style="flex: 1; overflow-y: auto; padding: 8px;">
-                        <!-- Session items populated dynamically -->
-                    </div>
-                    <!-- Personal Achievements mini tracker -->
+                    
+                    <!-- Sidebar Footer Achievement mini-tracker -->
                     <div style="padding: 16px; border-top: 1px solid var(--border-color); background: rgba(0,0,0,0.02); font-size: 12px; color: var(--text-body);">
                         <div style="font-weight: 700; margin-bottom: 6px; text-transform: uppercase; font-size: 10.5px; color: var(--text-muted);">Streak & Badges</div>
                         <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
@@ -1577,17 +1688,9 @@
                                 <option value="advanced" selected>Advanced Tutor Explanations</option>
                             </select>
 
-                            <!-- Category and Topic selectors -->
-                            <select id="viz-category-select" onchange="handleCategoryChange(this.value)" style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-container); color: var(--text-body); font-size: 12px; outline: none; cursor: pointer;">
-                                <option value="languages">Programming Languages</option>
-                                <option value="structures">Data Structures</option>
-                                <option value="algorithms">Algorithms</option>
-                                <option value="sql">SQL Visualizer</option>
-                                <option value="webdev">Web Development</option>
-                            </select>
-                            <select id="viz-topic-select" onchange="handleTopicChange(this.value)" style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-container); color: var(--text-body); font-size: 12px; outline: none; cursor: pointer;">
-                                <!-- Topics populated dynamically -->
-                            </select>
+                            <!-- Hidden dummy selects to preserve visualizer.js binds -->
+                            <select id="viz-category-select" style="display:none;"><option value="languages">Languages</option></select>
+                            <select id="viz-topic-select" style="display:none;"><option value="python">Python</option></select>
                             
                             <!-- Share and Export buttons -->
                             <button onclick="shareVizSessionState()" class="btn btn-secondary" style="padding: 6px 10px; border-radius: 6px; font-size: 12px;" title="Share active step link"><i class="fas fa-share-alt"></i> Share</button>
@@ -1603,99 +1706,7 @@
                         <button onclick="switchVizSubTab('dashboard')" class="viz-sub-tab" id="subtab-dashboard" style="padding:12px 6px; border:none; background:transparent; border-bottom:3px solid transparent; font-weight:600; color:var(--text-muted); font-size:12.5px; cursor:pointer;">Dashboard & Badges</button>
                     </div>
 
-                    <!-- ==================== SUBTAB: WALKTHROUGH ==================== -->
-                    <div id="panel-tab-walkthrough" class="viz-subpanelactive" style="flex: 1; display: flex; overflow: hidden; flex-wrap: wrap; min-height: 0;">
-                        <!-- Left Panel: Code & Controls -->
-                        <div style="width: 320px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; background: var(--bg-secondary); height: 100%; flex-shrink: 0; min-width: 280px;">
-                            <!-- Code Editor container -->
-                            <div style="flex: 1; display: flex; position: relative; border-bottom: 1px solid var(--border-color); font-family: monospace; font-size: 13px; line-height: 1.5; overflow: hidden;">
-                                <div id="viz-line-gutter" style="padding: 10px 6px; border-right: 1px solid var(--border-color); background: rgba(0,0,0,0.05); color: var(--text-muted); text-align: right; user-select: none; min-width: 28px; box-sizing: border-box; overflow: hidden;"></div>
-                                <textarea id="viz-code-editor" style="flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-body); resize: none; outline: none; font-family: inherit; font-size: inherit; line-height: inherit; overflow-y: auto;" oninput="handlePracticeCodeInput(this.value)"></textarea>
-                            </div>
-                            <!-- Control Panel -->
-                            <div style="padding: 16px; background: var(--bg-container);">
-                                <!-- Top buttons -->
-                                <div style="display: flex; gap: 8px; margin-bottom: 12px; justify-content: center;">
-                                    <button onclick="stepBackwardViz()" class="btn btn-secondary" style="padding: 6px 10px; border-radius: 6px;" title="Step Backward"><i class="fas fa-step-backward"></i></button>
-                                    <button id="viz-play-btn" onclick="toggleVizPlayback()" class="btn btn-primary" style="padding: 6px 16px; border-radius: 6px; font-weight: 700;"><i class="fas fa-play"></i> Run</button>
-                                    <button onclick="stepForwardViz()" class="btn btn-secondary" style="padding: 6px 10px; border-radius: 6px;" title="Step Forward"><i class="fas fa-step-forward"></i></button>
-                                    <button onclick="restartViz()" class="btn btn-secondary" style="padding: 6px 10px; border-radius: 6px;" title="Restart"><i class="fas fa-sync-alt"></i></button>
-                                </div>
-                                <!-- Timeline Slider -->
-                                <div style="margin-bottom: 12px;">
-                                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); font-weight: 600; margin-bottom: 4px;">
-                                        <span>Timeline Progress</span>
-                                        <span id="viz-step-label">Step: 1 / 1</span>
-                                    </div>
-                                    <input type="range" id="viz-step-slider" min="0" max="0" value="0" style="width: 100%; cursor: pointer; accent-color: var(--primary-color);">
-                                </div>
-                                <!-- Speed Slider -->
-                                <div>
-                                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); font-weight: 600; margin-bottom: 4px;">
-                                        <span>Playback Interval</span>
-                                        <span>Speed</span>
-                                    </div>
-                                    <input type="range" id="viz-speed-slider" min="100" max="1500" step="50" value="500" style="width: 100%; cursor: pointer; accent-color: var(--primary-color); transform: scaleY(-1);">
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Right Panel: Visualization Canvas & State -->
-                        <div style="flex: 1; display: flex; flex-direction: column; height: 100%; overflow-y: auto; min-width: 320px;">
-                            <!-- Flow progression arrows overlay indicator -->
-                            <div id="viz-flow-arrows" style="padding: 8px 24px; background: rgba(59,130,246,0.04); border-bottom: 1px solid var(--border-color); font-size: 11.5px; font-weight: 600; color: var(--primary-color); display:flex; align-items:center; gap:8px;">
-                                <span>Current Line</span> <i class="fas fa-long-arrow-alt-right"></i>
-                                <span>Condition Check</span> <i class="fas fa-long-arrow-alt-right"></i>
-                                <span>Variable Update</span> <i class="fas fa-long-arrow-alt-right"></i>
-                                <span style="color:var(--text-muted);">Next Step</span>
-                            </div>
-
-                            <!-- Interactive Visualization Area -->
-                            <div id="viz-display-area" style="flex: 1; border-bottom: 1px solid var(--border-color); background: rgba(0,0,0,0.01);">
-                                <!-- Canvas items rendered dynamically -->
-                            </div>
-                            
-                            <!-- Trace Info & Complexity -->
-                            <div style="padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; background: var(--bg-container); border-bottom: 1px solid var(--border-color);">
-                                <!-- Variables Table -->
-                                <div style="border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--bg-secondary);">
-                                    <div style="padding: 8px 12px; background: rgba(0,0,0,0.02); border-bottom: 1px solid var(--border-color); font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Variable Trace</div>
-                                    <div style="max-height: 120px; overflow-y: auto;">
-                                        <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: left;">
-                                            <tbody id="viz-vars-table-body">
-                                                <!-- Row variables updated dynamically -->
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-
-                                <!-- Stack Trace -->
-                                <div style="border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--bg-secondary);">
-                                    <div style="padding: 8px 12px; background: rgba(0,0,0,0.02); border-bottom: 1px solid var(--border-color); font-size: 11.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Memory Stack</div>
-                                    <ul id="viz-mem-stack" style="list-style: none; margin: 0; padding: 0; max-height: 120px; overflow-y: auto;">
-                                        <!-- Stack items updated dynamically -->
-                                    </ul>
-                                </div>
-
-                                <!-- Big-O complexity -->
-                                <div style="border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; background: var(--bg-secondary); padding: 12px; display: flex; flex-direction: column; justify-content: center; gap: 8px;">
-                                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 2px;">Algorithmic Complexity</div>
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 11.5px;">
-                                        <div>Best Case: <strong id="viz-best-case" style="color: #10b981;">O(1)</strong></div>
-                                        <div>Average Case: <strong id="viz-avg-case" style="color: #f59e0b;">O(n)</strong></div>
-                                        <div>Worst Case: <strong id="viz-worst-case" style="color: #ef4444;">O(n)</strong></div>
-                                        <div>Space complexity: <strong id="viz-space-case" style="color: var(--primary-color);">O(1)</strong></div>
-                    <div style="font-size:10px; color:var(--text-muted); border-top:1px dashed var(--border-color); padding-top:4px;">
-                                        Stable: <strong id="viz-stable-case" style="color:var(--text-body);">Yes</strong> | 
-                                        In-Place: <strong id="viz-inplace-case" style="color:var(--text-body);">Yes</strong>
-                                    </div>
-                                </div>
-                            <!-- AI Explanation Panel -->
-                            <div id="viz-explanation-panel" style="padding: 20px; background: var(--bg-secondary); border-radius: 0 0 10px 10px; min-height: 90px; box-sizing: border-box;">
-                                <!-- Plain English trace description updated dynamically -->
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- ==================== SUBTAB: COMPARE ==================== -->
                     <div id="panel-tab-compare" class="viz-subpanel" style="display: none; flex: 1; padding: 20px; overflow-y: auto; background: var(--bg-body);">
