@@ -146,8 +146,11 @@ async function retryWithBackoff(fn, retries = 3, delay = 1000) {
 
 // REST API for chat communication
 app.post('/api/chat', async (req, res) => {
-  const customApiKey = req.headers['x-api-key'];
-  const apiKey = customApiKey || process.env.GEMINI_API_KEY;
+  const { messages, stream, customApiKey } = req.body;
+  const headerApiKey = req.headers['x-api-key'];
+  const apiKey = customApiKey || headerApiKey || process.env.GEMINI_API_KEY;
+
+  console.log(`[BACKEND LOG] /api/chat: Using key: ${customApiKey ? 'Body Custom' : (headerApiKey ? 'Header Custom' : 'Default')}`);
 
   if (!apiKey || apiKey === 'your_gemini_api_key_here') {
     console.warn('[BACKEND LOG] /api/chat: Request blocked because GEMINI_API_KEY is not configured.');
@@ -156,8 +159,6 @@ app.post('/api/chat', async (req, res) => {
       status: 401
     });
   }
-
-  const { messages, stream } = req.body;
 
   // Validate request payload
   if (!messages || !validateMessages(messages)) {

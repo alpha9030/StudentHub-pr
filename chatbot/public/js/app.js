@@ -905,7 +905,8 @@ async function submitUserMessage() {
       headers: headers,
       body: JSON.stringify({
         messages: apiHistory,
-        stream: true
+        stream: true,
+        customApiKey: customKey
       }),
       signal: abortController.signal
     });
