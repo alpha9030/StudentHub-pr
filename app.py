@@ -1304,6 +1304,35 @@ def proxy_health():
             "error": str(e)
         }), 200
 
+@app.route('/debug-chatbot', methods=['GET'])
+def debug_chatbot():
+    import urllib.request
+    import urllib.error
+    url = os.environ.get("CHATBOT_BACKEND_URL", "http://127.0.0.1:3008")
+    
+    results = {
+        "CHATBOT_BACKEND_URL": url,
+        "is_default": url == "http://127.0.0.1:3008",
+        "env_keys": [k for k in os.environ.keys() if "KEY" not in k.upper() and "PASSWORD" not in k.upper() and "SECRET" not in k.upper()]
+    }
+    
+    try:
+        req = urllib.request.Request(f"{url.rstrip('/')}/health", headers={"User-Agent": "Flask-Debug"})
+        with urllib.request.urlopen(req, timeout=5) as response:
+            results["health_status"] = response.status
+            results["health_headers"] = dict(response.headers)
+            results["health_body"] = response.read().decode('utf-8')
+    except urllib.error.HTTPError as e:
+        results["health_error_type"] = "HTTPError"
+        results["health_status"] = e.code
+        results["health_headers"] = dict(e.headers)
+        results["health_body"] = e.read().decode('utf-8')
+    except Exception as e:
+        results["health_error_type"] = "GenericError"
+        results["health_error"] = str(e)
+        
+    return jsonify(results)
+
 # Catch-all to serve any static asset (js, css, images)
 @app.route('/<path:path>')
 def serve_static(path):
