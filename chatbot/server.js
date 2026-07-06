@@ -150,7 +150,9 @@ app.post('/api/chat', async (req, res) => {
   const headerApiKey = req.headers['x-api-key'];
   const apiKey = customApiKey || headerApiKey || process.env.GEMINI_API_KEY;
 
-  console.log(`[BACKEND LOG] /api/chat: Using key: ${customApiKey ? 'Body Custom' : (headerApiKey ? 'Header Custom' : 'Default')}`);
+  const keyType = customApiKey ? 'Body Custom' : (headerApiKey ? 'Header Custom' : 'Default');
+  const keyPrefix = apiKey ? apiKey.substring(0, 7) + '...' : 'None';
+  console.log(`[BACKEND LOG] /api/chat: Using key type: ${keyType} | Prefix: ${keyPrefix}`);
 
   if (!apiKey || apiKey === 'your_gemini_api_key_here') {
     console.warn('[BACKEND LOG] /api/chat: Request blocked because GEMINI_API_KEY is not configured.');
