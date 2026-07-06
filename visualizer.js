@@ -1,5 +1,5 @@
 // ==========================================
-// PRAVIO VISUALIZER INTERACTIVE ENGINE
+// PRAVIO LEARNING STUDIOS INTERACTIVE ENGINE
 // ==========================================
 
 // Global state
@@ -12,184 +12,287 @@ let learningMode = "intermediate"; // beginner, intermediate, expert
 let aiTutorLevel = "advanced"; // beginner, advanced
 let bookmarks = [];
 let completedTopics = [];
-let practiceRuns = 5;
+let practiceRuns = 8;
+let activeStudio = null; // null represents the dashboard studio list view
 
-// Curriculum Syllabus Catalog
-const CURRICULUM_TREE = [
-    {
-        type: "category",
-        title: "Programming Languages",
-        icon: "fas fa-code",
-        children: [
-            {
-                type: "language",
-                title: "C",
-                icon: "💻 C",
-                children: ["Variables", "Data Types", "Operators", "Input Output", "Conditional Statements", "Loops", "Functions", "Arrays", "Strings", "Pointers", "Structures", "Unions", "File Handling", "Memory Management", "Preprocessors", "Interview Questions", "Practice Problems"]
-            },
-            {
-                type: "language",
-                title: "C++",
-                icon: "💻 C++",
-                children: ["Variables", "OOP Basics", "Classes & Objects", "Constructors", "Inheritance", "Polymorphism", "Abstraction", "Encapsulation", "Templates", "STL", "Exception Handling", "File Handling", "Interview Questions", "Practice Problems"]
-            },
-            {
-                type: "language",
-                title: "Java",
-                icon: "☕ Java",
-                children: ["Variables", "Data Types", "Operators", "Conditional Statements", "Loops", "Methods", "Arrays", "Strings", "Recursion", "Classes & Objects", "Constructors", "Inheritance", "Polymorphism", "Abstraction", "Encapsulation", "Interfaces", "Packages", "Collections", "Generics", "Streams", "Lambda Expressions", "Multithreading", "Exception Handling", "JDBC", "Garbage Collection", "Memory Management", "Interview Questions", "Practice Problems"]
-            },
-            {
-                type: "language",
-                title: "Python",
-                icon: "🐍 Python",
-                children: ["Variables", "Data Types", "Lists", "Tuples", "Dicts", "Sets", "Conditional Statements", "Loops", "Functions", "List Comprehension", "Lambda Functions", "File I/O", "OOP", "Exception Handling", "Decorators", "Generators", "Iterators", "Regex", "Interview Questions", "Practice Problems"]
-            },
-            {
-                type: "language",
-                title: "JavaScript",
-                icon: "⚡ JavaScript",
-                children: ["Variables", "Data Types", "Operators", "Functions", "Objects", "Arrays", "Destructuring", "Promises", "Async Await", "DOM Manipulation", "Event Loop", "Closures", "Prototypes", "Modules", "ES6 Features", "Interview Questions", "Practice Problems"]
-            },
-            {
-                type: "language",
-                title: "TypeScript",
-                icon: "🟦 TypeScript",
-                children: ["Type Annotations", "Interfaces", "Classes", "Generics", "Enums", "Modules", "Config", "Advanced Types", "Interview Questions", "Practice Problems"]
-            },
-            {
-                type: "language",
-                title: "HTML",
-                icon: "🌐 HTML",
-                children: ["Structure", "Elements", "Attributes", "Headings", "Paragraphs", "Links", "Images", "Tables", "Lists", "Forms", "Semantic Tags", "SEO Basics"]
-            },
-            {
-                type: "language",
-                title: "CSS",
-                icon: "🎨 CSS",
-                children: ["Selectors", "Box Model", "Flexbox", "Grid", "Positioning", "Transitions", "Animations", "Media Queries", "Variables", "Specificity", "TailwindCSS"]
-            },
-            {
-                type: "language",
-                title: "SQL",
-                icon: "🗄 SQL",
-                children: ["SELECT & WHERE", "GROUP BY & HAVING", "ORDER BY Sorting", "INNER JOIN matching", "LEFT/RIGHT JOIN", "Aggregate Functions", "Indexing", "Transactions (ACID)", "Stored Procedures", "Views"]
-            },
-            {
-                type: "language",
-                title: "PHP",
-                icon: "🐘 PHP",
-                children: ["Syntax", "Variables", "Loops", "Arrays", "Superglobals", "Sessions", "OOP", "MySQL Integration"]
-            },
-            {
-                type: "language",
-                title: "Go",
-                icon: "🐹 Go",
-                children: ["Variables", "Structs", "Interfaces", "Goroutines", "Channels", "Pointers"]
-            },
-            {
-                type: "language",
-                title: "Rust",
-                icon: "🦀 Rust",
-                children: ["Variables", "Ownership", "Borrowing", "Lifetimes", "Structs", "Enums", "Pattern Matching"]
-            },
-            {
-                type: "language",
-                title: "Kotlin",
-                icon: "📱 Kotlin",
-                children: ["Syntax", "Null Safety", "Classes", "Lambdas", "Coroutines"]
-            },
-            {
-                type: "language",
-                title: "Swift",
-                icon: "🍎 Swift",
-                children: ["Variables", "Optionals", "Protocols", "Extensions", "Closures"]
-            },
-            {
-                type: "language",
-                title: "R",
-                icon: "📊 R",
-                children: ["Vectors", "Matrices", "Data Frames", "Vectorized Operations", "Plotting"]
-            }
+// Studios Syllabus Catalog
+const STUDIOS_CATALOG = {
+    java: {
+        title: "Java Studio",
+        emoji: "☕",
+        desc: "Master JVM architecture, OOP abstractions, collections API, threads, GC, memory frames, Comparable, reflection, and practice problems.",
+        difficulty: "Medium",
+        hours: "12 Hours",
+        topics: [
+            "Introduction", "Installation", "IDE Setup", "Variables", "Data Types", "Operators", "Input Output",
+            "Conditional Statements", "Loops", "Arrays", "Strings", "Methods", "Recursion", "Classes", "Objects",
+            "Constructors", "Inheritance", "Polymorphism", "Abstraction", "Encapsulation", "Interfaces", "Packages",
+            "Collections", "Generics", "Streams", "Lambda Expressions", "Exception Handling", "File Handling",
+            "JDBC", "Networking", "Multithreading", "Memory Management", "Garbage Collection", "Comparable",
+            "Comparator", "Annotations", "Reflection", "Projects", "Interview Questions", "Practice Problems",
+            "Debugging", "Optimization"
         ]
     },
-    {
-        type: "category",
-        title: "Data Structures",
-        icon: "fas fa-project-diagram",
-        children: ["Arrays (Insertion)", "Linked Lists (Singly)", "Linked Lists (Doubly)", "Stacks (Push & Pop)", "Queues (Enqueue & Dequeue)", "Hash Tables", "Trees", "Binary Trees", "BST (Binary Search Tree)", "AVL Trees", "Heaps", "Tries", "Graphs", "Sets", "Maps"]
+    python: {
+        title: "Python Studio",
+        emoji: "🐍",
+        desc: "Beginner syntax to complex generators, list comprehensions, modules, file I/O, regex, OOP structure, and interview coding quizzes.",
+        difficulty: "Easy",
+        hours: "8 Hours",
+        topics: [
+            "Introduction", "Setup", "Variables", "Data Types", "Operators", "Input Output", "Conditional Statements",
+            "Loops", "Lists", "Tuples", "Dictionaries", "Sets", "Functions", "Recursion", "List Comprehension",
+            "Lambda Functions", "File I/O", "OOP Basics", "Classes & Objects", "Inheritance", "Polymorphism",
+            "Exception Handling", "Decorators", "Generators", "Iterators", "Regex", "Modules", "Virtual Environments",
+            "Projects", "Interview Questions", "Practice Problems"
+        ]
     },
-    {
-        type: "category",
-        title: "Algorithms",
-        icon: "fas fa-random",
-        children: ["Bubble Sort", "Linear Search", "Binary Search", "Two Pointers", "Sliding Window", "Prefix Sum", "Greedy (Coin Change)", "Dynamic Programming", "Backtracking", "Divide & Conquer", "Bit Manipulation", "DFS Traversal", "BFS Traversal", "Factorial Recursion"]
+    c: {
+        title: "C Studio",
+        emoji: "💻 C",
+        desc: "Pointers dereferencing, variable memory allocations, structure stacks, unions, and low level preprocessor directives.",
+        difficulty: "Hard",
+        hours: "10 Hours",
+        topics: [
+            "Introduction", "Setup", "Variables", "Data Types", "Operators", "Input Output", "Conditional Statements",
+            "Loops", "Functions", "Arrays", "Strings", "Pointers", "Pointer Arithmetic", "Structures", "Unions",
+            "File Handling", "Dynamic Memory Allocation", "Preprocessors", "Interview Questions", "Practice Problems"
+        ]
     },
-    {
-        type: "category",
-        title: "Patterns",
-        icon: "fas fa-shapes",
-        children: ["Square Pattern", "Right Angle Triangle", "Pyramid Pattern", "Diamond Pattern", "Inverted Pyramid", "Hollow Square"]
+    cpp: {
+        title: "C++ Studio",
+        emoji: "💻 C++",
+        desc: "Object Oriented polymorphism, classes, inheritance, pointers, abstraction, STL container vectors, templates, and dynamic arrays.",
+        difficulty: "Hard",
+        hours: "12 Hours",
+        topics: [
+            "Introduction", "Setup", "Variables", "OOP Basics", "Classes & Objects", "Constructors", "Destructors",
+            "Inheritance", "Polymorphism", "Abstraction", "Encapsulation", "Pointers & References", "Templates",
+            "Standard Template Library (STL)", "Exception Handling", "File Handling", "Interview Questions", "Practice Problems"
+        ]
     },
-    {
-        type: "category",
-        title: "Web Development",
-        icon: "fas fa-globe",
-        children: ["CSS Box Model", "DOM Tree Selection", "Flexbox Layout", "Grid Layout", "JS Event Loop", "Promises & Async/Await", "HTTP Request Lifecycle"]
+    javascript: {
+        title: "JavaScript Studio",
+        emoji: "⚡",
+        desc: "Interactive DOM manipulations, ES6 destructuring, closures, async promises, event loops, and fetch API.",
+        difficulty: "Medium",
+        hours: "8 Hours",
+        topics: [
+            "Introduction", "Variables", "Data Types", "Operators", "Conditional Statements", "Loops", "Functions",
+            "Objects", "Arrays", "Destructuring", "Spread & Rest", "Promises", "Async Await", "Fetch API",
+            "DOM Selection", "DOM Manipulation", "Event Listeners", "Event Loop", "Closures", "Prototypes",
+            "Modules", "ES6 Features", "Projects", "Interview Questions", "Practice Problems"
+        ]
     },
-    {
-        type: "category",
-        title: "Database",
-        icon: "fas fa-database",
-        children: ["Relational Database", "NoSQL Basics", "Normalization Forms", "Indexing Strategies", "ACID Transactions", "Execution Plans"]
+    typescript: {
+        title: "TypeScript Studio",
+        emoji: "🟦",
+        desc: "Strict type safety annotations, interfaces, generics, custom config setups, and advanced typings.",
+        difficulty: "Medium",
+        hours: "6 Hours",
+        topics: [
+            "Introduction", "Type Annotations", "Interfaces", "Classes", "Generics", "Enums", "Modules",
+            "TSConfig Setup", "Advanced Types", "Interview Questions", "Practice Problems"
+        ]
     },
-    {
-        type: "category",
-        title: "Operating System",
-        icon: "fas fa-desktop",
-        children: ["Processes & Threads", "CPU Scheduling", "Deadlocks", "Memory Management", "Paging & Segmentation", "Virtual Memory"]
+    html: {
+        title: "HTML Studio",
+        emoji: "🌐 HTML",
+        desc: "Semantic elements structure, tables, forms validation, graphics layout canvases, and accessibility standards.",
+        difficulty: "Easy",
+        hours: "4 Hours",
+        topics: [
+            "Introduction", "Structure", "Elements", "Attributes", "Headings", "Paragraphs", "Links", "Images",
+            "Tables", "Lists", "Forms", "Input Types", "Semantic Tags", "Accessibility", "SVG & Canvas", "SEO Basics", "Projects"
+        ]
     },
-    {
-        type: "category",
-        title: "Computer Networks",
-        icon: "fas fa-network-wired",
-        children: ["OSI Model Layers", "TCP/IP Protocol", "IP Addressing", "DNS Resolution", "HTTP vs HTTPS", "Sockets programming"]
+    css: {
+        title: "CSS Studio",
+        emoji: "🎨 CSS",
+        desc: "Box model margins, borders, relative flexbox layout, grid alignment spacing, CSS variables, and keyframe animations.",
+        difficulty: "Easy",
+        hours: "8 Hours",
+        topics: [
+            "Introduction", "Selectors", "Box Model", "Flexbox Layout", "Grid Layout", "Positioning",
+            "Transitions", "Animations", "Media Queries", "Responsive Design", "Variables", "Specificity",
+            "TailwindCSS Basics", "Projects"
+        ]
     },
-    {
-        type: "category",
-        title: "Cloud",
-        icon: "fas fa-cloud",
-        children: ["Virtualization", "AWS Basics", "GCP Core Services", "Docker Containers", "Kubernetes Orchestration", "Serverless Architecture"]
+    sql: {
+        title: "SQL Studio",
+        emoji: "🗄 SQL",
+        desc: "Relational query statements, database selects, where conditional checks, indexing speed, transaction rollbacks, and views.",
+        difficulty: "Medium",
+        hours: "8 Hours",
+        topics: [
+            "Introduction", "SELECT & WHERE", "GROUP BY & HAVING", "ORDER BY Sorting", "INNER JOIN matching",
+            "LEFT/RIGHT JOIN", "Aggregate Functions", "Subqueries", "Indexing", "Transactions (ACID)",
+            "Stored Procedures", "Views", "Interview Questions", "Practice Problems"
+        ]
     },
-    {
-        type: "category",
-        title: "AI / ML",
-        icon: "fas fa-robot",
-        children: ["Supervised Learning", "Unsupervised Learning", "Neural Networks", "Deep Learning", "Transformers", "LLMs introduction"]
+    php: {
+        title: "PHP Studio",
+        emoji: "🐘",
+        desc: "Dynamic server-side web scripting, form variables, loops, superglobals, database connections, and session scopes.",
+        difficulty: "Medium",
+        hours: "8 Hours",
+        topics: [
+            "Introduction", "Syntax", "Variables", "Data Types", "Operators", "Conditional Statements",
+            "Loops", "Arrays", "Functions", "Superglobals", "Sessions", "OOP Basics", "MySQL Integration", "Practice Problems"
+        ]
     },
-    {
-        type: "category",
-        title: "Interview Preparation",
-        icon: "fas fa-briefcase",
-        children: ["Big-O Complexity analysis", "FAANG Preparation roadmap", "Mock Interviews checklist", "Behavioral questions prep", "System Design patterns"]
+    go: {
+        title: "Go Studio",
+        emoji: "🐹",
+        desc: "Concurrent channel programming, structs, pointer safety, interface behaviors, goroutines execution.",
+        difficulty: "Hard",
+        hours: "6 Hours",
+        topics: [
+            "Introduction", "Variables", "Structs", "Interfaces", "Goroutines", "Channels", "Pointers", "Packages", "Practice Problems"
+        ]
     },
-    {
-        type: "category",
-        title: "Bookmarks",
-        icon: "fas fa-star",
-        isBookmarks: true,
-        children: []
+    rust: {
+        title: "Rust Studio",
+        emoji: "🦀",
+        desc: "Strict memory ownership compilers, borrow checker safety lifetimes, structs, and matching loops.",
+        difficulty: "Hard",
+        hours: "12 Hours",
+        topics: [
+            "Introduction", "Variables", "Ownership", "Borrowing", "Lifetimes", "Structs", "Enums",
+            "Pattern Matching", "Error Handling", "Practice Problems"
+        ]
     },
-    {
-        type: "category",
-        title: "Saved Sessions",
-        icon: "fas fa-history",
-        isSessions: true,
-        children: []
+    kotlin: {
+        title: "Kotlin Studio",
+        emoji: "📱",
+        desc: "Android null safety types, basic constructors, lambdas functions, structures, and coroutine execution.",
+        difficulty: "Medium",
+        hours: "6 Hours",
+        topics: [
+            "Introduction", "Syntax", "Null Safety", "Classes", "Lambdas", "Coroutines", "Android Basics"
+        ]
+    },
+    swift: {
+        title: "Swift Studio",
+        emoji: "🍎",
+        desc: "iOS application options, protocols verification, structures, and closures.",
+        difficulty: "Medium",
+        hours: "6 Hours",
+        topics: [
+            "Introduction", "Variables", "Optionals", "Protocols", "Extensions", "Closures", "SwiftUI Basics"
+        ]
+    },
+    r: {
+        title: "R Studio",
+        emoji: "📊 R",
+        desc: "Statistical calculations vectors, data frames manipulation, vector operations, plotting graphics.",
+        difficulty: "Medium",
+        hours: "6 Hours",
+        topics: [
+            "Introduction", "Vectors", "Matrices", "Data Frames", "Vectorized Operations", "Plotting"
+        ]
+    },
+    structures: {
+        title: "Data Structures Studio",
+        emoji: "📦",
+        desc: "Detailed singly & doubly linked lists, circular lists, priority queue stacks, tree nodes traversal, BST, and graph mappings.",
+        difficulty: "Hard",
+        hours: "15 Hours",
+        topics: [
+            "Arrays", "Strings", "Linked Lists", "Circular Linked Lists", "Doubly Linked Lists",
+            "Stacks", "Queues", "Deque", "Priority Queue", "Hash Maps", "Hash Tables", "Hash Sets",
+            "Trees", "Binary Trees", "BST", "AVL Trees", "Red Black Trees", "Trie", "Heap",
+            "Segment Tree", "Fenwick Tree", "Graphs", "Disjoint Set", "Bloom Filter"
+        ]
+    },
+    algorithms: {
+        title: "Algorithms Studio",
+        emoji: "⚡",
+        desc: "Sorting (Bubble, Selection, Insertion, Merge, Quick), Linear & Binary Search, Sliding Window, DP optimization, DFS & BFS.",
+        difficulty: "Hard",
+        hours: "20 Hours",
+        topics: [
+            "Bubble Sort", "Selection Sort", "Insertion Sort", "Merge Sort", "Quick Sort",
+            "Heap Sort", "Counting Sort", "Bucket Sort", "Radix Sort", "Linear Search",
+            "Binary Search", "Sliding Window", "Two Pointers", "Greedy", "Dynamic Programming",
+            "Backtracking", "Divide and Conquer", "Bit Manipulation", "DFS", "BFS",
+            "Shortest Path", "Minimum Spanning Tree", "Topological Sort", "Tree Algorithms", "Graph Algorithms"
+        ]
+    },
+    patterns: {
+        title: "Pattern Studio",
+        emoji: "🎨",
+        desc: "Matrix index calculation star loop structures: pyramid, square, and triangle print statements.",
+        difficulty: "Easy",
+        hours: "4 Hours",
+        topics: [
+            "Square Pattern", "Right Angle Triangle", "Pyramid Pattern", "Diamond Pattern", "Inverted Pyramid", "Hollow Square"
+        ]
+    },
+    webdev: {
+        title: "Web Development Studio",
+        emoji: "🌐",
+        desc: "Fullstack request flow, DOM selections, flex spacing layout columns, and Javascript event processing loops.",
+        difficulty: "Medium",
+        hours: "10 Hours",
+        topics: [
+            "CSS Box Model", "DOM Tree Selection", "Flexbox Layout", "Grid Layout", "JS Event Loop",
+            "Promises & Async/Await", "HTTP Request Lifecycle"
+        ]
+    },
+    database: {
+        title: "Database Studio",
+        emoji: "🗄 Database",
+        desc: "Relational database tables, normalization keys form checks, indexes, ACID, and transactions.",
+        difficulty: "Medium",
+        hours: "6 Hours",
+        topics: [
+            "Relational Database", "NoSQL Basics", "Normalization Forms", "Indexing Strategies", "ACID Transactions", "Execution Plans"
+        ]
+    },
+    os: {
+        title: "Operating System Studio",
+        emoji: "💻 OS",
+        desc: "Process schedulers, virtual memory paging offsets, segmentation, thread boundaries, and CPU logic structures.",
+        difficulty: "Hard",
+        hours: "8 Hours",
+        topics: [
+            "Processes & Threads", "CPU Scheduling", "Deadlocks", "Memory Management", "Paging & Segmentation", "Virtual Memory"
+        ]
+    },
+    networks: {
+        title: "Computer Networks Studio",
+        emoji: "🌍",
+        desc: "OSI layer packets, TCP handshake connection sockets, DNS resolution IP lookups.",
+        difficulty: "Medium",
+        hours: "8 Hours",
+        topics: [
+            "OSI Model Layers", "TCP/IP Protocol", "IP Addressing", "DNS Resolution", "HTTP vs HTTPS", "Sockets programming"
+        ]
+    },
+    system_design: {
+        title: "System Design Studio",
+        emoji: "☁",
+        desc: "Load balancers routing, CDNs cache structures, sharding data distributions, and backend scalability rules.",
+        difficulty: "Hard",
+        hours: "10 Hours",
+        topics: [
+            "Scalability", "Load Balancing", "Caching & CDNs", "Sharding & Replication", "Microservices", "API Gateways"
+        ]
+    },
+    interview_prep: {
+        title: "Interview Preparation Studio",
+        emoji: "🎯",
+        desc: "Big-O complexities, FAANG recursion stack puzzles, mock system designs, and algorithmic trace check sheets.",
+        difficulty: "Hard",
+        hours: "15 Hours",
+        topics: [
+            "Big-O Complexity analysis", "FAANG Preparation roadmap", "Mock Interviews checklist", "Behavioral questions prep", "System Design patterns"
+        ]
     }
-];
+};
 
-// Topic Presets & Templates
+// Preset code mapping (normalized keys)
 const TOPIC_PRESETS = {
     "c_pointers": {
         code: `// C Pointer Dereferencing\nint val = 42;\nint *ptr = &val;\n*ptr = 99;`,
@@ -201,17 +304,17 @@ const TOPIC_PRESETS = {
         category: "languages",
         topic: "c"
     },
-    "cpp_oop": {
+    "cpp_oop_basics": {
         code: `// C++ Class Constructor\nclass Student {\n  public:\n    Student() { id = 101; }\n    int id;\n};\nStudent s;`,
         category: "languages",
         topic: "cpp"
     },
-    "java_gc": {
+    "java_garbage_collection": {
         code: `// Java Memory Reference\nString a = new String("Pravio");\na = null; // GC target`,
         category: "languages",
         topic: "java"
     },
-    "python_comprehension": {
+    "python_list_comprehension": {
         code: `# Python List Comprehension\nnums = [1, 2, 3, 4]\nsquares = [x * x for x in nums]\nprint(squares)`,
         category: "languages",
         topic: "python"
@@ -236,12 +339,12 @@ const TOPIC_PRESETS = {
         category: "webdev",
         topic: "boxmodel"
     },
-    "arrays_(insertion)": {
+    "arrays": {
         code: `// Array element shifting\nint arr[5] = {10, 20, 30};\nint pos = 1;\nint val = 99;\ninsertAt(arr, pos, val);`,
         category: "structures",
         topic: "array"
     },
-    "linked_lists_(singly)": {
+    "linked_lists": {
         code: `// Linked List insertion link splicing\nNode *head = [10 -> 20];\nNode *new_node = createNode(99);\nnew_node->next = head->next;\nhead->next = new_node;`,
         category: "structures",
         topic: "linked_list"
@@ -267,7 +370,7 @@ const VIZ_COMPLEXITIES = {
     boxmodel: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)", stable: "N/A", inplace: "N/A" }
 };
 
-// Hardcoded step data Catalog
+// Hardcoded visualization trace frames
 const VIZ_CATALOG = {
     languages: {
         topics: {
@@ -360,7 +463,7 @@ const VIZ_CATALOG = {
             select: {
                 steps: [
                     { line: 2, vars: { table: "Students", total_rows: 3, prev_val: "none", type: "string", scope: "database" }, mem: ["Input -> [Alice (CSE), Bob (ECE), Charlie (CSE)]"], explain: "Read all rows from the input table `Students`.", action: { type: "sql_table", rows: [{ name: "Alice", dept: "CSE", grade: "A" }, { name: "Bob", dept: "ECE", grade: "B" }, { name: "Charlie", dept: "CSE", grade: "A" }], active: [] } },
-                    { line: 3, vars: { table: "Students", row: "Alice", match: "true", prev_val: "none", type: "row", scope: "query" }, mem: ["Input -> [Alice (CSE)]", "Matches -> [Alice]"], explain: "Evaluate WHERE criteria on Bob: `ECE` = 'CSE' is False. Exclude row.", action: { type: "sql_table", rows: [{ name: "Alice", dept: "CSE", grade: "A", filter: "pass" }, { name: "Bob", dept: "ECE", grade: "B", filter: "fail" }, { name: "Charlie", dept: "CSE", grade: "A" }], active: [1] } },
+                    { line: 3, vars: { table: "Students", row: "Bob", match: "false", prev_val: "none", type: "row", scope: "query" }, mem: ["Input -> [Alice (CSE)]", "Matches -> [Alice]"], explain: "Evaluate WHERE criteria on Bob: `ECE` = 'CSE' is False. Exclude row.", action: { type: "sql_table", rows: [{ name: "Alice", dept: "CSE", grade: "A", filter: "pass" }, { name: "Bob", dept: "ECE", grade: "B", filter: "fail" }, { name: "Charlie", dept: "CSE", grade: "A" }], active: [1] } },
                     { line: 3, vars: { table: "Students", row: "Charlie", match: "true", prev_val: "none", type: "row", scope: "query" }, mem: ["Matches -> [Alice, Charlie]"], explain: "Evaluate WHERE criteria on Charlie: `CSE` = 'CSE' is True. Keep row.", action: { type: "sql_table", rows: [{ name: "Alice", dept: "CSE", grade: "A", filter: "pass" }, { name: "Bob", dept: "ECE", grade: "B", filter: "fail" }, { name: "Charlie", dept: "CSE", grade: "A", filter: "pass" }], active: [2] } },
                     { line: 1, vars: { result: "2 Rows Selected", prev_val: "none", type: "dataset", scope: "output" }, mem: ["Output -> [Alice (A), Charlie (A)]"], explain: "Apply SELECT projections. Print final result table.", action: { type: "sql_result", rows: [{ name: "Alice", grade: "A" }, { name: "Charlie", grade: "A" }] } }
                 ]
@@ -381,200 +484,177 @@ const VIZ_CATALOG = {
     }
 };
 
-// Curriculum Explorer dynamic builder
-function buildCurriculumTree() {
+// Dashboard rendering
+function renderStudioDashboard() {
+    const grid = document.getElementById('viz-studios-grid');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    
+    Object.keys(STUDIOS_CATALOG).forEach(key => {
+        const studio = STUDIOS_CATALOG[key];
+        const card = document.createElement('div');
+        
+        // Dynamic stats calculation
+        const isBookmarked = bookmarks.includes(studio.title);
+        const estTime = studio.hours;
+        
+        // Progress calculator
+        const completedCount = completedTopics.filter(t => studio.topics.map(x => x.toLowerCase()).includes(t)).length;
+        const progressPct = studio.topics.length > 0 ? Math.round((completedCount / studio.topics.length) * 100) : 0;
+
+        card.className = 'studio-card';
+        card.setAttribute('data-studio', key);
+        card.style.background = 'var(--bg-card)';
+        card.style.border = '1px solid var(--border-color)';
+        card.style.borderRadius = '14px';
+        card.style.padding = '20px';
+        card.style.display = 'flex';
+        card.style.flexDirection = 'column';
+        card.style.justifyContent = 'space-between';
+        card.style.transition = 'all 0.3s ease';
+        card.style.boxShadow = 'var(--shadow-sm)';
+        card.style.position = 'relative';
+        card.style.overflow = 'hidden';
+
+        card.innerHTML = `
+            <div>
+                <!-- Studio Emoji & Bookmark -->
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <div style="font-size:2rem; width:50px; height:50px; background:rgba(59,130,246,0.06); border-radius:12px; display:flex; align-items:center; justify-content:center;">
+                        ${studio.emoji}
+                    </div>
+                    <button onclick="toggleStudioBookmark('${key}', event)" style="background:transparent; border:none; cursor:pointer; color:var(--text-muted); font-size:1.15rem; outline:none;">
+                        <i class="${isBookmarked ? 'fas fa-bookmark' : 'far fa-bookmark'}" style="${isBookmarked ? 'color:var(--primary-color);' : ''}"></i>
+                    </button>
+                </div>
+                
+                <!-- Title & Meta -->
+                <h3 style="margin: 0 0 6px 0; font-size: 1.15rem; font-weight: 700; color: var(--text-body);">${studio.title}</h3>
+                <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
+                    <span style="font-size:10.5px; padding:2px 8px; border-radius:10px; font-weight:700; background:rgba(59,130,246,0.1); color:var(--primary-color);">${studio.difficulty}</span>
+                    <span style="font-size:11px; color:var(--text-muted);"><i class="far fa-clock"></i> ${estTime}</span>
+                </div>
+                
+                <p style="margin:0 0 16px 0; font-size:12.5px; line-height:1.45; color:var(--text-muted); height:55px; overflow:hidden; text-overflow:ellipsis;">${studio.desc}</p>
+            </div>
+            
+            <div>
+                <!-- Progress bar -->
+                <div style="margin-bottom: 12px;">
+                    <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:4px; font-weight:600; color:var(--text-body);">
+                        <span>Syllabus Progress</span>
+                        <span>${progressPct}%</span>
+                    </div>
+                    <div style="width:100%; height:6px; background:var(--border-color); border-radius:3px; overflow:hidden;">
+                        <div style="width:${progressPct}%; height:100%; background:linear-gradient(90deg, var(--primary-color) 0%, #3b82f6 100%); transition:width 0.3s ease;"></div>
+                    </div>
+                </div>
+                
+                <button onclick="enterStudioWorkspace('${key}')" class="btn btn-primary" style="width:100%; padding:10px; border-radius:8px; font-weight:700; font-size:12.5px; display:flex; justify-content:center; align-items:center; gap:6px;">
+                    Continue Learning <i class="fas fa-arrow-right" style="font-size:10px;"></i>
+                </button>
+            </div>
+        `;
+
+        grid.appendChild(card);
+    });
+}
+
+function filterStudioCards(query) {
+    const q = query.toLowerCase().trim();
+    const cards = document.querySelectorAll('.studio-card');
+    
+    cards.forEach(card => {
+        const studioKey = card.getAttribute('data-studio');
+        const studio = STUDIOS_CATALOG[studioKey];
+        if (studio.title.toLowerCase().includes(q) || studio.desc.toLowerCase().includes(q)) {
+            card.style.display = 'flex';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+// Workspace lifecycle triggers
+function enterStudioWorkspace(studioKey) {
+    const studio = STUDIOS_CATALOG[studioKey];
+    if (!studio) return;
+
+    activeStudio = studioKey;
+    
+    // Breadcrumbs labels updates
+    document.getElementById('breadcrumb-studio').innerText = studio.title;
+    document.getElementById('breadcrumb-topic').innerText = studio.topics[0];
+
+    // Transition panels visibility
+    document.getElementById('viz-dashboard-view').style.display = 'none';
+    document.getElementById('viz-workspace-view').style.display = 'flex';
+
+    // Populate Left curriculum trees specifically for this studio
+    buildStudioCurriculumTree(studioKey);
+
+    // Auto-select the first topic to start visualizing immediately
+    loadCurriculumTopic(studioKey, studioKey, studio.topics[0]);
+}
+
+function exitStudioToDashboard() {
+    activeStudio = null;
+    document.getElementById('viz-workspace-view').style.display = 'none';
+    document.getElementById('viz-dashboard-view').style.display = 'flex';
+    
+    // Playback safety resets
+    vizIsPlaying = false;
+    clearInterval(vizInterval);
+    updatePlayPauseButtonUI();
+
+    renderStudioDashboard();
+}
+
+function toggleStudioBookmark(studioKey, event) {
+    if (event) event.stopPropagation();
+    const studioName = STUDIOS_CATALOG[studioKey]?.title;
+    if (!studioName) return;
+
+    const idx = bookmarks.indexOf(studioName);
+    if (idx === -1) {
+        bookmarks.push(studioName);
+    } else {
+        bookmarks.splice(idx, 1);
+    }
+    saveVizSessions();
+    renderStudioDashboard();
+}
+
+function buildStudioCurriculumTree(studioKey) {
     const treeEl = document.getElementById('viz-curriculum-tree');
     if (!treeEl) return;
 
     treeEl.innerHTML = '';
+    const studio = STUDIOS_CATALOG[studioKey];
+    if (!studio) return;
 
-    CURRICULUM_TREE.forEach(cat => {
-        const catFolder = document.createElement('div');
-        catFolder.className = 'curr-folder';
-
-        // Header
-        const header = document.createElement('div');
-        header.className = 'folder-header';
-        header.style.display = 'flex';
-        header.style.alignItems = 'center';
-        header.style.gap = '8px';
-        header.style.padding = '6px 8px';
-        header.style.borderRadius = '6px';
-        header.style.cursor = 'pointer';
-        header.style.fontWeight = '700';
-        header.style.color = 'var(--text-body)';
-        header.onclick = () => toggleFolderNode(header);
-
-        header.innerHTML = `
-            <i class="fas fa-chevron-right folder-chevron" style="font-size:10px; transition:transform 0.2s;"></i>
-            <i class="${cat.icon}" style="color:var(--primary-color);"></i>
-            <span>${cat.title}</span>
-        `;
-        catFolder.appendChild(header);
-
-        // Contents
-        const contents = document.createElement('div');
-        contents.className = 'folder-contents';
-        contents.style.paddingLeft = '14px';
-        contents.style.display = 'none';
-
-        if (cat.isBookmarks) {
-            if (bookmarks.length === 0) {
-                contents.innerHTML = `<div style="padding:6px 12px; font-size:12px; color:var(--text-muted); font-style:italic;">No bookmarks yet.</div>`;
-            } else {
-                bookmarks.forEach(bm => {
-                    const item = document.createElement('div');
-                    item.className = 'tree-item';
-                    item.innerText = bm.toUpperCase();
-                    item.onclick = () => loadCurriculumTopic('bookmarks', 'bookmark', bm);
-                    contents.appendChild(item);
-                });
-            }
-        }
-        else if (cat.isSessions) {
-            if (vizSessions.length === 0) {
-                contents.innerHTML = `<div style="padding:6px 12px; font-size:12px; color:var(--text-muted); font-style:italic;">No saved sessions.</div>`;
-            } else {
-                vizSessions.forEach(sess => {
-                    const item = document.createElement('div');
-                    item.className = 'tree-item';
-                    item.style.display = 'flex';
-                    item.style.justifyContent = 'space-between';
-                    item.style.alignItems = 'center';
-                    item.innerHTML = `
-                        <span>${sess.name}</span>
-                        <i class="far fa-trash-alt" onclick="deleteVizSession('${sess.id}', event)" style="color:var(--text-muted); cursor:pointer;"></i>
-                    `;
-                    item.onclick = (e) => {
-                        if (e.target.tagName !== 'I') {
-                            selectVizSession(sess.id);
-                        }
-                    };
-                    contents.appendChild(item);
-                });
-            }
-        }
-        else {
-            cat.children.forEach(child => {
-                if (typeof child === 'string') {
-                    const item = document.createElement('div');
-                    item.className = 'tree-item';
-                    item.innerText = child;
-                    item.onclick = () => loadCurriculumTopic(cat.title.toLowerCase().replace(' ', '_'), 'general', child);
-                    contents.appendChild(item);
-                } else {
-                    // Separate programming languages list node
-                    const langFolder = document.createElement('div');
-                    langFolder.className = 'curr-folder';
-
-                    const langHeader = document.createElement('div');
-                    langHeader.className = 'folder-header';
-                    langHeader.style.display = 'flex';
-                    langHeader.style.alignItems = 'center';
-                    langHeader.style.gap = '6px';
-                    langHeader.style.padding = '4px 6px';
-                    langHeader.style.borderRadius = '6px';
-                    langHeader.style.cursor = 'pointer';
-                    langHeader.style.fontWeight = '600';
-                    langHeader.style.color = 'var(--text-body)';
-                    langHeader.onclick = () => toggleFolderNode(langHeader);
-
-                    langHeader.innerHTML = `
-                        <i class="fas fa-chevron-right folder-chevron" style="font-size:8px; transition:transform 0.2s;"></i>
-                        <span>${child.icon}</span>
-                    `;
-                    langFolder.appendChild(langHeader);
-
-                    const langContents = document.createElement('div');
-                    langContents.className = 'folder-contents';
-                    langContents.style.paddingLeft = '10px';
-                    langContents.style.display = 'none';
-
-                    child.children.forEach(topic => {
-                        const item = document.createElement('div');
-                        item.className = 'tree-item';
-                        item.innerText = topic;
-                        item.onclick = () => loadCurriculumTopic('languages', child.title.toLowerCase(), `${child.title} (${topic})`);
-                        langContents.appendChild(item);
-                    });
-
-                    langFolder.appendChild(langContents);
-                    contents.appendChild(langFolder);
-                }
-            });
-        }
-
-        catFolder.appendChild(contents);
-        treeEl.appendChild(catFolder);
+    // Direct items rendering (independent VS Code Project Explorer)
+    studio.topics.forEach(topic => {
+        const item = document.createElement('div');
+        item.className = 'tree-item';
+        item.innerText = topic;
+        item.style.padding = '6px 12px';
+        item.style.borderRadius = '4px';
+        item.style.cursor = 'pointer';
+        item.onclick = () => loadCurriculumTopic(studioKey, studioKey, topic);
+        treeEl.appendChild(item);
     });
-}
-
-function toggleFolderNode(headerElement) {
-    const contents = headerElement.nextElementSibling;
-    const chevron = headerElement.querySelector('.folder-chevron');
-    if (contents) {
-        if (contents.style.display === 'none' || contents.style.display === '') {
-            contents.style.display = 'block';
-            if (chevron) {
-                chevron.style.transform = 'rotate(90deg)';
-            }
-        } else {
-            contents.style.display = 'none';
-            if (chevron) {
-                chevron.style.transform = 'rotate(0deg)';
-            }
-        }
-    }
-}
-
-// Map custom syllabus keys to preset code vectors
-function getCodeForTopic(category, lang, name) {
-    const key = (lang + "_" + name.replace(/ /g, '_')).toLowerCase();
-    const cleanName = name.toLowerCase().replace(/ /g, '_');
-    
-    if (TOPIC_PRESETS[key]) return TOPIC_PRESETS[key];
-    if (TOPIC_PRESETS[cleanName]) return TOPIC_PRESETS[cleanName];
-
-    // Generic fallback code compiler generator for the complete syllabus list
-    let generatedCode = `// Pravio Trace: ${name}\n`;
-    let genericTopic = "general";
-    
-    if (category === "languages") {
-        if (lang === "python") {
-            generatedCode = `# Python Code: ${name}\ndef run_demo():\n    print("Executing ${name}")\nrun_demo()`;
-            genericTopic = "python";
-        } else if (lang === "java") {
-            generatedCode = `// Java Code: ${name}\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println("${name}");\n    }\n}`;
-            genericTopic = "java";
-        } else if (lang === "c") {
-            generatedCode = `// C Code: ${name}\n#include <stdio.h>\nint main() {\n    printf("${name}\\n");\n    return 0;\n}`;
-            genericTopic = "c";
-        } else if (lang === "cpp") {
-            generatedCode = `// C++ Code: ${name}\n#include <iostream>\nint main() {\n    std::cout << "${name}" << std::endl;\n    return 0;\n}`;
-            genericTopic = "cpp";
-        } else {
-            generatedCode = `// JavaScript Code: ${name}\nconst name = "${name}";\nconsole.log(name);`;
-            genericTopic = "javascript";
-        }
-    } else if (category === "patterns") {
-        generatedCode = `// Pattern Code: ${name}\nfor (int i = 0; i < 4; i++) {\n    for (int j = 0; j <= i; j++) {\n        print("*");\n    }\n    println();\n}`;
-        genericTopic = "bubble_sort";
-    } else {
-        generatedCode = `// Workspace Code: ${name}\nint val = 100;\nrun(${name});`;
-        genericTopic = "array";
-    }
-
-    return {
-        code: generatedCode,
-        category: category,
-        topic: genericTopic
-    };
 }
 
 function loadCurriculumTopic(category, lang, displayName) {
     const info = getCodeForTopic(category, lang, displayName);
     
-    // Create new session with matching template code
+    // Update breadcrumb topic labels
+    const breadcrumbTopic = document.getElementById('breadcrumb-topic');
+    if (breadcrumbTopic) breadcrumbTopic.innerText = displayName;
+
+    // Create session payloads
     const newSess = {
         id: "viz_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
         name: displayName,
@@ -590,9 +670,8 @@ function loadCurriculumTopic(category, lang, displayName) {
     
     saveVizSessions();
     loadActiveVizSession();
-    switchVizSubTab('walkthrough');
-    
-    // Highlight selected item in tree sidebar
+
+    // Focus selected item
     const items = document.querySelectorAll('.tree-item');
     items.forEach(i => {
         i.style.background = 'transparent';
@@ -601,16 +680,64 @@ function loadCurriculumTopic(category, lang, displayName) {
         i.style.borderLeftColor = 'transparent';
     });
     
-    const clicked = Array.from(items).find(i => i.innerText.trim() === displayName || i.innerText.includes(displayName));
+    const clicked = Array.from(items).find(i => i.innerText.trim() === displayName);
     if (clicked) {
         clicked.style.background = 'rgba(59, 130, 246, 0.08)';
         clicked.style.color = 'var(--primary-color)';
-        clicked.style.fontWeight = 'bold';
+        clicked.style.fontWeight = '700';
         clicked.style.borderLeftColor = 'var(--primary-color)';
     }
+}
 
-    // Refresh dynamically bookmarks list folder
-    buildCurriculumTree();
+// Map custom syllabus keys to preset code vectors
+function getCodeForTopic(category, lang, name) {
+    const key = (lang + "_" + name.replace(/ /g, '_')).toLowerCase();
+    const cleanName = name.toLowerCase().replace(/ /g, '_');
+    
+    if (TOPIC_PRESETS[key]) return TOPIC_PRESETS[key];
+    if (TOPIC_PRESETS[cleanName]) return TOPIC_PRESETS[cleanName];
+
+    // Generic fallback code compiler generator for full catalog coverage
+    let generatedCode = `// Pravio Trace: ${name}\n`;
+    let genericTopic = "general";
+    
+    if (lang === "python") {
+        generatedCode = `# Python Code: ${name}\ndef run_demo():\n    print("Executing ${name}")\nrun_demo()`;
+        genericTopic = "python";
+    } else if (lang === "java") {
+        generatedCode = `// Java Code: ${name}\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println("${name}");\n    }\n}`;
+        genericTopic = "java";
+    } else if (lang === "c") {
+        generatedCode = `// C Code: ${name}\n#include <stdio.h>\nint main() {\n    printf("${name}\\n");\n    return 0;\n}`;
+        genericTopic = "c";
+    } else if (lang === "cpp") {
+        generatedCode = `// C++ Code: ${name}\n#include <iostream>\nint main() {\n    std::cout << "${name}" << std::endl;\n    return 0;\n}`;
+        genericTopic = "cpp";
+    } else if (lang === "javascript" || lang === "typescript") {
+        generatedCode = `// JS Code: ${name}\nconst label = "${name}";\nconsole.log(label);`;
+        genericTopic = "javascript";
+    } else if (lang === "sql") {
+        generatedCode = `SELECT * FROM ${name.replace(/ /g, '_')};\n-- Performing query analysis`;
+        genericTopic = "select";
+    } else if (lang === "css" || lang === "html") {
+        generatedCode = `/* CSS Styles: ${name} */\n.container {\n  display: flex;\n  border: 1px solid;\n}`;
+        genericTopic = "boxmodel";
+    } else if (category === "patterns") {
+        generatedCode = `// Pattern Code: ${name}\nfor (int i = 0; i < 4; i++) {\n    for (int j = 0; j <= i; j++) {\n        print("*");\n    }\n    println();\n}`;
+        genericTopic = "bubble_sort";
+    } else if (category === "structures") {
+        generatedCode = `// DS Node operation: ${name}\nNode* target = search(${name});`;
+        genericTopic = "array";
+    } else {
+        generatedCode = `// Workspace Code: ${name}\nint val = 100;\nrun(${name});`;
+        genericTopic = "array";
+    }
+
+    return {
+        code: generatedCode,
+        category: category,
+        topic: genericTopic
+    };
 }
 
 function searchVizCurriculum(query) {
@@ -621,20 +748,6 @@ function searchVizCurriculum(query) {
         const text = item.innerText.toLowerCase();
         if (text.includes(q)) {
             item.style.display = 'block';
-            let parent = item.parentElement;
-            while (parent && parent.id !== 'viz-curriculum-tree') {
-                if (parent.classList.contains('folder-contents')) {
-                    parent.style.display = 'block';
-                    const folderHeader = parent.previousElementSibling;
-                    if (folderHeader) {
-                        const chevron = folderHeader.querySelector('.folder-chevron');
-                        if (chevron) {
-                            chevron.style.transform = 'rotate(90deg)';
-                        }
-                    }
-                }
-                parent = parent.parentElement;
-            }
         } else {
             item.style.display = 'none';
         }
@@ -646,92 +759,22 @@ function searchVizCurriculum(query) {
 // ==========================================
 function initVizSessions() {
     try {
-        vizSessions = JSON.parse(localStorage.getItem('pravio_visualizer_sessions') || '[]');
         bookmarks = JSON.parse(localStorage.getItem('pravio_visualizer_bookmarks') || '[]');
         completedTopics = JSON.parse(localStorage.getItem('pravio_visualizer_completed') || '[]');
     } catch(e) {
-        vizSessions = [];
         bookmarks = [];
         completedTopics = [];
     }
 
-    if (!Array.isArray(vizSessions)) vizSessions = [];
     if (!Array.isArray(bookmarks)) bookmarks = [];
     if (!Array.isArray(completedTopics)) completedTopics = [];
 
-    if (vizSessions.length === 0) {
-        const defaultTopic = {
-            id: "viz_default",
-            name: "Bubble Sort Walkthrough",
-            category: "algorithms",
-            topic: "bubble_sort",
-            code: VIZ_CATEGORIES.algorithms.topics.bubble_sort.code,
-            currentStep: 0,
-            createdAt: new Date().toISOString()
-        };
-        vizSessions.push(defaultTopic);
-        activeSession = defaultTopic;
-    } else {
-        activeSession = vizSessions[0];
-    }
-
-    buildCurriculumTree();
-    loadActiveVizSession();
-    updateDashboardUI();
+    renderStudioDashboard();
 }
 
 function saveVizSessions() {
-    localStorage.setItem('pravio_visualizer_sessions', JSON.stringify(vizSessions));
     localStorage.setItem('pravio_visualizer_bookmarks', JSON.stringify(bookmarks));
     localStorage.setItem('pravio_visualizer_completed', JSON.stringify(completedTopics));
-}
-
-function createVizSession(name, category = "algorithms", topic = "bubble_sort") {
-    const topicData = VIZ_CATEGORIES[category]?.topics[topic];
-    if (!topicData) return;
-
-    const newSess = {
-        id: "viz_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
-        name: name,
-        category: category,
-        topic: topic,
-        code: topicData.code,
-        currentStep: 0,
-        createdAt: new Date().toISOString()
-    };
-    vizSessions.unshift(newSess);
-    activeSession = newSess;
-    saveVizSessions();
-    loadActiveVizSession();
-}
-
-function selectVizSession(id) {
-    const found = vizSessions.find(s => s.id === id);
-    if (found) {
-        activeSession = found;
-        loadActiveVizSession();
-    }
-}
-
-function deleteVizSession(id, event) {
-    if (event) event.stopPropagation();
-    vizSessions = vizSessions.filter(s => s.id !== id);
-    if (activeSession && activeSession.id === id) {
-        activeSession = vizSessions[0] || null;
-    }
-    saveVizSessions();
-    buildCurriculumTree();
-    if (activeSession) {
-        loadActiveVizSession();
-    } else {
-        clearVizDisplay();
-    }
-}
-
-function clearVizDisplay() {
-    document.getElementById('active-viz-title').innerText = "No Active Session";
-    document.getElementById('viz-code-editor').value = "";
-    document.getElementById('viz-display-area').innerHTML = "<p style='color:var(--text-muted); padding:40px; text-align:center;'>Create or select a visualization session to get started.</p>";
 }
 
 function loadActiveVizSession() {
@@ -741,7 +784,6 @@ function loadActiveVizSession() {
     clearInterval(vizInterval);
     updatePlayPauseButtonUI();
 
-    document.getElementById('active-viz-title').innerText = activeSession.name;
     document.getElementById('viz-active-topic-name').innerText = activeSession.name;
 
     const editor = document.getElementById('viz-code-editor');
@@ -818,6 +860,7 @@ function renderCurrentStep() {
             // Blue for current executing line
             div.style.background = '#3b82f6';
             div.style.color = '#ffffff';
+            div.style.boxShadow = '0 0 8px rgba(59, 130, 246, 0.4)';
         } else if (line < step.line) {
             // Gray for executed lines
             div.style.background = '#e5e7eb';
@@ -861,22 +904,22 @@ function renderCurrentStep() {
         bar.style.width = `${pct}%`;
     }
 
-    // AI Tutor explanations & educational color coding
+    // AI Tutor explanations
     const explanation = document.getElementById('viz-explanation-panel');
     if (explanation) {
         const isAdvanced = aiTutorLevel === "advanced";
         let explanationText = step.explain;
         
-        let analogyText = "Analogy: Compiling instructions sequentially is like checking items off a checklist step-by-step.";
-        let optTip = "Optimization tip: Keep calculations minimal inside nested recursion frames.";
+        let analogyText = "Analogy: Sequential compiles resemble checking checklist items off step-by-step.";
+        let optTip = "Optimization: Avoid redundant lookups in loops.";
         
         if (learningMode === "beginner") {
-            analogyText = "Analogy: Imagine a chef preparing a recipe step-by-step. The variables store the active ingredients currently placed on the kitchen counter.";
+            analogyText = "Analogy: Imagine a recipe being cooked. active variable changes are local ingredients on the counter.";
         }
 
         explanation.innerHTML = `
             <div style="font-weight:600; color:var(--primary-color); margin-bottom:8px; display:flex; align-items:center; gap:6px;">
-                <i class="fas fa-graduation-cap"></i> AI Tutor (${isAdvanced ? 'Advanced Trace' : 'Beginner Friendly'}):
+                <i class="fas fa-graduation-cap"></i> AI Tutor (${isAdvanced ? 'Advanced' : 'Beginner'}):
             </div>
             <div style="font-size:0.9rem; line-height:1.5; color:var(--text-body); margin-bottom:8px;">${explanationText}</div>
             <div style="font-size:0.82rem; color:var(--text-muted); font-style:italic; margin-bottom:12px;">💡 ${analogyText}</div>
@@ -885,7 +928,7 @@ function renderCurrentStep() {
             <table style="width: 100%; border-collapse: collapse; font-size: 11.5px; margin-bottom: 12px;">
                 ${Object.keys(step.vars).map(vKey => {
                     if (vKey === "prev_val" || vKey === "type" || vKey === "scope") return "";
-                    // Orange variables color code
+                    // Orange variables color mapping
                     return `
                         <tr>
                             <td style="padding:4px 0; color:#f97316; font-family:monospace; font-weight:600;">${vKey}</td>
@@ -904,10 +947,11 @@ function renderCurrentStep() {
 
     renderInteractiveCanvas(step.action, activeSession.category, activeSession.topic);
 
-    if (stepIdx === totalSteps - 1 && !completedTopics.includes(activeSession.topic)) {
-        completedTopics.push(activeSession.topic);
+    // Save progress updates
+    const normalizedName = activeSession.name.toLowerCase();
+    if (stepIdx === totalSteps - 1 && !completedTopics.includes(normalizedName)) {
+        completedTopics.push(normalizedName);
         saveVizSessions();
-        updateDashboardUI();
     }
 }
 
@@ -954,14 +998,14 @@ function renderInteractiveCanvas(action, category, topic) {
                 if (action.highlight) {
                     block.style.background = '#ef4444'; // Red for swaps
                     block.style.transform = 'scale(1.15) translateY(-8px)';
-                    block.style.boxShadow = '0 10px 20px rgba(239, 68, 68, 0.2)';
+                    block.style.boxShadow = '0 10px 20px rgba(239, 68, 68, 0.3)';
                 } else {
-                    block.style.background = '#d97706'; // Gold/Yellow for comparison
+                    block.style.background = '#a855f7'; // Purple for comparisons
                     block.style.transform = 'scale(1.1) translateY(-4px)';
-                    block.style.boxShadow = '0 8px 16px rgba(217, 119, 6, 0.2)';
+                    block.style.boxShadow = '0 8px 16px rgba(168, 85, 247, 0.3)';
                 }
             } else if (action.complete) {
-                block.style.background = '#10b981'; // Green for completed step
+                block.style.background = '#10b981'; // Green for completed steps
                 block.style.borderColor = 'rgba(16, 185, 129, 0.4)';
             } else {
                 block.style.background = 'rgba(255, 255, 255, 0.05)';
@@ -1105,7 +1149,7 @@ function renderInteractiveCanvas(action, category, topic) {
         const tr = document.createElement('div');
         tr.style.fontSize = '1.4rem';
         tr.style.color = 'var(--text-body)';
-        tr.innerText = `?? Visualization Step Complete.`;
+        tr.innerText = `Visualizing operation trace...`;
         canvas.appendChild(tr);
     }
 }
@@ -1157,7 +1201,6 @@ function toggleVizPlayback() {
     } else {
         vizIsPlaying = true;
         practiceRuns++;
-        updateDashboardUI();
 
         vizInterval = setInterval(() => {
             if (activeSession.currentStep < totalSteps - 1) {
@@ -1278,9 +1321,7 @@ function jumpToStep(val) {
     renderCurrentStep();
 }
 
-// ==========================================
-// ADVANCED MODE HOOKS (LEARNING MODES, COMPARE, BOOKMARKS)
-// ==========================================
+// Learning options modifiers
 function setLearningMode(mode) {
     learningMode = mode;
     const speedSlider = document.getElementById('viz-speed-slider');
@@ -1304,137 +1345,6 @@ function setAITutorLevel(level) {
     renderCurrentStep();
 }
 
-function switchVizSubTab(tabId) {
-    const panels = document.querySelectorAll('.viz-subpanel');
-    panels.forEach(p => p.style.display = 'none');
-    
-    const active = document.getElementById(`panel-tab-${tabId}`);
-    if (active) {
-        active.style.display = tabId === 'walkthrough' ? 'flex' : 'block';
-    }
-
-    const tabs = document.querySelectorAll('.viz-sub-tab');
-    tabs.forEach(t => {
-        t.style.borderBottomColor = 'transparent';
-        t.style.color = 'var(--text-muted)';
-        t.style.fontWeight = '600';
-    });
-
-    const activeTab = document.getElementById(`subtab-${tabId}`);
-    if (activeTab) {
-        activeTab.style.borderBottomColor = 'var(--primary-color)';
-        activeTab.style.color = 'var(--primary-color)';
-        activeTab.style.fontWeight = '700';
-    }
-
-    if (tabId === 'compare') {
-        runComparison();
-    }
-    else if (tabId === 'challenge') {
-        generateNextQuizQuestion();
-    }
-    else if (tabId === 'dashboard') {
-        updateDashboardUI();
-    }
-}
-
-// Compare mode split pane simulator
-function runComparison() {
-    const selectA = document.getElementById('compare-select-a')?.value || 'bubble_sort';
-    const selectB = document.getElementById('compare-select-b')?.value || 'quick_sort';
-    
-    const canvasA = document.getElementById('compare-canvas-a');
-    const canvasB = document.getElementById('compare-canvas-b');
-    
-    if (canvasA) {
-        canvasA.innerHTML = `
-            <div style="text-align:center;">
-                <div style="display:flex; gap:6px; justify-content:center; margin-bottom:12px;">
-                    <div style="width:30px; height:60px; background:#d97706; border-radius:4px;"></div>
-                    <div style="width:30px; height:80px; background:#06b6d4; border-radius:4px;"></div>
-                    <div style="width:30px; height:40px; background:#ef4444; border-radius:4px;"></div>
-                </div>
-                <div style="font-size:12px; color:var(--text-muted);">Simulating ${selectA.toUpperCase()} operations...</div>
-            </div>
-        `;
-    }
-    
-    if (canvasB) {
-        canvasB.innerHTML = `
-            <div style="text-align:center;">
-                <div style="display:flex; gap:6px; justify-content:center; margin-bottom:12px;">
-                    <div style="width:30px; height:40px; background:#10b981; border-radius:4px;"></div>
-                    <div style="width:30px; height:60px; background:#10b981; border-radius:4px;"></div>
-                    <div style="width:30px; height:80px; background:#10b981; border-radius:4px;"></div>
-                </div>
-                <div style="font-size:12px; color:var(--text-muted);">Simulating ${selectB.toUpperCase()} operations...</div>
-            </div>
-        `;
-    }
-
-    const timeA = document.getElementById('comp-time-a');
-    const timeB = document.getElementById('comp-time-b');
-    const swapsA = document.getElementById('comp-swaps-a');
-    const swapsB = document.getElementById('comp-swaps-b');
-
-    if (timeA) timeA.innerText = selectA.includes('sort') ? "O(n²)" : "O(n)";
-    if (timeB) timeB.innerText = selectB.includes('sort') ? "O(n log n)" : "O(1)";
-    if (swapsA) swapsA.innerText = "15 Swaps";
-    if (swapsB) swapsB.innerText = "3 Swaps";
-}
-
-// Challenge Mode Quiz problems
-let currentQuizAnswer = "";
-function generateNextQuizQuestion() {
-    const topic = activeSession?.topic || "bubble_sort";
-    const container = document.getElementById('quiz-question-container');
-    const feedback = document.getElementById('quiz-feedback');
-    if (!container) return;
-
-    feedback.innerText = "";
-    
-    let questionHtml = "";
-    if (topic === "bubble_sort") {
-        questionHtml = `
-            <div style="font-weight:600; font-size:14px; margin-bottom:12px; color:var(--text-body);">Question: What triggers an early exit optimization in Bubble Sort?</div>
-            <label style="display:block; margin-bottom:8px; cursor:pointer;"><input type="radio" name="quiz-opt" value="a"> A) The array size becomes odd</label>
-            <label style="display:block; margin-bottom:8px; cursor:pointer;"><input type="radio" name="quiz-opt" value="b"> B) A full pass finishes with zero swaps made</label>
-            <label style="display:block; margin-bottom:8px; cursor:pointer;"><input type="radio" name="quiz-opt" value="c"> C) The pivot value matches low index boundary</label>
-        `;
-        currentQuizAnswer = "b";
-    } else {
-        questionHtml = `
-            <div style="font-weight:600; font-size:14px; margin-bottom:12px; color:var(--text-body);">Question: What is the primary space complexity of an in-place array operation?</div>
-            <label style="display:block; margin-bottom:8px; cursor:pointer;"><input type="radio" name="quiz-opt" value="a"> A) O(1)</label>
-            <label style="display:block; margin-bottom:8px; cursor:pointer;"><input type="radio" name="quiz-opt" value="b"> B) O(n)</label>
-            <label style="display:block; margin-bottom:8px; cursor:pointer;"><input type="radio" name="quiz-opt" value="c"> C) O(n log n)</label>
-        `;
-        currentQuizAnswer = "a";
-    }
-
-    container.innerHTML = questionHtml;
-}
-
-function checkQuizAnswer() {
-    const selected = document.querySelector('input[name="quiz-opt"]:checked')?.value;
-    const feedback = document.getElementById('quiz-feedback');
-    if (!feedback) return;
-
-    if (!selected) {
-        feedback.innerText = "⚠️ Please select an answer first.";
-        feedback.style.color = "var(--color-warning)";
-        return;
-    }
-
-    if (selected === currentQuizAnswer) {
-        feedback.innerText = "🎉 Correct! You've mastered this concept.";
-        feedback.style.color = "#10b981";
-    } else {
-        feedback.innerText = `❌ Incorrect. Hint: Read the Big-O Complexity card variables trace.`;
-        feedback.style.color = "#ef4444";
-    }
-}
-
 // Bookmarks toggle
 function toggleVizBookmark() {
     if (!activeSession) return;
@@ -1443,16 +1353,12 @@ function toggleVizBookmark() {
     
     if (idx === -1) {
         bookmarks.push(topic);
-        alert(`🔖 Bookmarked topic.`);
     } else {
         bookmarks.splice(idx, 1);
-        alert(`Unbookmarked topic.`);
     }
     
     saveVizSessions();
     updateBookmarkIconUI();
-    updateDashboardUI();
-    buildCurriculumTree();
 }
 
 function updateBookmarkIconUI() {
@@ -1463,50 +1369,6 @@ function updateBookmarkIconUI() {
     btn.innerHTML = isBookmarked 
         ? `<i class="fas fa-bookmark" style="color:var(--primary-color);"></i>` 
         : `<i class="far fa-bookmark"></i>`;
-}
-
-// Stats dashboard update
-function updateDashboardUI() {
-    const streakEl = document.getElementById('viz-sidebar-streak');
-    const badgeCountEl = document.getElementById('viz-sidebar-badge-count');
-    const completedStat = document.getElementById('viz-stat-completed');
-    const runsStat = document.getElementById('viz-stat-runs');
-    const bookmarksStat = document.getElementById('viz-stat-bookmarks');
-    const grid = document.getElementById('viz-badges-grid');
-
-    if (streakEl) streakEl.innerText = "3 Days";
-    if (badgeCountEl) badgeCountEl.innerText = `${completedTopics.length + 1}/10`;
-    if (completedStat) completedStat.innerText = `${completedTopics.length}/45`;
-    if (runsStat) runsStat.innerText = `${practiceRuns} Runs`;
-    if (bookmarksStat) bookmarksStat.innerText = `${bookmarks.length} Saved`;
-
-    if (grid) {
-        grid.innerHTML = '';
-        const badges = [
-            { name: "First Trace", desc: "First visualization run completed", icon: "🚀", unlocked: true },
-            { name: "Sorting Master", desc: "Complete Bubble Sort module", icon: "📊", unlocked: completedTopics.includes('bubble_sort') },
-            { name: "Structure Wizard", desc: "Complete Singly Linked List walkthrough", icon: "⛓️", unlocked: completedTopics.includes('linked_list') },
-            { name: "Practice Pro", desc: "Complete 10 runs in practice mode", icon: "👨‍💻", unlocked: practiceRuns >= 10 },
-            { name: "SQL Specialist", desc: "Complete SELECT table queries", icon: "🗄️", unlocked: completedTopics.includes('select') }
-        ];
-
-        badges.forEach(b => {
-            const card = document.createElement('div');
-            card.style.background = b.unlocked ? 'var(--bg-container)' : 'rgba(0,0,0,0.02)';
-            card.style.border = '1px solid var(--border-color)';
-            card.style.borderRadius = '8px';
-            card.style.padding = '12px';
-            card.style.textAlign = 'center';
-            card.style.opacity = b.unlocked ? '1' : '0.5';
-
-            card.innerHTML = `
-                <div style="font-size:24px; margin-bottom:4px;">${b.icon}</div>
-                <div style="font-size:11.5px; font-weight:700; color:var(--text-body);">${b.name}</div>
-                <div style="font-size:9.5px; color:var(--text-muted); margin-top:2px;">${b.desc}</div>
-            `;
-            grid.appendChild(card);
-        });
-    }
 }
 
 // Export trace logs and shareable state parameters
@@ -1523,12 +1385,12 @@ function exportVizReport(type) {
     };
 
     if (type === 'markdown') {
-        const markdown = `# Pravio Visualizer Report: ${reportData.name}\n\n* **Category**: ${reportData.category}\n* **Topic**: ${reportData.topic}\n* **Timestamp**: ${reportData.timestamp}\n\n## Code\n\`\`\`\n${reportData.code}\n\`\`\`\n\n*Report exported natively from Student Hub.*`;
+        const markdown = `# Pravio Learning Studio Report: ${reportData.name}\n\n* **Topic**: ${reportData.topic}\n* **Timestamp**: ${reportData.timestamp}\n\n## Code\n\`\`\`\n${reportData.code}\n\`\`\`\n\n*Report exported natively from Student Hub.*`;
         
         const blob = new Blob([markdown], { type: 'text/markdown' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = `pravio_visualizer_report_${activeSession.topic}.md`;
+        a.download = `pravio_studio_report_${activeSession.topic}.md`;
         a.click();
     }
 }
@@ -1548,89 +1410,9 @@ function shareVizSessionState() {
     const shareUrl = `${window.location.origin}${window.location.pathname}#visualizer?state=${encoded}`;
     
     navigator.clipboard.writeText(shareUrl).then(() => {
-        alert("🔗 Shareable link copied to clipboard! Open it in any browser tab to restore this exact visualization state.");
+        alert("🔗 Shareable studio link copied to clipboard! Open it in any browser tab to restore this exact visualizer state.");
     });
 }
-
-// Keyboard shortcuts binder
-document.addEventListener('keydown', (e) => {
-    const panel = document.getElementById('visualizer-panel');
-    if (!panel || !panel.classList.contains('active')) return;
-    
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-
-    if (e.code === 'Space') {
-        e.preventDefault();
-        toggleVizPlayback();
-    }
-    else if (e.code === 'ArrowRight') {
-        stepForwardViz();
-    }
-    else if (e.code === 'ArrowLeft') {
-        stepBackwardViz();
-    }
-    else if (e.key === 'r' || e.key === 'R') {
-        restartViz();
-    }
-    else if (e.key === '+') {
-        vizSpeed = Math.max(100, vizSpeed - 100);
-        setVizSpeed(vizSpeed);
-    }
-    else if (e.key === '-') {
-        vizSpeed = Math.min(1500, vizSpeed + 100);
-        setVizSpeed(vizSpeed);
-    }
-    else if (e.ctrlKey && e.key === 's') {
-        e.preventDefault();
-        saveVizSessions();
-        alert("Session saved successfully.");
-    }
-});
-
-// Category definitions Catalog presets
-const VIZ_CATEGORIES = {
-    languages: {
-        title: "Programming Languages",
-        icon: "code",
-        topics: {
-            python: { title: "Python (List Comprehension)", code: `# Python List Comprehension\nnums = [1, 2, 3, 4]\nsquares = [x * x for x in nums]\nprint(squares)` },
-            c: { title: "C (Pointers & Dereferencing)", code: `// C Pointer Dereferencing\nint val = 42;\nint *ptr = &val;\n*ptr = 99;` },
-            cpp: { title: "C++ (OOP Constructor)", code: `// C++ Class Constructor\nclass Student {\n  public:\n    Student() { id = 101; }\n    int id;\n};\nStudent s;` },
-            java: { title: "Java (Garbage Collection)", code: `// Java Memory Reference\nString a = new String("Pravio");\na = null; // GC target` },
-            javascript: { title: "JavaScript (Destructuring)", code: `// JS Object Destructuring\nconst user = { name: "Alice", age: 21 };\nconst { name, age } = user;` },
-            typescript: { title: "TypeScript (Interfaces)", code: `// TS Strict Type Safety\ninterface User { id: number; }\nconst u: User = { id: 456 };` }
-        }
-    },
-    structures: {
-        title: "Data Structures",
-        icon: "project-diagram",
-        topics: {
-            array: { title: "Arrays (Insertion)", code: `// Array element shifting\nint arr[5] = {10, 20, 30};\nint pos = 1;\nint val = 99;\ninsertAt(arr, pos, val);` },
-            linked_list: { title: "Linked Lists (Singly)", code: `// Linked List insertion link splicing\nNode *head = [10 -> 20];\nNode *new_node = createNode(99);\nnew_node->next = head->next;\nhead->next = new_node;` }
-        }
-    },
-    algorithms: {
-        title: "Algorithms",
-        icon: "random",
-        topics: {
-            bubble_sort: { title: "Bubble Sort", code: `// Bubble Sort element sorting\nfor (i = 0; i < len - 1; i++) {\n  for (j = 0; j < len - i - 1; j++) {\n    if (arr[j] > arr[j + 1]) {\n      swap(&arr[j], &arr[j + 1]);\n    }\n  }\n}` }
-        }
-    },
-    sql: {
-        title: "SQL Visualizer",
-        icon: "database",
-        topics: {
-            select: { title: "SELECT & WHERE", code: `SELECT name, grade\nFROM Students\nWHERE dept = 'CSE';` }
-        }
-    },
-    webdev: {
-        title: "Web Development",
-        icon: "globe",
-        topics: {
-            boxmodel: { title: "CSS Box Model", code: `.box {\n  width: 100px;\n  padding: 10px;\n  border: 5px solid;\n  margin: 15px;\n}` }
-        }
-    }
-};
 
 // Auto dynamic steps generator fallback
 function generateDynamicSteps(category, topic, code) {
@@ -1668,14 +1450,14 @@ function generateDynamicSteps(category, topic, code) {
             action: { type: "generic" }
         };
 
-        if (category === "languages") {
+        if (category === "languages" || category === "java" || category === "python" || category === "c" || category === "cpp" || category === "javascript" || category === "typescript") {
             step.vars.type = "compiler_node";
             step.vars.scope = "stack_frame";
             step.explain = `In language compiler runtime environment, parsing variables into call stack.`;
             step.action = { type: "mem_set", addr: `0x00${lineNum}`, val: trimmed.substring(0, 10) };
         }
         else if (category === "structures") {
-            if (topic === "array" || topic === "strings") {
+            if (topic === "array" || topic === "strings" || topic === "arrays") {
                 step.vars.type = "array_index";
                 step.explain = `Processing array/string elements at index ${idx}. Accessing memory address directly.`;
                 step.action = { type: "array_state", data: currentArray, active: [idx % 5] };
@@ -1695,7 +1477,7 @@ function generateDynamicSteps(category, topic, code) {
             step.explain = `SQL executor parses queries, filters row items by WHERE filters, and projects SELECT columns.`;
             step.action = { type: "sql_table", rows: currentSQLRows, active: [idx % 3] };
         }
-        else if (category === "webdev") {
+        else if (category === "webdev" || category === "css") {
             step.vars.type = "dom_node";
             step.explain = `Browser layouts flex direction alignments, adjusts grid spacing gaps, or triggers async events.`;
             step.action = { type: "box_model", layers: { content: "120px", padding: `${idx * 4}px`, border: "2px", margin: "10px" } };
@@ -1719,7 +1501,7 @@ function generateDynamicSteps(category, topic, code) {
 
 // Start listener hooks
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('viz-curriculum-search')) {
+    if (document.getElementById('viz-studio-search')) {
         initVizSessions();
         document.getElementById('viz-step-slider')?.addEventListener('input', (e) => {
             jumpToStep(e.target.value);

@@ -4074,5 +4074,26 @@ a, button, .dash-stat-card, .btn, input, select {
     border-left-color: var(--primary-color);
 }
 
+/* Premium Learning Studios card styles */
+.studio-card {
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.studio-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.12) !important;
+}
+
+.studio-card button {
+    transition: all 0.2s ease;
+}
+
+.studio-card:hover button {
+    background: var(--primary-dark) !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+
 
 
