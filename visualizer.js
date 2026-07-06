@@ -50,7 +50,7 @@ const LEARNING_STUDIOS = [
     { id: "linux", title: "Linux Studio", desc: "Master filesystem navigations, bash shell scripting, and server configurations.", category: "cs", lessons: 10, time: "5 hrs", diff: "Intermediate", icon: "🐧 Linux", objectives: ["Filesystem paths", "Permissions scopes", "Bash scripts run"] }
 ];
 
-// Structured syllabus with specific, custom topic keys
+// Structured syllabus
 const STUDIO_SYLLABUS = {
     python: [
         {
@@ -133,10 +133,18 @@ const STUDIO_SYLLABUS = {
                 { name: "SQL Joins", key: "sql_joins", operations: ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL JOIN", "UNION"] }
             ]
         }
+    ],
+    data_structures: [
+        {
+            module: "Module 1: Trees",
+            lessons: [
+                { name: "Binary Search Tree", key: "dsa_trees", operations: ["Node insertion", "BFS Traversal", "DFS Traversal"] }
+            ]
+        }
     ]
 };
 
-// Complete sub-lessons database
+// Complete sub-lessons database with detailed custom traces
 const SUB_LESSONS_CATALOG = {
     "python_variables": [
         {
@@ -165,18 +173,6 @@ const SUB_LESSONS_CATALOG = {
             practice: "Initialize tuple parameters.",
             steps: [
                 { line: 2, vars: { tup: "(10, 'Pravio', 3.14)" }, mem: ["tup (0x9000) -> 10", "tup (0x9008) -> 'Pravio'", "tup (0x9010) -> 3.14"], explain: "Declare and allocate a tuple container inside heap memory containing integer, string, and float items.", action: { type: "init", data: [10, "Pravio", 3.14] } }
-            ]
-        },
-        {
-            name: "Tuple Creation",
-            desc: "Create new tuples in python via comma separation syntax.",
-            code: `tup = (1, 2, 3)\nprint(tup)`,
-            complexity: { best: "Not Applicable", avg: "Not Applicable", worst: "Not Applicable", space: "Not Applicable" },
-            tip: "Parenthesis are optional but improve code readability.",
-            mistake: "Omitting trailing comma when declaring single-element tuples.",
-            practice: "Create single-element tuple.",
-            steps: [
-                { line: 1, vars: { tup: "(1, 2, 3)" }, mem: ["tup -> [1, 2, 3]"], explain: "Initialize tuple with 3 elements.", action: { type: "array_state", data: [1, 2, 3], active: [] } }
             ]
         },
         {
@@ -218,137 +214,21 @@ const SUB_LESSONS_CATALOG = {
                 { line: 1, vars: { tup: "(100, 200)" }, mem: ["tup -> (100, 200)"], explain: "Initialize tuple with values 100 and 200.", action: { type: "array_state", data: [100, 200], active: [] } },
                 { line: 2, vars: { x: 100, y: 200, tup: "(100, 200)" }, mem: ["x (stack) -> 100", "y (stack) -> 200"], explain: "Unpack elements into variables x and y.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
             ]
-        },
-        {
-            name: "Tuple Concatenation",
-            desc: "Merge two separate tuples together to form an entirely new tuple.",
-            code: `t1 = (1, 2)\nt2 = (3, 4)\nt3 = t1 + t2`,
-            complexity: { best: "O(n+m)", avg: "O(n+m)", worst: "O(n+m)", space: "O(n+m)" },
-            tip: "Use concatenation to construct parameter arrays.",
-            mistake: "Adding lists to tuples throws a TypeError.",
-            practice: "Merge user profiles.",
-            steps: [
-                { line: 1, vars: { t1: "(1, 2)" }, mem: ["t1 -> (1, 2)"], explain: "Initialize tuple t1.", action: { type: "array_state", data: [1, 2], active: [] } },
-                { line: 3, vars: { t1: "(1, 2)", t2: "(3, 4)", t3: "(1, 2, 3, 4)" }, mem: ["t3 -> (1, 2, 3, 4)"], explain: "Merge t1 and t2. Result is stored in a new memory address allocation block.", action: { type: "array_state", data: [1, 2, 3, 4], active: [0, 1, 2, 3], complete: true } }
-            ]
         }
     ],
-    "python_lists": [
+    "dsa_trees": [
         {
-            name: "append()",
-            desc: "Add a single element to the end of a python List.",
-            code: `lst = [10, 20]\nlst.append(30)`,
-            complexity: { best: "O(1) amortized", avg: "O(1)", worst: "O(1)", space: "O(1)" },
-            tip: "Ideal for queuing buffer items.",
-            mistake: "Appending lists inserts whole sublists.",
-            practice: "Append task list identifiers.",
-            steps: [
-                { line: 1, vars: { lst: "[10, 20]" }, mem: ["lst -> [10, 20]"], explain: "Initialize list with 2 elements.", action: { type: "array_state", data: [10, 20, 0], active: [] } },
-                { line: 2, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Append 30 to the end of the list array.", action: { type: "array_state", data: [10, 20, 30], active: [2], complete: true } }
-            ]
-        },
-        {
-            name: "pop()",
-            desc: "Remove and return the last element from the list.",
-            code: `lst = [10, 20, 30]\nval = lst.pop()`,
-            complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)" },
-            tip: "Pop matches stack LIFO behaviors.",
-            mistake: "Popping from an empty list throws IndexError.",
-            practice: "Pop active session stack.",
-            steps: [
-                { line: 1, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Initialize list with 3 elements.", action: { type: "array_state", data: [10, 20, 30], active: [] } },
-                { line: 2, vars: { lst: "[10, 20]", val: 30 }, mem: ["lst -> [10, 20]", "val -> 30"], explain: "Remove and pop element at the last index (30).", action: { type: "array_state", data: [10, 20], active: [1], highlight: true } }
-            ]
-        }
-    ],
-    "python_strings": [
-        {
-            name: "upper()",
-            desc: "Convert all characters inside string array to uppercase.",
-            code: `s = "hi"\nres = s.upper()`,
+            name: "BFS Traversal",
+            desc: "Breadth-First Search: Visit nodes level-by-level using a FIFO Queue.",
+            code: `// BST BFS level traversal\nQueue q = new Queue();\nq.enqueue(50); // root`,
             complexity: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)" },
-            tip: "Strings are immutable, so upper() returns a new string.",
-            mistake: "Modifying variables in place expecting updates.",
-            practice: "Capitalize log level output.",
+            tip: "Ideal for finding shortest path in unweighted graphs.",
+            mistake: "Forgetting to mark nodes visited, resulting in infinite loops.",
+            practice: "Trace BFS on a tree of depth 3.",
             steps: [
-                { line: 1, vars: { s: "'hi'" }, mem: ["s -> 'hi'"], explain: "Initialize string.", action: { type: "array_state", data: ["h", "i"], active: [] } },
-                { line: 2, vars: { s: "'hi'", res: "'HI'" }, mem: ["res -> 'HI'"], explain: "Iterate through characters and convert them to uppercase.", action: { type: "array_state", data: ["H", "I"], active: [0, 1], complete: true } }
-            ]
-        }
-    ],
-    "c_variables": [
-        {
-            name: "Introduction",
-            desc: "Learn C static variable declarations and type specs.",
-            code: `int main() {\n    int age = 20;\n    float salary = 35000.5;\n    char grade = 'A';\n    return 0;\n}`,
-            complexity: { best: "Not Applicable", avg: "Not Applicable", worst: "Not Applicable", space: "Not Applicable" },
-            tip: "Static types are verified at compile time.",
-            mistake: "Assigning values of mismatched types without explicit casts.",
-            practice: "Declare an integer counter.",
-            steps: [
-                { line: 2, vars: { age: 20 }, mem: ["age (0x7ffe) -> 20"], explain: "Declare integer age and allocate stack storage.", action: { type: "var_alloc", name: "age", val: 20, addr: "0x7ffe", dtype: "int" } },
-                { line: 3, vars: { age: 20, salary: 35000.5 }, mem: ["age (0x7ffe) -> 20", "salary (0x7ffa) -> 35000.5"], explain: "Declare float salary and allocate stack storage.", action: { type: "var_alloc", name: "salary", val: 35000.5, addr: "0x7ffa", dtype: "float" } },
-                { line: 4, vars: { age: 20, salary: 35000.5, grade: "'A'" }, mem: ["age -> 20", "salary -> 35000.5", "grade -> 'A'"], explain: "Declare character grade and allocate stack storage.", action: { type: "var_alloc", name: "grade", val: "'A'", addr: "0x7ff9", dtype: "char" } }
-            ]
-        }
-    ],
-    "c_pointers": [
-        {
-            name: "Dereferencing",
-            desc: "Modify target memory blocks by dereferencing pointers via `*ptr`.",
-            code: `int val = 42;\nint *ptr = &val;\n*ptr = 99;`,
-            complexity: { best: "Not Applicable", avg: "Not Applicable", worst: "Not Applicable", space: "Not Applicable" },
-            tip: "Ensure pointers are null-checked before dereferencing.",
-            mistake: "Dereferencing unassigned garbage address blocks.",
-            practice: "Dereference target variables.",
-            steps: [
-                { line: 1, vars: { val: 42 }, mem: ["val (0x7ffe) -> 42"], explain: "Allocate integer variable val in stack with value 42.", action: { type: "mem_set", addr: "0x7ffe", val: 42 } },
-                { line: 2, vars: { val: 42, ptr: "0x7ffe" }, mem: ["val (0x7ffe) -> 42", "ptr -> 0x7ffe"], explain: "Assign address of val (0x7ffe) to pointer ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
-                { line: 3, vars: { val: 99, ptr: "0x7ffe" }, mem: ["val (0x7ffe) -> 99"], explain: "Dereference ptr: set val to 99.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
-            ]
-        }
-    ],
-    "java_arrays": [
-        {
-            name: "Declaration",
-            desc: "Declare static sized contiguous arrays in Java.",
-            code: `int[] arr = new int[3];\narr[0] = 5;\narr[1] = 10;`,
-            complexity: { best: "Not Applicable", avg: "Not Applicable", worst: "Not Applicable", space: "Not Applicable" },
-            tip: "Java arrays indices are 0-based.",
-            mistake: "IndexOutOfBoundsException when checking indices >= size.",
-            practice: "Initialize array of capacity 5.",
-            steps: [
-                { line: 1, vars: { arr: "[0, 0, 0]" }, mem: ["arr (0x3000) -> [0, 0, 0]"], explain: "Initialize array of size 3. Defaults to 0s.", action: { type: "array_state", data: [0, 0, 0], active: [] } },
-                { line: 2, vars: { arr: "[5, 0, 0]" }, mem: ["arr (0x3000) -> [5, 0, 0]"], explain: "Assign index 0 element to 5.", action: { type: "array_state", data: [5, 0, 0], active: [0], complete: true } }
-            ]
-        }
-    ],
-    "javascript_arrays": [
-        {
-            name: "push",
-            desc: "JS array element insertions operations.",
-            code: `let arr = [1, 2];\narr.push(3);`,
-            complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)" },
-            tip: "Push modifies arrays in place and returns length.",
-            mistake: "Expecting copies to be generated on push.",
-            practice: "Push items into JS array.",
-            steps: [
-                { line: 1, vars: { arr: "[1, 2]" }, mem: ["arr -> [1, 2]"], explain: "Initialize array container.", action: { type: "array_state", data: [1, 2], active: [] } },
-                { line: 2, vars: { arr: "[1, 2, 3]" }, mem: ["arr -> [1, 2, 3]"], explain: "Push element to the end of list.", action: { type: "array_state", data: [1, 2, 3], active: [2], complete: true } }
-            ]
-        }
-    ],
-    "sql_clauses": [
-        {
-            name: "SELECT",
-            desc: "Retrieve column metrics.",
-            code: `SELECT name, grade\nFROM Students;`,
-            complexity: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)" },
-            tip: "Specify column titles explicitly.",
-            mistake: "SELECT * creates large data overhead.",
-            practice: "Retrieve name column.",
-            steps: [
-                { line: 1, vars: { match: 3 }, mem: ["Students selected"], explain: "Select matching records.", action: { type: "sql_table", rows: [{ name: "Alice", grade: "A" }, { name: "Bob", grade: "B" }], active: [0, 1] } }
+                { line: 1, vars: { queue: "[]", root: 50 }, mem: ["Queue allocated"], explain: "Initialize an empty queue for tracking active nodes.", action: { type: "tree_bfs", visited: [], active: 50, queue: [] } },
+                { line: 2, vars: { queue: "[50]", root: 50 }, mem: ["Queue -> 50"], explain: "Enqueue root node (50) to start breadth-first expansion.", action: { type: "tree_bfs", visited: [], active: 50, queue: [50] } },
+                { line: 2, vars: { queue: "[30, 70]", visited: "[50]" }, mem: ["Visited -> 50"], explain: "De-queue node 50, mark as visited, and enqueue children nodes (30) and (70).", action: { type: "tree_bfs", visited: [50], active: 30, queue: [30, 70] } }
             ]
         }
     ]
@@ -769,7 +649,7 @@ function renderCurrentStep() {
     const lowerName = activeSession.name.toLowerCase();
 
     // Check if custom code interpreter parser should evaluate the custom editor code
-    if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("push(")) {
+    if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("Queue q")) {
         steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
     } else {
         // Preset operations matching
@@ -810,6 +690,9 @@ function renderCurrentStep() {
                 { line: 2, vars: { ptr: "0x7ffe" }, mem: ["ptr -> 0x7ffe"], explain: "Assign address of val to pointer variable ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
                 { line: 3, vars: { val: 99 }, mem: ["val (0x7ffe) -> 99"], explain: "Animate dereference: change value at address stored in pointer.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
             ];
+        } else if (activeSession.topic.toLowerCase().includes("tree") || activeSession.topic.toLowerCase().includes("dsa_trees")) {
+            // High-fidelity Tree operations simulation
+            steps = SUB_LESSONS_CATALOG.dsa_trees[0].steps;
         } else {
             steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
         }
@@ -1036,6 +919,67 @@ function renderInteractiveCanvas(action) {
         `;
         canvas.appendChild(wrapper);
     }
+    else if (action.type === "tree_bfs") {
+        // High-fidelity SVG Tree Renderer matching AlgoMaster design illustrations
+        const wrapper = document.createElement('div');
+        wrapper.style.width = '100%';
+        wrapper.style.height = '100%';
+        wrapper.style.display = 'flex';
+        wrapper.style.flexDirection = 'column';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.justifyContent = 'center';
+
+        const svg = `
+            <svg viewBox="0 0 400 240" width="100%" height="220" style="max-width:350px;">
+                <!-- Links -->
+                <line x1="200" y1="40" x2="100" y2="100" stroke="#94a3b8" stroke-width="2.5" />
+                <line x1="200" y1="40" x2="300" y2="100" stroke="#94a3b8" stroke-width="2.5" />
+                <line x1="100" y1="100" x2="50" y2="160" stroke="#94a3b8" stroke-width="2" />
+                <line x1="100" y1="100" x2="150" y2="160" stroke="#94a3b8" stroke-width="2" />
+                <line x1="300" y1="100" x2="250" y2="160" stroke="#94a3b8" stroke-width="2" />
+                <line x1="300" y1="100" x2="350" y2="160" stroke="#94a3b8" stroke-width="2" />
+
+                <!-- Nodes -->
+                <!-- Root 50 -->
+                <circle cx="200" cy="40" r="18" fill="${action.visited.includes(50) ? '#10b981' : (action.active === 50 ? '#3b82f6' : 'var(--bg-container)')}" stroke="${action.active === 50 ? '#2563eb' : '#64748b'}" stroke-width="3" />
+                <text x="200" y="44" font-size="12" font-weight="bold" text-anchor="middle" fill="${action.visited.includes(50) || action.active === 50 ? '#ffffff' : 'var(--text-body)'}">50</text>
+
+                <!-- Left 30 -->
+                <circle cx="100" cy="100" r="18" fill="${action.visited.includes(30) ? '#10b981' : (action.active === 30 ? '#3b82f6' : 'var(--bg-container)')}" stroke="${action.active === 30 ? '#2563eb' : '#64748b'}" stroke-width="2.5" />
+                <text x="100" y="104" font-size="12" font-weight="bold" text-anchor="middle" fill="${action.visited.includes(30) || action.active === 30 ? '#ffffff' : 'var(--text-body)'}">30</text>
+
+                <!-- Right 70 -->
+                <circle cx="300" cy="100" r="18" fill="${action.visited.includes(70) ? '#10b981' : (action.active === 70 ? '#3b82f6' : 'var(--bg-container)')}" stroke="${action.active === 70 ? '#2563eb' : '#64748b'}" stroke-width="2.5" />
+                <text x="300" y="104" font-size="12" font-weight="bold" text-anchor="middle" fill="${action.visited.includes(70) || action.active === 70 ? '#ffffff' : 'var(--text-body)'}">70</text>
+
+                <!-- Leaf 20 -->
+                <circle cx="50" cy="160" r="15" fill="var(--bg-container)" stroke="#64748b" stroke-width="2" />
+                <text x="50" y="164" font-size="10" font-weight="bold" text-anchor="middle" fill="var(--text-body)">20</text>
+
+                <!-- Leaf 40 -->
+                <circle cx="150" cy="160" r="15" fill="var(--bg-container)" stroke="#64748b" stroke-width="2" />
+                <text x="150" y="164" font-size="10" font-weight="bold" text-anchor="middle" fill="var(--text-body)">40</text>
+
+                <!-- Leaf 60 -->
+                <circle cx="250" cy="160" r="15" fill="var(--bg-container)" stroke="#64748b" stroke-width="2" />
+                <text x="250" y="164" font-size="10" font-weight="bold" text-anchor="middle" fill="var(--text-body)">60</text>
+
+                <!-- Leaf 80 -->
+                <circle cx="350" cy="160" r="15" fill="var(--bg-container)" stroke="#64748b" stroke-width="2" />
+                <text x="350" y="164" font-size="10" font-weight="bold" text-anchor="middle" fill="var(--text-body)">80</text>
+            </svg>
+        `;
+        
+        wrapper.innerHTML = `
+            ${svg}
+            <div style="margin-top:10px; display:flex; gap:12px; font-size:11px;">
+                <div><span style="display:inline-block; width:12px; height:12px; background:#3b82f6; border-radius:50%; vertical-align:middle; margin-right:4px;"></span>Active Queue Head</div>
+                <div><span style="display:inline-block; width:12px; height:12px; background:#10b981; border-radius:50%; vertical-align:middle; margin-right:4px;"></span>Visited Node</div>
+            </div>
+            <div style="font-family:monospace; font-size:11px; margin-top:6px; color:var(--text-muted);">Queue elements buffer: [ ${action.queue.join(', ')} ]</div>
+        `;
+        canvas.appendChild(wrapper);
+    }
 }
 
 // Playback Controls
@@ -1090,6 +1034,8 @@ function toggleVizPlayback() {
             { line: 2, vars: { ptr: "0x7ffe" }, mem: ["ptr -> 0x7ffe"], explain: "Assign address of val to pointer variable ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
             { line: 3, vars: { val: 99 }, mem: ["val (0x7ffe) -> 99"], explain: "Animate dereference: change value at address stored in pointer.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
         ];
+    } else if (activeSession.topic.toLowerCase().includes("tree") || activeSession.topic.toLowerCase().includes("dsa_trees")) {
+        steps = SUB_LESSONS_CATALOG.dsa_trees[0].steps;
     } else {
         steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
     }
@@ -1121,7 +1067,7 @@ function stepForwardViz() {
     let steps = [];
     const lowerName = activeSession.name.toLowerCase();
     
-    if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("push(")) {
+    if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("Queue q")) {
         steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
     } else {
         if (lowerName.includes("slicing")) {
@@ -1138,7 +1084,7 @@ function stepForwardViz() {
         } else if (lowerName.includes("unpacking")) {
             steps = [
                 { line: 1, vars: { tup: "(100, 200)" }, mem: ["tup -> (100, 200)"], explain: "Initialize tuple to unpack.", action: { type: "array_state", data: [100, 200], active: [] } },
-                { line: 2, vars: { x: 100, y: 200 }, mem: ["x -> 100", "y -> 200"], explain: "Animate tuple values separating/unpacking into independent local stack variables.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
+                { line: 2, vars: { x: 100, y: 200, tup: "(100, 200)" }, mem: ["x (stack) -> 100", "y (stack) -> 200"], explain: "Animate tuple values separating/unpacking into independent local stack variables.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
             ];
         } else if (lowerName.includes("concatenation")) {
             steps = [
@@ -1161,6 +1107,8 @@ function stepForwardViz() {
                 { line: 2, vars: { ptr: "0x7ffe" }, mem: ["ptr -> 0x7ffe"], explain: "Assign address of val to pointer variable ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
                 { line: 3, vars: { val: 99 }, mem: ["val (0x7ffe) -> 99"], explain: "Animate dereference: change value at address stored in pointer.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
             ];
+        } else if (activeSession.topic.toLowerCase().includes("tree") || activeSession.topic.toLowerCase().includes("dsa_trees")) {
+            steps = SUB_LESSONS_CATALOG.dsa_trees[0].steps;
         } else {
             steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
         }
@@ -1197,7 +1145,7 @@ function setVizSpeed(val) {
         let steps = [];
         const lowerName = activeSession.name.toLowerCase();
         
-        if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("push(")) {
+        if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("Queue q")) {
             steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
         } else {
             if (lowerName.includes("slicing")) {
@@ -1237,6 +1185,8 @@ function setVizSpeed(val) {
                     { line: 2, vars: { ptr: "0x7ffe" }, mem: ["ptr -> 0x7ffe"], explain: "Assign address of val to pointer variable ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
                     { line: 3, vars: { val: 99 }, mem: ["val (0x7ffe) -> 99"], explain: "Animate dereference: change value at address stored in pointer.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
                 ];
+            } else if (activeSession.topic.toLowerCase().includes("tree") || activeSession.topic.toLowerCase().includes("dsa_trees")) {
+                steps = SUB_LESSONS_CATALOG.dsa_trees[0].steps;
             } else {
                 steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
             }
