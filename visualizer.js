@@ -14,52 +14,245 @@ let bookmarks = [];
 let completedTopics = [];
 let practiceRuns = 5;
 
-// Category definition catalog with full syllabus expansion
-const VIZ_CATEGORIES = {
-    languages: {
+// Curriculum Syllabus Catalog
+const CURRICULUM_TREE = [
+    {
+        type: "category",
         title: "Programming Languages",
-        icon: "code",
-        topics: {
-            python: { title: "Python (List Comprehension)", code: `# Python List Comprehension\nnums = [1, 2, 3, 4]\nsquares = [x * x for x in nums]\nprint(squares)` },
-            c: { title: "C (Pointers & Dereferencing)", code: `// C Pointer Dereferencing\nint val = 42;\nint *ptr = &val;\n*ptr = 99;` },
-            cpp: { title: "C++ (OOP Constructor)", code: `// C++ Class Constructor\nclass Student {\n  public:\n    Student() { id = 101; }\n    int id;\n};\nStudent s;` },
-            java: { title: "Java (Garbage Collection)", code: `// Java Memory Reference\nString a = new String("Pravio");\na = null; // GC target` },
-            javascript: { title: "JavaScript (Destructuring)", code: `// JS Object Destructuring\nconst user = { name: "Alice", age: 21 };\nconst { name, age } = user;` },
-            typescript: { title: "TypeScript (Interfaces)", code: `// TS Strict Type Safety\ninterface User { id: number; }\nconst u: User = { id: 456 };` }
-        }
+        icon: "fas fa-code",
+        children: [
+            {
+                type: "language",
+                title: "C",
+                icon: "💻 C",
+                children: ["Variables", "Data Types", "Operators", "Input Output", "Conditional Statements", "Loops", "Functions", "Arrays", "Strings", "Pointers", "Structures", "Unions", "File Handling", "Memory Management", "Preprocessors", "Interview Questions", "Practice Problems"]
+            },
+            {
+                type: "language",
+                title: "C++",
+                icon: "💻 C++",
+                children: ["Variables", "OOP Basics", "Classes & Objects", "Constructors", "Inheritance", "Polymorphism", "Abstraction", "Encapsulation", "Templates", "STL", "Exception Handling", "File Handling", "Interview Questions", "Practice Problems"]
+            },
+            {
+                type: "language",
+                title: "Java",
+                icon: "☕ Java",
+                children: ["Variables", "Data Types", "Operators", "Conditional Statements", "Loops", "Methods", "Arrays", "Strings", "Recursion", "Classes & Objects", "Constructors", "Inheritance", "Polymorphism", "Abstraction", "Encapsulation", "Interfaces", "Packages", "Collections", "Generics", "Streams", "Lambda Expressions", "Multithreading", "Exception Handling", "JDBC", "Garbage Collection", "Memory Management", "Interview Questions", "Practice Problems"]
+            },
+            {
+                type: "language",
+                title: "Python",
+                icon: "🐍 Python",
+                children: ["Variables", "Data Types", "Lists", "Tuples", "Dicts", "Sets", "Conditional Statements", "Loops", "Functions", "List Comprehension", "Lambda Functions", "File I/O", "OOP", "Exception Handling", "Decorators", "Generators", "Iterators", "Regex", "Interview Questions", "Practice Problems"]
+            },
+            {
+                type: "language",
+                title: "JavaScript",
+                icon: "⚡ JavaScript",
+                children: ["Variables", "Data Types", "Operators", "Functions", "Objects", "Arrays", "Destructuring", "Promises", "Async Await", "DOM Manipulation", "Event Loop", "Closures", "Prototypes", "Modules", "ES6 Features", "Interview Questions", "Practice Problems"]
+            },
+            {
+                type: "language",
+                title: "TypeScript",
+                icon: "🟦 TypeScript",
+                children: ["Type Annotations", "Interfaces", "Classes", "Generics", "Enums", "Modules", "Config", "Advanced Types", "Interview Questions", "Practice Problems"]
+            },
+            {
+                type: "language",
+                title: "HTML",
+                icon: "🌐 HTML",
+                children: ["Structure", "Elements", "Attributes", "Headings", "Paragraphs", "Links", "Images", "Tables", "Lists", "Forms", "Semantic Tags", "SEO Basics"]
+            },
+            {
+                type: "language",
+                title: "CSS",
+                icon: "🎨 CSS",
+                children: ["Selectors", "Box Model", "Flexbox", "Grid", "Positioning", "Transitions", "Animations", "Media Queries", "Variables", "Specificity", "TailwindCSS"]
+            },
+            {
+                type: "language",
+                title: "SQL",
+                icon: "🗄 SQL",
+                children: ["SELECT & WHERE", "GROUP BY & HAVING", "ORDER BY Sorting", "INNER JOIN matching", "LEFT/RIGHT JOIN", "Aggregate Functions", "Indexing", "Transactions (ACID)", "Stored Procedures", "Views"]
+            },
+            {
+                type: "language",
+                title: "PHP",
+                icon: "🐘 PHP",
+                children: ["Syntax", "Variables", "Loops", "Arrays", "Superglobals", "Sessions", "OOP", "MySQL Integration"]
+            },
+            {
+                type: "language",
+                title: "Go",
+                icon: "🐹 Go",
+                children: ["Variables", "Structs", "Interfaces", "Goroutines", "Channels", "Pointers"]
+            },
+            {
+                type: "language",
+                title: "Rust",
+                icon: "🦀 Rust",
+                children: ["Variables", "Ownership", "Borrowing", "Lifetimes", "Structs", "Enums", "Pattern Matching"]
+            },
+            {
+                type: "language",
+                title: "Kotlin",
+                icon: "📱 Kotlin",
+                children: ["Syntax", "Null Safety", "Classes", "Lambdas", "Coroutines"]
+            },
+            {
+                type: "language",
+                title: "Swift",
+                icon: "🍎 Swift",
+                children: ["Variables", "Optionals", "Protocols", "Extensions", "Closures"]
+            },
+            {
+                type: "language",
+                title: "R",
+                icon: "📊 R",
+                children: ["Vectors", "Matrices", "Data Frames", "Vectorized Operations", "Plotting"]
+            }
+        ]
     },
-    structures: {
+    {
+        type: "category",
         title: "Data Structures",
-        icon: "project-diagram",
-        topics: {
-            array: { title: "Arrays (Insertion)", code: `// Array element shifting\nint arr[5] = {10, 20, 30};\nint pos = 1;\nint val = 99;\ninsertAt(arr, pos, val);` },
-            linked_list: { title: "Linked Lists (Singly)", code: `// Linked List insertion link splicing\nNode *head = [10 -> 20];\nNode *new_node = createNode(99);\nnew_node->next = head->next;\nhead->next = new_node;` }
-        }
+        icon: "fas fa-project-diagram",
+        children: ["Arrays (Insertion)", "Linked Lists (Singly)", "Linked Lists (Doubly)", "Stacks (Push & Pop)", "Queues (Enqueue & Dequeue)", "Hash Tables", "Trees", "Binary Trees", "BST (Binary Search Tree)", "AVL Trees", "Heaps", "Tries", "Graphs", "Sets", "Maps"]
     },
-    algorithms: {
+    {
+        type: "category",
         title: "Algorithms",
-        icon: "random",
-        topics: {
-            bubble_sort: { title: "Bubble Sort", code: `// Bubble Sort element sorting\nfor (i = 0; i < len - 1; i++) {\n  for (j = 0; j < len - i - 1; j++) {\n    if (arr[j] > arr[j + 1]) {\n      swap(&arr[j], &arr[j + 1]);\n    }\n  }\n}` }
-        }
+        icon: "fas fa-random",
+        children: ["Bubble Sort", "Linear Search", "Binary Search", "Two Pointers", "Sliding Window", "Prefix Sum", "Greedy (Coin Change)", "Dynamic Programming", "Backtracking", "Divide & Conquer", "Bit Manipulation", "DFS Traversal", "BFS Traversal", "Factorial Recursion"]
     },
-    sql: {
-        title: "SQL Visualizer",
-        icon: "database",
-        topics: {
-            select: { title: "SELECT & WHERE", code: `SELECT name, grade\nFROM Students\nWHERE dept = 'CSE';` }
-        }
+    {
+        type: "category",
+        title: "Patterns",
+        icon: "fas fa-shapes",
+        children: ["Square Pattern", "Right Angle Triangle", "Pyramid Pattern", "Diamond Pattern", "Inverted Pyramid", "Hollow Square"]
     },
-    webdev: {
+    {
+        type: "category",
         title: "Web Development",
-        icon: "globe",
-        topics: {
-            boxmodel: { title: "CSS Box Model", code: `.box {\n  width: 100px;\n  padding: 10px;\n  border: 5px solid;\n  margin: 15px;\n}` }
-        }
+        icon: "fas fa-globe",
+        children: ["CSS Box Model", "DOM Tree Selection", "Flexbox Layout", "Grid Layout", "JS Event Loop", "Promises & Async/Await", "HTTP Request Lifecycle"]
+    },
+    {
+        type: "category",
+        title: "Database",
+        icon: "fas fa-database",
+        children: ["Relational Database", "NoSQL Basics", "Normalization Forms", "Indexing Strategies", "ACID Transactions", "Execution Plans"]
+    },
+    {
+        type: "category",
+        title: "Operating System",
+        icon: "fas fa-desktop",
+        children: ["Processes & Threads", "CPU Scheduling", "Deadlocks", "Memory Management", "Paging & Segmentation", "Virtual Memory"]
+    },
+    {
+        type: "category",
+        title: "Computer Networks",
+        icon: "fas fa-network-wired",
+        children: ["OSI Model Layers", "TCP/IP Protocol", "IP Addressing", "DNS Resolution", "HTTP vs HTTPS", "Sockets programming"]
+    },
+    {
+        type: "category",
+        title: "Cloud",
+        icon: "fas fa-cloud",
+        children: ["Virtualization", "AWS Basics", "GCP Core Services", "Docker Containers", "Kubernetes Orchestration", "Serverless Architecture"]
+    },
+    {
+        type: "category",
+        title: "AI / ML",
+        icon: "fas fa-robot",
+        children: ["Supervised Learning", "Unsupervised Learning", "Neural Networks", "Deep Learning", "Transformers", "LLMs introduction"]
+    },
+    {
+        type: "category",
+        title: "Interview Preparation",
+        icon: "fas fa-briefcase",
+        children: ["Big-O Complexity analysis", "FAANG Preparation roadmap", "Mock Interviews checklist", "Behavioral questions prep", "System Design patterns"]
+    },
+    {
+        type: "category",
+        title: "Bookmarks",
+        icon: "fas fa-star",
+        isBookmarks: true,
+        children: []
+    },
+    {
+        type: "category",
+        title: "Saved Sessions",
+        icon: "fas fa-history",
+        isSessions: true,
+        children: []
+    }
+];
+
+// Topic Presets & Templates
+const TOPIC_PRESETS = {
+    "c_pointers": {
+        code: `// C Pointer Dereferencing\nint val = 42;\nint *ptr = &val;\n*ptr = 99;`,
+        category: "languages",
+        topic: "c"
+    },
+    "c_variables": {
+        code: `// C Variables declaration\nint score = 100;\nfloat price = 19.99;\nchar grade = 'A';`,
+        category: "languages",
+        topic: "c"
+    },
+    "cpp_oop": {
+        code: `// C++ Class Constructor\nclass Student {\n  public:\n    Student() { id = 101; }\n    int id;\n};\nStudent s;`,
+        category: "languages",
+        topic: "cpp"
+    },
+    "java_gc": {
+        code: `// Java Memory Reference\nString a = new String("Pravio");\na = null; // GC target`,
+        category: "languages",
+        topic: "java"
+    },
+    "python_comprehension": {
+        code: `# Python List Comprehension\nnums = [1, 2, 3, 4]\nsquares = [x * x for x in nums]\nprint(squares)`,
+        category: "languages",
+        topic: "python"
+    },
+    "javascript_destructuring": {
+        code: `// JS Object Destructuring\nconst user = { name: "Alice", age: 21 };\nconst { name, age } = user;`,
+        category: "languages",
+        topic: "javascript"
+    },
+    "typescript_interfaces": {
+        code: `// TS Strict Type Safety\ninterface User { id: number; }\nconst u: User = { id: 456 };`,
+        category: "languages",
+        topic: "typescript"
+    },
+    "sql_select_&_where": {
+        code: `SELECT name, grade\nFROM Students\nWHERE dept = 'CSE';`,
+        category: "sql",
+        topic: "select"
+    },
+    "css_box_model": {
+        code: `.box {\n  width: 100px;\n  padding: 10px;\n  border: 5px solid;\n  margin: 15px;\n}`,
+        category: "webdev",
+        topic: "boxmodel"
+    },
+    "arrays_(insertion)": {
+        code: `// Array element shifting\nint arr[5] = {10, 20, 30};\nint pos = 1;\nint val = 99;\ninsertAt(arr, pos, val);`,
+        category: "structures",
+        topic: "array"
+    },
+    "linked_lists_(singly)": {
+        code: `// Linked List insertion link splicing\nNode *head = [10 -> 20];\nNode *new_node = createNode(99);\nnew_node->next = head->next;\nhead->next = new_node;`,
+        category: "structures",
+        topic: "linked_list"
+    },
+    "bubble_sort": {
+        code: `// Bubble Sort element sorting\nfor (i = 0; i < len - 1; i++) {\n  for (j = 0; j < len - i - 1; j++) {\n    if (arr[j] > arr[j + 1]) {\n      swap(&arr[j], &arr[j + 1]);\n    }\n  }\n}`,
+        category: "algorithms",
+        topic: "bubble_sort"
     }
 };
 
-// Custom complexity metadata
 const VIZ_COMPLEXITIES = {
     bubble_sort: { best: "O(n)", avg: "O(n²)", worst: "O(n²)", space: "O(1)", stable: "Yes", inplace: "Yes" },
     python: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)", stable: "N/A", inplace: "N/A" },
@@ -74,7 +267,7 @@ const VIZ_COMPLEXITIES = {
     boxmodel: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)", stable: "N/A", inplace: "N/A" }
 };
 
-// Hardcoded step data Catalog (including custom color states)
+// Hardcoded step data Catalog
 const VIZ_CATALOG = {
     languages: {
         topics: {
@@ -104,8 +297,8 @@ const VIZ_CATALOG = {
             },
             java: {
                 steps: [
-                    { line: 2, vars: { a: "0x5000", prev_val: "none", type: "String", scope: "stack" }, mem: ["0x5000 (Heap String) -> 'Pravio'"], explain: "Allocate java String object in heap storage, assign reference pointer to variable `a`.", action: { type: "mem_set", addr: "0x5000", val: "String('Pravio')" } },
-                    { line: 3, vars: { a: "null", prev_val: "0x5000", type: "String", scope: "stack" }, mem: ["0x5000 (Orphaned Object)"], explain: "Assign `a = null`. Heap reference count drops to 0. Marked as Garbage Collector garbage sweep target.", action: { type: "mem_update", addr: "0x5000", val: "GC Orphan" } }
+                    { line: 2, vars: { a: "0x5000", prev_val: "none", type: "String", scope: "stack" }, mem: ["0x5000 -> 'Pravio'"], explain: "Allocate java String object in heap storage, assign reference pointer to variable `a`.", action: { type: "mem_set", addr: "0x5000", val: "String('Pravio')" } },
+                    { line: 3, vars: { a: "null", prev_val: "0x5000", type: "String", scope: "stack" }, mem: ["0x5000 (Orphaned)"], explain: "Assign `a = null`. Heap reference count drops to 0. Marked as Garbage Collector garbage sweep target.", action: { type: "mem_update", addr: "0x5000", val: "GC Orphan" } }
                 ]
             },
             javascript: {
@@ -188,31 +381,215 @@ const VIZ_CATALOG = {
     }
 };
 
-// Folder expand/collapse handler
-function toggleFolder(element) {
-    const contents = element.nextElementSibling;
-    const chevron = element.querySelector('.folder-chevron');
-    
-    if (contents && contents.classList.contains('folder-contents')) {
+// Curriculum Explorer dynamic builder
+function buildCurriculumTree() {
+    const treeEl = document.getElementById('viz-curriculum-tree');
+    if (!treeEl) return;
+
+    treeEl.innerHTML = '';
+
+    CURRICULUM_TREE.forEach(cat => {
+        const catFolder = document.createElement('div');
+        catFolder.className = 'curr-folder';
+
+        // Header
+        const header = document.createElement('div');
+        header.className = 'folder-header';
+        header.style.display = 'flex';
+        header.style.alignItems = 'center';
+        header.style.gap = '8px';
+        header.style.padding = '6px 8px';
+        header.style.borderRadius = '6px';
+        header.style.cursor = 'pointer';
+        header.style.fontWeight = '700';
+        header.style.color = 'var(--text-body)';
+        header.onclick = () => toggleFolderNode(header);
+
+        header.innerHTML = `
+            <i class="fas fa-chevron-right folder-chevron" style="font-size:10px; transition:transform 0.2s;"></i>
+            <i class="${cat.icon}" style="color:var(--primary-color);"></i>
+            <span>${cat.title}</span>
+        `;
+        catFolder.appendChild(header);
+
+        // Contents
+        const contents = document.createElement('div');
+        contents.className = 'folder-contents';
+        contents.style.paddingLeft = '14px';
+        contents.style.display = 'none';
+
+        if (cat.isBookmarks) {
+            if (bookmarks.length === 0) {
+                contents.innerHTML = `<div style="padding:6px 12px; font-size:12px; color:var(--text-muted); font-style:italic;">No bookmarks yet.</div>`;
+            } else {
+                bookmarks.forEach(bm => {
+                    const item = document.createElement('div');
+                    item.className = 'tree-item';
+                    item.innerText = bm.toUpperCase();
+                    item.onclick = () => loadCurriculumTopic('bookmarks', 'bookmark', bm);
+                    contents.appendChild(item);
+                });
+            }
+        }
+        else if (cat.isSessions) {
+            if (vizSessions.length === 0) {
+                contents.innerHTML = `<div style="padding:6px 12px; font-size:12px; color:var(--text-muted); font-style:italic;">No saved sessions.</div>`;
+            } else {
+                vizSessions.forEach(sess => {
+                    const item = document.createElement('div');
+                    item.className = 'tree-item';
+                    item.style.display = 'flex';
+                    item.style.justifyContent = 'space-between';
+                    item.style.alignItems = 'center';
+                    item.innerHTML = `
+                        <span>${sess.name}</span>
+                        <i class="far fa-trash-alt" onclick="deleteVizSession('${sess.id}', event)" style="color:var(--text-muted); cursor:pointer;"></i>
+                    `;
+                    item.onclick = (e) => {
+                        if (e.target.tagName !== 'I') {
+                            selectVizSession(sess.id);
+                        }
+                    };
+                    contents.appendChild(item);
+                });
+            }
+        }
+        else {
+            cat.children.forEach(child => {
+                if (typeof child === 'string') {
+                    const item = document.createElement('div');
+                    item.className = 'tree-item';
+                    item.innerText = child;
+                    item.onclick = () => loadCurriculumTopic(cat.title.toLowerCase().replace(' ', '_'), 'general', child);
+                    contents.appendChild(item);
+                } else {
+                    // Separate programming languages list node
+                    const langFolder = document.createElement('div');
+                    langFolder.className = 'curr-folder';
+
+                    const langHeader = document.createElement('div');
+                    langHeader.className = 'folder-header';
+                    langHeader.style.display = 'flex';
+                    langHeader.style.alignItems = 'center';
+                    langHeader.style.gap = '6px';
+                    langHeader.style.padding = '4px 6px';
+                    langHeader.style.borderRadius = '6px';
+                    langHeader.style.cursor = 'pointer';
+                    langHeader.style.fontWeight = '600';
+                    langHeader.style.color = 'var(--text-body)';
+                    langHeader.onclick = () => toggleFolderNode(langHeader);
+
+                    langHeader.innerHTML = `
+                        <i class="fas fa-chevron-right folder-chevron" style="font-size:8px; transition:transform 0.2s;"></i>
+                        <span>${child.icon}</span>
+                    `;
+                    langFolder.appendChild(langHeader);
+
+                    const langContents = document.createElement('div');
+                    langContents.className = 'folder-contents';
+                    langContents.style.paddingLeft = '10px';
+                    langContents.style.display = 'none';
+
+                    child.children.forEach(topic => {
+                        const item = document.createElement('div');
+                        item.className = 'tree-item';
+                        item.innerText = topic;
+                        item.onclick = () => loadCurriculumTopic('languages', child.title.toLowerCase(), `${child.title} (${topic})`);
+                        langContents.appendChild(item);
+                    });
+
+                    langFolder.appendChild(langContents);
+                    contents.appendChild(langFolder);
+                }
+            });
+        }
+
+        catFolder.appendChild(contents);
+        treeEl.appendChild(catFolder);
+    });
+}
+
+function toggleFolderNode(headerElement) {
+    const contents = headerElement.nextElementSibling;
+    const chevron = headerElement.querySelector('.folder-chevron');
+    if (contents) {
         if (contents.style.display === 'none' || contents.style.display === '') {
             contents.style.display = 'block';
             if (chevron) {
-                chevron.classList.remove('fa-chevron-right');
-                chevron.classList.add('fa-chevron-down');
+                chevron.style.transform = 'rotate(90deg)';
             }
         } else {
             contents.style.display = 'none';
             if (chevron) {
-                chevron.classList.remove('fa-chevron-down');
-                chevron.classList.add('fa-chevron-right');
+                chevron.style.transform = 'rotate(0deg)';
             }
         }
     }
 }
 
-// Load topic curriculum trigger
-function loadCurriculumTopic(category, topic, displayName) {
-    createVizSession(displayName, category, topic);
+// Map custom syllabus keys to preset code vectors
+function getCodeForTopic(category, lang, name) {
+    const key = (lang + "_" + name.replace(/ /g, '_')).toLowerCase();
+    const cleanName = name.toLowerCase().replace(/ /g, '_');
+    
+    if (TOPIC_PRESETS[key]) return TOPIC_PRESETS[key];
+    if (TOPIC_PRESETS[cleanName]) return TOPIC_PRESETS[cleanName];
+
+    // Generic fallback code compiler generator for the complete syllabus list
+    let generatedCode = `// Pravio Trace: ${name}\n`;
+    let genericTopic = "general";
+    
+    if (category === "languages") {
+        if (lang === "python") {
+            generatedCode = `# Python Code: ${name}\ndef run_demo():\n    print("Executing ${name}")\nrun_demo()`;
+            genericTopic = "python";
+        } else if (lang === "java") {
+            generatedCode = `// Java Code: ${name}\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println("${name}");\n    }\n}`;
+            genericTopic = "java";
+        } else if (lang === "c") {
+            generatedCode = `// C Code: ${name}\n#include <stdio.h>\nint main() {\n    printf("${name}\\n");\n    return 0;\n}`;
+            genericTopic = "c";
+        } else if (lang === "cpp") {
+            generatedCode = `// C++ Code: ${name}\n#include <iostream>\nint main() {\n    std::cout << "${name}" << std::endl;\n    return 0;\n}`;
+            genericTopic = "cpp";
+        } else {
+            generatedCode = `// JavaScript Code: ${name}\nconst name = "${name}";\nconsole.log(name);`;
+            genericTopic = "javascript";
+        }
+    } else if (category === "patterns") {
+        generatedCode = `// Pattern Code: ${name}\nfor (int i = 0; i < 4; i++) {\n    for (int j = 0; j <= i; j++) {\n        print("*");\n    }\n    println();\n}`;
+        genericTopic = "bubble_sort";
+    } else {
+        generatedCode = `// Workspace Code: ${name}\nint val = 100;\nrun(${name});`;
+        genericTopic = "array";
+    }
+
+    return {
+        code: generatedCode,
+        category: category,
+        topic: genericTopic
+    };
+}
+
+function loadCurriculumTopic(category, lang, displayName) {
+    const info = getCodeForTopic(category, lang, displayName);
+    
+    // Create new session with matching template code
+    const newSess = {
+        id: "viz_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+        name: displayName,
+        category: info.category,
+        topic: info.topic,
+        code: info.code,
+        currentStep: 0,
+        createdAt: new Date().toISOString()
+    };
+    
+    vizSessions.unshift(newSess);
+    activeSession = newSess;
+    
+    saveVizSessions();
+    loadActiveVizSession();
     switchVizSubTab('walkthrough');
     
     // Highlight selected item in tree sidebar
@@ -221,18 +598,21 @@ function loadCurriculumTopic(category, topic, displayName) {
         i.style.background = 'transparent';
         i.style.color = 'var(--text-body)';
         i.style.fontWeight = 'normal';
+        i.style.borderLeftColor = 'transparent';
     });
     
-    // Attempt to match event source highlight
-    const clicked = Array.from(items).find(i => i.innerText.trim() === displayName || i.getAttribute('onclick').includes(topic));
+    const clicked = Array.from(items).find(i => i.innerText.trim() === displayName || i.innerText.includes(displayName));
     if (clicked) {
         clicked.style.background = 'rgba(59, 130, 246, 0.08)';
         clicked.style.color = 'var(--primary-color)';
         clicked.style.fontWeight = 'bold';
+        clicked.style.borderLeftColor = 'var(--primary-color)';
     }
+
+    // Refresh dynamically bookmarks list folder
+    buildCurriculumTree();
 }
 
-// Curriculum Search
 function searchVizCurriculum(query) {
     const q = query.toLowerCase().trim();
     const items = document.querySelectorAll('.tree-item');
@@ -241,7 +621,6 @@ function searchVizCurriculum(query) {
         const text = item.innerText.toLowerCase();
         if (text.includes(q)) {
             item.style.display = 'block';
-            // Auto expand parent folder to make it visible
             let parent = item.parentElement;
             while (parent && parent.id !== 'viz-curriculum-tree') {
                 if (parent.classList.contains('folder-contents')) {
@@ -250,8 +629,7 @@ function searchVizCurriculum(query) {
                     if (folderHeader) {
                         const chevron = folderHeader.querySelector('.folder-chevron');
                         if (chevron) {
-                            chevron.classList.remove('fa-chevron-right');
-                            chevron.classList.add('fa-chevron-down');
+                            chevron.style.transform = 'rotate(90deg)';
                         }
                     }
                 }
@@ -261,91 +639,6 @@ function searchVizCurriculum(query) {
             item.style.display = 'none';
         }
     });
-}
-
-// Dynamic Fallback Step tracer
-function generateDynamicSteps(category, topic, code) {
-    const steps = [];
-    const lines = code.split('\n');
-
-    let currentArray = [10, 20, 30, 40, 50];
-    let currentList = [
-        { val: 10, addr: "0x1000", next: "0x2000" },
-        { val: 20, addr: "0x2000", next: "0x3000" },
-        { val: 30, addr: "0x3000", next: "NULL" }
-    ];
-    let currentSQLRows = [
-        { name: "Alice", dept: "CSE", grade: "A" },
-        { name: "Bob", dept: "ECE", grade: "B" },
-        { name: "Charlie", dept: "CSE", grade: "A" }
-    ];
-
-    lines.forEach((lineText, idx) => {
-        const lineNum = idx + 1;
-        const trimmed = lineText.trim();
-        if (!trimmed) return;
-
-        const step = {
-            line: lineNum,
-            vars: {
-                name: trimmed.substring(0, 8),
-                val: trimmed.substring(0, 10),
-                prev_val: "none",
-                type: "string",
-                scope: "local"
-            },
-            mem: [`Instruction pointer -> line ${lineNum}`],
-            explain: `Running instruction on line ${lineNum}: \`${trimmed}\`. Loading state variables...`,
-            action: { type: "generic" }
-        };
-
-        if (category === "languages") {
-            step.vars.type = "compiler_node";
-            step.vars.scope = "stack_frame";
-            step.explain = `In language compiler runtime environment, parsing variables into call stack.`;
-            step.action = { type: "mem_set", addr: `0x00${lineNum}`, val: trimmed.substring(0, 10) };
-        }
-        else if (category === "structures") {
-            if (topic === "array" || topic === "strings") {
-                step.vars.type = "array_index";
-                step.explain = `Processing array/string elements at index ${idx}. Accessing memory address directly.`;
-                step.action = { type: "array_state", data: currentArray, active: [idx % 5] };
-            } else {
-                step.vars.type = "pointer";
-                step.explain = `Accessing linked structure node at pointer index 0x${lineNum}000.`;
-                step.action = { type: "ll_state", list: currentList, active: [`0x1000`] };
-            }
-        }
-        else if (category === "algorithms") {
-            step.vars.type = "algorithm_state";
-            step.explain = `Algorithm checks elements sequentially or splits intervals. Evaluating target values...`;
-            step.action = { type: "array_state", data: currentArray, active: [idx % 5] };
-        }
-        else if (category === "sql") {
-            step.vars.type = "table_row";
-            step.explain = `SQL executor parses queries, filters row items by WHERE filters, and projects SELECT columns.`;
-            step.action = { type: "sql_table", rows: currentSQLRows, active: [idx % 3] };
-        }
-        else if (category === "webdev") {
-            step.vars.type = "dom_node";
-            step.explain = `Browser layouts flex direction alignments, adjusts grid spacing gaps, or triggers async events.`;
-            step.action = { type: "box_model", layers: { content: "120px", padding: `${idx * 4}px`, border: "2px", margin: "10px" } };
-        }
-
-        steps.push(step);
-    });
-
-    if (steps.length === 0) {
-        steps.push({
-            line: 1,
-            vars: { status: "Empty", prev_val: "none", type: "string", scope: "none" },
-            mem: [],
-            explain: "Empty source code inputted. Please write code to visualize.",
-            action: { type: "generic" }
-        });
-    }
-
-    return steps;
 }
 
 // ==========================================
@@ -367,11 +660,22 @@ function initVizSessions() {
     if (!Array.isArray(completedTopics)) completedTopics = [];
 
     if (vizSessions.length === 0) {
-        createVizSession("Bubble Sort Walkthrough", "algorithms", "bubble_sort");
+        const defaultTopic = {
+            id: "viz_default",
+            name: "Bubble Sort Walkthrough",
+            category: "algorithms",
+            topic: "bubble_sort",
+            code: VIZ_CATEGORIES.algorithms.topics.bubble_sort.code,
+            currentStep: 0,
+            createdAt: new Date().toISOString()
+        };
+        vizSessions.push(defaultTopic);
+        activeSession = defaultTopic;
     } else {
         activeSession = vizSessions[0];
     }
 
+    buildCurriculumTree();
     loadActiveVizSession();
     updateDashboardUI();
 }
@@ -401,6 +705,29 @@ function createVizSession(name, category = "algorithms", topic = "bubble_sort") 
     loadActiveVizSession();
 }
 
+function selectVizSession(id) {
+    const found = vizSessions.find(s => s.id === id);
+    if (found) {
+        activeSession = found;
+        loadActiveVizSession();
+    }
+}
+
+function deleteVizSession(id, event) {
+    if (event) event.stopPropagation();
+    vizSessions = vizSessions.filter(s => s.id !== id);
+    if (activeSession && activeSession.id === id) {
+        activeSession = vizSessions[0] || null;
+    }
+    saveVizSessions();
+    buildCurriculumTree();
+    if (activeSession) {
+        loadActiveVizSession();
+    } else {
+        clearVizDisplay();
+    }
+}
+
 function clearVizDisplay() {
     document.getElementById('active-viz-title').innerText = "No Active Session";
     document.getElementById('viz-code-editor').value = "";
@@ -423,9 +750,7 @@ function loadActiveVizSession() {
         syncEditorLineNumbers();
     }
 
-    // Toggle Bookmark icon state
     updateBookmarkIconUI();
-
     renderCurrentStep();
 }
 
@@ -444,23 +769,11 @@ function syncEditorLineNumbers() {
     });
 }
 
-function handlePracticeCodeInput(code) {
-    if (!activeSession) return;
-    activeSession.code = code;
-    activeSession.currentStep = 0;
-    saveVizSessions();
-    syncEditorLineNumbers();
-    renderCurrentStep();
-}
-
 // ==========================================
-// INTERACTIVE ENGINE ACTIONS
+// INTERACTIVE ENGINE ACTIONS & RENDERERS
 // ==========================================
 function renderCurrentStep() {
     if (!activeSession) return;
-    const cat = VIZ_CATEGORIES[activeSession.category];
-    const topicData = cat?.topics[activeSession.topic];
-    if (!topicData) return;
 
     let steps = [];
     if (activeSession.category === "algorithms" && activeSession.topic === "bubble_sort") {
@@ -502,11 +815,11 @@ function renderCurrentStep() {
     gutterDivs.forEach(div => {
         const line = parseInt(div.getAttribute('data-line'), 10);
         if (line === step.line) {
-            // Blue color for current line
+            // Blue for current executing line
             div.style.background = '#3b82f6';
             div.style.color = '#ffffff';
         } else if (line < step.line) {
-            // Gray color for executed line
+            // Gray for executed lines
             div.style.background = '#e5e7eb';
             div.style.color = '#9ca3af';
         } else {
@@ -515,7 +828,6 @@ function renderCurrentStep() {
         }
     });
 
-    // Time/Space complexities
     const bestC = document.getElementById('viz-best-case');
     const avgC = document.getElementById('viz-avg-case');
     const worstC = document.getElementById('viz-worst-case');
@@ -532,7 +844,7 @@ function renderCurrentStep() {
     if (stableC) stableC.innerText = defaults.stable;
     if (inplaceC) inplaceC.innerText = defaults.inplace;
 
-    // Sliders progress update
+    // Timeline Slider progress update
     const progress = document.getElementById('viz-step-slider');
     const label = document.getElementById('viz-step-label-nav');
     const bar = document.getElementById('viz-step-progressbar');
@@ -549,7 +861,7 @@ function renderCurrentStep() {
         bar.style.width = `${pct}%`;
     }
 
-    // AI Tutor explanations
+    // AI Tutor explanations & educational color coding
     const explanation = document.getElementById('viz-explanation-panel');
     if (explanation) {
         const isAdvanced = aiTutorLevel === "advanced";
@@ -566,11 +878,11 @@ function renderCurrentStep() {
             <div style="font-weight:600; color:var(--primary-color); margin-bottom:8px; display:flex; align-items:center; gap:6px;">
                 <i class="fas fa-graduation-cap"></i> AI Tutor (${isAdvanced ? 'Advanced Trace' : 'Beginner Friendly'}):
             </div>
-            <div style="font-size:0.9rem; line-height:1.5; color:var(--text-body); margin-bottom:6px;">${explanationText}</div>
-            <div style="font-size:0.82rem; color:var(--text-muted); font-style:italic; margin-bottom:8px;">💡 ${analogyText}</div>
+            <div style="font-size:0.9rem; line-height:1.5; color:var(--text-body); margin-bottom:8px;">${explanationText}</div>
+            <div style="font-size:0.82rem; color:var(--text-muted); font-style:italic; margin-bottom:12px;">💡 ${analogyText}</div>
             
-            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; margin-top:12px;">Variables Inspect</div>
-            <table style="width: 100%; border-collapse: collapse; font-size: 11.5px; margin-bottom: 8px;">
+            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px; border-top:1px dashed var(--border-color); padding-top:8px;">Variables Inspect</div>
+            <table style="width: 100%; border-collapse: collapse; font-size: 11.5px; margin-bottom: 12px;">
                 ${Object.keys(step.vars).map(vKey => {
                     if (vKey === "prev_val" || vKey === "type" || vKey === "scope") return "";
                     // Orange variables color code
@@ -583,17 +895,15 @@ function renderCurrentStep() {
                 }).join('')}
             </table>
             
-            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Call Stack</div>
+            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px; border-top:1px dashed var(--border-color); padding-top:8px;">Memory Stack</div>
             <ul style="list-style:none; padding:0; margin:0; font-family:monospace; font-size:11px;">
-                ${step.mem.map(m => `<li style="padding:2px 4px; background:rgba(20,184,166,0.05); border-left:2.5px solid #14b8a6; margin-bottom:2px; color:var(--text-body);">${m}</li>`).join('')}
+                ${step.mem.map(m => `<li style="padding:4px 6px; background:rgba(20,184,166,0.05); border-left:3px solid #14b8a6; margin-bottom:3px; color:var(--text-body);">${m}</li>`).join('')}
             </ul>
         `;
     }
 
-    // Direct Canvas Rendering
     renderInteractiveCanvas(step.action, activeSession.category, activeSession.topic);
 
-    // Save completed topics in dashboard
     if (stepIdx === totalSteps - 1 && !completedTopics.includes(activeSession.topic)) {
         completedTopics.push(activeSession.topic);
         saveVizSessions();
@@ -642,16 +952,16 @@ function renderInteractiveCanvas(action, category, topic) {
             const isActive = activeIdx.includes(idx);
             if (isActive) {
                 if (action.highlight) {
-                    block.style.background = '#ef4444'; // Red for swapped values
+                    block.style.background = '#ef4444'; // Red for swaps
                     block.style.transform = 'scale(1.15) translateY(-8px)';
                     block.style.boxShadow = '0 10px 20px rgba(239, 68, 68, 0.2)';
                 } else {
-                    block.style.background = '#eab308'; // Yellow for compared values
+                    block.style.background = '#d97706'; // Gold/Yellow for comparison
                     block.style.transform = 'scale(1.1) translateY(-4px)';
-                    block.style.boxShadow = '0 8px 16px rgba(234, 179, 8, 0.2)';
+                    block.style.boxShadow = '0 8px 16px rgba(217, 119, 6, 0.2)';
                 }
             } else if (action.complete) {
-                block.style.background = '#10b981'; // Green for completed execution
+                block.style.background = '#10b981'; // Green for completed step
                 block.style.borderColor = 'rgba(16, 185, 129, 0.4)';
             } else {
                 block.style.background = 'rgba(255, 255, 255, 0.05)';
@@ -694,7 +1004,6 @@ function renderInteractiveCanvas(action, category, topic) {
                     <div style="font-size:0.68rem; color:${action.active.includes(node.addr) ? 'rgba(255,255,255,0.7)' : 'var(--text-muted)'};">next: ${node.next}</div>
                 </div>
             `;
-            
             wrapper.appendChild(block);
 
             if (idx < action.list.length - 1) {
@@ -715,7 +1024,6 @@ function renderInteractiveCanvas(action, category, topic) {
         wrapper.style.overflow = 'hidden';
 
         let headers = Object.keys(action.rows[0] || {}).filter(k => k !== "filter");
-        
         let headerHtml = headers.map(h => `<th style="padding:10px 14px; text-align:left; background:var(--bg-secondary); border-bottom:1px solid var(--border-color); font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--text-muted);">${h}</th>`).join('');
         
         let rowsHtml = action.rows.map((r, idx) => {
@@ -728,9 +1036,7 @@ function renderInteractiveCanvas(action, category, topic) {
             } else if (r.filter === "fail") {
                 rowBg = 'rgba(239, 68, 68, 0.05)';
             }
-            
             let cells = headers.map(h => `<td style="padding:10px 14px; border-bottom:1px solid var(--border-color); font-size:0.85rem; color:${isActive ? 'var(--color-executing)' : 'var(--text-body)'}; font-family:monospace;">${r[h]}</td>`).join('');
-            
             return `<tr style="background:${rowBg};">${cells}</tr>`;
         }).join('');
 
@@ -744,7 +1050,6 @@ function renderInteractiveCanvas(action, category, topic) {
     }
     else if (action.type === "box_model") {
         const layers = action.layers;
-        
         const wrapper = document.createElement('div');
         wrapper.style.position = 'relative';
         wrapper.style.display = 'flex';
@@ -805,7 +1110,7 @@ function renderInteractiveCanvas(action, category, topic) {
     }
 }
 
-// Playback toggling speed controls
+// Playback Speed controls
 function updatePlayPauseButtonUI() {
     const playBtn = document.getElementById('viz-play-btn');
     if (!playBtn) return;
@@ -994,7 +1299,6 @@ function setLearningMode(mode) {
     renderCurrentStep();
 }
 
-// AI explanations level
 function setAITutorLevel(level) {
     aiTutorLevel = level;
     renderCurrentStep();
@@ -1034,7 +1338,7 @@ function switchVizSubTab(tabId) {
     }
 }
 
-// Compare mode split scheduler
+// Compare mode split pane simulator
 function runComparison() {
     const selectA = document.getElementById('compare-select-a')?.value || 'bubble_sort';
     const selectB = document.getElementById('compare-select-b')?.value || 'quick_sort';
@@ -1046,7 +1350,7 @@ function runComparison() {
         canvasA.innerHTML = `
             <div style="text-align:center;">
                 <div style="display:flex; gap:6px; justify-content:center; margin-bottom:12px;">
-                    <div style="width:30px; height:60px; background:#eab308; border-radius:4px;"></div>
+                    <div style="width:30px; height:60px; background:#d97706; border-radius:4px;"></div>
                     <div style="width:30px; height:80px; background:#06b6d4; border-radius:4px;"></div>
                     <div style="width:30px; height:40px; background:#ef4444; border-radius:4px;"></div>
                 </div>
@@ -1079,7 +1383,7 @@ function runComparison() {
     if (swapsB) swapsB.innerText = "3 Swaps";
 }
 
-// Challenge Mode Quizzes
+// Challenge Mode Quiz problems
 let currentQuizAnswer = "";
 function generateNextQuizQuestion() {
     const topic = activeSession?.topic || "bubble_sort";
@@ -1131,15 +1435,15 @@ function checkQuizAnswer() {
     }
 }
 
-// Bookmarks manager
+// Bookmarks toggle
 function toggleVizBookmark() {
     if (!activeSession) return;
-    const topic = activeSession.topic;
+    const topic = activeSession.name;
     const idx = bookmarks.indexOf(topic);
     
     if (idx === -1) {
         bookmarks.push(topic);
-        alert(`🔖 Bookmarked: ${VIZ_CATEGORIES[activeSession.category].topics[topic].title}`);
+        alert(`🔖 Bookmarked topic.`);
     } else {
         bookmarks.splice(idx, 1);
         alert(`Unbookmarked topic.`);
@@ -1148,19 +1452,20 @@ function toggleVizBookmark() {
     saveVizSessions();
     updateBookmarkIconUI();
     updateDashboardUI();
+    buildCurriculumTree();
 }
 
 function updateBookmarkIconUI() {
     const btn = document.getElementById('viz-bookmark-btn');
     if (!btn || !activeSession) return;
     
-    const isBookmarked = bookmarks.includes(activeSession.topic);
+    const isBookmarked = bookmarks.includes(activeSession.name);
     btn.innerHTML = isBookmarked 
         ? `<i class="fas fa-bookmark" style="color:var(--primary-color);"></i>` 
         : `<i class="far fa-bookmark"></i>`;
 }
 
-// Dashboard achievement updates
+// Stats dashboard update
 function updateDashboardUI() {
     const streakEl = document.getElementById('viz-sidebar-streak');
     const badgeCountEl = document.getElementById('viz-sidebar-badge-count');
@@ -1282,11 +1587,140 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Bind load listener on startup
+// Category definitions Catalog presets
+const VIZ_CATEGORIES = {
+    languages: {
+        title: "Programming Languages",
+        icon: "code",
+        topics: {
+            python: { title: "Python (List Comprehension)", code: `# Python List Comprehension\nnums = [1, 2, 3, 4]\nsquares = [x * x for x in nums]\nprint(squares)` },
+            c: { title: "C (Pointers & Dereferencing)", code: `// C Pointer Dereferencing\nint val = 42;\nint *ptr = &val;\n*ptr = 99;` },
+            cpp: { title: "C++ (OOP Constructor)", code: `// C++ Class Constructor\nclass Student {\n  public:\n    Student() { id = 101; }\n    int id;\n};\nStudent s;` },
+            java: { title: "Java (Garbage Collection)", code: `// Java Memory Reference\nString a = new String("Pravio");\na = null; // GC target` },
+            javascript: { title: "JavaScript (Destructuring)", code: `// JS Object Destructuring\nconst user = { name: "Alice", age: 21 };\nconst { name, age } = user;` },
+            typescript: { title: "TypeScript (Interfaces)", code: `// TS Strict Type Safety\ninterface User { id: number; }\nconst u: User = { id: 456 };` }
+        }
+    },
+    structures: {
+        title: "Data Structures",
+        icon: "project-diagram",
+        topics: {
+            array: { title: "Arrays (Insertion)", code: `// Array element shifting\nint arr[5] = {10, 20, 30};\nint pos = 1;\nint val = 99;\ninsertAt(arr, pos, val);` },
+            linked_list: { title: "Linked Lists (Singly)", code: `// Linked List insertion link splicing\nNode *head = [10 -> 20];\nNode *new_node = createNode(99);\nnew_node->next = head->next;\nhead->next = new_node;` }
+        }
+    },
+    algorithms: {
+        title: "Algorithms",
+        icon: "random",
+        topics: {
+            bubble_sort: { title: "Bubble Sort", code: `// Bubble Sort element sorting\nfor (i = 0; i < len - 1; i++) {\n  for (j = 0; j < len - i - 1; j++) {\n    if (arr[j] > arr[j + 1]) {\n      swap(&arr[j], &arr[j + 1]);\n    }\n  }\n}` }
+        }
+    },
+    sql: {
+        title: "SQL Visualizer",
+        icon: "database",
+        topics: {
+            select: { title: "SELECT & WHERE", code: `SELECT name, grade\nFROM Students\nWHERE dept = 'CSE';` }
+        }
+    },
+    webdev: {
+        title: "Web Development",
+        icon: "globe",
+        topics: {
+            boxmodel: { title: "CSS Box Model", code: `.box {\n  width: 100px;\n  padding: 10px;\n  border: 5px solid;\n  margin: 15px;\n}` }
+        }
+    }
+};
+
+// Auto dynamic steps generator fallback
+function generateDynamicSteps(category, topic, code) {
+    const steps = [];
+    const lines = code.split('\n');
+
+    let currentArray = [10, 20, 30, 40, 50];
+    let currentList = [
+        { val: 10, addr: "0x1000", next: "0x2000" },
+        { val: 20, addr: "0x2000", next: "0x3000" },
+        { val: 30, addr: "0x3000", next: "NULL" }
+    ];
+    let currentSQLRows = [
+        { name: "Alice", dept: "CSE", grade: "A" },
+        { name: "Bob", dept: "ECE", grade: "B" },
+        { name: "Charlie", dept: "CSE", grade: "A" }
+    ];
+
+    lines.forEach((lineText, idx) => {
+        const lineNum = idx + 1;
+        const trimmed = lineText.trim();
+        if (!trimmed) return;
+
+        const step = {
+            line: lineNum,
+            vars: {
+                name: trimmed.substring(0, 8),
+                val: trimmed.substring(0, 10),
+                prev_val: "none",
+                type: "string",
+                scope: "local"
+            },
+            mem: [`Instruction pointer -> line ${lineNum}`],
+            explain: `Running instruction on line ${lineNum}: \`${trimmed}\`. Loading state variables...`,
+            action: { type: "generic" }
+        };
+
+        if (category === "languages") {
+            step.vars.type = "compiler_node";
+            step.vars.scope = "stack_frame";
+            step.explain = `In language compiler runtime environment, parsing variables into call stack.`;
+            step.action = { type: "mem_set", addr: `0x00${lineNum}`, val: trimmed.substring(0, 10) };
+        }
+        else if (category === "structures") {
+            if (topic === "array" || topic === "strings") {
+                step.vars.type = "array_index";
+                step.explain = `Processing array/string elements at index ${idx}. Accessing memory address directly.`;
+                step.action = { type: "array_state", data: currentArray, active: [idx % 5] };
+            } else {
+                step.vars.type = "pointer";
+                step.explain = `Accessing linked structure node at pointer index 0x${lineNum}000.`;
+                step.action = { type: "ll_state", list: currentList, active: [`0x1000`] };
+            }
+        }
+        else if (category === "algorithms") {
+            step.vars.type = "algorithm_state";
+            step.explain = `Algorithm checks elements sequentially or splits intervals. Evaluating target values...`;
+            step.action = { type: "array_state", data: currentArray, active: [idx % 5] };
+        }
+        else if (category === "sql") {
+            step.vars.type = "table_row";
+            step.explain = `SQL executor parses queries, filters row items by WHERE filters, and projects SELECT columns.`;
+            step.action = { type: "sql_table", rows: currentSQLRows, active: [idx % 3] };
+        }
+        else if (category === "webdev") {
+            step.vars.type = "dom_node";
+            step.explain = `Browser layouts flex direction alignments, adjusts grid spacing gaps, or triggers async events.`;
+            step.action = { type: "box_model", layers: { content: "120px", padding: `${idx * 4}px`, border: "2px", margin: "10px" } };
+        }
+
+        steps.push(step);
+    });
+
+    if (steps.length === 0) {
+        steps.push({
+            line: 1,
+            vars: { status: "Empty", prev_val: "none", type: "string", scope: "none" },
+            mem: [],
+            explain: "Empty source code inputted. Please write code to visualize.",
+            action: { type: "generic" }
+        });
+    }
+
+    return steps;
+}
+
+// Start listener hooks
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('viz-curriculum-tree')) {
+    if (document.getElementById('viz-curriculum-search')) {
         initVizSessions();
-        
         document.getElementById('viz-step-slider')?.addEventListener('input', (e) => {
             jumpToStep(e.target.value);
         });
