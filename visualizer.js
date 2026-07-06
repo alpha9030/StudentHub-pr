@@ -22,7 +22,7 @@ let studyHours = 8.4;
 // 28 Learning Studios Catalog
 const LEARNING_STUDIOS = [
     { id: "c", title: "C Studio", desc: "Master low-level compilation, memory allocations, pointer dereferencing, and structures.", category: "languages", lessons: 24, time: "10 hrs", diff: "Intermediate", icon: "💻 C", objectives: ["Pointers & addresses", "Stack/Heap allocation", "Structures & Unions"] },
-    { id: "cpp", title: "C++ Studio", desc: "Object-oriented software development with classes, inheritance, polymorphism, and STL containers.", category: "languages", lessons: 18, time: "12 hrs", diff: "Intermediate", icon: "💻 C++", objectives: ["OOP Paradigms", "Templates & Generic code", "STL Data structures"] },
+    { id: "cpp", title: "C++ Studio", desc: "Object-oriented software development with classes, inheritance, polymorphism, and STL containers.", category: "languages", lessons: 18, time: "12 hrs", diff: "Intermediate", icon: "💻 C++", objectives: ["OOP Paradigations", "Templates & Generic code", "STL Data structures"] },
     { id: "java", title: "Java Studio", desc: "Write scalable cross-platform software. Memory management, collections, and multi-threading.", category: "languages", lessons: 28, time: "18 hrs", diff: "Intermediate", icon: "☕ Java", objectives: ["JVM & Garbage sweep", "Interface inheritance", "Concurrency threads"] },
     { id: "python", title: "Python Studio", desc: "Syntax simplicity with list comprehensions, decorators, generators, and data analytics tools.", category: "languages", lessons: 28, time: "8 hrs", diff: "Beginner", icon: "🐍 Python", objectives: ["Variables & Loops", "Data Science libs", "Decorators & closures"] },
     { id: "javascript", title: "JavaScript Studio", desc: "Web client interactivity. Prototypes, event loops, call stacks, and promise pipelines.", category: "languages", lessons: 26, time: "7 hrs", diff: "Beginner", icon: "⚡ JavaScript", objectives: ["Closures scopes", "Event Loop mechanics", "Async Await threads"] },
@@ -35,7 +35,7 @@ const LEARNING_STUDIOS = [
     { id: "algorithms", title: "Algorithms Studio", desc: "Time & space complexity optimizations. Bubble/Merge sorting, binary search, greed, and DP.", category: "cs", lessons: 25, time: "18 hrs", diff: "Advanced", icon: "⚡ Algorithms", objectives: ["Sorting swaps", "Binary search bounds", "Dynamic programming"] }
 ];
 
-// Fully populated syllabus database matching Algomaster's complete roadmap requirements
+// Structured syllabus
 const STUDIO_SYLLABUS = {
     c: [
         {
@@ -167,7 +167,7 @@ const STUDIO_SYLLABUS = {
     ]
 };
 
-// Sub-lessons database with detailed animations preloaded
+// Complete sub-lessons database
 const SUB_LESSONS_CATALOG = {
     "python_variables": [
         {
@@ -175,9 +175,6 @@ const SUB_LESSONS_CATALOG = {
             desc: "Learn Python variable dynamics and target object labels mapping.",
             code: `x = 10\ny = 20\nsum = x + y`,
             complexity: { best: "Not Applicable", avg: "Not Applicable", worst: "Not Applicable", space: "Not Applicable" },
-            tip: "Python variables are labels bound to objects, not fixed memory slots.",
-            mistake: "Reusing global keywords like 'sum' or 'list' as local variables.",
-            practice: "Declare integer age and float height variables.",
             steps: [
                 { line: 1, vars: { x: "10" }, mem: ["x (0x500) -> 10"], explain: "Variable x is bound to integer object 10 in stack frame.", action: { type: "var_alloc", name: "x", val: 10, addr: "0x500", dtype: "int" } },
                 { line: 2, vars: { x: "10", y: "20" }, mem: ["x -> 10", "y -> 20"], explain: "Variable y is bound to integer object 20 in stack frame.", action: { type: "var_alloc", name: "y", val: 20, addr: "0x508", dtype: "int" } },
@@ -191,9 +188,6 @@ const SUB_LESSONS_CATALOG = {
             desc: "Learn Tuple characteristics, memory structures, and contrast differences with python Lists.",
             code: `# Tuples characteristics demo\ntup = (10, "Pravio", 3.14)\n# Note: Tuples are immutable!`,
             complexity: { best: "Not Applicable", avg: "Not Applicable", worst: "Not Applicable", space: "Not Applicable" },
-            tip: "Use tuples for read-only dictionary keys.",
-            mistake: "Attempting to overwrite a tuple index val.",
-            practice: "Initialize tuple parameters.",
             steps: [
                 { line: 2, vars: { tup: "(10, 'Pravio', 3.14)" }, mem: ["tup (0x9000) -> 10", "tup (0x9008) -> 'Pravio'", "tup (0x9010) -> 3.14"], explain: "Declare and allocate a tuple container inside heap memory containing integer, string, and float items.", action: { type: "init", data: [10, "Pravio", 3.14] } }
             ]
@@ -203,9 +197,6 @@ const SUB_LESSONS_CATALOG = {
             desc: "Extract a sub-slice sequence of tuple elements using indexing boundaries `tup[start:end]`.",
             code: `tup = (10, 20, 30, 40, 50)\nslice_tup = tup[1:4] # indexes 1,2,3`,
             complexity: { best: "O(k)", avg: "O(k)", worst: "O(k)", space: "O(k)" },
-            tip: "Slicing does not copy data; it creates a new view sequence slice.",
-            mistake: "Slicing indices out of range return empty lists.",
-            practice: "Slice the first two elements.",
             steps: [
                 { line: 1, vars: { tup: "(10, 20, 30, 40, 50)" }, mem: ["tup (0x8000) -> [10, 20, 30, 40, 50]"], explain: "Initialize tuple with 5 elements.", action: { type: "array_state", data: [10, 20, 30, 40, 50], active: [] } },
                 { line: 2, vars: { tup: "(10, 20, 30, 40, 50)", slice_tup: "(20, 30, 40)" }, mem: ["tup (0x8000)", "slice_tup (0x8500) -> [20, 30, 40]"], explain: "Slice elements from index 1 to 4 (exclusive). Slice contains index 1, 2, and 3.", action: { type: "array_state", data: [20, 30, 40], active: [0, 1, 2], highlight: true } }
@@ -216,9 +207,6 @@ const SUB_LESSONS_CATALOG = {
             desc: "Combine discrete independent variables together into a single tuple container object.",
             code: `a = 10\nb = 20\nc = 30\ntup = a, b, c # Packing`,
             complexity: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)" },
-            tip: "Use packing to bundle method variables cleanly.",
-            mistake: "Unpacking with mismatched variable lengths.",
-            practice: "Pack coordinates x, y, z.",
             steps: [
                 { line: 1, vars: { a: 10 }, mem: ["a (stack) -> 10"], explain: "Assign variable a to 10.", action: { type: "array_state", data: [10], active: [0] } },
                 { line: 2, vars: { a: 10, b: 20 }, mem: ["a -> 10", "b -> 20"], explain: "Assign variable b to 20.", action: { type: "array_state", data: [10, 20], active: [1] } },
@@ -230,9 +218,6 @@ const SUB_LESSONS_CATALOG = {
             desc: "Extract tuple values directly into separate standalone variables.",
             code: `tup = (100, 200)\nx, y = tup # Unpacking`,
             complexity: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)" },
-            tip: "Use unpacking to assign multiple returned elements from a method.",
-            mistake: "Unpacking tuple into too few variables.",
-            practice: "Unpack coordinates variables.",
             steps: [
                 { line: 1, vars: { tup: "(100, 200)" }, mem: ["tup -> (100, 200)"], explain: "Initialize tuple with values 100 and 200.", action: { type: "array_state", data: [100, 200], active: [] } },
                 { line: 2, vars: { x: 100, y: 200, tup: "(100, 200)" }, mem: ["x (stack) -> 100", "y (stack) -> 200"], explain: "Unpack elements into variables x and y.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
@@ -245,9 +230,6 @@ const SUB_LESSONS_CATALOG = {
             desc: "Breadth-First Search: Visit nodes level-by-level using a FIFO Queue.",
             code: `// BST BFS level traversal\nQueue q = new Queue();\nq.enqueue(50); // root`,
             complexity: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)" },
-            tip: "Ideal for finding shortest path in unweighted graphs.",
-            mistake: "Forgetting to mark nodes visited, resulting in infinite loops.",
-            practice: "Trace BFS on a tree of depth 3.",
             steps: [
                 { line: 1, vars: { queue: "[]", root: 50 }, mem: ["Queue allocated"], explain: "Initialize an empty queue for tracking active nodes.", action: { type: "tree_bfs", visited: [], active: 50, queue: [] } },
                 { line: 2, vars: { queue: "[50]", root: 50 }, mem: ["Queue -> 50"], explain: "Enqueue root node (50) to start breadth-first expansion.", action: { type: "tree_bfs", visited: [], active: 50, queue: [50] } },
@@ -256,6 +238,68 @@ const SUB_LESSONS_CATALOG = {
         }
     ]
 };
+
+// Auto-generate context-aware analogies, mistakes, and interview tips dynamically based on topic key
+function getDynamicAnalogyAndTips(category, topicKey, displayName) {
+    const key = topicKey.toLowerCase();
+    
+    if (key.includes("pointer")) {
+        return {
+            analogy: "Think of a pointer like a street address. Instead of carrying the house itself, you carry a slip of paper telling you where the house is located.",
+            mistake: "Dereferencing a pointer that points to NULL or random garbage address coordinates.",
+            tip: "Always check if your pointers are null pointers before attempting to read/write value blocks.",
+            practice: "Write code declaring an integer, a pointer, and assign the pointer to reference that integer."
+        };
+    }
+    if (key.includes("tuple")) {
+        return {
+            analogy: "Think of a tuple as a sealed parcel package. Once you pack items inside, you can read them, but you can never change or swap them without opening a new parcel.",
+            mistake: "Attempting to change tuple elements in place like a list (e.g. tup[0] = 5).",
+            tip: "Use tuples when you want to ensure data parameters cannot be modified by other parts of the script.",
+            practice: "Create a tuple representing coordinate dimensions and try to read the second item."
+        };
+    }
+    if (key.includes("list") || key.includes("array")) {
+        return {
+            analogy: "Think of an array or list as a train. Each carriage is an index slot where passengers sit. You can walk through carriages in order.",
+            mistake: "Accessing index bounds out of range (e.g., index 5 on an array of size 5).",
+            tip: "Keep track of array size bounds, particularly when writing loops.",
+            practice: "Iterate through a list and insert an element at index 2."
+        };
+    }
+    if (key.includes("tree")) {
+        return {
+            analogy: "Think of a binary tree like a corporate hierarchy. The CEO is the root node, and managers branch off to lead separate teams below.",
+            mistake: "Creating cyclic links that lock traversal loops in infinite cycles.",
+            tip: "Ensure base cases are reached in your tree traversals to avoid stack overflow crashes.",
+            practice: "Trace path traversal order from root node 50 to leaf node 40."
+        };
+    }
+    if (key.includes("sql") || key.includes("join")) {
+        return {
+            analogy: "Think of database tables as spreadsheets. Joins act like merging two sheets together based on a matching ID column.",
+            mistake: "Writing Cartesian joins (omitting join match filters) that create huge redundant data rows.",
+            tip: "Use explicit INNER/LEFT join statements instead of implicit comma separations.",
+            practice: "Write a query joining student info tables on student ID."
+        };
+    }
+    if (key.includes("html") || key.includes("css")) {
+        return {
+            analogy: "Think of HTML as the brick walls of a house, and CSS as the paint colors, wallpapers, and dimensions of each room.",
+            mistake: "Forgetting to close HTML tags or mistyping CSS selector syntax names.",
+            tip: "Keep style declarations separated in custom CSS files for code maintenance.",
+            practice: "Style a div box margin and background color elements."
+        };
+    }
+
+    // Dynamic general fallback using current topic name
+    return {
+        analogy: `Think of ${displayName} as a building block in your software design. It provides structured parameters to organize your instructions.`,
+        mistake: `Misunderstanding the local scope or lifecycle boundaries of ${displayName}.`,
+        tip: `Consult language style guides to format ${displayName} declarations correctly.`,
+        practice: `Create a clean code snippet showing ${displayName} instantiation.`
+    };
+}
 
 // Build studio cards
 function buildStudioDashboard() {
@@ -533,7 +577,6 @@ function loadCurriculumTopic(studioId, topicKey, displayName) {
         
         let activeKey = topicKey.toLowerCase();
         
-        // Auto-generate detailed operations curriculum dynamically if it is not pre-defined!
         if (!SUB_LESSONS_CATALOG[activeKey]) {
             SUB_LESSONS_CATALOG[activeKey] = [
                 {
@@ -541,9 +584,6 @@ function loadCurriculumTopic(studioId, topicKey, displayName) {
                     desc: `Learn the fundamentals of ${displayName} in ${studioId.toUpperCase()}.`,
                     code: generateCurriculumCodeSample(studioId, displayName),
                     complexity: { best: "Not Applicable", avg: "Not Applicable", worst: "Not Applicable", space: "Not Applicable" },
-                    tip: `Always name variables descriptively for better code readability.`,
-                    mistake: `Assigning mismatched data type expressions.`,
-                    practice: `Write a simple program demonstrating ${displayName}.`,
                     steps: [
                         { line: 1, vars: { topic: displayName }, mem: [`Topic -> ${displayName}`], explain: `Beginning interactive workspace lesson for ${displayName}.`, action: { type: "generic" } }
                     ]
@@ -775,20 +815,15 @@ function renderCurrentStep() {
         bar.style.width = `${pct}%`;
     }
 
-    // Right side text adaptations
+    // Dynamic right side context-aware explanation generation
     const activeKey = activeSession.topic.toLowerCase();
-    let subList = SUB_LESSONS_CATALOG[activeKey] || [];
-    let subInfo = subList.find(s => s.name === activeSession.name) || {
-        tip: "Keep variable declarations clean and initialize them appropriately.",
-        mistake: "Accessing variables outside their scoped lifetimes.",
-        practice: "Solve the sample output verification."
-    };
+    const subInfo = getDynamicAnalogyAndTips(activeSession.category, activeSession.topic, activeSession.name);
 
     const explanation = document.getElementById('viz-explanation-panel');
     if (explanation) {
         explanation.innerHTML = `
             <div style="font-size:0.9rem; line-height:1.5; color:var(--text-body); margin-bottom:8px;">${step.explain}</div>
-            <div style="font-size:0.8rem; color:#f59e0b; font-style:italic; margin-bottom:10px;">💡 Analogy: Think of variables as labeled boxes in a storage room. Writing data changes the item inside the labeled box.</div>
+            <div style="font-size:0.8rem; color:#f59e0b; font-style:italic; margin-bottom:10px;">💡 Analogy: ${subInfo.analogy}</div>
             
             <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; border-top:1px dashed var(--border-color); padding-top:8px;">Common Mistake</div>
             <div style="font-size:0.8rem; color:#ef4444; margin-bottom:10px;">⚠️ ${subInfo.mistake}</div>
@@ -1146,6 +1181,7 @@ function stepForwardViz() {
     }
 }
 
+// Controls
 function stepBackwardViz() {
     if (!activeSession) return;
     if (activeSession.currentStep > 0) {
