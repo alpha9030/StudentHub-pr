@@ -50,26 +50,31 @@ const LEARNING_STUDIOS = [
     { id: "linux", title: "Linux Studio", desc: "Master filesystem navigations, bash shell scripting, and server configurations.", category: "cs", lessons: 10, time: "5 hrs", diff: "Intermediate", icon: "🐧 Linux", objectives: ["Filesystem paths", "Permissions scopes", "Bash scripts run"] }
 ];
 
-// Syllabus structure per Studio mapping
+// Syllabus structures
 const STUDIO_SYLLABUS = {
     python: [
         {
-            module: "Module 1: Introduction",
+            module: "Module 1: Basics & Syntax",
             lessons: [
-                { name: "Syntax", key: "python_syntax", operations: ["Introduction", "Print function", "Comments"] },
-                { name: "Variables", key: "python_variables", operations: ["Declaration", "Scope", "Data types"] }
+                { name: "Variables & Types", key: "python_variables", operations: ["Introduction", "Declaration", "Data Types", "Operators"] }
             ]
         },
         {
             module: "Module 2: Tuples",
             lessons: [
-                { name: "Tuples Basics", key: "python_tuples", operations: ["Introduction", "Tuple Slicing", "Tuple Packing", "Tuple Unpacking", "Tuple Concatenation"] }
+                { name: "Tuple Operations", key: "python_tuples", operations: ["Introduction", "Tuple Creation", "Tuple Indexing", "Negative Indexing", "Tuple Slicing", "Tuple Packing", "Tuple Unpacking", "Tuple Iteration", "Membership", "Tuple Concatenation", "Tuple Repetition", "count()", "index()"] }
             ]
         },
         {
             module: "Module 3: Lists",
             lessons: [
-                { name: "Lists Operations", key: "python_lists", operations: ["append()", "pop()"] }
+                { name: "List Methods", key: "python_lists", operations: ["append()", "pop()", "extend()", "insert()", "remove()", "clear()", "sort()", "reverse()", "copy()", "count()", "index()"] }
+            ]
+        },
+        {
+            module: "Module 4: Strings",
+            lessons: [
+                { name: "String Functions", key: "python_strings", operations: ["upper()", "lower()", "strip()", "replace()", "split()", "join()", "find()", "index()", "startswith()", "endswith()", "capitalize()", "title()", "swapcase()"] }
             ]
         }
     ],
@@ -77,36 +82,101 @@ const STUDIO_SYLLABUS = {
         {
             module: "Module 1: Basics",
             lessons: [
-                { name: "Variables", key: "c_variables", operations: ["Declaration", "Data Types"] }
+                { name: "Variables", key: "c_variables", operations: ["Introduction", "Declaration", "Data Types"] }
             ]
         },
         {
             module: "Module 2: Pointers",
             lessons: [
-                { name: "Pointer Operations", key: "c_pointers", operations: ["Dereferencing", "Double Pointers"] }
+                { name: "Pointer Mechanics", key: "c_pointers", operations: ["Dereferencing", "Double Pointers", "Pointer Arithmetic"] }
+            ]
+        }
+    ],
+    java: [
+        {
+            module: "Module 1: Arrays",
+            lessons: [
+                { name: "Java Arrays", key: "java_arrays", operations: ["Traversals", "Inversions", "Searching"] }
+            ]
+        },
+        {
+            module: "Module 2: Collections",
+            lessons: [
+                { name: "Collections API", key: "java_collections", operations: ["ArrayList add", "ArrayList remove", "HashMap put", "HashMap get"] }
+            ]
+        }
+    ],
+    javascript: [
+        {
+            module: "Module 1: Arrays",
+            lessons: [
+                { name: "JS Array Methods", key: "javascript_arrays", operations: ["push", "pop", "shift", "unshift", "splice", "slice"] }
+            ]
+        },
+        {
+            module: "Module 2: Objects",
+            lessons: [
+                { name: "JS Objects", key: "javascript_objects", operations: ["Object creation", "Object keys", "Object values"] }
             ]
         }
     ],
     sql: [
         {
-            module: "Module 1: Queries",
+            module: "Module 1: Clauses",
             lessons: [
-                { name: "SELECT & WHERE", key: "sql_select_&_where", operations: ["SELECT Clause"] }
+                { name: "SQL Clauses", key: "sql_clauses", operations: ["SELECT", "WHERE", "GROUP BY", "HAVING", "ORDER BY"] }
+            ]
+        },
+        {
+            module: "Module 2: Joins",
+            lessons: [
+                { name: "SQL Joins", key: "sql_joins", operations: ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL JOIN", "UNION"] }
             ]
         }
     ]
 };
 
-// Sub-lessons database catalogs
+// Sub-lessons database catalog
 const SUB_LESSONS_CATALOG = {
+    "python_variables": [
+        {
+            name: "Introduction",
+            desc: "Learn Python variable dynamics and variable name bindings.",
+            code: `x = 10\ny = 20\nsum = x + y`,
+            complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)" },
+            tip: "Use camelCase or snake_case consistently.",
+            mistake: "Reusing global keywords as local variable names.",
+            practice: "Define variables representing items details.",
+            steps: [
+                { line: 1, vars: { x: "10" }, mem: ["x (0x500) -> 10"], explain: "Assign x to 10.", action: { type: "array_state", data: [10], active: [0] } },
+                { line: 2, vars: { x: "10", y: "20" }, mem: ["x -> 10", "y -> 20"], explain: "Assign y to 20.", action: { type: "array_state", data: [10, 20], active: [1] } },
+                { line: 3, vars: { x: "10", y: "20", sum: "30" }, mem: ["x -> 10", "y -> 20", "sum -> 30"], explain: "Compute sum x + y = 30.", action: { type: "array_state", data: [10, 20, 30], active: [2], complete: true } }
+            ]
+        }
+    ],
     "python_tuples": [
         {
             name: "Introduction",
             desc: "Learn Tuple characteristics, memory structures, and contrast differences with python Lists.",
             code: `# Tuples characteristics demo\ntup = (10, "Pravio", 3.14)\nprint(tup)\n# Note: Tuples are immutable!`,
             complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(n)" },
+            tip: "Use tuples for read-only dictionary keys.",
+            mistake: "Attempting to overwrite a tuple index val.",
+            practice: "Initialize tuple parameters.",
             steps: [
                 { line: 2, vars: { tup: "(10, 'Pravio', 3.14)" }, mem: ["tup (0x9000) -> 10", "tup (0x9008) -> 'Pravio'", "tup (0x9010) -> 3.14"], explain: "Declare and allocate a tuple container inside heap memory containing integer, string, and float items.", action: { type: "init", data: [10, "Pravio", 3.14] } }
+            ]
+        },
+        {
+            name: "Tuple Creation",
+            desc: "Create new tuples in python via comma separation syntax.",
+            code: `tup = (1, 2, 3)\nprint(tup)`,
+            complexity: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)" },
+            tip: "Parenthesis are optional but improve code readability.",
+            mistake: "Omitting trailing comma when declaring single-element tuples.",
+            practice: "Create single-element tuple.",
+            steps: [
+                { line: 1, vars: { tup: "(1, 2, 3)" }, mem: ["tup -> [1, 2, 3]"], explain: "Initialize tuple with 3 elements.", action: { type: "array_state", data: [1, 2, 3], active: [] } }
             ]
         },
         {
@@ -114,6 +184,9 @@ const SUB_LESSONS_CATALOG = {
             desc: "Extract a sub-slice sequence of tuple elements using indexing boundaries `tup[start:end]`.",
             code: `tup = (10, 20, 30, 40, 50)\nslice_tup = tup[1:4] # indexes 1,2,3`,
             complexity: { best: "O(k)", avg: "O(k)", worst: "O(k)", space: "O(k)" },
+            tip: "Slicing does not copy data; it creates a new view sequence slice.",
+            mistake: "Slicing indices out of range return empty lists.",
+            practice: "Slice the first two elements.",
             steps: [
                 { line: 1, vars: { tup: "(10, 20, 30, 40, 50)" }, mem: ["tup (0x8000) -> [10, 20, 30, 40, 50]"], explain: "Initialize tuple with 5 elements.", action: { type: "array_state", data: [10, 20, 30, 40, 50], active: [] } },
                 { line: 2, vars: { tup: "(10, 20, 30, 40, 50)", slice_tup: "(20, 30, 40)" }, mem: ["tup (0x8000)", "slice_tup (0x8500) -> [20, 30, 40]"], explain: "Slice elements from index 1 to 4 (exclusive). Slice contains index 1, 2, and 3.", action: { type: "array_state", data: [20, 30, 40], active: [0, 1, 2], highlight: true } }
@@ -124,6 +197,9 @@ const SUB_LESSONS_CATALOG = {
             desc: "Combine discrete independent variables together into a single tuple container object.",
             code: `a = 10\nb = 20\nc = 30\ntup = a, b, c # Packing`,
             complexity: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)" },
+            tip: "Use packing to bundle method variables cleanly.",
+            mistake: "Unpacking with mismatched variable lengths.",
+            practice: "Pack coordinates x, y, z.",
             steps: [
                 { line: 1, vars: { a: 10 }, mem: ["a (stack) -> 10"], explain: "Assign variable a to 10.", action: { type: "array_state", data: [10], active: [0] } },
                 { line: 2, vars: { a: 10, b: 20 }, mem: ["a -> 10", "b -> 20"], explain: "Assign variable b to 20.", action: { type: "array_state", data: [10, 20], active: [1] } },
@@ -135,6 +211,9 @@ const SUB_LESSONS_CATALOG = {
             desc: "Extract tuple values directly into separate standalone variables.",
             code: `tup = (100, 200)\nx, y = tup # Unpacking`,
             complexity: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)" },
+            tip: "Use unpacking to assign multiple returned elements from a method.",
+            mistake: "Unpacking tuple into too few variables.",
+            practice: "Unpack coordinates variables.",
             steps: [
                 { line: 1, vars: { tup: "(100, 200)" }, mem: ["tup -> (100, 200)"], explain: "Initialize tuple with values 100 and 200.", action: { type: "array_state", data: [100, 200], active: [] } },
                 { line: 2, vars: { x: 100, y: 200, tup: "(100, 200)" }, mem: ["x (stack) -> 100", "y (stack) -> 200"], explain: "Unpack elements into variables x and y.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
@@ -145,6 +224,9 @@ const SUB_LESSONS_CATALOG = {
             desc: "Merge two separate tuples together to form an entirely new tuple.",
             code: `t1 = (1, 2)\nt2 = (3, 4)\nt3 = t1 + t2`,
             complexity: { best: "O(n+m)", avg: "O(n+m)", worst: "O(n+m)", space: "O(n+m)" },
+            tip: "Use concatenation to construct parameter arrays.",
+            mistake: "Adding lists to tuples throws a TypeError.",
+            practice: "Merge user profiles.",
             steps: [
                 { line: 1, vars: { t1: "(1, 2)" }, mem: ["t1 -> (1, 2)"], explain: "Initialize tuple t1.", action: { type: "array_state", data: [1, 2], active: [] } },
                 { line: 3, vars: { t1: "(1, 2)", t2: "(3, 4)", t3: "(1, 2, 3, 4)" }, mem: ["t3 -> (1, 2, 3, 4)"], explain: "Merge t1 and t2. Result is stored in a new memory address allocation block.", action: { type: "array_state", data: [1, 2, 3, 4], active: [0, 1, 2, 3], complete: true } }
@@ -157,6 +239,9 @@ const SUB_LESSONS_CATALOG = {
             desc: "Add a single element to the end of a python List.",
             code: `lst = [10, 20]\nlst.append(30)`,
             complexity: { best: "O(1) amortized", avg: "O(1)", worst: "O(1)", space: "O(1)" },
+            tip: "Ideal for queuing buffer items.",
+            mistake: "Appending lists inserts whole sublists.",
+            practice: "Append task list identifiers.",
             steps: [
                 { line: 1, vars: { lst: "[10, 20]" }, mem: ["lst -> [10, 20]"], explain: "Initialize list with 2 elements.", action: { type: "array_state", data: [10, 20, 0], active: [] } },
                 { line: 2, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Append 30 to the end of the list array.", action: { type: "array_state", data: [10, 20, 30], active: [2], complete: true } }
@@ -167,9 +252,42 @@ const SUB_LESSONS_CATALOG = {
             desc: "Remove and return the last element from the list.",
             code: `lst = [10, 20, 30]\nval = lst.pop()`,
             complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)" },
+            tip: "Pop matches stack LIFO behaviors.",
+            mistake: "Popping from an empty list throws IndexError.",
+            practice: "Pop active session stack.",
             steps: [
                 { line: 1, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Initialize list with 3 elements.", action: { type: "array_state", data: [10, 20, 30], active: [] } },
                 { line: 2, vars: { lst: "[10, 20]", val: 30 }, mem: ["lst -> [10, 20]", "val -> 30"], explain: "Remove and pop element at the last index (30).", action: { type: "array_state", data: [10, 20], active: [1], highlight: true } }
+            ]
+        }
+    ],
+    "python_strings": [
+        {
+            name: "upper()",
+            desc: "Convert all characters inside string array to uppercase.",
+            code: `s = "hi"\nres = s.upper()`,
+            complexity: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)" },
+            tip: "Strings are immutable, so upper() returns a new string.",
+            mistake: "Modifying variables in place expecting updates.",
+            practice: "Capitalize log level output.",
+            steps: [
+                { line: 1, vars: { s: "'hi'" }, mem: ["s -> 'hi'"], explain: "Initialize string.", action: { type: "array_state", data: ["h", "i"], active: [] } },
+                { line: 2, vars: { s: "'hi'", res: "'HI'" }, mem: ["res -> 'HI'"], explain: "Iterate through characters and convert them to uppercase.", action: { type: "array_state", data: ["H", "I"], active: [0, 1], complete: true } }
+            ]
+        }
+    ],
+    "c_variables": [
+        {
+            name: "Declaration",
+            desc: "Declare static types and allocate storage values.",
+            code: `int main() {\n    int age = 20;\n    float salary = 35000.5;\n    char grade = 'A';\n    return 0;\n}`,
+            complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)" },
+            tip: "Initialize variables to avoid garbage values.",
+            mistake: "Accessing uninitialized variable addresses.",
+            practice: "Declare coordinate bounds.",
+            steps: [
+                { line: 2, vars: { age: 20 }, mem: ["age (0x7ffe) -> 20"], explain: "Allocate integer age at address 0x7ffe.", action: { type: "mem_set", addr: "0x7ffe", val: 20 } },
+                { line: 3, vars: { age: 20, salary: 35000.5 }, mem: ["age (0x7ffe) -> 20", "salary (0x7ffa) -> 35000.5"], explain: "Allocate float salary at address 0x7ffa.", action: { type: "mem_set", addr: "0x7ffa", val: 35000.5 } }
             ]
         }
     ],
@@ -179,6 +297,9 @@ const SUB_LESSONS_CATALOG = {
             desc: "Modify target memory blocks by dereferencing pointers via `*ptr`.",
             code: `int val = 42;\nint *ptr = &val;\n*ptr = 99;`,
             complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)" },
+            tip: "Ensure pointers are null-checked before dereferencing.",
+            mistake: "Dereferencing unassigned garbage address blocks.",
+            practice: "Dereference target variables.",
             steps: [
                 { line: 1, vars: { val: 42 }, mem: ["val (0x7ffe) -> 42"], explain: "Allocate integer variable val in stack with value 42.", action: { type: "mem_set", addr: "0x7ffe", val: 42 } },
                 { line: 2, vars: { val: 42, ptr: "0x7ffe" }, mem: ["val (0x7ffe) -> 42", "ptr -> 0x7ffe"], explain: "Assign address of val (0x7ffe) to pointer ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
@@ -192,6 +313,9 @@ const SUB_LESSONS_CATALOG = {
             desc: "Select specific columns from query matches.",
             code: `SELECT name, grade\nFROM Students;`,
             complexity: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)" },
+            tip: "Avoid SELECT * to reduce network overhead.",
+            mistake: "Querying unindexed target columns in huge tables.",
+            practice: "Query student data columns.",
             steps: [
                 { line: 1, vars: { total_rows: 3 }, mem: ["Columns: name, grade"], explain: "Select only name and grade columns from the database rows.", action: { type: "sql_table", rows: [{ name: "Alice", grade: "A" }, { name: "Bob", grade: "B" }, { name: "Charlie", grade: "A" }], active: [0, 1, 2] } }
             ]
@@ -199,7 +323,7 @@ const SUB_LESSONS_CATALOG = {
     ]
 };
 
-// Auto build Studio Cards on boot
+// Build studio cards
 function buildStudioDashboard() {
     const grid = document.getElementById('viz-studios-grid');
     if (!grid) return;
@@ -285,7 +409,6 @@ function filterStudios(category) {
         }
     });
 
-    // Update active filter styling
     const btns = document.querySelectorAll('#viz-category-filters button');
     btns.forEach(btn => {
         btn.className = 'btn btn-secondary';
@@ -312,21 +435,17 @@ function searchStudios(query) {
     });
 }
 
-// Enter workspace logic
+// Enter workspace
 function enterStudioWorkspace(studioId, studioTitle) {
     document.getElementById('viz-dashboard-view').style.display = 'none';
     document.getElementById('viz-workspace-view').style.display = 'flex';
 
-    // Set breadcrumbs
     document.getElementById('breadcrumb-studio').innerText = studioTitle;
     
-    // Build curriculum tree for active studio
     buildStudioSyllabusTree(studioId);
 
-    // Save recently visited
     localStorage.setItem('viz_recent_studio', studioId);
 
-    // Trigger loading first topic automatically
     const syllabus = STUDIO_SYLLABUS[studioId] || [
         { module: "Module 1: General Basics", lessons: [{ name: "Variables", key: "general_variables", operations: ["Introduction"] }] }
     ];
@@ -338,7 +457,6 @@ function exitStudioWorkspace() {
     document.getElementById('viz-workspace-view').style.display = 'none';
     document.getElementById('viz-dashboard-view').style.display = 'flex';
     
-    // Clean timer triggers
     vizIsPlaying = false;
     clearInterval(vizInterval);
     updatePlayPauseButtonUI();
@@ -346,7 +464,6 @@ function exitStudioWorkspace() {
     buildStudioDashboard();
 }
 
-// Curriculum syllabus layout builder
 function buildStudioSyllabusTree(studioId) {
     const treeEl = document.getElementById('viz-curriculum-tree');
     if (!treeEl) return;
@@ -421,7 +538,7 @@ function toggleFolderNode(headerElement) {
     }
 }
 
-// Workspace tab switcher notes/revision
+// Tabs
 function toggleWorkspaceTab(tab) {
     const tabNotes = document.getElementById('workspace-tab-notes');
     const tabRev = document.getElementById('workspace-tab-revision');
@@ -468,16 +585,14 @@ function saveActiveWorkspaceNotes() {
 }
 
 function loadCurriculumTopic(studioId, topicKey, displayName) {
-    // Breadcrumbs topic update
     document.getElementById('breadcrumb-topic').innerText = displayName;
 
-    // Reset console output window
     const consoleLog = document.getElementById('viz-console-log');
     if (consoleLog) {
         consoleLog.innerHTML = `[Console System Initialized]\nLoaded Studio: ${studioId}\nLesson: ${displayName}\nReady for execution...`;
     }
 
-    // Default load sub-lesson operations tab bar
+    // Default load sub-lesson operations toolbar
     const sublessonToolbar = document.getElementById('viz-sublesson-toolbar');
     if (sublessonToolbar) {
         sublessonToolbar.innerHTML = '';
@@ -530,7 +645,6 @@ function loadCurriculumTopic(studioId, topicKey, displayName) {
         loadSelectedSubLesson(activeKey, 0, studioId, topicKey);
     }
 
-    // Toggle live CSS preview side panel
     const previewContainer = document.getElementById('viz-html-preview-container');
     if (previewContainer) {
         if (displayName.toLowerCase().includes('css') || displayName.toLowerCase().includes('html') || displayName.toLowerCase().includes('box')) {
@@ -569,13 +683,11 @@ function loadSelectedSubLesson(activeKey, sIdx, category, topic) {
         syncEditorLineNumbers();
     }
 
-    // Load saved notes for this lesson operation
     const notesTextarea = document.getElementById('workspace-notes-textarea');
     if (notesTextarea) {
         notesTextarea.value = workspaceNotes[sub.name] || '';
     }
 
-    // Cache Complexity mappings
     const bestC = document.getElementById('viz-best-case');
     const avgC = document.getElementById('viz-avg-case');
     const worstC = document.getElementById('viz-worst-case');
@@ -586,7 +698,6 @@ function loadSelectedSubLesson(activeKey, sIdx, category, topic) {
     if (worstC) worstC.innerText = sub.complexity.worst;
     if (spaceC) spaceC.innerText = sub.complexity.space;
 
-    // Reset controls
     vizIsPlaying = false;
     clearInterval(vizInterval);
     updatePlayPauseButtonUI();
@@ -693,7 +804,6 @@ function renderCurrentStep() {
         }
     });
 
-    // Step sliders and labels
     const progress = document.getElementById('viz-step-slider');
     const label = document.getElementById('viz-step-label-nav');
     const sliderLabel = document.getElementById('viz-step-label-slider');
@@ -714,7 +824,15 @@ function renderCurrentStep() {
         bar.style.width = `${pct}%`;
     }
 
-    // AI Tutor Guide explanation styles
+    // Right side text adaptations
+    const activeKey = activeSession.topic.toLowerCase();
+    let subList = SUB_LESSONS_CATALOG[activeKey] || [];
+    let subInfo = subList.find(s => s.name === activeSession.name) || {
+        tip: "Keep variables names clean and self-explanatory.",
+        mistake: "Accidentally modifying immutable variables.",
+        practice: "Write simple trace cases."
+    };
+
     const explanation = document.getElementById('viz-explanation-panel');
     if (explanation) {
         explanation.innerHTML = `
@@ -722,7 +840,13 @@ function renderCurrentStep() {
             <div style="font-size:0.8rem; color:#f59e0b; font-style:italic; margin-bottom:10px;">💡 Analogy: Imagine baking cookies step-by-step. The variables are ingredients you set down on the counter.</div>
             
             <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; border-top:1px dashed var(--border-color); padding-top:8px;">Common Mistake</div>
-            <div style="font-size:0.8rem; color:#ef4444; margin-bottom:10px;">⚠️ Assigning out of bounds elements or modifing values on read-only tuple lists.</div>
+            <div style="font-size:0.8rem; color:#ef4444; margin-bottom:10px;">⚠️ ${subInfo.mistake}</div>
+
+            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; border-top:1px dashed var(--border-color); padding-top:8px;">Best Practice</div>
+            <div style="font-size:0.8rem; color:#10b981; margin-bottom:10px;">🛡️ ${subInfo.tip}</div>
+
+            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; border-top:1px dashed var(--border-color); padding-top:8px;">Practice Challenge</div>
+            <div style="font-size:0.8rem; color:var(--text-body);">${subInfo.practice}</div>
         `;
     }
 
@@ -765,7 +889,6 @@ function renderCurrentStep() {
 
     renderInteractiveCanvas(step.action);
 
-    // Save completed list
     const normalizedName = activeSession.topic.toLowerCase();
     if (stepIdx === totalSteps - 1 && !completedTopics.includes(normalizedName)) {
         completedTopics.push(normalizedName);
@@ -805,12 +928,12 @@ function renderInteractiveCanvas(action) {
             const isActive = activeIdx.includes(idx);
             if (isActive) {
                 if (action.highlight) {
-                    block.style.background = '#ef4444'; // Red swap/highlight
+                    block.style.background = '#ef4444'; // Red
                 } else {
-                    block.style.background = '#a855f7'; // Purple comparison
+                    block.style.background = '#a855f7'; // Purple
                 }
             } else if (action.complete) {
-                block.style.background = '#10b981'; // Green complete
+                block.style.background = '#10b981'; // Green
             } else {
                 block.style.background = 'rgba(255, 255, 255, 0.05)';
                 block.style.color = 'var(--text-body)';
@@ -868,7 +991,7 @@ function renderInteractiveCanvas(action) {
     }
 }
 
-// Playback Speed controls
+// Playback Controls
 function updatePlayPauseButtonUI() {
     const playBtn = document.getElementById('viz-play-btn');
     if (!playBtn) return;
@@ -1139,7 +1262,6 @@ function updateBookmarkIconUI() {
         : `<i class="far fa-bookmark"></i>`;
 }
 
-// Fallback steps generator loops
 function generateDynamicSteps(category, topic, code) {
     const steps = [];
     const lines = code.split('\n');
@@ -1175,7 +1297,6 @@ function generateDynamicSteps(category, topic, code) {
     return steps;
 }
 
-// Boot sequence loaders
 function initVizSessions() {
     try {
         bookmarks = JSON.parse(localStorage.getItem('pravio_visualizer_bookmarks') || '[]');
@@ -1190,13 +1311,11 @@ function initVizSessions() {
     if (!Array.isArray(bookmarks)) bookmarks = [];
     if (!Array.isArray(completedTopics)) completedTopics = [];
 
-    // Render stats metrics labels
     document.getElementById('viz-stat-streak').innerText = `${userStreak} Days`;
     document.getElementById('viz-stat-xp').innerText = `${userXP} XP`;
     document.getElementById('viz-stat-completed').innerText = `${completedTopics.length} / 85`;
     document.getElementById('viz-stat-hours').innerText = `${studyHours} hrs`;
 
-    // Render Dashboard homepage cards
     buildStudioDashboard();
 }
 
