@@ -56,7 +56,7 @@ const STUDIO_SYLLABUS = {
         {
             module: "Module 1: Basics & Syntax",
             lessons: [
-                { name: "Variables", key: "python_variables", operations: ["Introduction", "Declaration", "Scope", "Lifetime"] }
+                { name: "Variables", key: "python_variables", operations: ["Introduction", "Declaration", "Data Types", "Operators"] }
             ]
         },
         {
@@ -148,7 +148,7 @@ const SUB_LESSONS_CATALOG = {
             mistake: "Reusing global keywords like 'sum' or 'list' as local variables.",
             practice: "Declare integer age and float height variables.",
             steps: [
-                { line: 1, vars: { x: "10" }, mem: ["x (stack) -> 10"], explain: "Variable x is bound to integer object 10 in stack frame.", action: { type: "var_alloc", name: "x", val: 10, addr: "0x500", dtype: "int" } },
+                { line: 1, vars: { x: "10" }, mem: ["x (0x500) -> 10"], explain: "Variable x is bound to integer object 10 in stack frame.", action: { type: "var_alloc", name: "x", val: 10, addr: "0x500", dtype: "int" } },
                 { line: 2, vars: { x: "10", y: "20" }, mem: ["x -> 10", "y -> 20"], explain: "Variable y is bound to integer object 20 in stack frame.", action: { type: "var_alloc", name: "y", val: 20, addr: "0x508", dtype: "int" } },
                 { line: 3, vars: { x: "10", y: "20", sum: "30" }, mem: ["x -> 10", "y -> 20", "sum -> 30"], explain: "Compute x + y = 30 and bind the result to variable 'sum'.", action: { type: "var_alloc", name: "sum", val: 30, addr: "0x510", dtype: "int" } }
             ]
@@ -630,7 +630,6 @@ function loadCurriculumTopic(studioId, topicKey, displayName) {
         
         let activeKey = topicKey.toLowerCase();
         
-        // Match specific topic key mappings and build dynamic fallbacks specifically for this key!
         if (!SUB_LESSONS_CATALOG[activeKey]) {
             SUB_LESSONS_CATALOG[activeKey] = [
                 {
@@ -716,7 +715,6 @@ function loadSelectedSubLesson(activeKey, sIdx, category, topic) {
         notesTextarea.value = workspaceNotes[sub.name] || '';
     }
 
-    // Complexity format check
     const bestC = document.getElementById('viz-best-case');
     const avgC = document.getElementById('viz-avg-case');
     const worstC = document.getElementById('viz-worst-case');
@@ -770,46 +768,51 @@ function renderCurrentStep() {
     let steps = [];
     const lowerName = activeSession.name.toLowerCase();
 
-    // Trace frames selector
-    if (lowerName.includes("slicing")) {
-        steps = [
-            { line: 1, vars: { tup: "(10, 20, 30, 40, 50)" }, mem: ["tup -> [10, 20, 30, 40, 50]"], explain: "Initialize tuple with 5 elements.", action: { type: "array_state", data: [10, 20, 30, 40, 50], active: [] } },
-            { line: 2, vars: { tup: "(10, 20, 30, 40, 50)", slice_tup: "(20, 30, 40)" }, mem: ["slice_tup -> [20, 30, 40]"], explain: "Animate selected element slice being extracted from boundaries [1:4].", action: { type: "array_state", data: [20, 30, 40], active: [0, 1, 2], highlight: true } }
-        ];
-    } else if (lowerName.includes("packing")) {
-        steps = [
-            { line: 1, vars: { a: 10 }, mem: ["a -> 10"], explain: "Assign variable a to 10.", action: { type: "array_state", data: [10], active: [0] } },
-            { line: 2, vars: { a: 10, b: 20 }, mem: ["b -> 20"], explain: "Assign variable b to 20.", action: { type: "array_state", data: [10, 20], active: [1] } },
-            { line: 4, vars: { tup: "(10, 20, 30)" }, mem: ["tup -> (10, 20, 30)"], explain: "Animate variables combining/packing into a single tuple index structure.", action: { type: "array_state", data: [10, 20, 30], active: [0, 1, 2], complete: true } }
-        ];
-    } else if (lowerName.includes("unpacking")) {
-        steps = [
-            { line: 1, vars: { tup: "(100, 200)" }, mem: ["tup -> (100, 200)"], explain: "Initialize tuple to unpack.", action: { type: "array_state", data: [100, 200], active: [] } },
-            { line: 2, vars: { x: 100, y: 200 }, mem: ["x -> 100", "y -> 200"], explain: "Animate tuple values separating/unpacking into independent local stack variables.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
-        ];
-    } else if (lowerName.includes("concatenation")) {
-        steps = [
-            { line: 1, vars: { t1: "(1, 2)" }, mem: ["t1 -> (1, 2)"], explain: "Initialize first tuple.", action: { type: "array_state", data: [1, 2], active: [] } },
-            { line: 3, vars: { t3: "(1, 2, 3, 4)" }, mem: ["t3 -> (1, 2, 3, 4)"], explain: "Animate two tuples merging/concatenating together into a new heap allocation address.", action: { type: "array_state", data: [1, 2, 3, 4], active: [0, 1, 2, 3], complete: true } }
-        ];
-    } else if (lowerName.includes("append")) {
-        steps = [
-            { line: 1, vars: { lst: "[10, 20]" }, mem: ["lst -> [10, 20]"], explain: "Initialize list with 2 items.", action: { type: "array_state", data: [10, 20], active: [] } },
-            { line: 2, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Add element to the end of array list. Array size expands dynamically.", action: { type: "array_state", data: [10, 20, 30], active: [2], complete: true } }
-        ];
-    } else if (lowerName.includes("pop")) {
-        steps = [
-            { line: 1, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Initialize list with 3 elements.", action: { type: "array_state", data: [10, 20, 30], active: [] } },
-            { line: 2, vars: { lst: "[10, 20]", val: 30 }, mem: ["lst -> [10, 20]"], explain: "Pop element off the last index of list.", action: { type: "array_state", data: [10, 20], active: [1], highlight: true } }
-        ];
-    } else if (lowerName.includes("dereferencing")) {
-        steps = [
-            { line: 1, vars: { val: 42 }, mem: ["val (0x7ffe) -> 42"], explain: "Allocate local stack integer variable val with 42.", action: { type: "mem_set", addr: "0x7ffe", val: 42 } },
-            { line: 2, vars: { ptr: "0x7ffe" }, mem: ["ptr -> 0x7ffe"], explain: "Assign address of val to pointer variable ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
-            { line: 3, vars: { val: 99 }, mem: ["val (0x7ffe) -> 99"], explain: "Animate dereference: change value at address stored in pointer.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
-        ];
-    } else {
+    // Check if custom code interpreter parser should evaluate the custom editor code
+    if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("push(")) {
         steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
+    } else {
+        // Preset operations matching
+        if (lowerName.includes("slicing")) {
+            steps = [
+                { line: 1, vars: { tup: "(10, 20, 30, 40, 50)" }, mem: ["tup -> [10, 20, 30, 40, 50]"], explain: "Initialize tuple with 5 elements.", action: { type: "array_state", data: [10, 20, 30, 40, 50], active: [] } },
+                { line: 2, vars: { tup: "(10, 20, 30, 40, 50)", slice_tup: "(20, 30, 40)" }, mem: ["slice_tup -> [20, 30, 40]"], explain: "Animate selected element slice being extracted from boundaries [1:4].", action: { type: "array_state", data: [20, 30, 40], active: [0, 1, 2], highlight: true } }
+            ];
+        } else if (lowerName.includes("packing")) {
+            steps = [
+                { line: 1, vars: { a: 10 }, mem: ["a -> 10"], explain: "Assign variable a to 10.", action: { type: "array_state", data: [10], active: [0] } },
+                { line: 2, vars: { a: 10, b: 20 }, mem: ["b -> 20"], explain: "Assign variable b to 20.", action: { type: "array_state", data: [10, 20], active: [1] } },
+                { line: 4, vars: { tup: "(10, 20, 30)" }, mem: ["tup -> (10, 20, 30)"], explain: "Animate variables combining/packing into a single tuple index structure.", action: { type: "array_state", data: [10, 20, 30], active: [0, 1, 2], complete: true } }
+            ];
+        } else if (lowerName.includes("unpacking")) {
+            steps = [
+                { line: 1, vars: { tup: "(100, 200)" }, mem: ["tup -> (100, 200)"], explain: "Initialize tuple to unpack.", action: { type: "array_state", data: [100, 200], active: [] } },
+                { line: 2, vars: { x: 100, y: 200 }, mem: ["x -> 100", "y -> 200"], explain: "Animate tuple values separating/unpacking into independent local stack variables.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
+            ];
+        } else if (lowerName.includes("concatenation")) {
+            steps = [
+                { line: 1, vars: { t1: "(1, 2)" }, mem: ["t1 -> (1, 2)"], explain: "Initialize first tuple.", action: { type: "array_state", data: [1, 2], active: [] } },
+                { line: 3, vars: { t3: "(1, 2, 3, 4)" }, mem: ["t3 -> (1, 2, 3, 4)"], explain: "Animate two tuples merging/concatenating together into a new heap allocation address.", action: { type: "array_state", data: [1, 2, 3, 4], active: [0, 1, 2, 3], complete: true } }
+            ];
+        } else if (lowerName.includes("append")) {
+            steps = [
+                { line: 1, vars: { lst: "[10, 20]" }, mem: ["lst -> [10, 20]"], explain: "Initialize list with 2 items.", action: { type: "array_state", data: [10, 20], active: [] } },
+                { line: 2, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Add element to the end of array list. Array size expands dynamically.", action: { type: "array_state", data: [10, 20, 30], active: [2], complete: true } }
+            ];
+        } else if (lowerName.includes("pop")) {
+            steps = [
+                { line: 1, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Initialize list with 3 elements.", action: { type: "array_state", data: [10, 20, 30], active: [] } },
+                { line: 2, vars: { lst: "[10, 20]", val: 30 }, mem: ["lst -> [10, 20]"], explain: "Pop element off the last index of list.", action: { type: "array_state", data: [10, 20], active: [1], highlight: true } }
+            ];
+        } else if (lowerName.includes("dereferencing")) {
+            steps = [
+                { line: 1, vars: { val: 42 }, mem: ["val (0x7ffe) -> 42"], explain: "Allocate local stack integer variable val with 42.", action: { type: "mem_set", addr: "0x7ffe", val: 42 } },
+                { line: 2, vars: { ptr: "0x7ffe" }, mem: ["ptr -> 0x7ffe"], explain: "Assign address of val to pointer variable ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
+                { line: 3, vars: { val: 99 }, mem: ["val (0x7ffe) -> 99"], explain: "Animate dereference: change value at address stored in pointer.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
+            ];
+        } else {
+            steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
+        }
     }
 
     const totalSteps = steps.length;
@@ -858,7 +861,7 @@ function renderCurrentStep() {
     let subList = SUB_LESSONS_CATALOG[activeKey] || [];
     let subInfo = subList.find(s => s.name === activeSession.name) || {
         tip: "Keep variable declarations clean and initialize them appropriately.",
-        mistake: "Accessing out-of-bounds bounds scopes.",
+        mistake: "Accessing variables outside their scoped lifetimes.",
         practice: "Solve the sample output verification."
     };
 
@@ -1118,78 +1121,9 @@ function stepForwardViz() {
     let steps = [];
     const lowerName = activeSession.name.toLowerCase();
     
-    if (lowerName.includes("slicing")) {
-        steps = [
-            { line: 1, vars: { tup: "(10, 20, 30, 40, 50)" }, mem: ["tup -> [10, 20, 30, 40, 50]"], explain: "Initialize tuple with 5 elements.", action: { type: "array_state", data: [10, 20, 30, 40, 50], active: [] } },
-            { line: 2, vars: { tup: "(10, 20, 30, 40, 50)", slice_tup: "(20, 30, 40)" }, mem: ["slice_tup -> [20, 30, 40]"], explain: "Animate selected element slice being extracted from boundaries [1:4].", action: { type: "array_state", data: [20, 30, 40], active: [0, 1, 2], highlight: true } }
-        ];
-    } else if (lowerName.includes("packing")) {
-        steps = [
-            { line: 1, vars: { a: 10 }, mem: ["a -> 10"], explain: "Assign variable a to 10.", action: { type: "array_state", data: [10], active: [0] } },
-            { line: 2, vars: { a: 10, b: 20 }, mem: ["b -> 20"], explain: "Assign variable b to 20.", action: { type: "array_state", data: [10, 20], active: [1] } },
-            { line: 4, vars: { tup: "(10, 20, 30)" }, mem: ["tup -> (10, 20, 30)"], explain: "Animate variables combining/packing into a single tuple index structure.", action: { type: "array_state", data: [10, 20, 30], active: [0, 1, 2], complete: true } }
-        ];
-    } else if (lowerName.includes("unpacking")) {
-        steps = [
-            { line: 1, vars: { tup: "(100, 200)" }, mem: ["tup -> (100, 200)"], explain: "Initialize tuple to unpack.", action: { type: "array_state", data: [100, 200], active: [] } },
-            { line: 2, vars: { x: 100, y: 200 }, mem: ["x -> 100", "y -> 200"], explain: "Animate tuple values separating/unpacking into independent local stack variables.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
-        ];
-    } else if (lowerName.includes("concatenation")) {
-        steps = [
-            { line: 1, vars: { t1: "(1, 2)" }, mem: ["t1 -> (1, 2)"], explain: "Initialize first tuple.", action: { type: "array_state", data: [1, 2], active: [] } },
-            { line: 3, vars: { t3: "(1, 2, 3, 4)" }, mem: ["t3 -> (1, 2, 3, 4)"], explain: "Animate two tuples merging/concatenating together into a new heap allocation address.", action: { type: "array_state", data: [1, 2, 3, 4], active: [0, 1, 2, 3], complete: true } }
-        ];
-    } else if (lowerName.includes("append")) {
-        steps = [
-            { line: 1, vars: { lst: "[10, 20]" }, mem: ["lst -> [10, 20]"], explain: "Initialize list with 2 items.", action: { type: "array_state", data: [10, 20], active: [] } },
-            { line: 2, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Add element to the end of array list. Array size expands dynamically.", action: { type: "array_state", data: [10, 20, 30], active: [2], complete: true } }
-        ];
-    } else if (lowerName.includes("pop")) {
-        steps = [
-            { line: 1, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Initialize list with 3 elements.", action: { type: "array_state", data: [10, 20, 30], active: [] } },
-            { line: 2, vars: { lst: "[10, 20]", val: 30 }, mem: ["lst -> [10, 20]"], explain: "Pop element off the last index of list.", action: { type: "array_state", data: [10, 20], active: [1], highlight: true } }
-        ];
-    } else if (lowerName.includes("dereferencing")) {
-        steps = [
-            { line: 1, vars: { val: 42 }, mem: ["val (0x7ffe) -> 42"], explain: "Allocate local stack integer variable val with 42.", action: { type: "mem_set", addr: "0x7ffe", val: 42 } },
-            { line: 2, vars: { ptr: "0x7ffe" }, mem: ["ptr -> 0x7ffe"], explain: "Assign address of val to pointer variable ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
-            { line: 3, vars: { val: 99 }, mem: ["val (0x7ffe) -> 99"], explain: "Animate dereference: change value at address stored in pointer.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
-        ];
-    } else {
+    if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("push(")) {
         steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
-    }
-
-    if (activeSession.currentStep < steps.length - 1) {
-        activeSession.currentStep++;
-        renderCurrentStep();
-    }
-}
-
-function stepBackwardViz() {
-    if (!activeSession) return;
-    if (activeSession.currentStep > 0) {
-        activeSession.currentStep--;
-        renderCurrentStep();
-    }
-}
-
-function restartViz() {
-    if (!activeSession) return;
-    activeSession.currentStep = 0;
-    renderCurrentStep();
-}
-
-function setVizSpeed(val) {
-    vizSpeed = parseInt(val, 10);
-    const displayLbl = document.getElementById('viz-speed-display-lbl');
-    if (displayLbl) displayLbl.innerText = `${vizSpeed}ms`;
-
-    if (vizIsPlaying) {
-        clearInterval(vizInterval);
-        
-        let steps = [];
-        const lowerName = activeSession.name.toLowerCase();
-        
+    } else {
         if (lowerName.includes("slicing")) {
             steps = [
                 { line: 1, vars: { tup: "(10, 20, 30, 40, 50)" }, mem: ["tup -> [10, 20, 30, 40, 50]"], explain: "Initialize tuple with 5 elements.", action: { type: "array_state", data: [10, 20, 30, 40, 50], active: [] } },
@@ -1229,6 +1163,83 @@ function setVizSpeed(val) {
             ];
         } else {
             steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
+        }
+    }
+
+    if (activeSession.currentStep < steps.length - 1) {
+        activeSession.currentStep++;
+        renderCurrentStep();
+    }
+}
+
+function stepBackwardViz() {
+    if (!activeSession) return;
+    if (activeSession.currentStep > 0) {
+        activeSession.currentStep--;
+        renderCurrentStep();
+    }
+}
+
+function restartViz() {
+    if (!activeSession) return;
+    activeSession.currentStep = 0;
+    renderCurrentStep();
+}
+
+function setVizSpeed(val) {
+    vizSpeed = parseInt(val, 10);
+    const displayLbl = document.getElementById('viz-speed-display-lbl');
+    if (displayLbl) displayLbl.innerText = `${vizSpeed}ms`;
+
+    if (vizIsPlaying) {
+        clearInterval(vizInterval);
+        
+        let steps = [];
+        const lowerName = activeSession.name.toLowerCase();
+        
+        if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("push(")) {
+            steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
+        } else {
+            if (lowerName.includes("slicing")) {
+                steps = [
+                    { line: 1, vars: { tup: "(10, 20, 30, 40, 50)" }, mem: ["tup -> [10, 20, 30, 40, 50]"], explain: "Initialize tuple with 5 elements.", action: { type: "array_state", data: [10, 20, 30, 40, 50], active: [] } },
+                    { line: 2, vars: { tup: "(10, 20, 30, 40, 50)", slice_tup: "(20, 30, 40)" }, mem: ["slice_tup -> [20, 30, 40]"], explain: "Animate selected element slice being extracted from boundaries [1:4].", action: { type: "array_state", data: [20, 30, 40], active: [0, 1, 2], highlight: true } }
+                ];
+            } else if (lowerName.includes("packing")) {
+                steps = [
+                    { line: 1, vars: { a: 10 }, mem: ["a -> 10"], explain: "Assign variable a to 10.", action: { type: "array_state", data: [10], active: [0] } },
+                    { line: 2, vars: { a: 10, b: 20 }, mem: ["b -> 20"], explain: "Assign variable b to 20.", action: { type: "array_state", data: [10, 20], active: [1] } },
+                    { line: 4, vars: { tup: "(10, 20, 30)" }, mem: ["tup -> (10, 20, 30)"], explain: "Animate variables combining/packing into a single tuple index structure.", action: { type: "array_state", data: [10, 20, 30], active: [0, 1, 2], complete: true } }
+                ];
+            } else if (lowerName.includes("unpacking")) {
+                steps = [
+                    { line: 1, vars: { tup: "(100, 200)" }, mem: ["tup -> (100, 200)"], explain: "Initialize tuple to unpack.", action: { type: "array_state", data: [100, 200], active: [] } },
+                    { line: 2, vars: { x: 100, y: 200 }, mem: ["x -> 100", "y -> 200"], explain: "Animate tuple values separating/unpacking into independent local stack variables.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
+                ];
+            } else if (lowerName.includes("concatenation")) {
+                steps = [
+                    { line: 1, vars: { t1: "(1, 2)" }, mem: ["t1 -> (1, 2)"], explain: "Initialize first tuple.", action: { type: "array_state", data: [1, 2], active: [] } },
+                    { line: 3, vars: { t3: "(1, 2, 3, 4)" }, mem: ["t3 -> (1, 2, 3, 4)"], explain: "Animate two tuples merging/concatenating together into a new heap allocation address.", action: { type: "array_state", data: [1, 2, 3, 4], active: [0, 1, 2, 3], complete: true } }
+                ];
+            } else if (lowerName.includes("append")) {
+                steps = [
+                    { line: 1, vars: { lst: "[10, 20]" }, mem: ["lst -> [10, 20]"], explain: "Initialize list with 2 items.", action: { type: "array_state", data: [10, 20], active: [] } },
+                    { line: 2, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Add element to the end of array list. Array size expands dynamically.", action: { type: "array_state", data: [10, 20, 30], active: [2], complete: true } }
+                ];
+            } else if (lowerName.includes("pop")) {
+                steps = [
+                    { line: 1, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Initialize list with 3 elements.", action: { type: "array_state", data: [10, 20, 30], active: [] } },
+                    { line: 2, vars: { lst: "[10, 20]", val: 30 }, mem: ["lst -> [10, 20]"], explain: "Pop element off the last index of list.", action: { type: "array_state", data: [10, 20], active: [1], highlight: true } }
+                ];
+            } else if (lowerName.includes("dereferencing")) {
+                steps = [
+                    { line: 1, vars: { val: 42 }, mem: ["val (0x7ffe) -> 42"], explain: "Allocate local stack integer variable val with 42.", action: { type: "mem_set", addr: "0x7ffe", val: 42 } },
+                    { line: 2, vars: { ptr: "0x7ffe" }, mem: ["ptr -> 0x7ffe"], explain: "Assign address of val to pointer variable ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
+                    { line: 3, vars: { val: 99 }, mem: ["val (0x7ffe) -> 99"], explain: "Animate dereference: change value at address stored in pointer.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
+                ];
+            } else {
+                steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
+            }
         }
         
         const totalSteps = steps.length;
@@ -1307,34 +1318,108 @@ function updateBookmarkIconUI() {
         : `<i class="far fa-bookmark"></i>`;
 }
 
+// Advanced custom code compiler interpreter
 function generateDynamicSteps(category, topic, code) {
     const steps = [];
     const lines = code.split('\n');
+    let variablesState = {};
+    let memoryAllocations = [];
+    let baseAddr = 0x7ffe;
 
     lines.forEach((lineText, idx) => {
         const lineNum = idx + 1;
         const trimmed = lineText.trim();
         if (!trimmed) return;
 
+        // Skip comments
+        if (trimmed.startsWith('//') || trimmed.startsWith('#') || trimmed.startsWith('/*')) {
+            return;
+        }
+
+        let explain = `Executing instruction on line ${lineNum}: \`${trimmed}\`.`;
+        let action = { type: "generic" };
+
+        let varMatch = trimmed.match(/^(?:int|float|double|char|let|const|var)?\s*([a-zA-Z_]\w*)\s*=\s*(.+?);?$/);
+        let ptrMatch = trimmed.match(/^(?:int|float|double|char)?\s*\*([a-zA-Z_]\w*)\s*=\s*&([a-zA-Z_]\w*);?$/);
+        let derefMatch = trimmed.match(/^\*([a-zA-Z_]\w*)\s*=\s*(.+?);?$/);
+        let printMatch = trimmed.match(/^(?:printf|print|console\.log)\((.+?)\);?$/);
+
+        if (ptrMatch) {
+            const ptrName = ptrMatch[1];
+            const targetName = ptrMatch[2];
+            let targetAddr = "0x7ffe";
+            const existing = memoryAllocations.find(m => m.name === targetName);
+            if (existing) targetAddr = existing.addr;
+
+            variablesState[ptrName] = targetAddr;
+            const ptrAddr = "0x" + (baseAddr - memoryAllocations.length * 4).toString(16);
+            memoryAllocations.push({ name: ptrName, addr: ptrAddr, val: targetAddr, dtype: "pointer" });
+
+            explain = `Pointer Declaration: Create pointer variable \`${ptrName}\` and store the memory address of \`${targetName}\` (${targetAddr}) inside it.`;
+            action = { type: "mem_set", addr: ptrAddr, val: targetAddr, name: ptrName, dtype: "pointer" };
+        }
+        else if (derefMatch) {
+            const ptrName = derefMatch[1];
+            const valExpr = derefMatch[2];
+            
+            const ptrVal = variablesState[ptrName];
+            if (ptrVal) {
+                const target = memoryAllocations.find(m => m.addr === ptrVal);
+                if (target) {
+                    const oldVal = variablesState[target.name];
+                    variablesState[target.name] = valExpr;
+                    target.val = valExpr;
+
+                    explain = `Pointer Dereference: Write value \`${valExpr}\` directly to the address stored in pointer \`${ptrName}\` (${ptrVal}). This updates the value of \`${target.name}\` from ${oldVal} to ${valExpr}.`;
+                    action = { type: "mem_update", addr: ptrVal, val: valExpr, name: target.name, dtype: target.dtype };
+                }
+            }
+        }
+        else if (varMatch) {
+            const varName = varMatch[1];
+            const valExpr = varMatch[2];
+            
+            variablesState[varName] = valExpr;
+            let dtype = "int";
+            if (valExpr.includes('.') || parseFloat(valExpr) % 1 !== 0) dtype = "float";
+            if (valExpr.startsWith("'") || valExpr.startsWith('"')) dtype = "char";
+            
+            const existing = memoryAllocations.find(m => m.name === varName);
+            let addr = "";
+            if (existing) {
+                existing.val = valExpr;
+                addr = existing.addr;
+                explain = `Variable Assignment: Update existing variable \`${varName}\` to new value ${valExpr}.`;
+                action = { type: "mem_update", addr: addr, val: valExpr, name: varName, dtype: dtype };
+            } else {
+                addr = "0x" + (baseAddr - memoryAllocations.length * 4).toString(16);
+                memoryAllocations.push({ name: varName, addr: addr, val: valExpr, dtype: dtype });
+                explain = `Variable Allocation: Allocate stack memory slot for new variable \`${varName}\` at address ${addr} and assign initial value ${valExpr}.`;
+                action = { type: "var_alloc", name: varName, val: valExpr, addr: addr, dtype: dtype };
+            }
+        }
+        else if (printMatch) {
+            explain = `Output Statement: Print result details to the simulated console log container.`;
+            action = { type: "generic" };
+        }
+
+        const memStrings = memoryAllocations.map(m => `${m.name} (${m.addr}) -> ${m.val}`);
+
         steps.push({
             line: lineNum,
-            vars: {
-                instruction: trimmed.substring(0, 10),
-                type: "operation",
-                scope: "stack"
-            },
-            mem: [`Pointer -> line ${lineNum}`],
-            explain: `Running instruction on line ${lineNum}: \`${trimmed}\`. Updating stack references.`,
-            action: { type: "mem_set", addr: `0x00${lineNum}`, val: trimmed.substring(0, 10) }
+            vars: { ...variablesState },
+            mem: memStrings,
+            explain: explain,
+            action: action
         });
     });
 
     if (steps.length === 0) {
         steps.push({
             line: 1,
-            vars: { status: "Empty" },
+            vars: {},
             mem: [],
-            explain: "Write code inside the editor to generate interactive compiler visualizations.",
+            explain: "Start typing code to compile and run trace animations.",
             action: { type: "generic" }
         });
     }
