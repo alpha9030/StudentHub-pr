@@ -3851,7 +3851,8 @@ body.theme-light .career-wrapper .career-select option {
     overflow: hidden !important;
 }
 
-.app-container.full-screen-chat #chatbot-panel {
+.app-container.full-screen-chat #chatbot-panel,
+.app-container.full-screen-chat #visualizer-panel {
     flex: 1 !important;
     height: calc(100vh - 65px) !important; /* height of header is 65px */
     min-height: 0 !important;
@@ -3920,6 +3921,76 @@ a, button, .dash-stat-card, .btn, input, select {
 #syllabus-table td {
     padding: 14px 16px;
     vertical-align: middle;
+}
+
+/* Pravio Visualizer Layout Styles */
+.viz-session-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    margin-bottom: 4px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+    background: transparent;
+}
+
+.viz-session-item:hover {
+    background-color: var(--nav-hover-bg);
+}
+
+.viz-session-item.active {
+    background-color: var(--nav-hover-bg);
+    border-left: 3px solid var(--primary-color);
+}
+
+.viz-session-item .session-actions {
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.viz-session-item:hover .session-actions {
+    opacity: 1;
+}
+
+.sess-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    padding: 2px 4px;
+}
+
+.sess-btn:hover {
+    color: var(--primary-color);
+}
+
+#viz-line-gutter div {
+    height: 1.5em;
+    padding-right: 4px;
+    box-sizing: border-box;
+    transition: background-color 0.2s;
+}
+
+#viz-line-gutter div.active-line {
+    background: rgba(99, 102, 241, 0.25);
+    color: var(--primary-color);
+    font-weight: 700;
+    border-left: 2px solid var(--primary-color);
+}
+
+/* Code editor text area active line synchronization */
+#viz-code-editor {
+    line-height: 1.5em;
+}
+
+/* Visual gradients for canvas blocks */
+:root {
+    --gradient-primary: linear-gradient(135deg, #6366f1, #4f46e5);
+    --gradient-orange: linear-gradient(135deg, #f97316, #ea580c);
+    --gradient-teal: linear-gradient(135deg, #10b981, #059669);
 }
 
 
