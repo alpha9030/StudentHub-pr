@@ -983,9 +983,6 @@ async function submitUserMessage() {
             }
           } catch (jsonErr) {
             // Avoid failing on broken line parsing
-            if (line.includes('error')) {
-              throw new Error(dataContent);
-            }
           }
         }
       }
