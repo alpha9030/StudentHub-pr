@@ -1362,6 +1362,23 @@
                     <div style="font-size: 32px;">⏱️</div>
                 </div>
 
+                <!-- Card 2.5: Independent Stopwatch -->
+                <div class="dash-stat-card mentor-card" style="display: flex; align-items: center; justify-content: space-between; padding: 15px; border-radius: 12px; position: relative;">
+                    <div>
+                        <span style="color: var(--text-muted); font-size: 12px; font-weight: 600; text-transform: uppercase;">Stopwatch Timer</span>
+                        <h3 id="stopwatch-display" style="margin: 5px 0; font-size: 24px; font-weight: 700; color: #10b981; font-family: monospace;">00:00.00</h3>
+                        
+                        <div id="stopwatch-laps-summary" style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 8px; height: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Laps: 0</div>
+
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            <button id="stopwatch-start-btn" onclick="toggleStopwatch()" style="background: #10b981; border: none; color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.2s;">Start</button>
+                            <button id="stopwatch-lap-btn" onclick="recordStopwatchLap()" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-body); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: none;">Lap</button>
+                            <button id="stopwatch-reset-btn" onclick="resetStopwatch()" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-body); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">Reset</button>
+                        </div>
+                    </div>
+                    <div style="font-size: 32px; cursor: pointer;" onclick="showStopwatchLapsModal()" title="View Laps">⏱️</div>
+                </div>
+
                 <!-- Card 3: Milestone Achievement -->
                 <div class="dash-stat-card mentor-card" style="display: flex; align-items: center; justify-content: space-between; padding: 15px; border-radius: 12px;">
                     <div>
@@ -1527,6 +1544,12 @@
     <script>
         // Simple page view switching logic
         function showView(viewId) {
+            // Redirect landing to dashboard if user is logged in
+            const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (viewId === 'landing' && loggedIn) {
+                viewId = 'dashboard';
+            }
+
             // Hide all panels
             const panels = document.querySelectorAll('.view-panel');
             panels.forEach(p => p.classList.remove('active'));
@@ -1537,6 +1560,16 @@
                 activePanel.classList.add('active');
             }
 
+            // Toggle full-screen class on app container for chatbot page
+            const appContainer = document.querySelector('.app-container');
+            if (appContainer) {
+                if (viewId === 'chatbot') {
+                    appContainer.classList.add('full-screen-chat');
+                } else {
+                    appContainer.classList.remove('full-screen-chat');
+                }
+            }
+
             // Reset navigation link highlights
             const navLinks = document.querySelectorAll('nav a');
             navLinks.forEach(link => {
@@ -1544,7 +1577,11 @@
             });
 
             // Highlight the active nav link
-            const activeLink = document.getElementById('nav-' + viewId);
+            let highlightId = viewId;
+            if (viewId === 'dashboard') {
+                highlightId = 'landing';
+            }
+            const activeLink = document.getElementById('nav-' + highlightId);
             if (activeLink) {
                 activeLink.classList.add('active');
             }
@@ -3088,6 +3125,143 @@
             const simulatedToken = "simulated_token_" + btoa(unescape(encodeURIComponent(JSON.stringify(simulatedPayload))));
             
             selectGoogleAccount(name, email, dept, grade, simulatedToken);
+        }
+
+        // ==========================================
+        // INDEPENDENT STOPWATCH COMPONENT
+        // ==========================================
+        let stopwatchInterval = null;
+        let stopwatchStartTime = 0;
+        let stopwatchElapsedTime = 0;
+        let stopwatchIsRunning = false;
+        let stopwatchLaps = [];
+
+        function toggleStopwatch() {
+            const startBtn = document.getElementById('stopwatch-start-btn');
+            const lapBtn = document.getElementById('stopwatch-lap-btn');
+            if (!stopwatchIsRunning) {
+                stopwatchStartTime = Date.now() - stopwatchElapsedTime;
+                stopwatchInterval = setInterval(updateStopwatchDisplay, 10);
+                stopwatchIsRunning = true;
+                if (startBtn) {
+                    startBtn.innerText = 'Pause';
+                    startBtn.style.backgroundColor = '#f59e0b';
+                }
+                if (lapBtn) lapBtn.style.display = 'inline-block';
+            } else {
+                clearInterval(stopwatchInterval);
+                stopwatchElapsedTime = Date.now() - stopwatchStartTime;
+                stopwatchIsRunning = false;
+                if (startBtn) {
+                    startBtn.innerText = 'Resume';
+                    startBtn.style.backgroundColor = '#10b981';
+                }
+                if (lapBtn) lapBtn.style.display = 'none';
+            }
+        }
+
+        function resetStopwatch() {
+            clearInterval(stopwatchInterval);
+            stopwatchElapsedTime = 0;
+            stopwatchIsRunning = false;
+            stopwatchLaps = [];
+            
+            const display = document.getElementById('stopwatch-display');
+            if (display) display.innerText = '00:00.00';
+            
+            const startBtn = document.getElementById('stopwatch-start-btn');
+            if (startBtn) {
+                startBtn.innerText = 'Start';
+                startBtn.style.backgroundColor = '#10b981';
+            }
+            
+            const lapBtn = document.getElementById('stopwatch-lap-btn');
+            if (lapBtn) lapBtn.style.display = 'none';
+
+            const lapsSummary = document.getElementById('stopwatch-laps-summary');
+            if (lapsSummary) lapsSummary.innerText = 'Laps: 0';
+        }
+
+        function updateStopwatchDisplay() {
+            const time = Date.now() - stopwatchStartTime;
+            const display = document.getElementById('stopwatch-display');
+            if (display) {
+                display.innerText = formatStopwatchTime(time);
+            }
+        }
+
+        function formatStopwatchTime(ms) {
+            let minutes = Math.floor(ms / 60000);
+            let seconds = Math.floor((ms % 60000) / 1000);
+            let centiseconds = Math.floor((ms % 1000) / 10);
+            
+            minutes = minutes.toString().padStart(2, '0');
+            seconds = seconds.toString().padStart(2, '0');
+            centiseconds = centiseconds.toString().padStart(2, '0');
+            
+            return `${minutes}:${seconds}.${centiseconds}`;
+        }
+
+        function recordStopwatchLap() {
+            if (!stopwatchIsRunning) return;
+            const time = Date.now() - stopwatchStartTime;
+            const formatted = formatStopwatchTime(time);
+            stopwatchLaps.push(formatted);
+            
+            const lapsSummary = document.getElementById('stopwatch-laps-summary');
+            if (lapsSummary) {
+                lapsSummary.innerText = `Laps: ${stopwatchLaps.length} (Last: ${formatted})`;
+            }
+        }
+
+        function showStopwatchLapsModal() {
+            let content = '<h4 style="margin-top:0; color:var(--text-body); border-bottom:1px solid var(--border-color); padding-bottom:8px;">⏱️ Stopwatch Lap Records</h4>';
+            if (stopwatchLaps.length === 0) {
+                content += '<p style="color:var(--text-muted); font-size:13px; margin: 12px 0;">No laps recorded yet. Press "Lap" while running.</p>';
+            } else {
+                content += '<ol style="max-height:200px; overflow-y:auto; padding-left:20px; color:var(--text-body); font-family:monospace; font-size:14px; margin: 12px 0;">';
+                stopwatchLaps.forEach((lap, idx) => {
+                    content += `<li style="margin-bottom:6px;">Lap ${idx + 1}: <strong style="color:#10b981;">${lap}</strong></li>`;
+                });
+                content += '</ol>';
+            }
+            
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100vw';
+            modal.style.height = '100vh';
+            modal.style.background = 'rgba(0,0,0,0.5)';
+            modal.style.display = 'flex';
+            modal.style.alignItems = 'center';
+            modal.style.justifyContent = 'center';
+            modal.style.zIndex = '9999';
+            
+            const container = document.createElement('div');
+            container.style.background = 'var(--bg-card)';
+            container.style.border = '1px solid var(--border-color)';
+            container.style.borderRadius = '12px';
+            container.style.padding = '20px';
+            container.style.minWidth = '250px';
+            container.style.maxWidth = '300px';
+            container.style.boxShadow = '0 10px 25px rgba(0,0,0,0.3)';
+            
+            container.innerHTML = content;
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.innerText = 'Close';
+            closeBtn.className = 'btn btn-secondary';
+            closeBtn.style.width = '100%';
+            closeBtn.style.marginTop = '15px';
+            closeBtn.style.cursor = 'pointer';
+            closeBtn.onclick = () => {
+                document.body.removeChild(modal);
+            };
+            
+            container.appendChild(closeBtn);
+            modal.appendChild(container);
+            document.body.appendChild(modal);
         }
     </script>
 

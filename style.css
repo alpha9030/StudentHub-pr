@@ -332,14 +332,16 @@ h5 { margin-top: 16px; font-size: 14px; font-weight: 600; }
 .study-guide-container,
 .ref-page-container,
 .admin-container {
-    max-width: 1350px !important;
-    margin: 40px auto !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
     padding: 40px !important;
     box-sizing: border-box !important;
-    border-radius: 16px !important;
+    border-radius: 0 !important;
     background-color: var(--bg-container) !important;
-    border: 1px solid var(--border-color) !important;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04) !important;
+    border: none !important;
+    min-height: 100vh !important;
+    box-shadow: none !important;
 }
 
 /* ==========================================================================
@@ -2233,7 +2235,7 @@ input[type="submit"]:hover {
     .study-guide-container,
     .ref-page-container,
     .admin-container {
-        max-width: 95% !important;
+        max-width: 100% !important;
     }
 }
 
@@ -3834,6 +3836,90 @@ body.theme-light .career-wrapper .career-select option {
     position: absolute;
     right: 12px;
     pointer-events: none;
+}
+
+/* Full viewport chatbot mode */
+.app-container.full-screen-chat {
+    padding: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+}
+
+.app-container.full-screen-chat #chatbot-panel {
+    flex: 1 !important;
+    height: calc(100vh - 65px) !important; /* height of header is 65px */
+    min-height: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* UI Polishing overrides */
+a, button, .dash-stat-card, .btn, input, select {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dash-stat-card {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease !important;
+}
+
+.dash-stat-card:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Scrollbar styling for a modern application look */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(156, 163, 175, 0.3);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(156, 163, 175, 0.5);
+}
+
+/* Align and clean up lists and buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+/* Table alignments and headers */
+#syllabus-table th {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+}
+
+#syllabus-table td {
+    padding: 14px 16px;
+    vertical-align: middle;
 }
 
 
