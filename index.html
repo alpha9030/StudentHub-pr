@@ -1610,8 +1610,10 @@
                         
                         <div style="display: flex; gap: 8px; align-items: center;">
                             <button id="viz-bookmark-btn" onclick="toggleVizBookmark()" style="background:transparent; border:none; cursor:pointer; color:var(--text-muted); font-size:1.05rem;" title="Bookmark topic"><i class="far fa-bookmark"></i></button>
+                            <button id="viz-diff-btn" onclick="toggleDiffMode()" class="btn btn-secondary" style="padding: 4px 8px; border-radius: 6px; font-size: 11.5px; background:var(--bg-container); border:1px solid var(--border-color);" title="Compare side-by-side"><i class="fas fa-columns"></i> Diff Mode</button>
                             <button onclick="shareVizSessionState()" class="btn btn-secondary" style="padding: 4px 8px; border-radius: 6px; font-size: 11.5px; background:var(--bg-container); border:1px solid var(--border-color);"><i class="fas fa-share-alt"></i> Share</button>
-                            <button onclick="exportVizReport('markdown')" class="btn btn-secondary" style="padding: 4px 8px; border-radius: 6px; font-size: 11.5px; background:var(--bg-container); border:1px solid var(--border-color);"><i class="fas fa-file-export"></i> Export</button>
+                            <button onclick="exportVizReport('markdown')" class="btn btn-secondary" style="display:none;"></button>
+                            <button onclick="triggerExportSelection()" class="btn btn-secondary" style="padding: 4px 8px; border-radius: 6px; font-size: 11.5px; background:var(--bg-container); border:1px solid var(--border-color);"><i class="fas fa-file-export"></i> Export</button>
                         </div>
                     </div>
 
@@ -3518,7 +3520,7 @@
             document.body.appendChild(modal);
         }
     </script>
-    <script src="visualizer.js?v=2.1.0"></script>
+    <script src="visualizer.js?v=2.1.1"></script>
 
     <!-- Google Account Chooser Modal -->
     <div id="google-auth-modal" class="google-modal-backdrop" onclick="closeGoogleAuthModal()">

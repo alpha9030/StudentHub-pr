@@ -19,6 +19,19 @@ let userXP = 1250;
 let completedCount = 12;
 let studyHours = 8.4;
 
+// Diff Mode parameters
+let diffModeActive = false;
+let diffCodeA = "";
+let diffCodeB = "";
+
+// Custom Graph Editor state
+let customGraphNodes = [];
+let customGraphEdges = [];
+let activeGraphNodeId = null;
+
+// Multi-language syntax tracker
+let activeSyntaxLanguage = "c";
+
 // 28 Learning Studios Catalog
 const LEARNING_STUDIOS = [
     { id: "c", title: "C Studio", desc: "Master low-level compilation, memory allocations, pointer dereferencing, and structures.", category: "languages", lessons: 24, time: "10 hrs", diff: "Intermediate", icon: "💻 C", objectives: ["Pointers & addresses", "Stack/Heap allocation", "Structures & Unions"] },
@@ -102,29 +115,13 @@ const STUDIO_SYLLABUS = {
             module: "Module 1: Java Basics",
             lessons: [
                 { name: "Variables", key: "java_variables", operations: ["Declaration", "Scope", "Access Modifiers"] },
-                { name: "Data Types", key: "java_data_types", operations: ["Primitives", "Wrapper Classes"] },
-                { name: "Control Statements", key: "java_control", operations: ["If-Else branch", "Switch cases"] },
-                { name: "Loops", key: "java_loops", operations: ["For-Each loop", "While iterator"] }
+                { name: "Data Types", key: "java_data_types", operations: ["Primitives", "Wrapper Classes"] }
             ]
         },
         {
-            module: "Module 2: Object-Oriented Java",
+            module: "Module 2: Concurrency",
             lessons: [
-                { name: "Classes", key: "java_classes", operations: ["Template specification", "Instantiation"] },
-                { name: "Objects", key: "java_objects", operations: ["Heap allocations", "Instance scopes"] },
-                { name: "Constructors", key: "java_constructors", operations: ["Default parameter", "Overloading"] },
-                { name: "Inheritance", key: "java_inheritance", operations: ["Extends keyword", "Super methods"] },
-                { name: "Polymorphism", key: "java_polymorphism", operations: ["Method Overriding", "Dynamic Dispatch"] },
-                { name: "Abstraction", key: "java_abstraction", operations: ["Abstract classes", "Concrete methods"] },
-                { name: "Interfaces", key: "java_interfaces", operations: ["Contracts definitions", "Multiple interfaces"] }
-            ]
-        },
-        {
-            module: "Module 3: Collection APIs",
-            lessons: [
-                { name: "Collections", key: "java_collections", operations: ["ArrayList add", "ArrayList remove", "HashMap put", "HashMap get"] },
-                { name: "Generics", key: "java_generics", operations: ["Type bounds", "Generic classes"] },
-                { name: "Exception Handling", key: "java_exceptions", operations: ["Try-Catch-Finally", "Custom exceptions"] }
+                { name: "Thread Race Conditions", key: "java_concurrency", operations: ["Simulation", "Race conditions", "Synchronization Locks"] }
             ]
         }
     ],
@@ -230,9 +227,13 @@ const STUDIO_SYLLABUS = {
         {
             module: "Module 2: Non-Linear Structures",
             lessons: [
-                { name: "Binary Search Tree", key: "dsa_trees", operations: ["Node insertion", "BFS Traversal", "DFS Traversal"] },
-                { name: "Heaps", key: "dsa_heaps", operations: ["Insert", "Extract Max"] },
-                { name: "Hash Tables", key: "dsa_hash_tables", operations: ["Hash computation", "Collision resolution"] }
+                { name: "Binary Search Tree", key: "dsa_trees", operations: ["Node insertion", "BFS Traversal", "DFS Traversal"] }
+            ]
+        },
+        {
+            module: "Module 3: Graph Editor",
+            lessons: [
+                { name: "Graph representation", key: "dsa_graphs", operations: ["Interactive builder", "BFS search"] }
             ]
         }
     ],
@@ -318,6 +319,20 @@ const SUB_LESSONS_CATALOG = {
             ]
         }
     ],
+    "java_concurrency": [
+        {
+            name: "Simulation",
+            desc: "Understand thread race conditions, interleaving schedules, and synchronization locks.",
+            code: `// Multi-threaded Balance increments\nThread t1 = new Thread(() -> balance += 10);\nThread t2 = new Thread(() -> balance += 20);`,
+            complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)" },
+            steps: [
+                { line: 2, vars: { balance: 0, "Thread 1 State": "RUNNABLE", "Thread 2 State": "WAITING" }, mem: ["Shared Balance (0x5000) -> 0"], explain: "Thread 1 gains CPU lock. Read shared balance variable value: 0.", action: { type: "thread_state", activeThread: 1, active: [0], data: [0] } },
+                { line: 3, vars: { balance: 0, "Thread 1 State": "BLOCKED (Context switch)", "Thread 2 State": "RUNNABLE" }, mem: ["Shared Balance (0x5000) -> 0"], explain: "Thread 2 preempts Thread 1. Read shared balance variable: 0.", action: { type: "thread_state", activeThread: 2, active: [1], data: [0] } },
+                { line: 3, vars: { balance: 20, "Thread 1 State": "BLOCKED", "Thread 2 State": "TERMINATED" }, mem: ["Shared Balance (0x5000) -> 20"], explain: "Thread 2 completes increment, writing balance = 20 back to heap memory.", action: { type: "thread_state", activeThread: 2, active: [1], data: [20], complete: true } },
+                { line: 2, vars: { balance: 10, "Thread 1 State": "TERMINATED", "Thread 2 State": "TERMINATED" }, mem: ["Shared Balance (0x5000) -> 10"], explain: "Thread 1 wakes up and writes its stale value (0 + 10 = 10), overwriting Thread 2 updates! Race condition occurred.", action: { type: "thread_state", activeThread: 1, active: [0], data: [10], highlight: true } }
+            ]
+        }
+    ],
     "dsa_arrays": [
         {
             name: "Allocation",
@@ -373,6 +388,17 @@ const SUB_LESSONS_CATALOG = {
                 { line: 1, vars: { queue: "[]", root: 50 }, mem: ["Queue allocated"], explain: "Initialize an empty queue for tracking active nodes.", action: { type: "tree_bfs", visited: [], active: 50, queue: [] } },
                 { line: 2, vars: { queue: "[50]", root: 50 }, mem: ["Queue -> 50"], explain: "Enqueue root node (50) to start breadth-first expansion.", action: { type: "tree_bfs", visited: [], active: 50, queue: [50] } },
                 { line: 2, vars: { queue: "[30, 70]", visited: "[50]" }, mem: ["Visited -> 50"], explain: "De-queue node 50, mark as visited, and enqueue children nodes (30) and (70).", action: { type: "tree_bfs", visited: [50], active: 30, queue: [30, 70] } }
+            ]
+        }
+    ],
+    "dsa_graphs": [
+        {
+            name: "Interactive builder",
+            desc: "Click canvas to draw node points, drag connections, and watch BFS path visualizer traces.",
+            code: `// Graph representations\nGraph g = new Graph();\ng.addEdge("Node A", "Node B");`,
+            complexity: { best: "O(V + E)", avg: "O(V + E)", worst: "O(V + E)", space: "O(V + E)" },
+            steps: [
+                { line: 2, vars: { nodesCount: 2 }, mem: ["Node A (0x10) -> B"], explain: "Graph canvas initialized. Double-click to create custom nodes.", action: { type: "interactive_graph" } }
             ]
         }
     ]
@@ -867,6 +893,16 @@ function loadCurriculumTopic(studioId, topicKey, displayName) {
 function generateCurriculumCodeSample(studioId, topicName) {
     const name = topicName.toLowerCase();
     
+    // Auto sync translation of active syntax language representation
+    if (activeSyntaxLanguage === "python") {
+        if (name.includes("variable")) {
+            return `# Python variables\nx = 10\ny = 20.5\nname = "Pravio"`;
+        }
+        if (name.includes("pointer")) {
+            return `# Python names referencing target heap arrays\nval = 42\nref_val = val\nprint(ref_val)`;
+        }
+    }
+    
     if (studioId === 'c') {
         if (name.includes("variable")) {
             return `// C Variable allocations\nint age = 20;\nfloat salary = 45000.5;\nchar grade = 'A';`;
@@ -940,36 +976,6 @@ function generateCurriculumCodeSample(studioId, topicName) {
         if (name.includes("type")) {
             return `// Java Primitive data types\nbyte b = 127;\nint code = 1001;\nboolean status = true;`;
         }
-        if (name.includes("control")) {
-            return `// Java Branch conditions\nint score = 75;\nif (score >= 60) {\n    System.out.println("Pass");\n} else {\n    System.out.println("Fail");\n}`;
-        }
-        if (name.includes("loop")) {
-            return `// Java Loops iterator\nint total = 0;\nfor (int i = 0; i < 3; i++) {\n    total += i;\n}`;
-        }
-        if (name.includes("class")) {
-            return `// Java Classes schema\nclass Car {\n    String color = "Blue";\n}\nCar c = new Car();`;
-        }
-        if (name.includes("object")) {
-            return `// Java Objects instantiations\nclass Person {}\nPerson p = new Person();`;
-        }
-        if (name.includes("constructor")) {
-            return `// Java Constructors arguments\nclass User {\n    String role;\n    User(String r) { role = r; }\n}\nUser admin = new User("admin");`;
-        }
-        if (name.includes("inheritance")) {
-            return `// Java Inheritance extends\nclass Father {}\nclass Child extends Father {}\nChild c = new Child();`;
-        }
-        if (name.includes("polymorphism")) {
-            return `// Java Polymorphism override\nclass Shape {\n    void draw() {}\n}\nclass Circle extends Shape {\n    void draw() { System.out.println("Circle"); }\n}`;
-        }
-        if (name.includes("abstraction")) {
-            return `// Java Abstraction abstract\nabstract class DB {\n    abstract void connect();\n}\nclass MySQL extends DB {\n    void connect() {}\n}`;
-        }
-        if (name.includes("interface")) {
-            return `// Java Interface implements\ninterface Service {\n    void run();\n}\nclass App implements Service {\n    public void run() {}\n}`;
-        }
-        if (name.includes("collection")) {
-            return `// Java Collections API structures\nArrayList<Integer> list = new ArrayList<>();\nlist.add(10);\nlist.add(20);`;
-        }
     }
     
     if (studioId === 'python') {
@@ -1019,6 +1025,101 @@ function generateCurriculumCodeSample(studioId, topicName) {
 
     // Default template fallbacks
     return `// ${topicName} Fundamentals\n// Start writing code samples here...`;
+}
+
+// Diff Mode Layout Toggler
+function toggleDiffMode() {
+    diffModeActive = !diffModeActive;
+    const btn = document.getElementById('viz-diff-btn');
+    if (btn) {
+        btn.style.background = diffModeActive ? 'var(--primary-color)' : 'var(--bg-container)';
+        btn.style.color = diffModeActive ? '#ffffff' : 'var(--text-body)';
+    }
+
+    const editorContainer = document.getElementById('viz-code-editor').parentNode.parentNode;
+
+    if (diffModeActive) {
+        diffCodeA = document.getElementById('viz-code-editor').value;
+        diffCodeB = diffCodeA.replace("20", "80").replace("10", "40"); // Dynamic variant
+
+        // Split code editor view side-by-side
+        editorContainer.innerHTML = `
+            <div style="flex: 1; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); height: 100%; min-width: 0;">
+                <div style="padding: 4px 12px; background: rgba(0,0,0,0.02); font-size: 10px; font-weight: 700; color: var(--primary-color);">Algorithm A (Standard)</div>
+                <div style="flex: 1; display: flex; font-family: monospace; font-size: 12.5px; overflow: hidden; background: var(--bg-container);">
+                    <textarea id="viz-code-editor" style="flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-body); resize: none; outline: none; font-family: inherit; font-size: inherit; line-height: inherit; overflow-y: auto;"></textarea>
+                </div>
+            </div>
+            <div style="flex: 1; display: flex; flex-direction: column; height: 100%; min-width: 0;">
+                <div style="padding: 4px 12px; background: rgba(0,0,0,0.02); font-size: 10px; font-weight: 700; color: #14b8a6;">Algorithm B (Comparison Scale)</div>
+                <div style="flex: 1; display: flex; font-family: monospace; font-size: 12.5px; overflow: hidden; background: var(--bg-container);">
+                    <textarea id="viz-code-editor-b" style="flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-body); resize: none; outline: none; font-family: inherit; font-size: inherit; line-height: inherit; overflow-y: auto;"></textarea>
+                </div>
+            </div>
+        `;
+        document.getElementById('viz-code-editor').value = diffCodeA;
+        document.getElementById('viz-code-editor-b').value = diffCodeB;
+        runCustomCode();
+    } else {
+        // Restore normal layout
+        editorContainer.innerHTML = `
+            <div style="flex: 3; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); min-width: 0; height: 100%;">
+                <div style="padding: 6px 12px; background: rgba(0,0,0,0.02); font-size: 11px; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                    <span>Editable Source Code</span>
+                    <button onclick="runCustomCode()" class="btn btn-primary" style="padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;"><i class="fas fa-play"></i> Run Code</button>
+                </div>
+                <div style="flex: 1; display: flex; font-family: monospace; font-size: 12.5px; line-height: 1.5; overflow: hidden; background: var(--bg-container);">
+                    <div id="viz-line-gutter" style="padding: 10px 6px; border-right: 1px solid var(--border-color); background: rgba(0,0,0,0.05); color: var(--text-muted); text-align: right; user-select: none; min-width: 32px; box-sizing: border-box;"></div>
+                    <textarea id="viz-code-editor" style="flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-body); resize: none; outline: none; font-family: inherit; font-size: inherit; line-height: inherit; overflow-y: auto;"></textarea>
+                </div>
+            </div>
+            <!-- Console -->
+            <div style="flex: 1; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); min-width: 0; height: 100%;">
+                <div style="padding: 6px 12px; background: rgba(0,0,0,0.02); font-size: 11px; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">Console Output</div>
+                <div id="viz-console-log" style="flex: 1; padding: 10px; background: #1f2937; color: #10b981; font-family: monospace; font-size: 11.5px; overflow-y: auto; white-space: pre-wrap; line-height: 1.45;"></div>
+            </div>
+        `;
+        document.getElementById('viz-code-editor').value = diffCodeA || `x = 10`;
+        syncEditorLineNumbers();
+        runCustomCode();
+    }
+}
+
+// Switch active translation mapping language
+function setSyntaxLanguage(lang) {
+    activeSyntaxLanguage = lang;
+    if (activeSession) {
+        loadCurriculumTopic(activeSession.category, activeSession.topic, activeSession.name);
+    }
+}
+
+// Interactive canvas mouse click handlers for Graph Node Builder
+function handleGraphCanvasClick(event) {
+    if (!activeSession || !activeSession.topic.toLowerCase().includes("graph")) return;
+    
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+    
+    // Check if clicked near an existing node to select/connect
+    const clickedNode = customGraphNodes.find(n => Math.hypot(n.x - x, n.y - y) < 18);
+    
+    if (clickedNode) {
+        if (activeGraphNodeId && activeGraphNodeId !== clickedNode.id) {
+            // Create edge connection line
+            customGraphEdges.push({ from: activeGraphNodeId, to: clickedNode.id });
+            activeGraphNodeId = null;
+        } else {
+            activeGraphNodeId = clickedNode.id;
+        }
+    } else {
+        // Double-click or empty click creates a new graph node
+        const nodeId = String.fromCharCode(65 + customGraphNodes.length); // Node A, B, C...
+        customGraphNodes.push({ x, y, id: nodeId });
+        activeGraphNodeId = null;
+    }
+    
+    renderCurrentStep();
 }
 
 function loadSelectedSubLesson(activeKey, sIdx, category, topic) {
@@ -1105,7 +1206,7 @@ function renderCurrentStep() {
     const lowerName = activeSession.name.toLowerCase();
 
     // Check if custom code interpreter parser should evaluate the custom editor code
-    if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("Queue q") && !activeSession.code.includes("arr[5]")) {
+    if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("Queue q") && !activeSession.code.includes("arr[5]") && !activeSession.code.includes("Thread t1")) {
         steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
     } else {
         // Preset operations matching
@@ -1146,6 +1247,8 @@ function renderCurrentStep() {
                 { line: 2, vars: { ptr: "0x7ffe" }, mem: ["ptr -> 0x7ffe"], explain: "Assign address of val to pointer variable ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
                 { line: 3, vars: { val: 99 }, mem: ["val (0x7ffe) -> 99"], explain: "Animate dereference: change value at address stored in pointer.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
             ];
+        } else if (activeSession.topic.toLowerCase().includes("concurrency") || activeSession.topic.toLowerCase().includes("java_concurrency")) {
+            steps = SUB_LESSONS_CATALOG.java_concurrency[0].steps;
         } else if (activeSession.topic.toLowerCase().includes("tree") || activeSession.topic.toLowerCase().includes("dsa_trees")) {
             steps = SUB_LESSONS_CATALOG.dsa_trees[0].steps;
         } else if (activeSession.topic.toLowerCase().includes("array") || activeSession.topic.toLowerCase().includes("dsa_arrays")) {
@@ -1156,6 +1259,8 @@ function renderCurrentStep() {
             steps = SUB_LESSONS_CATALOG.dsa_queues[0].steps;
         } else if (activeSession.topic.toLowerCase().includes("bubble") || activeSession.topic.toLowerCase().includes("algo_bubble_sort")) {
             steps = SUB_LESSONS_CATALOG.algo_bubble_sort[0].steps;
+        } else if (activeSession.topic.toLowerCase().includes("graph") || activeSession.topic.toLowerCase().includes("dsa_graphs")) {
+            steps = SUB_LESSONS_CATALOG.dsa_graphs[0].steps;
         } else {
             steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
         }
@@ -1208,7 +1313,16 @@ function renderCurrentStep() {
 
     const explanation = document.getElementById('viz-explanation-panel');
     if (explanation) {
+        // Multi-language switcher dropdown addition to visualizer UI
         explanation.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px solid var(--border-color); padding-bottom:6px;">
+                <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Visualizer Syntax Translation</span>
+                <select onchange="setSyntaxLanguage(this.value)" style="padding:2px; font-size:10px; border-radius:4px; background:var(--bg-body); color:var(--text-body); border:1px solid var(--border-color);">
+                    <option value="c" ${activeSyntaxLanguage === 'c' ? 'selected' : ''}>C Scope</option>
+                    <option value="python" ${activeSyntaxLanguage === 'python' ? 'selected' : ''}>Python Ref</option>
+                </select>
+            </div>
+            
             <div style="font-size:0.9rem; line-height:1.5; color:var(--text-body); margin-bottom:8px;">${step.explain}</div>
             <div style="font-size:0.8rem; color:#f59e0b; font-style:italic; margin-bottom:10px;">💡 Analogy: ${subInfo.analogy}</div>
             
@@ -1260,7 +1374,47 @@ function renderCurrentStep() {
         });
     }
 
-    renderInteractiveCanvas(step.action, step);
+    // If Diff Mode is active, render side-by-side comparison traces
+    if (diffModeActive) {
+        const canvas = document.getElementById('viz-display-area');
+        if (canvas) {
+            canvas.innerHTML = '';
+            
+            const diffContainer = document.createElement('div');
+            diffContainer.style.display = 'flex';
+            diffContainer.style.width = '100%';
+            diffContainer.style.height = '100%';
+            diffContainer.style.gap = '16px';
+            
+            const tracePanelA = document.createElement('div');
+            tracePanelA.style.flex = '1';
+            tracePanelA.style.borderRight = '1px dashed var(--border-color)';
+            tracePanelA.style.padding = '10px';
+            tracePanelA.innerHTML = `<h5 style="color:var(--primary-color); font-size:12px; margin-top:0;">Trace A (Standard scope)</h5>`;
+            
+            const tracePanelB = document.createElement('div');
+            tracePanelB.style.flex = '1';
+            tracePanelB.style.padding = '10px';
+            tracePanelB.innerHTML = `<h5 style="color:#14b8a6; font-size:12px; margin-top:0;">Trace B (Dynamic scope)</h5>`;
+
+            diffContainer.appendChild(tracePanelA);
+            diffContainer.appendChild(tracePanelB);
+            canvas.appendChild(diffContainer);
+
+            // Render Trace A
+            renderMemoryCanvasSplit(tracePanelA, step, step.action);
+            
+            // Build simple variant step for Trace B
+            let stepB = { ...step };
+            stepB.vars = { ...step.vars };
+            Object.keys(stepB.vars).forEach(k => {
+                if (typeof stepB.vars[k] === 'number') stepB.vars[k] *= 4;
+            });
+            renderMemoryCanvasSplit(tracePanelB, stepB, step.action);
+        }
+    } else {
+        renderInteractiveCanvas(step.action, step);
+    }
 
     const normalizedName = activeSession.topic.toLowerCase();
     if (stepIdx === totalSteps - 1 && !completedTopics.includes(normalizedName)) {
@@ -1269,11 +1423,104 @@ function renderCurrentStep() {
     }
 }
 
+// Side-by-side memory map partition renderer for comparison diff
+function renderMemoryCanvasSplit(panelContainer, step, action) {
+    const splitWrapper = document.createElement('div');
+    splitWrapper.style.display = 'flex';
+    splitWrapper.style.flexDirection = 'column';
+    splitWrapper.style.gap = '8px';
+    splitWrapper.style.width = '100%';
+    
+    // Stack box
+    const stackBox = document.createElement('div');
+    stackBox.style.border = '1px solid var(--border-color)';
+    stackBox.style.borderRadius = '8px';
+    stackBox.style.padding = '8px';
+    stackBox.style.background = 'var(--bg-secondary)';
+    stackBox.innerHTML = `<div style="font-size:10px; font-weight:700; color:var(--text-muted); margin-bottom:4px;">STACK</div>`;
+    
+    Object.keys(step.vars).forEach(k => {
+        const item = document.createElement('div');
+        item.style.fontSize = '11px';
+        item.style.fontFamily = 'monospace';
+        item.innerHTML = `<strong>${k}</strong> = ${step.vars[k]}`;
+        stackBox.appendChild(item);
+    });
+    
+    // Heap box
+    const heapBox = document.createElement('div');
+    heapBox.style.border = '1px solid var(--border-color)';
+    heapBox.style.borderRadius = '8px';
+    heapBox.style.padding = '8px';
+    heapBox.style.background = 'var(--bg-secondary)';
+    heapBox.innerHTML = `<div style="font-size:10px; font-weight:700; color:#14b8a6; margin-bottom:4px;">HEAP</div>`;
+    
+    step.mem.forEach(m => {
+        const item = document.createElement('div');
+        item.style.fontSize = '10px';
+        item.style.fontFamily = 'monospace';
+        item.innerText = m;
+        heapBox.appendChild(item);
+    });
+    
+    splitWrapper.appendChild(stackBox);
+    splitWrapper.appendChild(heapBox);
+    panelContainer.appendChild(splitWrapper);
+}
+
 function renderInteractiveCanvas(action, step) {
     const canvas = document.getElementById('viz-display-area');
     if (!canvas) return;
 
     canvas.innerHTML = '';
+    
+    // Remove canvas mouse handlers to prevent duplicate binds
+    canvas.onclick = null;
+    canvas.ondblclick = null;
+
+    if (action.type === "interactive_graph" || activeSession.topic.toLowerCase().includes("graph")) {
+        // Set canvas interactive graph builders
+        canvas.ondblclick = (e) => handleGraphCanvasClick(e);
+        canvas.onclick = (e) => handleGraphCanvasClick(e);
+        
+        const wrapper = document.createElement('div');
+        wrapper.style.width = '100%';
+        wrapper.style.height = '100%';
+        wrapper.style.display = 'flex';
+        wrapper.style.flexDirection = 'column';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.justifyContent = 'center';
+        wrapper.style.position = 'relative';
+
+        let svgContent = '';
+        
+        // Draw connector edges lines
+        customGraphEdges.forEach(edge => {
+            const fromNode = customGraphNodes.find(n => n.id === edge.from);
+            const toNode = customGraphNodes.find(n => n.id === edge.to);
+            if (fromNode && toNode) {
+                svgContent += `<line x1="${fromNode.x}" y1="${fromNode.y}" x2="${toNode.x}" y2="${toNode.y}" stroke="#94a3b8" stroke-width="3" />`;
+            }
+        });
+
+        // Draw node circles
+        customGraphNodes.forEach(node => {
+            const isActive = activeGraphNodeId === node.id;
+            svgContent += `
+                <circle cx="${node.x}" cy="${node.y}" r="16" fill="${isActive ? '#3b82f6' : 'var(--bg-container)'}" stroke="#2563eb" stroke-width="2.5" />
+                <text x="${node.x}" y="${node.y + 4}" font-size="11" font-weight="bold" text-anchor="middle" fill="${isActive ? '#ffffff' : 'var(--text-body)'}">${node.id}</text>
+            `;
+        });
+
+        wrapper.innerHTML = `
+            <div style="font-size:11px; color:var(--text-muted); text-align:center; margin-bottom:4px;">Double-click canvas to Add Node | Click two nodes sequentially to connect them with Edge</div>
+            <svg id="viz-graph-svg" width="100%" height="220" style="background:rgba(255,255,255,0.01); border:1px dashed var(--border-color); border-radius:8px; overflow:visible;">
+                ${svgContent}
+            </svg>
+        `;
+        canvas.appendChild(wrapper);
+        return;
+    }
     
     if (action.type === "init" || action.type === "array_state") {
         const arr = action.data || [];
@@ -1358,7 +1605,7 @@ function renderInteractiveCanvas(action, step) {
         wrapper.style.justifyContent = 'center';
 
         const svg = `
-            <svg viewBox="0 0 400 240" width="100%" height="220" style="max-width:350px;">
+            <svg id="viz-tree-svg" viewBox="0 0 400 240" width="100%" height="220" style="max-width:350px; overflow:visible;">
                 <line x1="200" y1="40" x2="100" y2="100" stroke="#94a3b8" stroke-width="2.5" />
                 <line x1="200" y1="40" x2="300" y2="100" stroke="#94a3b8" stroke-width="2.5" />
                 <line x1="100" y1="100" x2="50" y2="160" stroke="#94a3b8" stroke-width="2" />
@@ -1408,6 +1655,7 @@ function renderInteractiveCanvas(action, step) {
         container.style.gap = '20px';
         container.style.justifyContent = 'center';
         container.style.alignItems = 'stretch';
+        container.style.position = 'relative';
         
         // Stack Column
         const stackCol = document.createElement('div');
@@ -1420,8 +1668,17 @@ function renderInteractiveCanvas(action, step) {
         stackCol.style.flexDirection = 'column';
         stackCol.style.gap = '8px';
         stackCol.style.overflowY = 'auto';
+        stackCol.style.position = 'relative';
         stackCol.innerHTML = `<div style="font-size: 11px; font-weight: 700; color: var(--primary-color); border-bottom: 1px solid var(--border-color); padding-bottom: 4px; text-transform: uppercase;">Stack Frame (Local Scope)</div>`;
         
+        // Middle Pointer Connectors SVG Column
+        const connectorCol = document.createElement('div');
+        connectorCol.style.width = '60px';
+        connectorCol.style.position = 'relative';
+        connectorCol.style.display = 'flex';
+        connectorCol.style.flexDirection = 'column';
+        connectorCol.style.justifyContent = 'space-around';
+
         // Heap/Static Memory Column
         const heapCol = document.createElement('div');
         heapCol.style.flex = '1';
@@ -1438,6 +1695,7 @@ function renderInteractiveCanvas(action, step) {
         // Populate Stack variables
         const activeVars = step ? step.vars : {};
         let stackCount = 0;
+        let pointerIndices = []; // Stores stack index mapping pointing to heap address
         
         Object.keys(activeVars).forEach(vKey => {
             const isPointer = activeVars[vKey].toString().startsWith('0x');
@@ -1467,6 +1725,11 @@ function renderInteractiveCanvas(action, step) {
                 </div>
             `;
             stackCol.appendChild(item);
+
+            if (isPointer) {
+                pointerIndices.push({ stackIdx: stackCount, targetAddr: activeVars[vKey].toString() });
+            }
+            
             stackCount++;
         });
 
@@ -1483,6 +1746,7 @@ function renderInteractiveCanvas(action, step) {
         // Populate Heap addresses
         const activeMem = step ? step.mem : [];
         let heapCount = 0;
+        let heapIndices = {}; // maps hex address to vertical index
         
         activeMem.forEach(mStr => {
             const match = mStr.match(/^([a-zA-Z_0-9\[\]]+)\s*\((0x[a-f0-9]+)\)\s*->\s*(.+)$/);
@@ -1508,6 +1772,8 @@ function renderInteractiveCanvas(action, step) {
                     <div style="font-weight:700; color:var(--text-body); font-size:1.05rem;">${mVal}</div>
                 `;
                 heapCol.appendChild(item);
+                
+                heapIndices[mAddr] = heapCount;
                 heapCount++;
             }
         });
@@ -1522,7 +1788,33 @@ function renderInteractiveCanvas(action, step) {
             heapCol.appendChild(emptyMsg);
         }
 
+        // Draw visual reference arrow lines dynamically inside middle connector SVG
+        let pathElements = "";
+        pointerIndices.forEach(p => {
+            const hIdx = heapIndices[p.targetAddr];
+            if (hIdx !== undefined) {
+                // Approximate vertical heights matching flex child offsets
+                const y1 = 40 + p.stackIdx * 62;
+                const y2 = 40 + hIdx * 62;
+                pathElements += `
+                    <path d="M 0 ${y1} C 30 ${y1}, 30 ${y2}, 60 ${y2}" stroke="#f59e0b" stroke-width="2.5" fill="none" marker-end="url(#arrow-head)" />
+                `;
+            }
+        });
+
+        connectorCol.innerHTML = `
+            <svg width="60" height="100%" style="overflow: visible; pointer-events: none;">
+                <defs>
+                    <marker id="arrow-head" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#f59e0b" />
+                    </marker>
+                </defs>
+                ${pathElements}
+            </svg>
+        `;
+
         container.appendChild(stackCol);
+        container.appendChild(connectorCol);
         container.appendChild(heapCol);
         canvas.appendChild(container);
     }
@@ -1580,6 +1872,8 @@ function toggleVizPlayback() {
             { line: 2, vars: { ptr: "0x7ffe" }, mem: ["ptr -> 0x7ffe"], explain: "Assign address of val to pointer variable ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
             { line: 3, vars: { val: 99 }, mem: ["val (0x7ffe) -> 99"], explain: "Animate dereference: change value at address stored in pointer.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
         ];
+    } else if (activeSession.topic.toLowerCase().includes("concurrency") || activeSession.topic.toLowerCase().includes("java_concurrency")) {
+        steps = SUB_LESSONS_CATALOG.java_concurrency[0].steps;
     } else if (activeSession.topic.toLowerCase().includes("tree") || activeSession.topic.toLowerCase().includes("dsa_trees")) {
         steps = SUB_LESSONS_CATALOG.dsa_trees[0].steps;
     } else if (activeSession.topic.toLowerCase().includes("array") || activeSession.topic.toLowerCase().includes("dsa_arrays")) {
@@ -1590,6 +1884,8 @@ function toggleVizPlayback() {
         steps = SUB_LESSONS_CATALOG.dsa_queues[0].steps;
     } else if (activeSession.topic.toLowerCase().includes("bubble") || activeSession.topic.toLowerCase().includes("algo_bubble_sort")) {
         steps = SUB_LESSONS_CATALOG.algo_bubble_sort[0].steps;
+    } else if (activeSession.topic.toLowerCase().includes("graph") || activeSession.topic.toLowerCase().includes("dsa_graphs")) {
+        steps = SUB_LESSONS_CATALOG.dsa_graphs[0].steps;
     } else {
         steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
     }
@@ -1621,7 +1917,7 @@ function stepForwardViz() {
     let steps = [];
     const lowerName = activeSession.name.toLowerCase();
     
-    if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("Queue q") && !activeSession.code.includes("arr[5]")) {
+    if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("Queue q") && !activeSession.code.includes("arr[5]") && !activeSession.code.includes("Thread t1")) {
         steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
     } else {
         if (lowerName.includes("slicing")) {
@@ -1661,6 +1957,8 @@ function stepForwardViz() {
                 { line: 2, vars: { ptr: "0x7ffe" }, mem: ["ptr -> 0x7ffe"], explain: "Assign address of val to pointer variable ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
                 { line: 3, vars: { val: 99 }, mem: ["val (0x7ffe) -> 99"], explain: "Animate dereference: change value at address stored in pointer.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
             ];
+        } else if (activeSession.topic.toLowerCase().includes("concurrency") || activeSession.topic.toLowerCase().includes("java_concurrency")) {
+            steps = SUB_LESSONS_CATALOG.java_concurrency[0].steps;
         } else if (activeSession.topic.toLowerCase().includes("tree") || activeSession.topic.toLowerCase().includes("dsa_trees")) {
             steps = SUB_LESSONS_CATALOG.dsa_trees[0].steps;
         } else if (activeSession.topic.toLowerCase().includes("array") || activeSession.topic.toLowerCase().includes("dsa_arrays")) {
@@ -1671,6 +1969,8 @@ function stepForwardViz() {
             steps = SUB_LESSONS_CATALOG.dsa_queues[0].steps;
         } else if (activeSession.topic.toLowerCase().includes("bubble") || activeSession.topic.toLowerCase().includes("algo_bubble_sort")) {
             steps = SUB_LESSONS_CATALOG.algo_bubble_sort[0].steps;
+        } else if (activeSession.topic.toLowerCase().includes("graph") || activeSession.topic.toLowerCase().includes("dsa_graphs")) {
+            steps = SUB_LESSONS_CATALOG.dsa_graphs[0].steps;
         } else {
             steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
         }
@@ -1708,7 +2008,7 @@ function setVizSpeed(val) {
         let steps = [];
         const lowerName = activeSession.name.toLowerCase();
         
-        if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("Queue q") && !activeSession.code.includes("arr[5]")) {
+        if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("Queue q") && !activeSession.code.includes("arr[5]") && !activeSession.code.includes("Thread t1")) {
             steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
         } else {
             if (lowerName.includes("slicing")) {
@@ -1748,6 +2048,8 @@ function setVizSpeed(val) {
                     { line: 2, vars: { ptr: "0x7ffe" }, mem: ["ptr -> 0x7ffe"], explain: "Assign address of val to pointer variable ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
                     { line: 3, vars: { val: 99 }, mem: ["val (0x7ffe) -> 99"], explain: "Animate dereference: change value at address stored in pointer.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
                 ];
+            } else if (activeSession.topic.toLowerCase().includes("concurrency") || activeSession.topic.toLowerCase().includes("java_concurrency")) {
+                steps = SUB_LESSONS_CATALOG.java_concurrency[0].steps;
             } else if (activeSession.topic.toLowerCase().includes("tree") || activeSession.topic.toLowerCase().includes("dsa_trees")) {
                 steps = SUB_LESSONS_CATALOG.dsa_trees[0].steps;
             } else if (activeSession.topic.toLowerCase().includes("array") || activeSession.topic.toLowerCase().includes("dsa_arrays")) {
@@ -1758,6 +2060,8 @@ function setVizSpeed(val) {
                 steps = SUB_LESSONS_CATALOG.dsa_queues[0].steps;
             } else if (activeSession.topic.toLowerCase().includes("bubble") || activeSession.topic.toLowerCase().includes("algo_bubble_sort")) {
                 steps = SUB_LESSONS_CATALOG.algo_bubble_sort[0].steps;
+            } else if (activeSession.topic.toLowerCase().includes("graph") || activeSession.topic.toLowerCase().includes("dsa_graphs")) {
+                steps = SUB_LESSONS_CATALOG.dsa_graphs[0].steps;
             } else {
                 steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
             }
@@ -1840,12 +2144,39 @@ function shareVizSessionState() {
 
 function exportVizReport(format) {
     if (!activeSession) return;
-    const markdown = `# Pravio Studio Report: ${activeSession.name}\n\n## Code Sample\n\`\`\`\n${activeSession.code}\n\`\`\`\n\nGenerated via Pravio Visualizer.`;
-    const blob = new Blob([markdown], { type: "text/markdown" });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `${activeSession.name.replace(/\s+/g, '_')}_report.md`;
-    link.click();
+    
+    if (format === 'markdown') {
+        const markdown = `# Pravio Studio Report: ${activeSession.name}\n\n## Code Sample\n\`\`\`\n${activeSession.code}\n\`\`\`\n\nGenerated via Pravio Visualizer.`;
+        const blob = new Blob([markdown], { type: "text/markdown" });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${activeSession.name.replace(/\s+/g, '_')}_report.md`;
+        link.click();
+    } else if (format === 'svg') {
+        // Grab current active canvas SVG string representation to export direct vector illustration
+        const svgEl = document.getElementById('viz-tree-svg') || document.getElementById('viz-graph-svg');
+        if (svgEl) {
+            const svgData = new XMLSerializer().serializeToString(svgEl);
+            const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${activeSession.name.replace(/\s+/g, '_')}_canvas.svg`;
+            link.click();
+            alert("🎨 Canvas SVG Vector graphic downloaded successfully!");
+        } else {
+            alert("No vector SVG graphics found on screen to export. Trees and Graphs render fully as SVG vectors.");
+        }
+    }
+}
+
+// Intercept export click to allow choosing format
+function triggerExportSelection() {
+    const format = confirm("Export options:\n\nClick OK to export Vector Canvas Graphic (.SVG)\nClick Cancel to export Markdown Report (.MD)");
+    if (format) {
+        exportVizReport('svg');
+    } else {
+        exportVizReport('markdown');
+    }
 }
 
 function updateBookmarkIconUI() {
