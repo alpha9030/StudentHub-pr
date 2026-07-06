@@ -448,7 +448,9 @@ function setupEventListeners() {
 
   if (DOMElements.btnKeyModalSave) {
     DOMElements.btnKeyModalSave.addEventListener('click', () => {
-      const newKey = DOMElements.inputCustomApiKey.value.trim();
+      let newKey = DOMElements.inputCustomApiKey.value.trim();
+      newKey = newKey.replace(/^GEMINI_API_KEY\s*=\s*/i, '');
+      newKey = newKey.replace(/^['"]|['"]$/g, '').trim();
       localStorage.setItem('custom_gemini_api_key', newKey);
       DOMElements.apiKeyModal.classList.add('hidden');
       checkServerHealth(); // Instantly verify the new API key status

@@ -1311,7 +1311,11 @@ def serve_static(path):
     blocked_extensions = ('.db', '.xlsx', '.xls', '.csv', '.bat', '.git')
     if any(path.lower().endswith(ext) for ext in blocked_extensions) or '..' in path:
         return jsonify({'success': False, 'message': 'Access Denied'}), 403
-    return send_from_directory('.', path)
+    resp = send_from_directory('.', path)
+    resp.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    resp.headers['Pragma'] = 'no-cache'
+    resp.headers['Expires'] = '0'
+    return resp
 
 init_db()
 print("Database initialized.")
