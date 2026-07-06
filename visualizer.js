@@ -35,7 +35,7 @@ const LEARNING_STUDIOS = [
     { id: "algorithms", title: "Algorithms Studio", desc: "Time & space complexity optimizations. Bubble/Merge sorting, binary search, greed, and DP.", category: "cs", lessons: 25, time: "18 hrs", diff: "Advanced", icon: "⚡ Algorithms", objectives: ["Sorting swaps", "Binary search bounds", "Dynamic programming"] }
 ];
 
-// Structured syllabus
+// Structured syllabus mapping for all 12 studios
 const STUDIO_SYLLABUS = {
     c: [
         {
@@ -70,6 +70,30 @@ const STUDIO_SYLLABUS = {
                 { name: "Recursion", key: "c_recursion", operations: ["Stack frames", "Base case"] },
                 { name: "Structures", key: "c_structures", operations: ["Definition", "Memory alignment"] },
                 { name: "Dynamic Memory", key: "c_dynamic_memory", operations: ["malloc", "calloc", "free"] }
+            ]
+        }
+    ],
+    cpp: [
+        {
+            module: "Module 1: OOP Basics",
+            lessons: [
+                { name: "Classes", key: "cpp_classes", operations: ["Declaration", "Methods"] },
+                { name: "Objects", key: "cpp_objects", operations: ["Instantiation", "Memory Layout"] },
+                { name: "Constructors", key: "cpp_constructors", operations: ["Overloading", "Destructors"] }
+            ]
+        },
+        {
+            module: "Module 2: Inheritance & Poly",
+            lessons: [
+                { name: "Inheritance", key: "cpp_inheritance", operations: ["Public", "Protected", "Private"] },
+                { name: "Polymorphism", key: "cpp_polymorphism", operations: ["Virtual functions", "Runtime bindings"] }
+            ]
+        },
+        {
+            module: "Module 3: C++ STL",
+            lessons: [
+                { name: "Vectors", key: "cpp_vectors", operations: ["Push back", "Resizing"] },
+                { name: "Maps", key: "cpp_maps", operations: ["Key Value", "Find"] }
             ]
         }
     ],
@@ -143,6 +167,33 @@ const STUDIO_SYLLABUS = {
             ]
         }
     ],
+    typescript: [
+        {
+            module: "Module 1: TS Types",
+            lessons: [
+                { name: "Type Annotations", key: "ts_types", operations: ["Basics", "Unions"] },
+                { name: "Interfaces", key: "ts_interfaces", operations: ["Declaration", "Extends"] }
+            ]
+        }
+    ],
+    html: [
+        {
+            module: "Module 1: Semantic HTML",
+            lessons: [
+                { name: "Semantic Tags", key: "html_semantics", operations: ["Header", "Section", "Footer"] },
+                { name: "Form Validations", key: "html_forms", operations: ["Inputs", "Submit"] }
+            ]
+        }
+    ],
+    css: [
+        {
+            module: "Module 1: CSS Layouts",
+            lessons: [
+                { name: "Box Model", key: "css_box_model", operations: ["Margin", "Padding", "Border"] },
+                { name: "Flexbox", key: "css_flexbox", operations: ["Justify", "Align"] }
+            ]
+        }
+    ],
     sql: [
         {
             module: "Module 1: Database Clauses",
@@ -157,11 +208,54 @@ const STUDIO_SYLLABUS = {
             ]
         }
     ],
+    git: [
+        {
+            module: "Module 1: Version Control",
+            lessons: [
+                { name: "Git Commits", key: "git_commits", operations: ["Stage", "Commit"] },
+                { name: "Branching", key: "git_branches", operations: ["Checkout", "Merge"] }
+            ]
+        }
+    ],
     data_structures: [
         {
-            module: "Module 1: Non-Linear Structures",
+            module: "Module 1: Linear Structures",
             lessons: [
-                { name: "Binary Search Tree", key: "dsa_trees", operations: ["Node insertion", "BFS Traversal", "DFS Traversal"] }
+                { name: "Arrays", key: "dsa_arrays", operations: ["Allocation", "Index access"] },
+                { name: "Linked Lists", key: "dsa_linked_lists", operations: ["Node insertion", "Traversal"] },
+                { name: "Stacks", key: "dsa_stacks", operations: ["Push", "Pop"] },
+                { name: "Queues", key: "dsa_queues", operations: ["Enqueue", "Dequeue"] }
+            ]
+        },
+        {
+            module: "Module 2: Non-Linear Structures",
+            lessons: [
+                { name: "Binary Search Tree", key: "dsa_trees", operations: ["Node insertion", "BFS Traversal", "DFS Traversal"] },
+                { name: "Heaps", key: "dsa_heaps", operations: ["Insert", "Extract Max"] },
+                { name: "Hash Tables", key: "dsa_hash_tables", operations: ["Hash computation", "Collision resolution"] }
+            ]
+        }
+    ],
+    algorithms: [
+        {
+            module: "Module 1: Sorting Algorithms",
+            lessons: [
+                { name: "Bubble Sort", key: "algo_bubble_sort", operations: ["Swapping elements", "Outer passes"] },
+                { name: "Insertion Sort", key: "algo_insertion_sort", operations: ["Shift elements", "Sort passes"] },
+                { name: "Merge Sort", key: "algo_merge_sort", operations: ["Divide", "Merge arrays"] }
+            ]
+        },
+        {
+            module: "Module 2: Searching Algorithms",
+            lessons: [
+                { name: "Linear Search", key: "algo_linear_search", operations: ["Sequential scan"] },
+                { name: "Binary Search", key: "algo_binary_search", operations: ["Range reduction"] }
+            ]
+        },
+        {
+            module: "Module 3: Dynamic Programming",
+            lessons: [
+                { name: "Fibonacci Sequence", key: "algo_fibonacci", operations: ["Memoization", "Tabulation"] }
             ]
         }
     ]
@@ -221,6 +315,51 @@ const SUB_LESSONS_CATALOG = {
             steps: [
                 { line: 1, vars: { tup: "(100, 200)" }, mem: ["tup -> (100, 200)"], explain: "Initialize tuple with values 100 and 200.", action: { type: "array_state", data: [100, 200], active: [] } },
                 { line: 2, vars: { x: 100, y: 200, tup: "(100, 200)" }, mem: ["x (stack) -> 100", "y (stack) -> 200"], explain: "Unpack elements into variables x and y.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
+            ]
+        }
+    ],
+    "dsa_arrays": [
+        {
+            name: "Allocation",
+            desc: "Understand contiguous index memory layout of static arrays.",
+            code: `// Array memory slots\nint arr[5] = {10, 20, 30, 40, 50};`,
+            complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(n)" },
+            steps: [
+                { line: 2, vars: { "arr[0]": 10, "arr[1]": 20, "arr[2]": 30 }, mem: ["arr (0x3000) -> [10, 20, 30, 40, 50]"], explain: "Animate contiguous allocation of array blocks in heap memory.", action: { type: "array_state", data: [10, 20, 30, 40, 50], active: [0, 1, 2, 3, 4] } }
+            ]
+        }
+    ],
+    "dsa_stacks": [
+        {
+            name: "Push",
+            desc: "Push element onto the top of the stack.",
+            code: `// Stack LIFO push\nstack[++top] = 42;`,
+            complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)" },
+            steps: [
+                { line: 2, vars: { top: 0 }, mem: ["stack[0] -> 42"], explain: "Push 42 onto index 0. Increments top stack pointer.", action: { type: "array_state", data: [42, "", "", ""], active: [0], highlight: true } }
+            ]
+        }
+    ],
+    "dsa_queues": [
+        {
+            name: "Enqueue",
+            desc: "Enqueue element at the tail of the queue.",
+            code: `// Queue FIFO enqueue\nqueue[tail++] = 88;`,
+            complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)" },
+            steps: [
+                { line: 2, vars: { head: 0, tail: 1 }, mem: ["queue[0] -> 88"], explain: "Enqueue 88 at tail. Increments tail queue pointer.", action: { type: "array_state", data: [88, "", "", ""], active: [0], highlight: true } }
+            ]
+        }
+    ],
+    "algo_bubble_sort": [
+        {
+            name: "Swapping elements",
+            desc: "Bubble sort swaps adjacent elements if they are in the wrong order.",
+            code: `// Bubble Sort swap iteration\nif (arr[j] > arr[j+1]) {\n    swap(arr[j], arr[j+1]);\n}`,
+            complexity: { best: "O(n)", avg: "O(n^2)", worst: "O(n^2)", space: "O(1)" },
+            steps: [
+                { line: 2, vars: { "arr[0]": 5, "arr[1]": 2 }, mem: ["arr -> [5, 2, 8]"], explain: "Compare element 5 at index 0 and 2 at index 1. Since 5 > 2, swap them.", action: { type: "array_state", data: [5, 2, 8], active: [0, 1], highlight: true } },
+                { line: 3, vars: { "arr[0]": 2, "arr[1]": 5 }, mem: ["arr -> [2, 5, 8]"], explain: "Swap completed: index 0 and 1 swapped successfully.", action: { type: "array_state", data: [2, 5, 8], active: [0, 1], complete: true } }
             ]
         }
     ],
@@ -763,13 +902,34 @@ function generateCurriculumCodeSample(studioId, topicName) {
             return `// C Function scopes\nint add(int a, int b) {\n    return a + b;\n}\nint sum = add(10, 20);`;
         }
         if (name.includes("recursion")) {
-            return `// C Recursion factorials\nint factorial(int n) {\n    if (n <= 1) return 1;\n    return n * factorial(n - 1);\n}\nint ans = factorial(3);`;
+            return `// C Model Recursion\nint factorial(int n) {\n    if (n <= 1) return 1;\n    return n * factorial(n - 1);\n}\nint ans = factorial(3);`;
         }
         if (name.includes("structure")) {
             return `// C Structure alignment\nstruct Student {\n    int roll;\n    float score;\n};\nstruct Student s = {101, 95.5};`;
         }
         if (name.includes("memory")) {
             return `// C Dynamic malloc alloc\nint *arr = (int*)malloc(2 * sizeof(int));\narr[0] = 5;\nfree(arr);`;
+        }
+    }
+    
+    if (studioId === 'cpp') {
+        if (name.includes("class")) {
+            return `// C++ Class declaration\nclass Student {\npublic:\n    int id = 101;\n};`;
+        }
+        if (name.includes("object")) {
+            return `// C++ Object memory layout\nStudent s1;\nint sid = s1.id;`;
+        }
+        if (name.includes("constructor")) {
+            return `// C++ Constructor definition\nclass Book {\npublic:\n    int pages;\n    Book(int p) { pages = p; }\n};\nBook b(350);`;
+        }
+        if (name.includes("inheritance")) {
+            return `// C++ Base & Derived classes\nclass Father {};\nclass Child : public Father {};`;
+        }
+        if (name.includes("polymorphism")) {
+            return `// C++ Virtual functions\nclass Shape {\npublic:\n    virtual void draw() {}\n};`;
+        }
+        if (name.includes("vector")) {
+            return `// C++ STL dynamic vector\nstd::vector<int> numbers = {10, 20};\nnumbers.push_back(30);`;
         }
     }
     
@@ -831,6 +991,30 @@ function generateCurriculumCodeSample(studioId, topicName) {
         if (name.includes("event loop")) {
             return `// JS Event Loop task priorities\nconsole.log("Sync 1");\nsetTimeout(() => console.log("Macro 1"), 0);\nconsole.log("Sync 2");`;
         }
+    }
+
+    if (studioId === 'typescript') {
+        return `// TypeScript annotations\nlet age: number = 25;\ninterface User {\n    id: number;\n}`;
+    }
+
+    if (studioId === 'html') {
+        return `<!-- HTML5 structure -->\n<div class="card">\n    <h3>Pravio layout</h3>\n</div>`;
+    }
+
+    if (studioId === 'css') {
+        return `/* CSS Layout attributes */\n.card {\n    margin: 10px;\n    padding: 15px;\n    border: 1px solid #ddd;\n}`;
+    }
+
+    if (studioId === 'git') {
+        return `# Git workflow instructions\ngit add .\ngit commit -m "Initialize project"`;
+    }
+
+    if (studioId === 'data_structures') {
+        return `// DSA Data Structures allocation\nint items[5] = {10, 20, 30, 40, 50};`;
+    }
+
+    if (studioId === 'algorithms') {
+        return `// Algorithm Swapping logic\nint temp = a;\na = b;\nb = temp;`;
     }
 
     // Default template fallbacks
@@ -921,7 +1105,7 @@ function renderCurrentStep() {
     const lowerName = activeSession.name.toLowerCase();
 
     // Check if custom code interpreter parser should evaluate the custom editor code
-    if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("Queue q")) {
+    if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("Queue q") && !activeSession.code.includes("arr[5]")) {
         steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
     } else {
         // Preset operations matching
@@ -964,6 +1148,14 @@ function renderCurrentStep() {
             ];
         } else if (activeSession.topic.toLowerCase().includes("tree") || activeSession.topic.toLowerCase().includes("dsa_trees")) {
             steps = SUB_LESSONS_CATALOG.dsa_trees[0].steps;
+        } else if (activeSession.topic.toLowerCase().includes("array") || activeSession.topic.toLowerCase().includes("dsa_arrays")) {
+            steps = SUB_LESSONS_CATALOG.dsa_arrays[0].steps;
+        } else if (activeSession.topic.toLowerCase().includes("stack") || activeSession.topic.toLowerCase().includes("dsa_stacks")) {
+            steps = SUB_LESSONS_CATALOG.dsa_stacks[0].steps;
+        } else if (activeSession.topic.toLowerCase().includes("queue") || activeSession.topic.toLowerCase().includes("dsa_queues")) {
+            steps = SUB_LESSONS_CATALOG.dsa_queues[0].steps;
+        } else if (activeSession.topic.toLowerCase().includes("bubble") || activeSession.topic.toLowerCase().includes("algo_bubble_sort")) {
+            steps = SUB_LESSONS_CATALOG.algo_bubble_sort[0].steps;
         } else {
             steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
         }
@@ -1292,6 +1484,14 @@ function toggleVizPlayback() {
         ];
     } else if (activeSession.topic.toLowerCase().includes("tree") || activeSession.topic.toLowerCase().includes("dsa_trees")) {
         steps = SUB_LESSONS_CATALOG.dsa_trees[0].steps;
+    } else if (activeSession.topic.toLowerCase().includes("array") || activeSession.topic.toLowerCase().includes("dsa_arrays")) {
+        steps = SUB_LESSONS_CATALOG.dsa_arrays[0].steps;
+    } else if (activeSession.topic.toLowerCase().includes("stack") || activeSession.topic.toLowerCase().includes("dsa_stacks")) {
+        steps = SUB_LESSONS_CATALOG.dsa_stacks[0].steps;
+    } else if (activeSession.topic.toLowerCase().includes("queue") || activeSession.topic.toLowerCase().includes("dsa_queues")) {
+        steps = SUB_LESSONS_CATALOG.dsa_queues[0].steps;
+    } else if (activeSession.topic.toLowerCase().includes("bubble") || activeSession.topic.toLowerCase().includes("algo_bubble_sort")) {
+        steps = SUB_LESSONS_CATALOG.algo_bubble_sort[0].steps;
     } else {
         steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
     }
@@ -1323,7 +1523,7 @@ function stepForwardViz() {
     let steps = [];
     const lowerName = activeSession.name.toLowerCase();
     
-    if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("Queue q")) {
+    if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("Queue q") && !activeSession.code.includes("arr[5]")) {
         steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
     } else {
         if (lowerName.includes("slicing")) {
@@ -1365,6 +1565,14 @@ function stepForwardViz() {
             ];
         } else if (activeSession.topic.toLowerCase().includes("tree") || activeSession.topic.toLowerCase().includes("dsa_trees")) {
             steps = SUB_LESSONS_CATALOG.dsa_trees[0].steps;
+        } else if (activeSession.topic.toLowerCase().includes("array") || activeSession.topic.toLowerCase().includes("dsa_arrays")) {
+            steps = SUB_LESSONS_CATALOG.dsa_arrays[0].steps;
+        } else if (activeSession.topic.toLowerCase().includes("stack") || activeSession.topic.toLowerCase().includes("dsa_stacks")) {
+            steps = SUB_LESSONS_CATALOG.dsa_stacks[0].steps;
+        } else if (activeSession.topic.toLowerCase().includes("queue") || activeSession.topic.toLowerCase().includes("dsa_queues")) {
+            steps = SUB_LESSONS_CATALOG.dsa_queues[0].steps;
+        } else if (activeSession.topic.toLowerCase().includes("bubble") || activeSession.topic.toLowerCase().includes("algo_bubble_sort")) {
+            steps = SUB_LESSONS_CATALOG.algo_bubble_sort[0].steps;
         } else {
             steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
         }
@@ -1402,7 +1610,7 @@ function setVizSpeed(val) {
         let steps = [];
         const lowerName = activeSession.name.toLowerCase();
         
-        if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("Queue q")) {
+        if (activeSession.code && !activeSession.code.includes("Characteristics demo") && !activeSession.code.includes("int[] arr") && !activeSession.code.includes("Queue q") && !activeSession.code.includes("arr[5]")) {
             steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
         } else {
             if (lowerName.includes("slicing")) {
@@ -1419,7 +1627,7 @@ function setVizSpeed(val) {
             } else if (lowerName.includes("unpacking")) {
                 steps = [
                     { line: 1, vars: { tup: "(100, 200)" }, mem: ["tup -> (100, 200)"], explain: "Initialize tuple to unpack.", action: { type: "array_state", data: [100, 200], active: [] } },
-                    { line: 2, vars: { x: 100, y: 200, tup: "(100, 200)" }, mem: ["x -> 100", "y -> 200"], explain: "Animate tuple values separating/unpacking into independent local stack variables.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
+                    { line: 2, vars: { x: 100, y: 200 }, mem: ["x -> 100", "y -> 200"], explain: "Animate tuple values separating/unpacking into independent local stack variables.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
                 ];
             } else if (lowerName.includes("concatenation")) {
                 steps = [
@@ -1433,7 +1641,7 @@ function setVizSpeed(val) {
                 ];
             } else if (lowerName.includes("pop")) {
                 steps = [
-                    { line: 1, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Initialize list with 3 elements.", action: { type: "array_state", data: [10, 20], active: [] } },
+                    { line: 1, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Initialize list with 3 elements.", action: { type: "array_state", data: [10, 20, 30], active: [] } },
                     { line: 2, vars: { lst: "[10, 20]", val: 30 }, mem: ["lst -> [10, 20]"], explain: "Pop element off the last index of list.", action: { type: "array_state", data: [10, 20], active: [1], highlight: true } }
                 ];
             } else if (lowerName.includes("dereferencing")) {
@@ -1444,6 +1652,14 @@ function setVizSpeed(val) {
                 ];
             } else if (activeSession.topic.toLowerCase().includes("tree") || activeSession.topic.toLowerCase().includes("dsa_trees")) {
                 steps = SUB_LESSONS_CATALOG.dsa_trees[0].steps;
+            } else if (activeSession.topic.toLowerCase().includes("array") || activeSession.topic.toLowerCase().includes("dsa_arrays")) {
+                steps = SUB_LESSONS_CATALOG.dsa_arrays[0].steps;
+            } else if (activeSession.topic.toLowerCase().includes("stack") || activeSession.topic.toLowerCase().includes("dsa_stacks")) {
+                steps = SUB_LESSONS_CATALOG.dsa_stacks[0].steps;
+            } else if (activeSession.topic.toLowerCase().includes("queue") || activeSession.topic.toLowerCase().includes("dsa_queues")) {
+                steps = SUB_LESSONS_CATALOG.dsa_queues[0].steps;
+            } else if (activeSession.topic.toLowerCase().includes("bubble") || activeSession.topic.toLowerCase().includes("algo_bubble_sort")) {
+                steps = SUB_LESSONS_CATALOG.algo_bubble_sort[0].steps;
             } else {
                 steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
             }
@@ -1513,6 +1729,25 @@ function toggleVizBookmark() {
     
     localStorage.setItem('pravio_visualizer_bookmarks', JSON.stringify(bookmarks));
     updateBookmarkIconUI();
+}
+
+// Export and sharing capabilities
+function shareVizSessionState() {
+    if (!activeSession) return;
+    const shareUrl = `${window.location.origin}${window.location.pathname}?studio=${activeSession.category}&topic=${activeSession.topic}`;
+    navigator.clipboard.writeText(shareUrl).then(() => {
+        alert("📋 Shareable lesson link copied to clipboard!");
+    });
+}
+
+function exportVizReport(format) {
+    if (!activeSession) return;
+    const markdown = `# Pravio Studio Report: ${activeSession.name}\n\n## Code Sample\n\`\`\`\n${activeSession.code}\n\`\`\`\n\nGenerated via Pravio Visualizer.`;
+    const blob = new Blob([markdown], { type: "text/markdown" });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `${activeSession.name.replace(/\s+/g, '_')}_report.md`;
+    link.click();
 }
 
 function updateBookmarkIconUI() {
