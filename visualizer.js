@@ -1260,7 +1260,7 @@ function renderCurrentStep() {
         });
     }
 
-    renderInteractiveCanvas(step.action);
+    renderInteractiveCanvas(step.action, step);
 
     const normalizedName = activeSession.topic.toLowerCase();
     if (stepIdx === totalSteps - 1 && !completedTopics.includes(normalizedName)) {
@@ -1269,7 +1269,7 @@ function renderCurrentStep() {
     }
 }
 
-function renderInteractiveCanvas(action) {
+function renderInteractiveCanvas(action, step) {
     const canvas = document.getElementById('viz-display-area');
     if (!canvas) return;
 
@@ -1319,35 +1319,6 @@ function renderInteractiveCanvas(action) {
             wrapper.appendChild(block);
         });
         canvas.appendChild(wrapper);
-    }
-    else if (action.type === "var_alloc") {
-        const block = document.createElement('div');
-        block.style.border = '1px solid var(--border-color)';
-        block.style.borderRadius = '8px';
-        block.style.background = 'rgba(20, 184, 166, 0.05)';
-        block.style.borderLeft = '4px solid #14b8a6'; // Teal variable memory box
-        block.style.padding = '12px';
-        block.style.fontFamily = 'monospace';
-        block.style.fontSize = '12px';
-        block.innerHTML = `
-            <div style="color:var(--text-muted); font-size:0.65rem;">Address: ${action.addr} | Type: ${action.dtype}</div>
-            <div style="font-weight:700; color:var(--text-body); font-size:1.1rem; margin-top:2px;">${action.name} = ${action.val}</div>
-        `;
-        canvas.appendChild(block);
-    }
-    else if (action.type === "mem_set" || action.type === "mem_update") {
-        const block = document.createElement('div');
-        block.style.border = '1px solid var(--border-color)';
-        block.style.borderRadius = '8px';
-        block.style.background = 'rgba(59, 130, 246, 0.05)';
-        block.style.borderLeft = '4px solid #3b82f6';
-        block.style.padding = '12px';
-        block.style.fontFamily = 'monospace';
-        block.innerHTML = `
-            <div style="font-size:0.7rem; color:#2563eb;">Address: ${action.addr}</div>
-            <div style="font-size:1rem; font-weight:700; margin-top:2px; color:var(--text-body);">Value: ${action.val}</div>
-        `;
-        canvas.appendChild(block);
     }
     else if (action.type === "sql_table") {
         const wrapper = document.createElement('div');
@@ -1427,6 +1398,133 @@ function renderInteractiveCanvas(action) {
             <div style="font-family:monospace; font-size:11px; margin-top:6px; color:var(--text-muted);">Queue elements buffer: [ ${action.queue.join(', ')} ]</div>
         `;
         canvas.appendChild(wrapper);
+    }
+    else {
+        // Render unified Stack & Heap layout for standard variables, C pointers, class objects, etc.
+        const container = document.createElement('div');
+        container.style.display = 'flex';
+        container.style.width = '95%';
+        container.style.height = '90%';
+        container.style.gap = '20px';
+        container.style.justifyContent = 'center';
+        container.style.alignItems = 'stretch';
+        
+        // Stack Column
+        const stackCol = document.createElement('div');
+        stackCol.style.flex = '1';
+        stackCol.style.background = 'rgba(255, 255, 255, 0.02)';
+        stackCol.style.border = '1px solid var(--border-color)';
+        stackCol.style.borderRadius = '10px';
+        stackCol.style.padding = '12px';
+        stackCol.style.display = 'flex';
+        stackCol.style.flexDirection = 'column';
+        stackCol.style.gap = '8px';
+        stackCol.style.overflowY = 'auto';
+        stackCol.innerHTML = `<div style="font-size: 11px; font-weight: 700; color: var(--primary-color); border-bottom: 1px solid var(--border-color); padding-bottom: 4px; text-transform: uppercase;">Stack Frame (Local Scope)</div>`;
+        
+        // Heap/Static Memory Column
+        const heapCol = document.createElement('div');
+        heapCol.style.flex = '1';
+        heapCol.style.background = 'rgba(255, 255, 255, 0.02)';
+        heapCol.style.border = '1px solid var(--border-color)';
+        heapCol.style.borderRadius = '10px';
+        heapCol.style.padding = '12px';
+        heapCol.style.display = 'flex';
+        heapCol.style.flexDirection = 'column';
+        heapCol.style.gap = '8px';
+        heapCol.style.overflowY = 'auto';
+        heapCol.innerHTML = `<div style="font-size: 11px; font-weight: 700; color: #14b8a6; border-bottom: 1px solid var(--border-color); padding-bottom: 4px; text-transform: uppercase;">Heap Space (Allocations)</div>`;
+
+        // Populate Stack variables
+        const activeVars = step ? step.vars : {};
+        let stackCount = 0;
+        
+        Object.keys(activeVars).forEach(vKey => {
+            const isPointer = activeVars[vKey].toString().startsWith('0x');
+            const isActiveVar = action && (action.name === vKey || (action.type === "mem_update" && action.name === vKey));
+            
+            const item = document.createElement('div');
+            item.style.padding = '8px 12px';
+            item.style.borderRadius = '6px';
+            item.style.border = isActiveVar ? '1.5px solid #f59e0b' : '1px solid var(--border-color)';
+            item.style.background = isActiveVar ? 'rgba(245, 158, 11, 0.08)' : 'var(--bg-container)';
+            item.style.fontFamily = 'monospace';
+            item.style.fontSize = '12px';
+            item.style.transition = 'all 0.3s';
+            
+            if (isActiveVar) {
+                item.style.boxShadow = '0 0 10px rgba(245, 158, 11, 0.2)';
+            }
+            
+            item.innerHTML = `
+                <div style="display:flex; justify-content:space-between; margin-bottom: 2px;">
+                    <span style="color:var(--text-muted); font-size:10px;">${isPointer ? 'pointer' : 'variable'}</span>
+                    <span style="color:var(--text-muted); font-size:10px;">FP + ${stackCount * 4}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight: 700; color: #f97316;">${vKey}</span>
+                    <span style="color: var(--text-body); font-weight: 600;">${activeVars[vKey]}</span>
+                </div>
+            `;
+            stackCol.appendChild(item);
+            stackCount++;
+        });
+
+        if (stackCount === 0) {
+            const emptyMsg = document.createElement('div');
+            emptyMsg.style.color = 'var(--text-muted)';
+            emptyMsg.style.fontSize = '12px';
+            emptyMsg.style.textAlign = 'center';
+            emptyMsg.style.marginTop = '20px';
+            emptyMsg.innerText = 'Stack frame is currently empty.';
+            stackCol.appendChild(emptyMsg);
+        }
+
+        // Populate Heap addresses
+        const activeMem = step ? step.mem : [];
+        let heapCount = 0;
+        
+        activeMem.forEach(mStr => {
+            const match = mStr.match(/^([a-zA-Z_0-9\[\]]+)\s*\((0x[a-f0-9]+)\)\s*->\s*(.+)$/);
+            if (match) {
+                const mName = match[1];
+                const mAddr = match[2];
+                const mVal = match[3];
+                const isActiveMem = action && (action.addr === mAddr || (action.type === "mem_update" && action.name === mName));
+                
+                const item = document.createElement('div');
+                item.style.padding = '8px 12px';
+                item.style.borderRadius = '6px';
+                item.style.border = isActiveMem ? '1.5px solid #14b8a6' : '1px solid var(--border-color)';
+                item.style.background = isActiveMem ? 'rgba(20, 184, 166, 0.08)' : 'var(--bg-container)';
+                item.style.fontFamily = 'monospace';
+                item.style.fontSize = '12px';
+                
+                item.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; margin-bottom: 2px;">
+                        <span style="color:#14b8a6; font-size:10px; font-weight:700;">${mAddr}</span>
+                        <span style="color:var(--text-muted); font-size:10px;">${mName}</span>
+                    </div>
+                    <div style="font-weight:700; color:var(--text-body); font-size:1.05rem;">${mVal}</div>
+                `;
+                heapCol.appendChild(item);
+                heapCount++;
+            }
+        });
+
+        if (heapCount === 0) {
+            const emptyMsg = document.createElement('div');
+            emptyMsg.style.color = 'var(--text-muted)';
+            emptyMsg.style.fontSize = '12px';
+            emptyMsg.style.textAlign = 'center';
+            emptyMsg.style.marginTop = '20px';
+            emptyMsg.innerText = 'No active dynamic memory allocations.';
+            heapCol.appendChild(emptyMsg);
+        }
+
+        container.appendChild(stackCol);
+        container.appendChild(heapCol);
+        canvas.appendChild(container);
     }
 }
 
