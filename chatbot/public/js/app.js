@@ -298,6 +298,7 @@ const DOMElements = {
   btnKeyModalSave: document.getElementById('btn-key-modal-save'),
   inputCustomApiKey: document.getElementById('input-custom-api-key'),
   chkShowKey: document.getElementById('chk-show-key'),
+  apiKeyStatusText: document.getElementById('api-key-status-text'),
   
   activeChatTitle: document.getElementById('active-chat-title'),
   btnPinActive: document.getElementById('btn-pin-active'),
@@ -328,6 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupEventListeners();
   renderSidebarChats();
   checkServerHealth();
+  updateKeyStatusUI();
   setInterval(checkServerHealth, HEALTH_CHECK_INTERVAL);
   
   // Set up connection event handlers
@@ -430,6 +432,7 @@ function setupEventListeners() {
       DOMElements.inputCustomApiKey.value = savedKey;
       DOMElements.inputCustomApiKey.type = 'password';
       DOMElements.chkShowKey.checked = false;
+      updateKeyStatusUI();
       DOMElements.apiKeyModal.classList.remove('hidden');
     });
   }
@@ -453,6 +456,7 @@ function setupEventListeners() {
       newKey = newKey.replace(/^['"]|['"]$/g, '').trim();
       localStorage.setItem('custom_gemini_api_key', newKey);
       DOMElements.apiKeyModal.classList.add('hidden');
+      updateKeyStatusUI();
       checkServerHealth(); // Instantly verify the new API key status
     });
   }
@@ -1185,6 +1189,21 @@ function downloadFile(content, fileName, contentType) {
   a.download = fileName;
   a.click();
   URL.revokeObjectURL(a.href);
+}
+
+function updateKeyStatusUI() {
+  const savedKey = localStorage.getItem('custom_gemini_api_key') || '';
+  if (savedKey) {
+    if (DOMElements.apiKeyStatusText) {
+      DOMElements.apiKeyStatusText.innerText = `Custom Key (${savedKey.substring(0, 7)}...)`;
+      DOMElements.apiKeyStatusText.style.color = '#10b981'; // Green online
+    }
+  } else {
+    if (DOMElements.apiKeyStatusText) {
+      DOMElements.apiKeyStatusText.innerText = 'Shared System Key';
+      DOMElements.apiKeyStatusText.style.color = 'var(--primary-color)';
+    }
+  }
 }
 
 // Ping Server Health Status
