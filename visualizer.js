@@ -230,201 +230,118 @@ const CURRICULUM_TREE = [
     }
 ];
 
-// Topic Presets & Templates
-const TOPIC_PRESETS = {
-    "c_variables": {
-        code: `int main() {\n    int age = 20;\n    float salary = 35000.5;\n    char grade = 'A';\n    return 0;\n}`,
-        category: "languages",
-        topic: "c"
-    },
-    "c_pointers": {
-        code: `// C Pointer Dereferencing\nint val = 42;\nint *ptr = &val;\n*ptr = 99;`,
-        category: "languages",
-        topic: "c"
-    },
-    "c_loops": {
-        code: `// C For Loop iterations\nfor (int i = 0; i < 4; i++) {\n    printf("%d", i);\n}`,
-        category: "languages",
-        topic: "c"
-    },
-    "cpp_oop_basics": {
-        code: `// C++ Class Constructor\nclass Student {\n  public:\n    Student() { id = 101; }\n    int id;\n};\nStudent s;`,
-        category: "languages",
-        topic: "cpp"
-    },
-    "java_garbage_collection": {
-        code: `// Java Memory Reference\nString a = new String("Pravio");\na = null; // GC target`,
-        category: "languages",
-        topic: "java"
-    },
-    "python_list_comprehension": {
-        code: `# Python List Comprehension\nnums = [1, 2, 3, 4]\nsquares = [x * x for x in nums]\nprint(squares)`,
-        category: "languages",
-        topic: "python"
-    },
-    "javascript_destructuring": {
-        code: `// JS Object Destructuring\nconst user = { name: "Alice", age: 21 };\nconst { name, age } = user;`,
-        category: "languages",
-        topic: "javascript"
-    },
-    "typescript_interfaces": {
-        code: `// TS Strict Type Safety\ninterface User { id: number; }\nconst u: User = { id: 456 };`,
-        category: "languages",
-        topic: "typescript"
-    },
-    "sql_select_&_where": {
-        code: `SELECT name, grade\nFROM Students\nWHERE dept = 'CSE';`,
-        category: "sql",
-        topic: "select"
-    },
-    "css_box_model": {
-        code: `<!-- HTML Markup -->\n<div class="box">Pravio Layout</div>\n\n/* CSS styling declarations */\n.box {\n  width: 100px;\n  padding: 10px;\n  border: 5px solid #3b82f6;\n  margin: 15px;\n}`,
-        category: "webdev",
-        topic: "boxmodel"
-    },
-    "arrays": {
-        code: `// Array element shifting\nint arr[5] = {10, 20, 30};\nint pos = 1;\nint val = 99;\ninsertAt(arr, pos, val);`,
-        category: "structures",
-        topic: "array"
-    },
-    "linked_lists": {
-        code: `// Linked List insertion link splicing\nNode *head = [10 -> 20];\nNode *new_node = createNode(99);\nnew_node->next = head->next;\nhead->next = new_node;`,
-        category: "structures",
-        topic: "linked_list"
-    },
-    "bubble_sort": {
-        code: `// Bubble Sort element sorting\nfor (i = 0; i < len - 1; i++) {\n  for (j = 0; j < len - i - 1; j++) {\n    if (arr[j] > arr[j + 1]) {\n      swap(&arr[j], &arr[j + 1]);\n    }\n  }\n}`,
-        category: "algorithms",
-        topic: "bubble_sort"
-    }
-};
-
-const VIZ_COMPLEXITIES = {
-    bubble_sort: { best: "O(n)", avg: "O(n²)", worst: "O(n²)", space: "O(1)", stable: "Yes", inplace: "Yes" },
-    python: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)", stable: "N/A", inplace: "N/A" },
-    c: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)", stable: "N/A", inplace: "N/A" },
-    cpp: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)", stable: "N/A", inplace: "N/A" },
-    java: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)", stable: "N/A", inplace: "N/A" },
-    javascript: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)", stable: "N/A", inplace: "N/A" },
-    typescript: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)", stable: "N/A", inplace: "N/A" },
-    array: { best: "O(1)", avg: "O(n)", worst: "O(n)", space: "O(n)", stable: "N/A", inplace: "Yes" },
-    linked_list: { best: "O(1)", avg: "O(n)", worst: "O(n)", space: "O(1)", stable: "N/A", inplace: "Yes" },
-    select: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)", stable: "N/A", inplace: "N/A" },
-    boxmodel: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)", stable: "N/A", inplace: "N/A" }
-};
-
-// Hardcoded visualization trace frames
-const VIZ_CATALOG = {
-    languages: {
-        topics: {
-            python: {
-                steps: [
-                    { line: 2, vars: { nums: "[1, 2, 3, 4]", squares: "undefined", prev_val: "none", type: "list", scope: "global" }, mem: ["nums -> [1, 2, 3, 4]"], explain: "Initialize list of numbers `nums` containing elements 1, 2, 3 and 4.", action: { type: "init", data: [1, 2, 3, 4] } },
-                    { line: 3, vars: { nums: "[1, 2, 3, 4]", x: 1, squares: "[]", prev_val: "undefined", type: "int", scope: "local" }, mem: ["nums -> [1, 2, 3, 4]", "squares -> []"], explain: "Loop starts: `x` takes first element (1). Evaluate `1 * 1 = 1`.", action: { type: "eval", idx: 0, val: 1 } },
-                    { line: 3, vars: { nums: "[1, 2, 3, 4]", x: 2, squares: "[1]", prev_val: "[]", type: "int", scope: "local" }, mem: ["nums -> [1, 2, 3, 4]", "squares -> [1]"], explain: "Loop continues: `x` takes second element (2). Evaluate `2 * 2 = 4`.", action: { type: "eval", idx: 1, val: 4 } },
-                    { line: 3, vars: { nums: "[1, 2, 3, 4]", x: 3, squares: "[1, 4]", prev_val: "[1]", type: "int", scope: "local" }, mem: ["nums -> [1, 2, 3, 4]", "squares -> [1, 4]"], explain: "Loop continues: `x` takes third element (3). Evaluate `3 * 3 = 9`.", action: { type: "eval", idx: 2, val: 9 } },
-                    { line: 3, vars: { nums: "[1, 2, 3, 4]", x: 4, squares: "[1, 4, 9]", prev_val: "[1, 4]", type: "int", scope: "local" }, mem: ["nums -> [1, 2, 3, 4]", "squares -> [1, 4, 9]"], explain: "Loop continues: `x` takes fourth element (4). Evaluate `4 * 4 = 16`.", action: { type: "eval", idx: 3, val: 16 } },
-                    { line: 3, vars: { nums: "[1, 2, 3, 4]", squares: "[1, 4, 9, 16]", prev_val: "[1, 4, 9]", type: "list", scope: "global" }, mem: ["nums -> [1, 2, 3, 4]", "squares -> [1, 4, 9, 16]"], explain: "List comprehension ends, resulting list of squares is assigned to `squares`.", action: { type: "complete", data: [1, 4, 9, 16] } },
-                    { line: 4, vars: { nums: "[1, 2, 3, 4]", squares: "[1, 4, 9, 16]", prev_val: "[1, 4, 9]", type: "list", scope: "global" }, mem: ["nums -> [1, 2, 3, 4]", "squares -> [1, 4, 9, 16]"], explain: "Print statement executes: prints `[1, 4, 9, 16]` to output window.", action: { type: "print", val: "[1, 4, 9, 16]" } }
-                ]
-            },
-            c: {
-                steps: [
-                    { line: 2, vars: { val: 42, ptr: "NULL", prev_val: "none", type: "int", scope: "stack" }, mem: ["val (0x7ffe) -> 42"], explain: "Allocate integer `val` in stack frame at address 0x7ffe and assign value 42.", action: { type: "mem_set", addr: "0x7ffe", val: 42 } },
-                    { line: 3, vars: { val: 42, ptr: "0x7ffe", prev_val: "NULL", type: "pointer", scope: "stack" }, mem: ["val (0x7ffe) -> 42", "ptr (0x7fff) -> 0x7ffe"], explain: "Declare pointer `ptr` and store the address of `val` (0x7ffe) in it.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
-                    { line: 4, vars: { val: 99, ptr: "0x7ffe", prev_val: "42", type: "int", scope: "stack" }, mem: ["val (0x7ffe) -> 99", "ptr (0x7fff) -> 0x7ffe"], explain: "Dereference `ptr`: write value 99 to the memory address stored in `ptr` (0x7ffe). `val` is now 99.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
-                ]
-            },
-            cpp: {
-                steps: [
-                    { line: 2, vars: { this: "0x4000", id: "garbage", prev_val: "none", type: "object", scope: "heap" }, mem: ["Constructor call stacked"], explain: "Allocate Student object memory block in heap. Invoke C++ default constructor function.", action: { type: "mem_set", addr: "0x4000", val: "Student" } },
-                    { line: 4, vars: { this: "0x4000", id: 101, prev_val: "garbage", type: "int", scope: "object" }, mem: ["this -> 0x4000"], explain: "Within constructor frame scope, set object property member variables `id` to 101.", action: { type: "mem_update", addr: "0x4000", val: "id: 101" } }
-                ]
-            },
-            java: {
-                steps: [
-                    { line: 2, vars: { a: "0x5000", prev_val: "none", type: "String", scope: "stack" }, mem: ["0x5000 -> 'Pravio'"], explain: "Allocate java String object in heap storage, assign reference pointer to variable `a`.", action: { type: "mem_set", addr: "0x5000", val: "String('Pravio')" } },
-                    { line: 3, vars: { a: "null", prev_val: "0x5000", type: "String", scope: "stack" }, mem: ["0x5000 (Orphaned)"], explain: "Assign `a = null`. Heap reference count drops to 0. Marked as Garbage Collector garbage sweep target.", action: { type: "mem_update", addr: "0x5000", val: "GC Orphan" } }
-                ]
-            },
-            javascript: {
-                steps: [
-                    { line: 2, vars: { user: "{ name: 'Alice', age: 21 }", prev_val: "none", type: "object", scope: "heap" }, mem: ["user object initialized"], explain: "Declare ES6 object `user` containing name and age keys.", action: { type: "init", data: ["Alice", 21] } },
-                    { line: 3, vars: { name: "Alice", age: 21, prev_val: "undefined", type: "string", scope: "local" }, mem: ["name -> 'Alice'", "age -> 21"], explain: "Perform array/object destructuring. Extract properties directly into individual scope variables.", action: { type: "complete", data: ["Alice", 21] } }
-                ]
-            },
-            typescript: {
-                steps: [
-                    { line: 3, vars: { u: "{ id: 456 }", prev_val: "none", type: "User", scope: "local" }, mem: ["Type Interface Verified"], explain: "Strict compile-time interface structure verification matches specifications. Assign variable objects.", action: { type: "init", data: [456] } }
-                ]
-            }
+// Complete Sub-Lessons Database Catalog
+const SUB_LESSONS_CATALOG = {
+    "python_tuples": [
+        {
+            name: "Introduction",
+            desc: "Learn Tuple characteristics, memory structures, and contrast differences with python Lists.",
+            code: `# Tuples characteristics demo\ntup = (10, "Pravio", 3.14)\nprint(tup)\n# Note: Tuples are immutable!`,
+            complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(n)" },
+            steps: [
+                { line: 2, vars: { tup: "(10, 'Pravio', 3.14)", type: "tuple" }, mem: ["tup (0x9000) -> 10", "tup (0x9008) -> 'Pravio'", "tup (0x9010) -> 3.14"], explain: "Declare and allocate a tuple container inside heap memory containing integer, string, and float items.", action: { type: "init", data: [10, "Pravio", 3.14] } }
+            ]
+        },
+        {
+            name: "Tuple Slicing",
+            desc: "Extract a sub-slice sequence of tuple elements using indexing boundaries `tup[start:end]`.",
+            code: `tup = (10, 20, 30, 40, 50)\nslice_tup = tup[1:4] # indexes 1,2,3`,
+            complexity: { best: "O(k)", avg: "O(k)", worst: "O(k)", space: "O(k)" },
+            steps: [
+                { line: 1, vars: { tup: "(10, 20, 30, 40, 50)" }, mem: ["tup (0x8000) -> [10, 20, 30, 40, 50]"], explain: "Initialize tuple with 5 elements.", action: { type: "array_state", data: [10, 20, 30, 40, 50], active: [] } },
+                { line: 2, vars: { tup: "(10, 20, 30, 40, 50)", slice_tup: "(20, 30, 40)" }, mem: ["tup (0x8000)", "slice_tup (0x8500) -> [20, 30, 40]"], explain: "Slice elements from index 1 to 4 (exclusive). Slice contains index 1, 2, and 3.", action: { type: "array_state", data: [20, 30, 40], active: [0, 1, 2], highlight: true } }
+            ]
+        },
+        {
+            name: "Tuple Packing",
+            desc: "Combine discrete independent variables together into a single tuple container object.",
+            code: `a = 10\nb = 20\nc = 30\ntup = a, b, c # Packing`,
+            complexity: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)" },
+            steps: [
+                { line: 1, vars: { a: 10 }, mem: ["a (stack) -> 10"], explain: "Assign variable a to 10.", action: { type: "array_state", data: [10], active: [0] } },
+                { line: 2, vars: { a: 10, b: 20 }, mem: ["a -> 10", "b -> 20"], explain: "Assign variable b to 20.", action: { type: "array_state", data: [10, 20], active: [1] } },
+                { line: 4, vars: { a: 10, b: 20, c: 30, tup: "(10, 20, 30)" }, mem: ["tup (0x7000) -> (10, 20, 30)"], explain: "Pack a, b, and c into a single tuple object.", action: { type: "array_state", data: [10, 20, 30], active: [0, 1, 2], complete: true } }
+            ]
+        },
+        {
+            name: "Tuple Unpacking",
+            desc: "Extract tuple values directly into separate standalone variables.",
+            code: `tup = (100, 200)\nx, y = tup # Unpacking`,
+            complexity: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)" },
+            steps: [
+                { line: 1, vars: { tup: "(100, 200)" }, mem: ["tup -> (100, 200)"], explain: "Initialize tuple with values 100 and 200.", action: { type: "array_state", data: [100, 200], active: [] } },
+                { line: 2, vars: { x: 100, y: 200, tup: "(100, 200)" }, mem: ["x (stack) -> 100", "y (stack) -> 200"], explain: "Unpack elements into variables x and y.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
+            ]
+        },
+        {
+            name: "Tuple Concatenation",
+            desc: "Merge two separate tuples together to form an entirely new tuple.",
+            code: `t1 = (1, 2)\nt2 = (3, 4)\nt3 = t1 + t2`,
+            complexity: { best: "O(n+m)", avg: "O(n+m)", worst: "O(n+m)", space: "O(n+m)" },
+            steps: [
+                { line: 1, vars: { t1: "(1, 2)" }, mem: ["t1 -> (1, 2)"], explain: "Initialize tuple t1.", action: { type: "array_state", data: [1, 2], active: [] } },
+                { line: 3, vars: { t1: "(1, 2)", t2: "(3, 4)", t3: "(1, 2, 3, 4)" }, mem: ["t3 -> (1, 2, 3, 4)"], explain: "Merge t1 and t2. Result is stored in a new memory address allocation block.", action: { type: "array_state", data: [1, 2, 3, 4], active: [0, 1, 2, 3], complete: true } }
+            ]
         }
-    },
-    structures: {
-        topics: {
-            array: {
-                steps: [
-                    { line: 2, vars: { arr: "[10, 20, 30, 0, 0]", size: 3, prev_val: "none", type: "array", scope: "heap" }, mem: ["arr -> [10, 20, 30, 0, 0]"], explain: "Initialize array of capacity 5 with initial elements: [10, 20, 30].", action: { type: "array_state", data: [10, 20, 30, 0, 0], active: [] } },
-                    { line: 3, vars: { arr: "[10, 20, 30, 0, 0]", pos: 1, prev_val: "none", type: "int", scope: "stack" }, mem: ["arr -> [10, 20, 30, 0, 0]"], explain: "Set position index where insertion will occur: pos = 1.", action: { type: "array_state", data: [10, 20, 30, 0, 0], active: [1] } },
-                    { line: 4, vars: { arr: "[10, 20, 30, 0, 0]", pos: 1, val: 99, prev_val: "none", type: "int", scope: "stack" }, mem: ["arr -> [10, 20, 30, 0, 0]"], explain: "Set insertion value: val = 99.", action: { type: "array_state", data: [10, 20, 30, 0, 0], active: [1] } },
-                    { line: 5, vars: { arr: "[10, 20, 30, 30, 0]", pos: 1, val: 99, prev_val: "0", type: "array", scope: "heap" }, mem: ["arr -> [10, 20, 30, 30, 0]"], explain: "Shift element at index 2 (30) to index 3 to make room.", action: { type: "array_state", data: [10, 20, 30, 30, 0], active: [2, 3] } },
-                    { line: 5, vars: { arr: "[10, 20, 20, 30, 0]", pos: 1, val: 99, prev_val: "30", type: "array", scope: "heap" }, mem: ["arr -> [10, 20, 20, 30, 0]"], explain: "Shift element at index 1 (20) to index 2.", action: { type: "array_state", data: [10, 20, 20, 30, 0], active: [1, 2] } },
-                    { line: 5, vars: { arr: "[10, 99, 20, 30, 0]", pos: 1, val: 99, prev_val: "20", type: "array", scope: "heap" }, mem: ["arr -> [10, 99, 20, 30, 0]"], explain: "Write insertion value 99 into index 1. Array insertion complete.", action: { type: "array_state", data: [10, 99, 20, 30, 0], active: [1] } }
-                ]
-            },
-            linked_list: {
-                steps: [
-                    { line: 2, vars: { head: "0x1000", nodes: "10 -> 20", prev_val: "none", type: "pointer", scope: "stack" }, mem: ["head (0x1000) -> 10 (next: 0x2000)", "node2 (0x2000) -> 20 (next: NULL)"], explain: "Initialize linked list with head pointer pointing to node (10) pointing to node (20).", action: { type: "ll_state", list: [{ val: 10, addr: "0x1000", next: "0x2000" }, { val: 20, addr: "0x2000", next: "NULL" }], active: [] } },
-                    { line: 3, vars: { head: "0x1000", new_node: "0x3000", prev_val: "NULL", type: "pointer", scope: "stack" }, mem: ["head (0x1000)", "node2 (0x2000)", "new_node (0x3000) -> 99 (next: NULL)"], explain: "Create a new node containing value 99 in memory at heap address 0x3000.", action: { type: "ll_state", list: [{ val: 10, addr: "0x1000", next: "0x2000" }, { val: 20, addr: "0x2000", next: "NULL" }, { val: 99, addr: "0x3000", next: "NULL", temp: true }], active: ["0x3000"] } },
-                    { line: 4, vars: { head: "0x1000", new_node: "0x3000", prev_val: "0x3000", type: "pointer", scope: "stack" }, mem: ["head (0x1000)", "node2 (0x2000)", "new_node (0x3000) -> 99 (next: 0x2000)"], explain: "Link `new_node->next` to the node following head node (`head->next` / 0x2000).", action: { type: "ll_state", list: [{ val: 10, addr: "0x1000", next: "0x2000" }, { val: 20, addr: "0x2000", next: "NULL" }, { val: 99, addr: "0x3000", next: "0x2000", temp: true }], active: ["0x3000", "0x2000"] } },
-                    { line: 5, vars: { head: "0x1000", new_node: "0x3000", prev_val: "0x3000", type: "pointer", scope: "stack" }, mem: ["head (0x1000) -> 10 (next: 0x3000)", "new_node (0x3000) -> 99 (next: 0x2000)", "node2 (0x2000)"], explain: "Link `head->next` to point to `new_node` (0x3000). Node 99 is now spliced in.", action: { type: "ll_state", list: [{ val: 10, addr: "0x1000", next: "0x3000" }, { val: 99, addr: "0x3000", next: "0x2000" }, { val: 20, addr: "0x2000", next: "NULL" }], active: ["0x1000", "0x3000"] } }
-                ]
-            }
+    ],
+    "python_lists": [
+        {
+            name: "append()",
+            desc: "Add a single element to the end of a python List.",
+            code: `lst = [10, 20]\nlst.append(30)`,
+            complexity: { best: "O(1) amortized", avg: "O(1)", worst: "O(1)", space: "O(1)" },
+            steps: [
+                { line: 1, vars: { lst: "[10, 20]" }, mem: ["lst -> [10, 20]"], explain: "Initialize list with 2 elements.", action: { type: "array_state", data: [10, 20, 0], active: [] } },
+                { line: 2, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Append 30 to the end of the list array.", action: { type: "array_state", data: [10, 20, 30], active: [2], complete: true } }
+            ]
+        },
+        {
+            name: "pop()",
+            desc: "Remove and return the last element from the list.",
+            code: `lst = [10, 20, 30]\nval = lst.pop()`,
+            complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)" },
+            steps: [
+                { line: 1, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Initialize list with 3 elements.", action: { type: "array_state", data: [10, 20, 30], active: [] } },
+                { line: 2, vars: { lst: "[10, 20]", val: 30 }, mem: ["lst -> [10, 20]", "val -> 30"], explain: "Remove and pop element at the last index (30).", action: { type: "array_state", data: [10, 20], active: [1], highlight: true } }
+            ]
         }
-    },
-    algorithms: {
-        topics: {
-            bubble_sort: {
-                steps: [
-                    { line: 2, vars: { arr: "[5, 1, 4]", i: 0, j: "undefined", prev_val: "none", type: "int", scope: "local" }, mem: ["arr -> [5, 1, 4]"], explain: "Start outer loop: pass i = 0.", action: { type: "array_state", data: [5, 1, 4], active: [] } },
-                    { line: 3, vars: { arr: "[5, 1, 4]", i: 0, j: 0, prev_val: "undefined", type: "int", scope: "local" }, mem: ["arr -> [5, 1, 4]"], explain: "Start inner loop: check index j = 0.", action: { type: "array_state", data: [5, 1, 4], active: [0, 1] } },
-                    { line: 4, vars: { arr: "[5, 1, 4]", i: 0, j: 0, prev_val: "none", type: "bool", scope: "local" }, mem: ["arr -> [5, 1, 4]"], explain: "Compare element at j (5) and j+1 (1). 5 > 1, so prepare to swap.", action: { type: "array_state", data: [5, 1, 4], active: [0, 1], highlight: true } },
-                    { line: 5, vars: { arr: "[1, 5, 4]", i: 0, j: 0, prev_val: "[5, 1, 4]", type: "array", scope: "heap" }, mem: ["arr -> [1, 5, 4]"], explain: "Swap elements at index 0 and 1. 5 shifts right.", action: { type: "array_state", data: [1, 5, 4], active: [0, 1] } },
-                    { line: 3, vars: { arr: "[1, 5, 4]", i: 0, j: 1, prev_val: "0", type: "int", scope: "local" }, mem: ["arr -> [1, 5, 4]"], explain: "Increment inner loop index to j = 1.", action: { type: "array_state", data: [1, 5, 4], active: [1, 2] } },
-                    { line: 4, vars: { arr: "[1, 5, 4]", i: 0, j: 1, prev_val: "none", type: "bool", scope: "local" }, mem: ["arr -> [1, 5, 4]"], explain: "Compare element at j (5) and j+1 (4). 5 > 4, swap required.", action: { type: "array_state", data: [1, 5, 4], active: [1, 2], highlight: true } },
-                    { line: 5, vars: { arr: "[1, 4, 5]", i: 0, j: 1, prev_val: "[1, 5, 4]", type: "array", scope: "heap" }, mem: ["arr -> [1, 4, 5]"], explain: "Swap index 1 and 2. 5 shifts right and bubbles to end.", action: { type: "array_state", data: [1, 4, 5], active: [1, 2] } },
-                    { line: 2, vars: { arr: "[1, 4, 5]", i: 1, j: "undefined", prev_val: "0", type: "int", scope: "local" }, mem: ["arr -> [1, 4, 5]"], explain: "Inner loop done. Increment outer loop index: i = 1.", action: { type: "array_state", data: [1, 4, 5], active: [] } },
-                    { line: 3, vars: { arr: "[1, 4, 5]", i: 1, j: 0, prev_val: "1", type: "int", scope: "local" }, mem: ["arr -> [1, 4, 5]"], explain: "Start second pass: check index j = 0.", action: { type: "array_state", data: [1, 4, 5], active: [0, 1] } },
-                    { line: 4, vars: { arr: "[1, 4, 5]", i: 1, j: 0, prev_val: "none", type: "bool", scope: "local" }, mem: ["arr -> [1, 4, 5]"], explain: "Compare element at j (1) and j+1 (4). 1 < 4, no swap needed.", action: { type: "array_state", data: [1, 4, 5], active: [0, 1] } },
-                    { line: 8, vars: { arr: "[1, 4, 5]", sorted: "true", prev_val: "false", type: "bool", scope: "global" }, mem: ["arr -> [1, 4, 5]"], explain: "All elements sorted. Bubble Sort finished successfully.", action: { type: "array_state", data: [1, 4, 5], active: [], complete: true } }
-                ]
-            }
+    ],
+    "python_strings": [
+        {
+            name: "upper()",
+            desc: "Convert all characters inside string array to uppercase.",
+            code: `s = "hi"\nres = s.upper()`,
+            complexity: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)" },
+            steps: [
+                { line: 1, vars: { s: "'hi'" }, mem: ["s -> 'hi'"], explain: "Initialize string.", action: { type: "array_state", data: ["h", "i"], active: [] } },
+                { line: 2, vars: { s: "'hi'", res: "'HI'" }, mem: ["res -> 'HI'"], explain: "Iterate through characters and convert them to uppercase.", action: { type: "array_state", data: ["H", "I"], active: [0, 1], complete: true } }
+            ]
         }
-    },
-    sql: {
-        topics: {
-            select: {
-                steps: [
-                    { line: 2, vars: { table: "Students", total_rows: 3, prev_val: "none", type: "string", scope: "database" }, mem: ["Input -> [Alice (CSE), Bob (ECE), Charlie (CSE)]"], explain: "Read all rows from the input table `Students`.", action: { type: "sql_table", rows: [{ name: "Alice", dept: "CSE", grade: "A" }, { name: "Bob", dept: "ECE", grade: "B" }, { name: "Charlie", dept: "CSE", grade: "A" }], active: [] } },
-                    { line: 3, vars: { table: "Students", row: "Bob", match: "false", prev_val: "none", type: "row", scope: "query" }, mem: ["Input -> [Alice (CSE)]", "Matches -> [Alice]"], explain: "Evaluate WHERE criteria on Bob: `ECE` = 'CSE' is False. Exclude row.", action: { type: "sql_table", rows: [{ name: "Alice", dept: "CSE", grade: "A", filter: "pass" }, { name: "Bob", dept: "ECE", grade: "B", filter: "fail" }, { name: "Charlie", dept: "CSE", grade: "A" }], active: [1] } },
-                    { line: 3, vars: { table: "Students", row: "Charlie", match: "true", prev_val: "none", type: "row", scope: "query" }, mem: ["Matches -> [Alice, Charlie]"], explain: "Evaluate WHERE criteria on Charlie: `CSE` = 'CSE' is True. Keep row.", action: { type: "sql_table", rows: [{ name: "Alice", dept: "CSE", grade: "A", filter: "pass" }, { name: "Bob", dept: "ECE", grade: "B", filter: "fail" }, { name: "Charlie", dept: "CSE", grade: "A", filter: "pass" }], active: [2] } },
-                    { line: 1, vars: { result: "2 Rows Selected", prev_val: "none", type: "dataset", scope: "output" }, mem: ["Output -> [Alice (A), Charlie (A)]"], explain: "Apply SELECT projections. Print final result table.", action: { type: "sql_result", rows: [{ name: "Alice", grade: "A" }, { name: "Charlie", grade: "A" }] } }
-                ]
-            }
+    ],
+    "c_pointers": [
+        {
+            name: "Dereferencing",
+            desc: "Modify target memory blocks by dereferencing pointers via `*ptr`.",
+            code: `int val = 42;\nint *ptr = &val;\n*ptr = 99;`,
+            complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)" },
+            steps: [
+                { line: 1, vars: { val: 42 }, mem: ["val (0x7ffe) -> 42"], explain: "Allocate integer variable val in stack with value 42.", action: { type: "mem_set", addr: "0x7ffe", val: 42 } },
+                { line: 2, vars: { val: 42, ptr: "0x7ffe" }, mem: ["val (0x7ffe) -> 42", "ptr -> 0x7ffe"], explain: "Assign address of val (0x7ffe) to pointer ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
+                { line: 3, vars: { val: 99, ptr: "0x7ffe" }, mem: ["val (0x7ffe) -> 99"], explain: "Dereference ptr: set val to 99.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
+            ]
         }
-    },
-    webdev: {
-        topics: {
-            boxmodel: {
-                steps: [
-                    { line: 3, vars: { content_width: "100px", prev_val: "none", type: "css_prop", scope: "layout" }, mem: [], explain: "Content layer dimensions are initialized to 100px wide.", action: { type: "box_model", layers: { content: "100px", padding: "0px", border: "0px", margin: "0px" } } },
-                    { line: 4, vars: { padding: "10px", prev_val: "0px", type: "css_prop", scope: "layout" }, mem: [], explain: "Padding adds 10px spacing inside the border, surrounding the content.", action: { type: "box_model", layers: { content: "100px", padding: "10px", border: "0px", margin: "0px" } } },
-                    { line: 5, vars: { border: "5px", prev_val: "0px", type: "css_prop", scope: "layout" }, mem: [], explain: "Border boundary adds 5px thickness, enclosing content and padding layers.", action: { type: "box_model", layers: { content: "100px", padding: "10px", border: "5px", margin: "0px" } } },
-                    { line: 6, vars: { margin: "15px", total_width: "150px", prev_val: "0px", type: "css_prop", scope: "layout" }, mem: [], explain: "Margin creates 15px outer space, pushing surrounding elements away. Total occupied width is 160px.", action: { type: "box_model", layers: { content: "100px", padding: "10px", border: "5px", margin: "15px" } } }
-                ]
-            }
+    ],
+    "sql_select_&_where": [
+        {
+            name: "SELECT Clause",
+            desc: "Select specific columns from query matches.",
+            code: `SELECT name, grade\nFROM Students;`,
+            complexity: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)" },
+            steps: [
+                { line: 1, vars: { total_rows: 3 }, mem: ["Columns: name, grade"], explain: "Select only name and grade columns from the database rows.", action: { type: "sql_table", rows: [{ name: "Alice", grade: "A" }, { name: "Bob", grade: "B" }, { name: "Charlie", grade: "A" }], active: [0, 1, 2] } }
+            ]
         }
-    }
+    ]
 };
 
 // Curriculum Tree Builder
@@ -496,7 +413,6 @@ function buildCurriculumTree() {
                     item.onclick = () => loadCurriculumTopic(cat.title.toLowerCase().replace(' ', '_'), 'general', child);
                     contents.appendChild(item);
                 } else {
-                    // Nested languages
                     const langFolder = document.createElement('div');
                     langFolder.className = 'curr-folder';
 
@@ -568,7 +484,7 @@ function getCodeForTopic(category, lang, name) {
     if (TOPIC_PRESETS[key]) return TOPIC_PRESETS[key];
     if (TOPIC_PRESETS[cleanName]) return TOPIC_PRESETS[cleanName];
 
-    // Generic code builder for complete directory coverage
+    // Generic fallback code compiler generator for full catalog coverage
     let generatedCode = `// Pravio Trace: ${name}\n`;
     let genericTopic = "general";
     
@@ -619,22 +535,69 @@ function loadCurriculumTopic(category, lang, displayName) {
         consoleLog.innerHTML = `[Console System Initialized]\nLoaded topic: ${displayName}\nReady for execution...`;
     }
 
-    // Create session payload
-    const newSess = {
-        id: "viz_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
-        name: displayName,
-        category: info.category,
-        topic: info.topic,
-        code: info.code,
-        currentStep: 0,
-        createdAt: new Date().toISOString()
-    };
+    // Determine sub-lessons catalog list key
+    const normalKey = (lang + "_" + displayName.replace(/ /g, '_')).toLowerCase().replace(/\(|\)/g, '');
+    const cleanKey = displayName.toLowerCase().replace(/ /g, '_').replace(/\(|\)/g, '');
     
-    vizSessions.unshift(newSess);
-    activeSession = newSess;
-    
-    saveVizSessions();
-    loadActiveVizSession();
+    let activeKey = "";
+    if (SUB_LESSONS_CATALOG[normalKey]) {
+        activeKey = normalKey;
+    } else if (SUB_LESSONS_CATALOG[cleanKey]) {
+        activeKey = cleanKey;
+    } else {
+        // Fallback checks
+        if (displayName.toLowerCase().includes('tuple')) activeKey = "python_tuples";
+        else if (displayName.toLowerCase().includes('list')) activeKey = "python_lists";
+        else if (displayName.toLowerCase().includes('string')) activeKey = "python_strings";
+        else if (displayName.toLowerCase().includes('pointer')) activeKey = "c_pointers";
+        else if (displayName.toLowerCase().includes('select') || displayName.toLowerCase().includes('sql')) activeKey = "sql_select_&_where";
+    }
+
+    // Build the Sub-Lesson Tab Buttons Toolbar dynamically
+    const sublessonToolbar = document.getElementById('viz-sublesson-toolbar');
+    if (sublessonToolbar) {
+        sublessonToolbar.innerHTML = '';
+        const list = SUB_LESSONS_CATALOG[activeKey] || [
+            {
+                name: "Interactive Trace",
+                desc: `Step-by-step trace analyzer for ${displayName}.`,
+                code: info.code,
+                complexity: { best: "O(1)", avg: "O(n)", worst: "O(n)", space: "O(1)" }
+            }
+        ];
+
+        list.forEach((sub, sIdx) => {
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-secondary';
+            btn.style.padding = '4px 10px';
+            btn.style.fontSize = '12px';
+            btn.style.borderRadius = '6px';
+            btn.style.fontWeight = sIdx === 0 ? '700' : '500';
+            btn.style.background = sIdx === 0 ? 'var(--primary-color)' : 'var(--bg-container)';
+            btn.style.color = sIdx === 0 ? '#ffffff' : 'var(--text-body)';
+            btn.style.border = '1px solid var(--border-color)';
+            btn.innerText = sub.name;
+            
+            btn.onclick = () => {
+                // Focus styling toggle
+                Array.from(sublessonToolbar.children).forEach(child => {
+                    child.style.background = 'var(--bg-container)';
+                    child.style.color = 'var(--text-body)';
+                    child.style.fontWeight = '500';
+                });
+                btn.style.background = 'var(--primary-color)';
+                btn.style.color = '#ffffff';
+                btn.style.fontWeight = '700';
+                
+                loadSelectedSubLesson(activeKey, sIdx, info.category, info.topic);
+            };
+            
+            sublessonToolbar.appendChild(btn);
+        });
+
+        // Initialize active first sub-lesson immediately
+        loadSelectedSubLesson(activeKey, 0, info.category, info.topic);
+    }
     
     // Active sidebar tree styling
     const items = document.querySelectorAll('.tree-item');
@@ -663,6 +626,58 @@ function loadCurriculumTopic(category, lang, displayName) {
             previewContainer.style.display = 'none';
         }
     }
+}
+
+function loadSelectedSubLesson(activeKey, sIdx, category, topic) {
+    const list = SUB_LESSONS_CATALOG[activeKey] || [
+        {
+            name: "Interactive Trace",
+            desc: "Dynamic code compiler step trace.",
+            code: getCodeForTopic(category, topic, activeKey).code,
+            complexity: { best: "O(1)", avg: "O(n)", worst: "O(n)", space: "O(1)" }
+        }
+    ];
+    
+    const sub = list[sIdx];
+    
+    // Create session wrapper
+    const newSess = {
+        id: "viz_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+        name: sub.name,
+        category: category,
+        topic: topic,
+        code: sub.code,
+        currentStep: 0,
+        createdAt: new Date().toISOString()
+    };
+    
+    activeSession = newSess;
+    
+    // Sync editor
+    const editor = document.getElementById('viz-code-editor');
+    if (editor) {
+        editor.value = sub.code;
+        syncEditorLineNumbers();
+    }
+
+    // Clear and build step trace variables
+    vizIsPlaying = false;
+    clearInterval(vizInterval);
+    updatePlayPauseButtonUI();
+
+    // Cache values in complexity labels
+    const bestC = document.getElementById('viz-best-case');
+    const avgC = document.getElementById('viz-avg-case');
+    const worstC = document.getElementById('viz-worst-case');
+    const spaceC = document.getElementById('viz-space-case');
+    
+    if (bestC) bestC.innerText = sub.complexity.best;
+    if (avgC) avgC.innerText = sub.complexity.avg;
+    if (worstC) worstC.innerText = sub.complexity.worst;
+    if (spaceC) spaceC.innerText = sub.complexity.space;
+
+    // Trigger canvas updates immediate render
+    renderCurrentStep();
 }
 
 function searchVizCurriculum(query) {
@@ -701,7 +716,6 @@ function updateHTMLPreview(code) {
     let doc = iframe.contentDocument || iframe.contentWindow.document;
     doc.open();
     
-    // Inject structural container wraps
     if (code.includes('<div') || code.includes('<p>')) {
         doc.write(code);
     } else {
@@ -731,14 +745,12 @@ function runCustomCode() {
     activeSession.code = editor.value;
     activeSession.currentStep = 0;
     
-    // Update live rendering if HTML/CSS
     if (activeSession.name.toLowerCase().includes('css') || activeSession.name.toLowerCase().includes('html') || activeSession.name.toLowerCase().includes('box')) {
         updateHTMLPreview(editor.value);
     }
 
     saveVizSessions();
     
-    // Append compile status console logs
     const consoleLog = document.getElementById('viz-console-log');
     if (consoleLog) {
         consoleLog.innerHTML += `\n[Pravio GCC] Code updated. Parsing syntax...`;
@@ -851,30 +863,73 @@ function renderCurrentStep() {
     if (!activeSession) return;
 
     let steps = [];
-    if (activeSession.category === "algorithms" && activeSession.topic === "bubble_sort") {
-        steps = VIZ_CATALOG.algorithms.topics.bubble_sort.steps;
-    } else if (activeSession.category === "structures" && activeSession.topic === "array") {
-        steps = VIZ_CATALOG.structures.topics.array.steps;
-    } else if (activeSession.category === "structures" && activeSession.topic === "linked_list") {
-        steps = VIZ_CATALOG.structures.topics.linked_list.steps;
-    } else if (activeSession.category === "languages" && activeSession.topic === "python") {
-        steps = VIZ_CATALOG.languages.topics.python.steps;
-    } else if (activeSession.category === "languages" && activeSession.topic === "c") {
-        steps = VIZ_CATALOG.languages.topics.c.steps;
-    } else if (activeSession.category === "languages" && activeSession.topic === "cpp") {
-        steps = VIZ_CATALOG.languages.topics.cpp.steps;
-    } else if (activeSession.category === "languages" && activeSession.topic === "java") {
-        steps = VIZ_CATALOG.languages.topics.java.steps;
-    } else if (activeSession.category === "languages" && activeSession.topic === "javascript") {
-        steps = VIZ_CATALOG.languages.topics.javascript.steps;
-    } else if (activeSession.category === "languages" && activeSession.topic === "typescript") {
-        steps = VIZ_CATALOG.languages.topics.typescript.steps;
-    } else if (activeSession.category === "sql" && activeSession.topic === "select") {
-        steps = VIZ_CATALOG.sql.topics.select.steps;
-    } else if (activeSession.category === "webdev" && activeSession.topic === "boxmodel") {
-        steps = VIZ_CATALOG.webdev.topics.boxmodel.steps;
+    const lowerName = activeSession.name.toLowerCase();
+    
+    // Custom sub-lesson trace frames selector matching active topic name
+    if (lowerName.includes("slicing")) {
+        steps = [
+            { line: 1, vars: { tup: "(10, 20, 30, 40, 50)" }, mem: ["tup -> [10, 20, 30, 40, 50]"], explain: "Initialize tuple with 5 elements.", action: { type: "array_state", data: [10, 20, 30, 40, 50], active: [] } },
+            { line: 2, vars: { tup: "(10, 20, 30, 40, 50)", slice_tup: "(20, 30, 40)" }, mem: ["slice_tup -> [20, 30, 40]"], explain: "Animate selected element slice being extracted from boundaries [1:4].", action: { type: "array_state", data: [20, 30, 40], active: [0, 1, 2], highlight: true } }
+        ];
+    } else if (lowerName.includes("packing")) {
+        steps = [
+            { line: 1, vars: { a: 10 }, mem: ["a -> 10"], explain: "Assign variable a to 10.", action: { type: "array_state", data: [10], active: [0] } },
+            { line: 2, vars: { a: 10, b: 20 }, mem: ["b -> 20"], explain: "Assign variable b to 20.", action: { type: "array_state", data: [10, 20], active: [1] } },
+            { line: 4, vars: { tup: "(10, 20, 30)" }, mem: ["tup -> (10, 20, 30)"], explain: "Animate variables combining/packing into a single tuple index structure.", action: { type: "array_state", data: [10, 20, 30], active: [0, 1, 2], complete: true } }
+        ];
+    } else if (lowerName.includes("unpacking")) {
+        steps = [
+            { line: 1, vars: { tup: "(100, 200)" }, mem: ["tup -> (100, 200)"], explain: "Initialize tuple to unpack.", action: { type: "array_state", data: [100, 200], active: [] } },
+            { line: 2, vars: { x: 100, y: 200 }, mem: ["x -> 100", "y -> 200"], explain: "Animate tuple values separating/unpacking into independent local stack variables.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
+        ];
+    } else if (lowerName.includes("concatenation")) {
+        steps = [
+            { line: 1, vars: { t1: "(1, 2)" }, mem: ["t1 -> (1, 2)"], explain: "Initialize first tuple.", action: { type: "array_state", data: [1, 2], active: [] } },
+            { line: 3, vars: { t3: "(1, 2, 3, 4)" }, mem: ["t3 -> (1, 2, 3, 4)"], explain: "Animate two tuples merging/concatenating together into a new heap allocation address.", action: { type: "array_state", data: [1, 2, 3, 4], active: [0, 1, 2, 3], complete: true } }
+        ];
+    } else if (lowerName.includes("append")) {
+        steps = [
+            { line: 1, vars: { lst: "[10, 20]" }, mem: ["lst -> [10, 20]"], explain: "Initialize list with 2 items.", action: { type: "array_state", data: [10, 20], active: [] } },
+            { line: 2, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Add element to the end of array list. Array size expands dynamically.", action: { type: "array_state", data: [10, 20, 30], active: [2], complete: true } }
+        ];
+    } else if (lowerName.includes("pop")) {
+        steps = [
+            { line: 1, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Initialize list with 3 elements.", action: { type: "array_state", data: [10, 20, 30], active: [] } },
+            { line: 2, vars: { lst: "[10, 20]", val: 30 }, mem: ["lst -> [10, 20]"], explain: "Pop element off the last index of list.", action: { type: "array_state", data: [10, 20], active: [1], highlight: true } }
+        ];
+    } else if (lowerName.includes("dereferencing")) {
+        steps = [
+            { line: 1, vars: { val: 42 }, mem: ["val (0x7ffe) -> 42"], explain: "Allocate local stack integer variable val with 42.", action: { type: "mem_set", addr: "0x7ffe", val: 42 } },
+            { line: 2, vars: { ptr: "0x7ffe" }, mem: ["ptr -> 0x7ffe"], explain: "Assign address of val to pointer variable ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
+            { line: 3, vars: { val: 99 }, mem: ["val (0x7ffe) -> 99"], explain: "Animate dereference: change value at address stored in pointer.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
+        ];
     } else {
-        steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
+        // Fallbacks trace selector
+        if (activeSession.category === "algorithms" && activeSession.topic === "bubble_sort") {
+            steps = VIZ_CATALOG.algorithms.topics.bubble_sort.steps;
+        } else if (activeSession.category === "structures" && activeSession.topic === "array") {
+            steps = VIZ_CATALOG.structures.topics.array.steps;
+        } else if (activeSession.category === "structures" && activeSession.topic === "linked_list") {
+            steps = VIZ_CATALOG.structures.topics.linked_list.steps;
+        } else if (activeSession.category === "languages" && activeSession.topic === "python") {
+            steps = VIZ_CATALOG.languages.topics.python.steps;
+        } else if (activeSession.category === "languages" && activeSession.topic === "c") {
+            steps = VIZ_CATALOG.languages.topics.c.steps;
+        } else if (activeSession.category === "languages" && activeSession.topic === "cpp") {
+            steps = VIZ_CATALOG.languages.topics.cpp.steps;
+        } else if (activeSession.category === "languages" && activeSession.topic === "java") {
+            steps = VIZ_CATALOG.languages.topics.java.steps;
+        } else if (activeSession.category === "languages" && activeSession.topic === "javascript") {
+            steps = VIZ_CATALOG.languages.topics.javascript.steps;
+        } else if (activeSession.category === "languages" && activeSession.topic === "typescript") {
+            steps = VIZ_CATALOG.languages.topics.typescript.steps;
+        } else if (activeSession.category === "sql" && activeSession.topic === "select") {
+            steps = VIZ_CATALOG.sql.topics.select.steps;
+        } else if (activeSession.category === "webdev" && activeSession.topic === "boxmodel") {
+            steps = VIZ_CATALOG.webdev.topics.boxmodel.steps;
+        } else {
+            steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
+        }
     }
 
     const totalSteps = steps.length;
@@ -890,12 +945,10 @@ function renderCurrentStep() {
     gutterDivs.forEach(div => {
         const line = parseInt(div.getAttribute('data-line'), 10);
         if (line === step.line) {
-            // Blue for current executing line
             div.style.background = '#3b82f6';
             div.style.color = '#ffffff';
             div.style.boxShadow = '0 0 6px rgba(59,130,246,0.3)';
         } else if (line < step.line) {
-            // Gray for executed lines
             div.style.background = '#f3f4f6';
             div.style.color = '#9ca3af';
         } else {
@@ -924,18 +977,6 @@ function renderCurrentStep() {
         const pct = totalSteps > 1 ? (stepIdx / (totalSteps - 1)) * 100 : 100;
         bar.style.width = `${pct}%`;
     }
-
-    // Complexity mapping
-    const bestC = document.getElementById('viz-best-case');
-    const avgC = document.getElementById('viz-avg-case');
-    const worstC = document.getElementById('viz-worst-case');
-    const spaceC = document.getElementById('viz-space-case');
-    
-    const defaults = VIZ_COMPLEXITIES[activeSession.topic] || { best: "O(1)", avg: "O(n)", worst: "O(n)", space: "O(1)" };
-    if (bestC) bestC.innerText = defaults.best;
-    if (avgC) avgC.innerText = defaults.avg;
-    if (worstC) worstC.innerText = defaults.worst;
-    if (spaceC) spaceC.innerText = defaults.space;
 
     // AI Tutor Guide explanation styles
     const explanation = document.getElementById('viz-explanation-panel');
@@ -974,7 +1015,6 @@ function renderCurrentStep() {
             row.style.padding = '4px 0';
             row.style.borderBottom = '1px solid rgba(0,0,0,0.03)';
             
-            // Orange text variable
             row.innerHTML = `
                 <span style="font-family:monospace; color:#f97316; font-weight:600;">${vKey}</span>
                 <span style="font-family:monospace; color:var(--text-body);">${step.vars[vKey]}</span>
@@ -992,7 +1032,6 @@ function renderCurrentStep() {
             block.style.padding = '4px 8px';
             block.style.fontSize = '11px';
             block.style.fontFamily = 'monospace';
-            // Teal memory blocks
             block.style.background = 'rgba(20,184,166,0.05)';
             block.style.borderLeft = '3px solid #14b8a6';
             block.style.color = 'var(--text-body)';
@@ -1090,7 +1129,6 @@ function renderInteractiveCanvas(action, category, topic) {
             block.style.border = '1px solid var(--border-color)';
             block.style.borderRadius = '8px';
             
-            // Cyan pointer
             block.style.background = action.active.includes(node.addr) ? '#06b6d4' : 'rgba(255,255,255,0.04)';
             block.style.boxShadow = '0 4px 10px rgba(0,0,0,0.03)';
             block.style.padding = '6px 10px';
@@ -1160,7 +1198,7 @@ function renderInteractiveCanvas(action, category, topic) {
 
         const marginBox = document.createElement('div');
         marginBox.style.width = '100%';
-        marginBox.style.padding = layers.margin !== "0px" ? "12px" : "4px";
+        marginBox.style.padding = layers.margin !== "0px" ? "14px" : "4px";
         marginBox.style.border = '1px dashed var(--border-color)';
         marginBox.style.borderRadius = '8px';
         marginBox.style.background = 'rgba(249, 115, 22, 0.02)';
@@ -1201,6 +1239,31 @@ function renderInteractiveCanvas(action, category, topic) {
         wrapper.appendChild(marginBox);
         canvas.appendChild(wrapper);
     }
+    else if (action.type === "mem_set" || action.type === "mem_update") {
+        const wrapper = document.createElement('div');
+        wrapper.style.display = 'flex';
+        wrapper.style.flexDirection = 'column';
+        wrapper.style.gap = '10px';
+        wrapper.style.width = '100%';
+        wrapper.style.maxWidth = '250px';
+
+        const block = document.createElement('div');
+        block.style.border = '1px solid var(--border-color)';
+        block.style.borderRadius = '8px';
+        block.style.background = '#e0f2fe'; // Blue memory allocation highlight
+        block.style.borderLeft = '4px solid #3b82f6';
+        block.style.padding = '10px';
+        block.style.boxShadow = '0 4px 10px rgba(59, 130, 246, 0.15)';
+        block.style.color = '#1e3a8a';
+        block.style.fontFamily = 'monospace';
+        
+        block.innerHTML = `
+            <div style="font-size:0.7rem; color:#2563eb;">Address: ${action.addr}</div>
+            <div style="font-size:0.95rem; font-weight:700; margin-top:2px;">Value: ${action.val}</div>
+        `;
+        wrapper.appendChild(block);
+        canvas.appendChild(wrapper);
+    }
     else {
         const tr = document.createElement('div');
         tr.style.fontSize = '1.3rem';
@@ -1223,30 +1286,71 @@ function toggleVizPlayback() {
     if (!activeSession) return;
     
     let steps = [];
-    if (activeSession.category === "algorithms" && activeSession.topic === "bubble_sort") {
-        steps = VIZ_CATALOG.algorithms.topics.bubble_sort.steps;
-    } else if (activeSession.category === "structures" && activeSession.topic === "array") {
-        steps = VIZ_CATALOG.structures.topics.array.steps;
-    } else if (activeSession.category === "structures" && activeSession.topic === "linked_list") {
-        steps = VIZ_CATALOG.structures.topics.linked_list.steps;
-    } else if (activeSession.category === "languages" && activeSession.topic === "python") {
-        steps = VIZ_CATALOG.languages.topics.python.steps;
-    } else if (activeSession.category === "languages" && activeSession.topic === "c") {
-        steps = VIZ_CATALOG.languages.topics.c.steps;
-    } else if (activeSession.category === "languages" && activeSession.topic === "cpp") {
-        steps = VIZ_CATALOG.languages.topics.cpp.steps;
-    } else if (activeSession.category === "languages" && activeSession.topic === "java") {
-        steps = VIZ_CATALOG.languages.topics.java.steps;
-    } else if (activeSession.category === "languages" && activeSession.topic === "javascript") {
-        steps = VIZ_CATALOG.languages.topics.javascript.steps;
-    } else if (activeSession.category === "languages" && activeSession.topic === "typescript") {
-        steps = VIZ_CATALOG.languages.topics.typescript.steps;
-    } else if (activeSession.category === "sql" && activeSession.topic === "select") {
-        steps = VIZ_CATALOG.sql.topics.select.steps;
-    } else if (activeSession.category === "webdev" && activeSession.topic === "boxmodel") {
-        steps = VIZ_CATALOG.webdev.topics.boxmodel.steps;
+    const lowerName = activeSession.name.toLowerCase();
+    
+    if (lowerName.includes("slicing")) {
+        steps = [
+            { line: 1, vars: { tup: "(10, 20, 30, 40, 50)" }, mem: ["tup -> [10, 20, 30, 40, 50]"], explain: "Initialize tuple with 5 elements.", action: { type: "array_state", data: [10, 20, 30, 40, 50], active: [] } },
+            { line: 2, vars: { tup: "(10, 20, 30, 40, 50)", slice_tup: "(20, 30, 40)" }, mem: ["slice_tup -> [20, 30, 40]"], explain: "Animate selected element slice being extracted from boundaries [1:4].", action: { type: "array_state", data: [20, 30, 40], active: [0, 1, 2], highlight: true } }
+        ];
+    } else if (lowerName.includes("packing")) {
+        steps = [
+            { line: 1, vars: { a: 10 }, mem: ["a -> 10"], explain: "Assign variable a to 10.", action: { type: "array_state", data: [10], active: [0] } },
+            { line: 2, vars: { a: 10, b: 20 }, mem: ["b -> 20"], explain: "Assign variable b to 20.", action: { type: "array_state", data: [10, 20], active: [1] } },
+            { line: 4, vars: { tup: "(10, 20, 30)" }, mem: ["tup -> (10, 20, 30)"], explain: "Animate variables combining/packing into a single tuple index structure.", action: { type: "array_state", data: [10, 20, 30], active: [0, 1, 2], complete: true } }
+        ];
+    } else if (lowerName.includes("unpacking")) {
+        steps = [
+            { line: 1, vars: { tup: "(100, 200)" }, mem: ["tup -> (100, 200)"], explain: "Initialize tuple to unpack.", action: { type: "array_state", data: [100, 200], active: [] } },
+            { line: 2, vars: { x: 100, y: 200 }, mem: ["x -> 100", "y -> 200"], explain: "Animate tuple values separating/unpacking into independent local stack variables.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
+        ];
+    } else if (lowerName.includes("concatenation")) {
+        steps = [
+            { line: 1, vars: { t1: "(1, 2)" }, mem: ["t1 -> (1, 2)"], explain: "Initialize first tuple.", action: { type: "array_state", data: [1, 2], active: [] } },
+            { line: 3, vars: { t3: "(1, 2, 3, 4)" }, mem: ["t3 -> (1, 2, 3, 4)"], explain: "Animate two tuples merging/concatenating together into a new heap allocation address.", action: { type: "array_state", data: [1, 2, 3, 4], active: [0, 1, 2, 3], complete: true } }
+        ];
+    } else if (lowerName.includes("append")) {
+        steps = [
+            { line: 1, vars: { lst: "[10, 20]" }, mem: ["lst -> [10, 20]"], explain: "Initialize list with 2 items.", action: { type: "array_state", data: [10, 20], active: [] } },
+            { line: 2, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Add element to the end of array list. Array size expands dynamically.", action: { type: "array_state", data: [10, 20, 30], active: [2], complete: true } }
+        ];
+    } else if (lowerName.includes("pop")) {
+        steps = [
+            { line: 1, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Initialize list with 3 elements.", action: { type: "array_state", data: [10, 20, 30], active: [] } },
+            { line: 2, vars: { lst: "[10, 20]", val: 30 }, mem: ["lst -> [10, 20]"], explain: "Pop element off the last index of list.", action: { type: "array_state", data: [10, 20], active: [1], highlight: true } }
+        ];
+    } else if (lowerName.includes("dereferencing")) {
+        steps = [
+            { line: 1, vars: { val: 42 }, mem: ["val (0x7ffe) -> 42"], explain: "Allocate local stack integer variable val with 42.", action: { type: "mem_set", addr: "0x7ffe", val: 42 } },
+            { line: 2, vars: { ptr: "0x7ffe" }, mem: ["ptr -> 0x7ffe"], explain: "Assign address of val to pointer variable ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
+            { line: 3, vars: { val: 99 }, mem: ["val (0x7ffe) -> 99"], explain: "Animate dereference: change value at address stored in pointer.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
+        ];
     } else {
-        steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
+        if (activeSession.category === "algorithms" && activeSession.topic === "bubble_sort") {
+            steps = VIZ_CATALOG.algorithms.topics.bubble_sort.steps;
+        } else if (activeSession.category === "structures" && activeSession.topic === "array") {
+            steps = VIZ_CATALOG.structures.topics.array.steps;
+        } else if (activeSession.category === "structures" && activeSession.topic === "linked_list") {
+            steps = VIZ_CATALOG.structures.topics.linked_list.steps;
+        } else if (activeSession.category === "languages" && activeSession.topic === "python") {
+            steps = VIZ_CATALOG.languages.topics.python.steps;
+        } else if (activeSession.category === "languages" && activeSession.topic === "c") {
+            steps = VIZ_CATALOG.languages.topics.c.steps;
+        } else if (activeSession.category === "languages" && activeSession.topic === "cpp") {
+            steps = VIZ_CATALOG.languages.topics.cpp.steps;
+        } else if (activeSession.category === "languages" && activeSession.topic === "java") {
+            steps = VIZ_CATALOG.languages.topics.java.steps;
+        } else if (activeSession.category === "languages" && activeSession.topic === "javascript") {
+            steps = VIZ_CATALOG.languages.topics.javascript.steps;
+        } else if (activeSession.category === "languages" && activeSession.topic === "typescript") {
+            steps = VIZ_CATALOG.languages.topics.typescript.steps;
+        } else if (activeSession.category === "sql" && activeSession.topic === "select") {
+            steps = VIZ_CATALOG.sql.topics.select.steps;
+        } else if (activeSession.category === "webdev" && activeSession.topic === "boxmodel") {
+            steps = VIZ_CATALOG.webdev.topics.boxmodel.steps;
+        } else {
+            steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
+        }
     }
     
     const totalSteps = steps.length;
@@ -1275,30 +1379,71 @@ function toggleVizPlayback() {
 function stepForwardViz() {
     if (!activeSession) return;
     let steps = [];
-    if (activeSession.category === "algorithms" && activeSession.topic === "bubble_sort") {
-        steps = VIZ_CATALOG.algorithms.topics.bubble_sort.steps;
-    } else if (activeSession.category === "structures" && activeSession.topic === "array") {
-        steps = VIZ_CATALOG.structures.topics.array.steps;
-    } else if (activeSession.category === "structures" && activeSession.topic === "linked_list") {
-        steps = VIZ_CATALOG.structures.topics.linked_list.steps;
-    } else if (activeSession.category === "languages" && activeSession.topic === "python") {
-        steps = VIZ_CATALOG.languages.topics.python.steps;
-    } else if (activeSession.category === "languages" && activeSession.topic === "c") {
-        steps = VIZ_CATALOG.languages.topics.c.steps;
-    } else if (activeSession.category === "languages" && activeSession.topic === "cpp") {
-        steps = VIZ_CATALOG.languages.topics.cpp.steps;
-    } else if (activeSession.category === "languages" && activeSession.topic === "java") {
-        steps = VIZ_CATALOG.languages.topics.java.steps;
-    } else if (activeSession.category === "languages" && activeSession.topic === "javascript") {
-        steps = VIZ_CATALOG.languages.topics.javascript.steps;
-    } else if (activeSession.category === "languages" && activeSession.topic === "typescript") {
-        steps = VIZ_CATALOG.languages.topics.typescript.steps;
-    } else if (activeSession.category === "sql" && activeSession.topic === "select") {
-        steps = VIZ_CATALOG.sql.topics.select.steps;
-    } else if (activeSession.category === "webdev" && activeSession.topic === "boxmodel") {
-        steps = VIZ_CATALOG.webdev.topics.boxmodel.steps;
+    const lowerName = activeSession.name.toLowerCase();
+    
+    if (lowerName.includes("slicing")) {
+        steps = [
+            { line: 1, vars: { tup: "(10, 20, 30, 40, 50)" }, mem: ["tup -> [10, 20, 30, 40, 50]"], explain: "Initialize tuple with 5 elements.", action: { type: "array_state", data: [10, 20, 30, 40, 50], active: [] } },
+            { line: 2, vars: { tup: "(10, 20, 30, 40, 50)", slice_tup: "(20, 30, 40)" }, mem: ["slice_tup -> [20, 30, 40]"], explain: "Animate selected element slice being extracted from boundaries [1:4].", action: { type: "array_state", data: [20, 30, 40], active: [0, 1, 2], highlight: true } }
+        ];
+    } else if (lowerName.includes("packing")) {
+        steps = [
+            { line: 1, vars: { a: 10 }, mem: ["a -> 10"], explain: "Assign variable a to 10.", action: { type: "array_state", data: [10], active: [0] } },
+            { line: 2, vars: { a: 10, b: 20 }, mem: ["b -> 20"], explain: "Assign variable b to 20.", action: { type: "array_state", data: [10, 20], active: [1] } },
+            { line: 4, vars: { tup: "(10, 20, 30)" }, mem: ["tup -> (10, 20, 30)"], explain: "Animate variables combining/packing into a single tuple index structure.", action: { type: "array_state", data: [10, 20, 30], active: [0, 1, 2], complete: true } }
+        ];
+    } else if (lowerName.includes("unpacking")) {
+        steps = [
+            { line: 1, vars: { tup: "(100, 200)" }, mem: ["tup -> (100, 200)"], explain: "Initialize tuple to unpack.", action: { type: "array_state", data: [100, 200], active: [] } },
+            { line: 2, vars: { x: 100, y: 200 }, mem: ["x -> 100", "y -> 200"], explain: "Animate tuple values separating/unpacking into independent local stack variables.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
+        ];
+    } else if (lowerName.includes("concatenation")) {
+        steps = [
+            { line: 1, vars: { t1: "(1, 2)" }, mem: ["t1 -> (1, 2)"], explain: "Initialize first tuple.", action: { type: "array_state", data: [1, 2], active: [] } },
+            { line: 3, vars: { t3: "(1, 2, 3, 4)" }, mem: ["t3 -> (1, 2, 3, 4)"], explain: "Animate two tuples merging/concatenating together into a new heap allocation address.", action: { type: "array_state", data: [1, 2, 3, 4], active: [0, 1, 2, 3], complete: true } }
+        ];
+    } else if (lowerName.includes("append")) {
+        steps = [
+            { line: 1, vars: { lst: "[10, 20]" }, mem: ["lst -> [10, 20]"], explain: "Initialize list with 2 items.", action: { type: "array_state", data: [10, 20], active: [] } },
+            { line: 2, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Add element to the end of array list. Array size expands dynamically.", action: { type: "array_state", data: [10, 20, 30], active: [2], complete: true } }
+        ];
+    } else if (lowerName.includes("pop")) {
+        steps = [
+            { line: 1, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Initialize list with 3 elements.", action: { type: "array_state", data: [10, 20, 30], active: [] } },
+            { line: 2, vars: { lst: "[10, 20]", val: 30 }, mem: ["lst -> [10, 20]"], explain: "Pop element off the last index of list.", action: { type: "array_state", data: [10, 20], active: [1], highlight: true } }
+        ];
+    } else if (lowerName.includes("dereferencing")) {
+        steps = [
+            { line: 1, vars: { val: 42 }, mem: ["val (0x7ffe) -> 42"], explain: "Allocate local stack integer variable val with 42.", action: { type: "mem_set", addr: "0x7ffe", val: 42 } },
+            { line: 2, vars: { ptr: "0x7ffe" }, mem: ["ptr -> 0x7ffe"], explain: "Assign address of val to pointer variable ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
+            { line: 3, vars: { val: 99 }, mem: ["val (0x7ffe) -> 99"], explain: "Animate dereference: change value at address stored in pointer.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
+        ];
     } else {
-        steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
+        if (activeSession.category === "algorithms" && activeSession.topic === "bubble_sort") {
+            steps = VIZ_CATALOG.algorithms.topics.bubble_sort.steps;
+        } else if (activeSession.category === "structures" && activeSession.topic === "array") {
+            steps = VIZ_CATALOG.structures.topics.array.steps;
+        } else if (activeSession.category === "structures" && activeSession.topic === "linked_list") {
+            steps = VIZ_CATALOG.structures.topics.linked_list.steps;
+        } else if (activeSession.category === "languages" && activeSession.topic === "python") {
+            steps = VIZ_CATALOG.languages.topics.python.steps;
+        } else if (activeSession.category === "languages" && activeSession.topic === "c") {
+            steps = VIZ_CATALOG.languages.topics.c.steps;
+        } else if (activeSession.category === "languages" && activeSession.topic === "cpp") {
+            steps = VIZ_CATALOG.languages.topics.cpp.steps;
+        } else if (activeSession.category === "languages" && activeSession.topic === "java") {
+            steps = VIZ_CATALOG.languages.topics.java.steps;
+        } else if (activeSession.category === "languages" && activeSession.topic === "javascript") {
+            steps = VIZ_CATALOG.languages.topics.javascript.steps;
+        } else if (activeSession.category === "languages" && activeSession.topic === "typescript") {
+            steps = VIZ_CATALOG.languages.topics.typescript.steps;
+        } else if (activeSession.category === "sql" && activeSession.topic === "select") {
+            steps = VIZ_CATALOG.sql.topics.select.steps;
+        } else if (activeSession.category === "webdev" && activeSession.topic === "boxmodel") {
+            steps = VIZ_CATALOG.webdev.topics.boxmodel.steps;
+        } else {
+            steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
+        }
     }
 
     if (activeSession.currentStep < steps.length - 1) {
@@ -1332,30 +1477,71 @@ function setVizSpeed(val) {
         clearInterval(vizInterval);
         
         let steps = [];
-        if (activeSession.category === "algorithms" && activeSession.topic === "bubble_sort") {
-            steps = VIZ_CATALOG.algorithms.topics.bubble_sort.steps;
-        } else if (activeSession.category === "structures" && activeSession.topic === "array") {
-            steps = VIZ_CATALOG.structures.topics.array.steps;
-        } else if (activeSession.category === "structures" && activeSession.topic === "linked_list") {
-            steps = VIZ_CATALOG.structures.topics.linked_list.steps;
-        } else if (activeSession.category === "languages" && activeSession.topic === "python") {
-            steps = VIZ_CATALOG.languages.topics.python.steps;
-        } else if (activeSession.category === "languages" && activeSession.topic === "c") {
-            steps = VIZ_CATALOG.languages.topics.c.steps;
-        } else if (activeSession.category === "languages" && activeSession.topic === "cpp") {
-            steps = VIZ_CATALOG.languages.topics.cpp.steps;
-        } else if (activeSession.category === "languages" && activeSession.topic === "java") {
-            steps = VIZ_CATALOG.languages.topics.java.steps;
-        } else if (activeSession.category === "languages" && activeSession.topic === "javascript") {
-            steps = VIZ_CATALOG.languages.topics.javascript.steps;
-        } else if (activeSession.category === "languages" && activeSession.topic === "typescript") {
-            steps = VIZ_CATALOG.languages.topics.typescript.steps;
-        } else if (activeSession.category === "sql" && activeSession.topic === "select") {
-            steps = VIZ_CATALOG.sql.topics.select.steps;
-        } else if (activeSession.category === "webdev" && activeSession.topic === "boxmodel") {
-            steps = VIZ_CATALOG.webdev.topics.boxmodel.steps;
+        const lowerName = activeSession.name.toLowerCase();
+        
+        if (lowerName.includes("slicing")) {
+            steps = [
+                { line: 1, vars: { tup: "(10, 20, 30, 40, 50)" }, mem: ["tup -> [10, 20, 30, 40, 50]"], explain: "Initialize tuple with 5 elements.", action: { type: "array_state", data: [10, 20, 30, 40, 50], active: [] } },
+                { line: 2, vars: { tup: "(10, 20, 30, 40, 50)", slice_tup: "(20, 30, 40)" }, mem: ["slice_tup -> [20, 30, 40]"], explain: "Animate selected element slice being extracted from boundaries [1:4].", action: { type: "array_state", data: [20, 30, 40], active: [0, 1, 2], highlight: true } }
+            ];
+        } else if (lowerName.includes("packing")) {
+            steps = [
+                { line: 1, vars: { a: 10 }, mem: ["a -> 10"], explain: "Assign variable a to 10.", action: { type: "array_state", data: [10], active: [0] } },
+                { line: 2, vars: { a: 10, b: 20 }, mem: ["b -> 20"], explain: "Assign variable b to 20.", action: { type: "array_state", data: [10, 20], active: [1] } },
+                { line: 4, vars: { tup: "(10, 20, 30)" }, mem: ["tup -> (10, 20, 30)"], explain: "Animate variables combining/packing into a single tuple index structure.", action: { type: "array_state", data: [10, 20, 30], active: [0, 1, 2], complete: true } }
+            ];
+        } else if (lowerName.includes("unpacking")) {
+            steps = [
+                { line: 1, vars: { tup: "(100, 200)" }, mem: ["tup -> (100, 200)"], explain: "Initialize tuple to unpack.", action: { type: "array_state", data: [100, 200], active: [] } },
+                { line: 2, vars: { x: 100, y: 200 }, mem: ["x -> 100", "y -> 200"], explain: "Animate tuple values separating/unpacking into independent local stack variables.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
+            ];
+        } else if (lowerName.includes("concatenation")) {
+            steps = [
+                { line: 1, vars: { t1: "(1, 2)" }, mem: ["t1 -> (1, 2)"], explain: "Initialize first tuple.", action: { type: "array_state", data: [1, 2], active: [] } },
+                { line: 3, vars: { t3: "(1, 2, 3, 4)" }, mem: ["t3 -> (1, 2, 3, 4)"], explain: "Animate two tuples merging/concatenating together into a new heap allocation address.", action: { type: "array_state", data: [1, 2, 3, 4], active: [0, 1, 2, 3], complete: true } }
+            ];
+        } else if (lowerName.includes("append")) {
+            steps = [
+                { line: 1, vars: { lst: "[10, 20]" }, mem: ["lst -> [10, 20]"], explain: "Initialize list with 2 items.", action: { type: "array_state", data: [10, 20], active: [] } },
+                { line: 2, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Add element to the end of array list. Array size expands dynamically.", action: { type: "array_state", data: [10, 20, 30], active: [2], complete: true } }
+            ];
+        } else if (lowerName.includes("pop")) {
+            steps = [
+                { line: 1, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Initialize list with 3 elements.", action: { type: "array_state", data: [10, 20, 30], active: [] } },
+                { line: 2, vars: { lst: "[10, 20]", val: 30 }, mem: ["lst -> [10, 20]"], explain: "Pop element off the last index of list.", action: { type: "array_state", data: [10, 20], active: [1], highlight: true } }
+            ];
+        } else if (lowerName.includes("dereferencing")) {
+            steps = [
+                { line: 1, vars: { val: 42 }, mem: ["val (0x7ffe) -> 42"], explain: "Allocate local stack integer variable val with 42.", action: { type: "mem_set", addr: "0x7ffe", val: 42 } },
+                { line: 2, vars: { ptr: "0x7ffe" }, mem: ["ptr -> 0x7ffe"], explain: "Assign address of val to pointer variable ptr.", action: { type: "mem_set", addr: "0x7fff", val: "0x7ffe" } },
+                { line: 3, vars: { val: 99 }, mem: ["val (0x7ffe) -> 99"], explain: "Animate dereference: change value at address stored in pointer.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
+            ];
         } else {
-            steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
+            if (activeSession.category === "algorithms" && activeSession.topic === "bubble_sort") {
+                steps = VIZ_CATALOG.algorithms.topics.bubble_sort.steps;
+            } else if (activeSession.category === "structures" && activeSession.topic === "array") {
+                steps = VIZ_CATALOG.structures.topics.array.steps;
+            } else if (activeSession.category === "structures" && activeSession.topic === "linked_list") {
+                steps = VIZ_CATALOG.structures.topics.linked_list.steps;
+            } else if (activeSession.category === "languages" && activeSession.topic === "python") {
+                steps = VIZ_CATALOG.languages.topics.python.steps;
+            } else if (activeSession.category === "languages" && activeSession.topic === "c") {
+                steps = VIZ_CATALOG.languages.topics.c.steps;
+            } else if (activeSession.category === "languages" && activeSession.topic === "cpp") {
+                steps = VIZ_CATALOG.languages.topics.cpp.steps;
+            } else if (activeSession.category === "languages" && activeSession.topic === "java") {
+                steps = VIZ_CATALOG.languages.topics.java.steps;
+            } else if (activeSession.category === "languages" && activeSession.topic === "javascript") {
+                steps = VIZ_CATALOG.languages.topics.javascript.steps;
+            } else if (activeSession.category === "languages" && activeSession.topic === "typescript") {
+                steps = VIZ_CATALOG.languages.topics.typescript.steps;
+            } else if (activeSession.category === "sql" && activeSession.topic === "select") {
+                steps = VIZ_CATALOG.sql.topics.select.steps;
+            } else if (activeSession.category === "webdev" && activeSession.topic === "boxmodel") {
+                steps = VIZ_CATALOG.webdev.topics.boxmodel.steps;
+            } else {
+                steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
+            }
         }
         
         const totalSteps = steps.length;
@@ -1379,113 +1565,23 @@ function jumpToStep(val) {
     renderCurrentStep();
 }
 
-// Learning options modifiers
-function setLearningMode(mode) {
-    learningMode = mode;
-    const speedSlider = document.getElementById('viz-speed-slider');
+// Session initialization
+function initVizSessions() {
+    try {
+        bookmarks = JSON.parse(localStorage.getItem('pravio_visualizer_bookmarks') || '[]');
+        completedTopics = JSON.parse(localStorage.getItem('pravio_visualizer_completed') || '[]');
+    } catch(e) {
+        bookmarks = [];
+        completedTopics = [];
+    }
+
+    if (!Array.isArray(bookmarks)) bookmarks = [];
+    if (!Array.isArray(completedTopics)) completedTopics = [];
+
+    buildCurriculumTree();
     
-    if (mode === "beginner") {
-        vizSpeed = 1000;
-        if (speedSlider) speedSlider.value = 1000;
-    } else if (mode === "intermediate") {
-        vizSpeed = 500;
-        if (speedSlider) speedSlider.value = 500;
-    } else if (mode === "expert") {
-        vizSpeed = 150;
-        if (speedSlider) speedSlider.value = 150;
-    }
-    setVizSpeed(vizSpeed);
-    renderCurrentStep();
-}
-
-function setAITutorLevel(level) {
-    aiTutorLevel = level;
-    renderCurrentStep();
-}
-
-// Auto dynamic steps generator fallback
-function generateDynamicSteps(category, topic, code) {
-    const steps = [];
-    const lines = code.split('\n');
-
-    let currentArray = [12, 24, 8, 19, 30];
-    let currentList = [
-        { val: 10, addr: "0x1000", next: "0x2000" },
-        { val: 20, addr: "0x2000", next: "0x3000" },
-        { val: 30, addr: "0x3000", next: "NULL" }
-    ];
-    let currentSQLRows = [
-        { name: "Alice", dept: "CSE", grade: "A" },
-        { name: "Bob", dept: "ECE", grade: "B" },
-        { name: "Charlie", dept: "CSE", grade: "A" }
-    ];
-
-    lines.forEach((lineText, idx) => {
-        const lineNum = idx + 1;
-        const trimmed = lineText.trim();
-        if (!trimmed) return;
-
-        const step = {
-            line: lineNum,
-            vars: {
-                name: trimmed.substring(0, 8),
-                val: trimmed.substring(0, 10),
-                prev_val: "none",
-                type: "string",
-                scope: "local"
-            },
-            mem: [`Instruction pointer -> line ${lineNum}`],
-            explain: `Running instruction on line ${lineNum}: \`${trimmed}\`. Loading state variables...`,
-            action: { type: "generic" }
-        };
-
-        if (category === "languages" || category === "java" || category === "python" || category === "c" || category === "cpp" || category === "javascript" || category === "typescript") {
-            step.vars.type = "compiler_node";
-            step.vars.scope = "stack_frame";
-            step.explain = `In language compiler runtime environment, parsing variables into call stack.`;
-            step.action = { type: "mem_set", addr: `0x00${lineNum}`, val: trimmed.substring(0, 10) };
-        }
-        else if (category === "structures") {
-            if (topic === "array" || topic === "strings" || topic === "arrays") {
-                step.vars.type = "array_index";
-                step.explain = `Processing array/string elements at index ${idx}. Accessing memory address directly.`;
-                step.action = { type: "array_state", data: currentArray, active: [idx % 5] };
-            } else {
-                step.vars.type = "pointer";
-                step.explain = `Accessing linked structure node at pointer index 0x${lineNum}000.`;
-                step.action = { type: "ll_state", list: currentList, active: [`0x1000`] };
-            }
-        }
-        else if (category === "algorithms") {
-            step.vars.type = "algorithm_state";
-            step.explain = `Algorithm checks elements sequentially or splits intervals. Evaluating target values...`;
-            step.action = { type: "array_state", data: currentArray, active: [idx % 5] };
-        }
-        else if (category === "sql") {
-            step.vars.type = "table_row";
-            step.explain = `SQL executor parses queries, filters row items by WHERE filters, and projects SELECT columns.`;
-            step.action = { type: "sql_table", rows: currentSQLRows, active: [idx % 3] };
-        }
-        else if (category === "webdev" || category === "css" || category === "html") {
-            step.vars.type = "dom_node";
-            step.explain = `Browser layouts flex direction alignments, adjusts grid spacing gaps, or triggers async events.`;
-            step.action = { type: "box_model", layers: { content: "120px", padding: `${idx * 4}px`, border: "2px", margin: "10px" } };
-        }
-
-        steps.push(step);
-    });
-
-    if (steps.length === 0) {
-        steps.push({
-            line: 1,
-            vars: { status: "Empty", prev_val: "none", type: "string", scope: "none" },
-            mem: [],
-            explain: "Empty source code inputted. Please write code to visualize.",
-            action: { type: "generic" }
-        });
-    }
-
-    return steps;
+    // Auto-load default: C -> Variables
+    loadCurriculumTopic('languages', 'c', 'C (Variables)');
 }
 
 // Start listener hooks
