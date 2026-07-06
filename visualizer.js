@@ -724,17 +724,117 @@ function loadCurriculumTopic(studioId, topicKey, displayName) {
     }
 }
 
+// Generate topic-specific example code snippets
 function generateCurriculumCodeSample(studioId, topicName) {
+    const name = topicName.toLowerCase();
+    
     if (studioId === 'c') {
-        return `// C ${topicName} Fundamentals\n#include <stdio.h>\n\nint main() {\n    int targetVal = 100;\n    printf("Val is: %d\\n", targetVal);\n    return 0;\n}`;
-    } else if (studioId === 'java') {
-        return `// Java ${topicName} Fundamentals\npublic class Main {\n    public static void main(String[] args) {\n        int variableVal = 200;\n        System.out.println(variableVal);\n    }\n}`;
-    } else if (studioId === 'python') {
-        return `# Python ${topicName} Fundamentals\nlabel_val = 500\nprint(label_val)`;
-    } else if (studioId === 'javascript') {
-        return `// JS ${topicName} Fundamentals\nlet variableValue = 300;\nconsole.log(variableValue);`;
+        if (name.includes("variable")) {
+            return `// C Variable allocations\nint age = 20;\nfloat salary = 45000.5;\nchar grade = 'A';`;
+        }
+        if (name.includes("data type")) {
+            return `// C Data Types primitives\nint score = 95;\ndouble percentage = 98.75;\nchar letter = 'B';`;
+        }
+        if (name.includes("operator")) {
+            return `// C Operators arithmetic\nint a = 15;\nint b = 4;\nint sum = a + b;\nint remainder = a % b;`;
+        }
+        if (name.includes("input output")) {
+            return `// C Input Output IO stream\nprintf("Enter target boundary:\\n");\nint bound = 100;\nprintf("Boundary: %d\\n", bound);`;
+        }
+        if (name.includes("if else")) {
+            return `// C Control Flow conditionals\nint mark = 85;\nif (mark >= 90) {\n    printf("Excellent\\n");\n} else {\n    printf("Good\\n");\n}`;
+        }
+        if (name.includes("switch")) {
+            return `// C Switch multi-branch\nint selector = 2;\nswitch(selector) {\n    case 1: printf("First\\n"); break;\n    case 2: printf("Second\\n"); break;\n    default: printf("Other\\n");\n}`;
+        }
+        if (name.includes("loop")) {
+            return `// C Loop iteration cycles\nint result = 0;\nfor (int i = 0; i < 3; i++) {\n    result += 10;\n}`;
+        }
+        if (name.includes("array")) {
+            return `// C Static Array contiguous layout\nint items[3] = {10, 20, 30};\nint val = items[1];`;
+        }
+        if (name.includes("string")) {
+            return `// C String char array\nchar name[] = "Pravio";\nint size = 6;`;
+        }
+        if (name.includes("pointer")) {
+            return `// C Pointer dereference reference\nint num = 42;\nint *ptr = &num;\n*ptr = 99;`;
+        }
+        if (name.includes("function")) {
+            return `// C Function scopes\nint add(int a, int b) {\n    return a + b;\n}\nint sum = add(10, 20);`;
+        }
+        if (name.includes("recursion")) {
+            return `// C Recursion factorials\nint factorial(int n) {\n    if (n <= 1) return 1;\n    return n * factorial(n - 1);\n}\nint ans = factorial(3);`;
+        }
+        if (name.includes("structure")) {
+            return `// C Structure alignment\nstruct Student {\n    int roll;\n    float score;\n};\nstruct Student s = {101, 95.5};`;
+        }
+        if (name.includes("memory")) {
+            return `// C Dynamic malloc alloc\nint *arr = (int*)malloc(2 * sizeof(int));\narr[0] = 5;\nfree(arr);`;
+        }
     }
-    return `// ${topicName} workspace\n// Enter sample code...`;
+    
+    if (studioId === 'java') {
+        if (name.includes("variable")) {
+            return `// Java Variables mapping\nint age = 22;\ndouble sal = 55000.5;\nString name = "Alice";`;
+        }
+        if (name.includes("type")) {
+            return `// Java Primitive data types\nbyte b = 127;\nint code = 1001;\nboolean status = true;`;
+        }
+        if (name.includes("control")) {
+            return `// Java Branch conditions\nint score = 75;\nif (score >= 60) {\n    System.out.println("Pass");\n} else {\n    System.out.println("Fail");\n}`;
+        }
+        if (name.includes("loop")) {
+            return `// Java Loops iterator\nint total = 0;\nfor (int i = 0; i < 3; i++) {\n    total += i;\n}`;
+        }
+        if (name.includes("class")) {
+            return `// Java Classes schema\nclass Car {\n    String color = "Blue";\n}\nCar c = new Car();`;
+        }
+        if (name.includes("object")) {
+            return `// Java Objects instantiations\nclass Person {}\nPerson p = new Person();`;
+        }
+        if (name.includes("constructor")) {
+            return `// Java Constructors arguments\nclass User {\n    String role;\n    User(String r) { role = r; }\n}\nUser admin = new User("admin");`;
+        }
+        if (name.includes("inheritance")) {
+            return `// Java Inheritance extends\nclass Father {}\nclass Child extends Father {}\nChild c = new Child();`;
+        }
+        if (name.includes("polymorphism")) {
+            return `// Java Polymorphism override\nclass Shape {\n    void draw() {}\n}\nclass Circle extends Shape {\n    void draw() { System.out.println("Circle"); }\n}`;
+        }
+        if (name.includes("abstraction")) {
+            return `// Java Abstraction abstract\nabstract class DB {\n    abstract void connect();\n}\nclass MySQL extends DB {\n    void connect() {}\n}`;
+        }
+        if (name.includes("interface")) {
+            return `// Java Interface implements\ninterface Service {\n    void run();\n}\nclass App implements Service {\n    public void run() {}\n}`;
+        }
+        if (name.includes("collection")) {
+            return `// Java Collections API structures\nArrayList<Integer> list = new ArrayList<>();\nlist.add(10);\nlist.add(20);`;
+        }
+    }
+    
+    if (studioId === 'python') {
+        if (name.includes("variable")) {
+            return `# Python Variables dynamic assignment\nx = 10\ny = "Pravio"\nprint(x)`;
+        }
+        if (name.includes("type")) {
+            return `# Python Basic types\npi = 3.14159\nis_valid = True\nlabel = "Code"`;
+        }
+    }
+    
+    if (studioId === 'javascript') {
+        if (name.includes("variable")) {
+            return `// JS variable block scopes\nlet x = 100;\nconst name = "Pravio";\nvar legacy = true;`;
+        }
+        if (name.includes("promise")) {
+            return `// JS Promises async resolver\nconst task = new Promise((resolve) => {\n    resolve("Done");\n});`;
+        }
+        if (name.includes("event loop")) {
+            return `// JS Event Loop task priorities\nconsole.log("Sync 1");\nsetTimeout(() => console.log("Macro 1"), 0);\nconsole.log("Sync 2");`;
+        }
+    }
+
+    // Default template fallbacks
+    return `// ${topicName} Fundamentals\n// Start writing code samples here...`;
 }
 
 function loadSelectedSubLesson(activeKey, sIdx, category, topic) {
@@ -1319,7 +1419,7 @@ function setVizSpeed(val) {
             } else if (lowerName.includes("unpacking")) {
                 steps = [
                     { line: 1, vars: { tup: "(100, 200)" }, mem: ["tup -> (100, 200)"], explain: "Initialize tuple to unpack.", action: { type: "array_state", data: [100, 200], active: [] } },
-                    { line: 2, vars: { x: 100, y: 200 }, mem: ["x -> 100", "y -> 200"], explain: "Animate tuple values separating/unpacking into independent local stack variables.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
+                    { line: 2, vars: { x: 100, y: 200, tup: "(100, 200)" }, mem: ["x -> 100", "y -> 200"], explain: "Animate tuple values separating/unpacking into independent local stack variables.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
                 ];
             } else if (lowerName.includes("concatenation")) {
                 steps = [
@@ -1333,7 +1433,7 @@ function setVizSpeed(val) {
                 ];
             } else if (lowerName.includes("pop")) {
                 steps = [
-                    { line: 1, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Initialize list with 3 elements.", action: { type: "array_state", data: [10, 20, 30], active: [] } },
+                    { line: 1, vars: { lst: "[10, 20, 30]" }, mem: ["lst -> [10, 20, 30]"], explain: "Initialize list with 3 elements.", action: { type: "array_state", data: [10, 20], active: [] } },
                     { line: 2, vars: { lst: "[10, 20]", val: 30 }, mem: ["lst -> [10, 20]"], explain: "Pop element off the last index of list.", action: { type: "array_state", data: [10, 20], active: [1], highlight: true } }
                 ];
             } else if (lowerName.includes("dereferencing")) {
