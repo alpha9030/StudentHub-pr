@@ -21,114 +21,137 @@ let studyHours = 8.4;
 
 // 28 Learning Studios Catalog
 const LEARNING_STUDIOS = [
-    { id: "c", title: "C Studio", desc: "Master low-level compilation, memory allocations, pointer dereferencing, and structures.", category: "languages", lessons: 18, time: "10 hrs", diff: "Intermediate", icon: "💻 C", objectives: ["Pointers & addresses", "Stack/Heap allocation", "Structures & Unions"] },
-    { id: "cpp", title: "C++ Studio", desc: "Object-oriented software development with classes, inheritance, polymorphism, and STL containers.", category: "languages", lessons: 15, time: "12 hrs", diff: "Intermediate", icon: "💻 C++", objectives: ["OOP Paradigms", "Templates & Generic code", "STL Data structures"] },
-    { id: "java", title: "Java Studio", desc: "Write scalable cross-platform software. Memory management, collections, and multi-threading.", category: "languages", lessons: 32, time: "18 hrs", diff: "Intermediate", icon: "☕ Java", objectives: ["JVM & Garbage sweep", "Interface inheritance", "Concurrency threads"] },
-    { id: "python", title: "Python Studio", desc: "Syntax simplicity with list comprehensions, decorators, generators, and data analytics tools.", category: "languages", lessons: 22, time: "8 hrs", diff: "Beginner", icon: "🐍 Python", objectives: ["Variables & Loops", "Data Science libs", "Decorators & closures"] },
-    { id: "javascript", title: "JavaScript Studio", desc: "Web client interactivity. Prototypes, event loops, call stacks, and promise pipelines.", category: "languages", lessons: 16, time: "7 hrs", diff: "Beginner", icon: "⚡ JavaScript", objectives: ["Closures scopes", "Event Loop mechanics", "Async Await threads"] },
+    { id: "c", title: "C Studio", desc: "Master low-level compilation, memory allocations, pointer dereferencing, and structures.", category: "languages", lessons: 24, time: "10 hrs", diff: "Intermediate", icon: "💻 C", objectives: ["Pointers & addresses", "Stack/Heap allocation", "Structures & Unions"] },
+    { id: "cpp", title: "C++ Studio", desc: "Object-oriented software development with classes, inheritance, polymorphism, and STL containers.", category: "languages", lessons: 18, time: "12 hrs", diff: "Intermediate", icon: "💻 C++", objectives: ["OOP Paradigms", "Templates & Generic code", "STL Data structures"] },
+    { id: "java", title: "Java Studio", desc: "Write scalable cross-platform software. Memory management, collections, and multi-threading.", category: "languages", lessons: 28, time: "18 hrs", diff: "Intermediate", icon: "☕ Java", objectives: ["JVM & Garbage sweep", "Interface inheritance", "Concurrency threads"] },
+    { id: "python", title: "Python Studio", desc: "Syntax simplicity with list comprehensions, decorators, generators, and data analytics tools.", category: "languages", lessons: 28, time: "8 hrs", diff: "Beginner", icon: "🐍 Python", objectives: ["Variables & Loops", "Data Science libs", "Decorators & closures"] },
+    { id: "javascript", title: "JavaScript Studio", desc: "Web client interactivity. Prototypes, event loops, call stacks, and promise pipelines.", category: "languages", lessons: 26, time: "7 hrs", diff: "Beginner", icon: "⚡ JavaScript", objectives: ["Closures scopes", "Event Loop mechanics", "Async Await threads"] },
     { id: "typescript", title: "TypeScript Studio", desc: "Enforce strict compile-time types. Structural interfaces, type annotations, and enums.", category: "languages", lessons: 12, time: "6 hrs", diff: "Intermediate", icon: "🟦 TS", objectives: ["Interface specs", "Strict types", "Generics structures"] },
-    { id: "html", title: "HTML Studio", desc: "Semantic structural documents, SEO essentials, accessibility layouts, and form validations.", category: "web", lessons: 10, time: "3 hrs", diff: "Beginner", icon: "🌐 HTML", objectives: ["Semantic tags", "SEO hierarchies", "Form validation DOM"] },
-    { id: "css", title: "CSS Studio", desc: "Transform layouts. Box model sizing, Flexbox grids, media queries, and transition animations.", category: "web", lessons: 12, time: "5 hrs", diff: "Beginner", icon: "🎨 CSS", objectives: ["Box model margin/border", "Flexbox layouts", "Glow keyframe transition"] },
-    { id: "sql", title: "SQL Studio", desc: "Relational database operations. Aggregate filters, inner/outer joins, indexing, and ACID constraints.", category: "cs", lessons: 14, time: "6 hrs", diff: "Beginner", icon: "🗄 SQL", objectives: ["SELECT projection WHERE", "GROUP BY aggregates", "JOIN row matching"] },
-    { id: "php", title: "PHP Studio", desc: "Backend web architecture, session storage, cookie authorizations, and server integrations.", category: "web", lessons: 8, time: "4 hrs", diff: "Intermediate", icon: "🐘 PHP", objectives: ["Sessions & Cookies", "Server routing", "MySQL integration"] },
-    { id: "go", title: "Go Studio", desc: "Build scalable concurrent servers. Goroutines concurrency, channel pipelines, and structs.", category: "languages", lessons: 11, time: "6 hrs", diff: "Advanced", icon: "🐹 Go", objectives: ["Goroutine concurrency", "Channel messages", "Struct definitions"] },
-    { id: "rust", title: "Rust Studio", desc: "Compile-time memory safety. Variable ownership, reference borrowing, and lifetime scopes.", category: "languages", lessons: 14, time: "10 hrs", diff: "Advanced", icon: "🦀 Rust", objectives: ["Ownership scopes", "Reference borrowing", "Lifetimes checking"] },
-    { id: "kotlin", title: "Kotlin Studio", desc: "Null-safe Android mobile development. Coroutines threads, lambdas, and class properties.", category: "languages", lessons: 10, time: "6 hrs", diff: "Intermediate", icon: "📱 Kotlin", objectives: ["Null-safety checks", "Coroutines tasks", "Lambdas blocks"] },
-    { id: "swift", title: "Swift Studio", desc: "Apple client applications. Optionals wrapping, protocols matching, and UI storyboard layouts.", category: "languages", lessons: 12, time: "7 hrs", diff: "Intermediate", icon: "🍎 Swift", objectives: ["Optionals unwrapping", "Protocols contracts", "Extensions bindings"] },
-    { id: "r", title: "R Studio", desc: "Statistical calculations, vectors, data frame manipulations, and plotting diagrams.", category: "languages", lessons: 8, time: "5 hrs", diff: "Intermediate", icon: "📊 R", objectives: ["Vectors arrays", "Data Frames", "Plot charts"] },
+    { id: "html", title: "HTML Studio", desc: "Semantic structural documents, SEO essentials, accessibility layouts, and form validations.", category: "web", lessons: 12, time: "3 hrs", diff: "Beginner", icon: "🌐 HTML", objectives: ["Semantic tags", "SEO hierarchies", "Form validation DOM"] },
+    { id: "css", title: "CSS Studio", desc: "Transform layouts. Box model sizing, Flexbox grids, media queries, and transition animations.", category: "web", lessons: 14, time: "5 hrs", diff: "Beginner", icon: "🎨 CSS", objectives: ["Box model margin/border", "Flexbox layouts", "Glow keyframe transition"] },
+    { id: "sql", title: "SQL Studio", desc: "Relational database operations. Aggregate filters, inner/outer joins, indexing, and ACID constraints.", category: "cs", lessons: 18, time: "6 hrs", diff: "Beginner", icon: "🗄 SQL", objectives: ["SELECT projection WHERE", "GROUP BY aggregates", "JOIN row matching"] },
+    { id: "git", title: "Git & GitHub Studio", desc: "Track code changes. Git branch checkouts, commits timelines, merges, and merge conflicts.", category: "cs", lessons: 12, time: "4 hrs", diff: "Beginner", icon: "🐙 Git VCS", objectives: ["Commit checkouts", "Branch checkout rules", "Merge conflict resets"] },
     { id: "data_structures", title: "Data Structures Studio", desc: "Optimize memory storage. Arrays, lists, circular stacks, binary trees, heaps, and hash structures.", category: "cs", lessons: 24, time: "15 hrs", diff: "Advanced", icon: "📦 Data Structs", objectives: ["Arrays & Lists", "BST & AVL trees", "Bloom filter hash"] },
-    { id: "algorithms", title: "Algorithms Studio", desc: "Time & space complexity optimizations. Bubble/Merge sorting, binary search, greed, and DP.", category: "cs", lessons: 25, time: "18 hrs", diff: "Advanced", icon: "⚡ Algorithms", objectives: ["Sorting swaps", "Binary search bounds", "Dynamic programming"] },
-    { id: "oop", title: "OOP Studio", desc: "Object-oriented design. Classes abstraction, inheritance mapping, polymorphism, and encapsulation.", category: "cs", lessons: 10, time: "5 hrs", diff: "Intermediate", icon: "🧩 OOP Design", objectives: ["Encapsulation setters", "Polymorphism calls", "Inheritance trees"] },
-    { id: "database", title: "Database Studio", desc: "Relational database structures. Normalization forms, query execution plans, and ACID.", category: "cs", lessons: 8, time: "6 hrs", diff: "Intermediate", icon: "🗄 DB Design", objectives: ["Normalization forms", "Index lookups", "Transactions safety"] },
-    { id: "os", title: "Operating Systems Studio", desc: "CPU process schedulers, mutex deadlocks, virtual paging, and memory allocations.", category: "cs", lessons: 12, time: "9 hrs", diff: "Advanced", icon: "💻 OS Core", objectives: ["CPU scheduler tasks", "Mutex deadlock states", "Paging maps"] },
-    { id: "networks", title: "Computer Networks Studio", desc: "OSI layer stacks, DNS resolutions, IP routing paths, and TCP handshake handshakes.", category: "cs", lessons: 10, time: "6 hrs", diff: "Intermediate", icon: "📡 Networks", objectives: ["OSI layer levels", "DNS address resolve", "TCP handshake flow"] },
-    { id: "system_design", title: "System Design Studio", desc: "Architect distributed databases, reverse proxy load balancers, and CDN cache clusters.", category: "cs", lessons: 12, time: "10 hrs", diff: "Advanced", icon: "🏛 Sys Design", objectives: ["Load balancer weights", "CDN caching layers", "Database partitions"] },
-    { id: "ml", title: "Machine Learning Studio", desc: "Build predictive models: Linear regression models, decision trees, and cost optimizers.", category: "data", lessons: 12, time: "10 hrs", diff: "Advanced", icon: "🤖 Machine Learning", objectives: ["Regression curves", "Gradient descent rates", "Decision splitting"] },
-    { id: "ai", title: "Artificial Intelligence Studio", desc: "Neural networks, activation calculations, transformer weights, and generative models.", category: "data", lessons: 14, time: "12 hrs", diff: "Advanced", icon: "🤖 AI Models", objectives: ["Neural calculations", "Transformer weights", "Attention mappings"] },
-    { id: "data_science", title: "Data Science Studio", desc: "Clean datasets, manage NumPy matrix elements, and run Pandas data summaries.", category: "data", lessons: 15, time: "8 hrs", diff: "Intermediate", icon: "📊 Data Science", objectives: ["NumPy arrays", "Pandas cleaning", "Matplotlib charts"] },
-    { id: "git", title: "Git & GitHub Studio", desc: "Track code changes. Git branch checkouts, commits timelines, merges, and merge conflicts.", category: "cs", lessons: 8, time: "4 hrs", diff: "Beginner", icon: "🐙 Git VCS", objectives: ["Commit checkouts", "Branch checkout rules", "Merge conflict resets"] },
-    { id: "linux", title: "Linux Studio", desc: "Master filesystem navigations, bash shell scripting, and server configurations.", category: "cs", lessons: 10, time: "5 hrs", diff: "Intermediate", icon: "🐧 Linux", objectives: ["Filesystem paths", "Permissions scopes", "Bash scripts run"] }
+    { id: "algorithms", title: "Algorithms Studio", desc: "Time & space complexity optimizations. Bubble/Merge sorting, binary search, greed, and DP.", category: "cs", lessons: 25, time: "18 hrs", diff: "Advanced", icon: "⚡ Algorithms", objectives: ["Sorting swaps", "Binary search bounds", "Dynamic programming"] }
 ];
 
-// Structured syllabus
+// Fully populated syllabus database matching Algomaster's complete roadmap requirements
 const STUDIO_SYLLABUS = {
-    python: [
-        {
-            module: "Module 1: Basics & Syntax",
-            lessons: [
-                { name: "Variables", key: "python_variables", operations: ["Introduction", "Declaration", "Data Types", "Operators"] }
-            ]
-        },
-        {
-            module: "Module 2: Tuples",
-            lessons: [
-                { name: "Tuples", key: "python_tuples", operations: ["Introduction", "Tuple Creation", "Tuple Indexing", "Negative Indexing", "Tuple Slicing", "Tuple Packing", "Tuple Unpacking", "Tuple Iteration", "Membership", "Tuple Concatenation", "Tuple Repetition", "count()", "index()"] }
-            ]
-        },
-        {
-            module: "Module 3: Lists",
-            lessons: [
-                { name: "Lists", key: "python_lists", operations: ["append()", "pop()", "extend()", "insert()", "remove()", "clear()", "sort()", "reverse()"] }
-            ]
-        },
-        {
-            module: "Module 4: Strings",
-            lessons: [
-                { name: "Strings", key: "python_strings", operations: ["upper()", "lower()", "strip()", "replace()", "split()", "join()", "find()"] }
-            ]
-        }
-    ],
     c: [
         {
-            module: "Module 1: Basics",
+            module: "Module 1: C Fundamentals",
             lessons: [
-                { name: "Variables", key: "c_variables", operations: ["Introduction", "Declaration", "Data Types", "Memory Allocation"] }
+                { name: "Variables", key: "c_variables", operations: ["Introduction", "Declaration", "Scope", "Lifetime"] },
+                { name: "Data Types", key: "c_data_types", operations: ["Primitives", "Modifiers", "SizeOf"] },
+                { name: "Operators", key: "c_operators", operations: ["Arithmetic", "Logical", "Relational"] },
+                { name: "Input Output", key: "c_input_output", operations: ["printf", "scanf", "Format Specifiers"] }
             ]
         },
         {
-            module: "Module 2: Pointers",
+            module: "Module 2: Control & Loops",
             lessons: [
-                { name: "Pointers", key: "c_pointers", operations: ["Introduction", "Dereferencing", "Double Pointers", "Pointer Arithmetic"] }
+                { name: "If Else", key: "c_if_else", operations: ["Conditions", "Nested If"] },
+                { name: "Switch", key: "c_switch", operations: ["Case select", "Default case"] },
+                { name: "Loops", key: "c_loops", operations: ["For Loop", "While Loop", "Do-While"] }
+            ]
+        },
+        {
+            module: "Module 3: Derived & Memory Types",
+            lessons: [
+                { name: "Arrays", key: "c_arrays", operations: ["Contiguous allocation", "Index boundaries"] },
+                { name: "Strings", key: "c_strings", operations: ["Char arrays", "String methods"] },
+                { name: "Pointers", key: "c_pointers", operations: ["Dereferencing", "Double Pointers", "Pointer Arithmetic"] }
+            ]
+        },
+        {
+            module: "Module 4: Advanced C System",
+            lessons: [
+                { name: "Functions", key: "c_functions", operations: ["Parameters", "Return values"] },
+                { name: "Recursion", key: "c_recursion", operations: ["Stack frames", "Base case"] },
+                { name: "Structures", key: "c_structures", operations: ["Definition", "Memory alignment"] },
+                { name: "Dynamic Memory", key: "c_dynamic_memory", operations: ["malloc", "calloc", "free"] }
             ]
         }
     ],
     java: [
         {
-            module: "Module 1: Array Layouts",
+            module: "Module 1: Java Basics",
             lessons: [
-                { name: "Java Arrays", key: "java_arrays", operations: ["Declaration", "Traversals", "Inversions"] }
+                { name: "Variables", key: "java_variables", operations: ["Declaration", "Scope", "Access Modifiers"] },
+                { name: "Data Types", key: "java_data_types", operations: ["Primitives", "Wrapper Classes"] },
+                { name: "Control Statements", key: "java_control", operations: ["If-Else branch", "Switch cases"] },
+                { name: "Loops", key: "java_loops", operations: ["For-Each loop", "While iterator"] }
             ]
         },
         {
-            module: "Module 2: Collections API",
+            module: "Module 2: Object-Oriented Java",
             lessons: [
-                { name: "Collections", key: "java_collections", operations: ["ArrayList add", "ArrayList remove", "HashMap put", "HashMap get"] }
+                { name: "Classes", key: "java_classes", operations: ["Template specification", "Instantiation"] },
+                { name: "Objects", key: "java_objects", operations: ["Heap allocations", "Instance scopes"] },
+                { name: "Constructors", key: "java_constructors", operations: ["Default parameter", "Overloading"] },
+                { name: "Inheritance", key: "java_inheritance", operations: ["Extends keyword", "Super methods"] },
+                { name: "Polymorphism", key: "java_polymorphism", operations: ["Method Overriding", "Dynamic Dispatch"] },
+                { name: "Abstraction", key: "java_abstraction", operations: ["Abstract classes", "Concrete methods"] },
+                { name: "Interfaces", key: "java_interfaces", operations: ["Contracts definitions", "Multiple interfaces"] }
+            ]
+        },
+        {
+            module: "Module 3: Collection APIs",
+            lessons: [
+                { name: "Collections", key: "java_collections", operations: ["ArrayList add", "ArrayList remove", "HashMap put", "HashMap get"] },
+                { name: "Generics", key: "java_generics", operations: ["Type bounds", "Generic classes"] },
+                { name: "Exception Handling", key: "java_exceptions", operations: ["Try-Catch-Finally", "Custom exceptions"] }
+            ]
+        }
+    ],
+    python: [
+        {
+            module: "Module 1: Basics & Variables",
+            lessons: [
+                { name: "Variables", key: "python_variables", operations: ["Introduction", "Scope", "Memory Labels"] },
+                { name: "Data Types", key: "python_types", operations: ["Integers", "Floats", "Booleans"] }
+            ]
+        },
+        {
+            module: "Module 2: Built-in Containers",
+            lessons: [
+                { name: "Tuples", key: "python_tuples", operations: ["Introduction", "Tuple Creation", "Tuple Indexing", "Negative Indexing", "Tuple Slicing", "Tuple Packing", "Tuple Unpacking", "Tuple Iteration", "Membership", "Tuple Concatenation", "Tuple Repetition", "count()", "index()"] },
+                { name: "Lists", key: "python_lists", operations: ["append()", "pop()", "extend()", "insert()", "remove()", "clear()", "sort()", "reverse()"] },
+                { name: "Strings", key: "python_strings", operations: ["upper()", "lower()", "strip()", "replace()", "split()", "join()", "find()"] }
             ]
         }
     ],
     javascript: [
         {
-            module: "Module 1: Arrays",
+            module: "Module 1: JS Basics",
             lessons: [
-                { name: "JS Arrays", key: "javascript_arrays", operations: ["push", "pop", "shift", "unshift", "splice", "slice"] }
+                { name: "Variables", key: "js_variables", operations: ["var", "let", "const", "Lexical Scoping"] }
             ]
         },
         {
-            module: "Module 2: Objects",
+            module: "Module 2: Array Structures",
             lessons: [
+                { name: "JS Arrays", key: "javascript_arrays", operations: ["push", "pop", "shift", "unshift", "splice", "slice"] },
                 { name: "JS Objects", key: "javascript_objects", operations: ["Object creation", "Object keys", "Object values"] }
+            ]
+        },
+        {
+            module: "Module 3: Asynchronous JS",
+            lessons: [
+                { name: "Promises", key: "js_promises", operations: ["Pending state", "Resolved chain", "Rejected catch"] },
+                { name: "Event Loop", key: "js_event_loop", operations: ["Call Stack", "Microtasks queue", "Callback loop"] }
             ]
         }
     ],
     sql: [
         {
-            module: "Module 1: Clauses",
+            module: "Module 1: Database Clauses",
             lessons: [
                 { name: "SQL Clauses", key: "sql_clauses", operations: ["SELECT", "WHERE", "GROUP BY", "HAVING", "ORDER BY"] }
             ]
         },
         {
-            module: "Module 2: Joins",
+            module: "Module 2: Relational Joins",
             lessons: [
                 { name: "SQL Joins", key: "sql_joins", operations: ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL JOIN", "UNION"] }
             ]
@@ -136,7 +159,7 @@ const STUDIO_SYLLABUS = {
     ],
     data_structures: [
         {
-            module: "Module 1: Trees",
+            module: "Module 1: Non-Linear Structures",
             lessons: [
                 { name: "Binary Search Tree", key: "dsa_trees", operations: ["Node insertion", "BFS Traversal", "DFS Traversal"] }
             ]
@@ -144,7 +167,7 @@ const STUDIO_SYLLABUS = {
     ]
 };
 
-// Complete sub-lessons database with detailed custom traces
+// Sub-lessons database with detailed animations preloaded
 const SUB_LESSONS_CATALOG = {
     "python_variables": [
         {
@@ -510,18 +533,19 @@ function loadCurriculumTopic(studioId, topicKey, displayName) {
         
         let activeKey = topicKey.toLowerCase();
         
+        // Auto-generate detailed operations curriculum dynamically if it is not pre-defined!
         if (!SUB_LESSONS_CATALOG[activeKey]) {
             SUB_LESSONS_CATALOG[activeKey] = [
                 {
                     name: "Introduction",
-                    desc: `Learn the core concepts of ${displayName}.`,
-                    code: `// ${displayName} Fundamentals\n// Start learning...`,
+                    desc: `Learn the fundamentals of ${displayName} in ${studioId.toUpperCase()}.`,
+                    code: generateCurriculumCodeSample(studioId, displayName),
                     complexity: { best: "Not Applicable", avg: "Not Applicable", worst: "Not Applicable", space: "Not Applicable" },
-                    tip: `Practice writing code for ${displayName}.`,
-                    mistake: `Ignoring basic structural syntax parameters.`,
-                    practice: `Write a simple sample testing ${displayName}.`,
+                    tip: `Always name variables descriptively for better code readability.`,
+                    mistake: `Assigning mismatched data type expressions.`,
+                    practice: `Write a simple program demonstrating ${displayName}.`,
                     steps: [
-                        { line: 1, vars: { topic: displayName }, mem: [`Topic -> ${displayName}`], explain: `Beginning interactive lesson for ${displayName}.`, action: { type: "generic" } }
+                        { line: 1, vars: { topic: displayName }, mem: [`Topic -> ${displayName}`], explain: `Beginning interactive workspace lesson for ${displayName}.`, action: { type: "generic" } }
                     ]
                 }
             ];
@@ -568,6 +592,19 @@ function loadCurriculumTopic(studioId, topicKey, displayName) {
             previewContainer.style.display = 'none';
         }
     }
+}
+
+function generateCurriculumCodeSample(studioId, topicName) {
+    if (studioId === 'c') {
+        return `// C ${topicName} Fundamentals\n#include <stdio.h>\n\nint main() {\n    int targetVal = 100;\n    printf("Val is: %d\\n", targetVal);\n    return 0;\n}`;
+    } else if (studioId === 'java') {
+        return `// Java ${topicName} Fundamentals\npublic class Main {\n    public static void main(String[] args) {\n        int variableVal = 200;\n        System.out.println(variableVal);\n    }\n}`;
+    } else if (studioId === 'python') {
+        return `# Python ${topicName} Fundamentals\nlabel_val = 500\nprint(label_val)`;
+    } else if (studioId === 'javascript') {
+        return `// JS ${topicName} Fundamentals\nlet variableValue = 300;\nconsole.log(variableValue);`;
+    }
+    return `// ${topicName} workspace\n// Enter sample code...`;
 }
 
 function loadSelectedSubLesson(activeKey, sIdx, category, topic) {
@@ -667,7 +704,7 @@ function renderCurrentStep() {
         } else if (lowerName.includes("unpacking")) {
             steps = [
                 { line: 1, vars: { tup: "(100, 200)" }, mem: ["tup -> (100, 200)"], explain: "Initialize tuple to unpack.", action: { type: "array_state", data: [100, 200], active: [] } },
-                { line: 2, vars: { x: 100, y: 200 }, mem: ["x -> 100", "y -> 200"], explain: "Animate tuple values separating/unpacking into independent local stack variables.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
+                { line: 2, vars: { x: 100, y: 200, tup: "(100, 200)" }, mem: ["x (stack) -> 100", "y (stack) -> 200"], explain: "Animate tuple values separating/unpacking into independent local stack variables.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
             ];
         } else if (lowerName.includes("concatenation")) {
             steps = [
@@ -691,7 +728,6 @@ function renderCurrentStep() {
                 { line: 3, vars: { val: 99 }, mem: ["val (0x7ffe) -> 99"], explain: "Animate dereference: change value at address stored in pointer.", action: { type: "mem_update", addr: "0x7ffe", val: 99 } }
             ];
         } else if (activeSession.topic.toLowerCase().includes("tree") || activeSession.topic.toLowerCase().includes("dsa_trees")) {
-            // High-fidelity Tree operations simulation
             steps = SUB_LESSONS_CATALOG.dsa_trees[0].steps;
         } else {
             steps = generateDynamicSteps(activeSession.category, activeSession.topic, activeSession.code);
@@ -920,7 +956,6 @@ function renderInteractiveCanvas(action) {
         canvas.appendChild(wrapper);
     }
     else if (action.type === "tree_bfs") {
-        // High-fidelity SVG Tree Renderer matching AlgoMaster design illustrations
         const wrapper = document.createElement('div');
         wrapper.style.width = '100%';
         wrapper.style.height = '100%';
@@ -931,7 +966,6 @@ function renderInteractiveCanvas(action) {
 
         const svg = `
             <svg viewBox="0 0 400 240" width="100%" height="220" style="max-width:350px;">
-                <!-- Links -->
                 <line x1="200" y1="40" x2="100" y2="100" stroke="#94a3b8" stroke-width="2.5" />
                 <line x1="200" y1="40" x2="300" y2="100" stroke="#94a3b8" stroke-width="2.5" />
                 <line x1="100" y1="100" x2="50" y2="160" stroke="#94a3b8" stroke-width="2" />
@@ -939,32 +973,24 @@ function renderInteractiveCanvas(action) {
                 <line x1="300" y1="100" x2="250" y2="160" stroke="#94a3b8" stroke-width="2" />
                 <line x1="300" y1="100" x2="350" y2="160" stroke="#94a3b8" stroke-width="2" />
 
-                <!-- Nodes -->
-                <!-- Root 50 -->
                 <circle cx="200" cy="40" r="18" fill="${action.visited.includes(50) ? '#10b981' : (action.active === 50 ? '#3b82f6' : 'var(--bg-container)')}" stroke="${action.active === 50 ? '#2563eb' : '#64748b'}" stroke-width="3" />
                 <text x="200" y="44" font-size="12" font-weight="bold" text-anchor="middle" fill="${action.visited.includes(50) || action.active === 50 ? '#ffffff' : 'var(--text-body)'}">50</text>
 
-                <!-- Left 30 -->
                 <circle cx="100" cy="100" r="18" fill="${action.visited.includes(30) ? '#10b981' : (action.active === 30 ? '#3b82f6' : 'var(--bg-container)')}" stroke="${action.active === 30 ? '#2563eb' : '#64748b'}" stroke-width="2.5" />
                 <text x="100" y="104" font-size="12" font-weight="bold" text-anchor="middle" fill="${action.visited.includes(30) || action.active === 30 ? '#ffffff' : 'var(--text-body)'}">30</text>
 
-                <!-- Right 70 -->
                 <circle cx="300" cy="100" r="18" fill="${action.visited.includes(70) ? '#10b981' : (action.active === 70 ? '#3b82f6' : 'var(--bg-container)')}" stroke="${action.active === 70 ? '#2563eb' : '#64748b'}" stroke-width="2.5" />
                 <text x="300" y="104" font-size="12" font-weight="bold" text-anchor="middle" fill="${action.visited.includes(70) || action.active === 70 ? '#ffffff' : 'var(--text-body)'}">70</text>
 
-                <!-- Leaf 20 -->
                 <circle cx="50" cy="160" r="15" fill="var(--bg-container)" stroke="#64748b" stroke-width="2" />
                 <text x="50" y="164" font-size="10" font-weight="bold" text-anchor="middle" fill="var(--text-body)">20</text>
 
-                <!-- Leaf 40 -->
                 <circle cx="150" cy="160" r="15" fill="var(--bg-container)" stroke="#64748b" stroke-width="2" />
                 <text x="150" y="164" font-size="10" font-weight="bold" text-anchor="middle" fill="var(--text-body)">40</text>
 
-                <!-- Leaf 60 -->
                 <circle cx="250" cy="160" r="15" fill="var(--bg-container)" stroke="#64748b" stroke-width="2" />
                 <text x="250" y="164" font-size="10" font-weight="bold" text-anchor="middle" fill="var(--text-body)">60</text>
 
-                <!-- Leaf 80 -->
                 <circle cx="350" cy="160" r="15" fill="var(--bg-container)" stroke="#64748b" stroke-width="2" />
                 <text x="350" y="164" font-size="10" font-weight="bold" text-anchor="middle" fill="var(--text-body)">80</text>
             </svg>
@@ -1011,7 +1037,7 @@ function toggleVizPlayback() {
     } else if (lowerName.includes("unpacking")) {
         steps = [
             { line: 1, vars: { tup: "(100, 200)" }, mem: ["tup -> (100, 200)"], explain: "Initialize tuple to unpack.", action: { type: "array_state", data: [100, 200], active: [] } },
-            { line: 2, vars: { x: 100, y: 200 }, mem: ["x -> 100", "y -> 200"], explain: "Animate tuple values separating/unpacking into independent local stack variables.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
+            { line: 2, vars: { x: 100, y: 200, tup: "(100, 200)" }, mem: ["x (stack) -> 100", "y (stack) -> 200"], explain: "Animate tuple values separating/unpacking into independent local stack variables.", action: { type: "array_state", data: [100, 200], active: [0, 1], highlight: true } }
         ];
     } else if (lowerName.includes("concatenation")) {
         steps = [
