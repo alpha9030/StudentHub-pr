@@ -50,31 +50,31 @@ const LEARNING_STUDIOS = [
     { id: "linux", title: "Linux Studio", desc: "Master filesystem navigations, bash shell scripting, and server configurations.", category: "cs", lessons: 10, time: "5 hrs", diff: "Intermediate", icon: "🐧 Linux", objectives: ["Filesystem paths", "Permissions scopes", "Bash scripts run"] }
 ];
 
-// Syllabus structures
+// Structured syllabus with specific, custom topic keys
 const STUDIO_SYLLABUS = {
     python: [
         {
             module: "Module 1: Basics & Syntax",
             lessons: [
-                { name: "Variables & Types", key: "python_variables", operations: ["Introduction", "Declaration", "Data Types", "Operators"] }
+                { name: "Variables", key: "python_variables", operations: ["Introduction", "Declaration", "Scope", "Lifetime"] }
             ]
         },
         {
             module: "Module 2: Tuples",
             lessons: [
-                { name: "Tuple Operations", key: "python_tuples", operations: ["Introduction", "Tuple Creation", "Tuple Indexing", "Negative Indexing", "Tuple Slicing", "Tuple Packing", "Tuple Unpacking", "Tuple Iteration", "Membership", "Tuple Concatenation", "Tuple Repetition", "count()", "index()"] }
+                { name: "Tuples", key: "python_tuples", operations: ["Introduction", "Tuple Creation", "Tuple Indexing", "Negative Indexing", "Tuple Slicing", "Tuple Packing", "Tuple Unpacking", "Tuple Iteration", "Membership", "Tuple Concatenation", "Tuple Repetition", "count()", "index()"] }
             ]
         },
         {
             module: "Module 3: Lists",
             lessons: [
-                { name: "List Methods", key: "python_lists", operations: ["append()", "pop()", "extend()", "insert()", "remove()", "clear()", "sort()", "reverse()", "copy()", "count()", "index()"] }
+                { name: "Lists", key: "python_lists", operations: ["append()", "pop()", "extend()", "insert()", "remove()", "clear()", "sort()", "reverse()"] }
             ]
         },
         {
             module: "Module 4: Strings",
             lessons: [
-                { name: "String Functions", key: "python_strings", operations: ["upper()", "lower()", "strip()", "replace()", "split()", "join()", "find()", "index()", "startswith()", "endswith()", "capitalize()", "title()", "swapcase()"] }
+                { name: "Strings", key: "python_strings", operations: ["upper()", "lower()", "strip()", "replace()", "split()", "join()", "find()"] }
             ]
         }
     ],
@@ -82,27 +82,27 @@ const STUDIO_SYLLABUS = {
         {
             module: "Module 1: Basics",
             lessons: [
-                { name: "Variables", key: "c_variables", operations: ["Introduction", "Declaration", "Data Types"] }
+                { name: "Variables", key: "c_variables", operations: ["Introduction", "Declaration", "Data Types", "Memory Allocation"] }
             ]
         },
         {
             module: "Module 2: Pointers",
             lessons: [
-                { name: "Pointer Mechanics", key: "c_pointers", operations: ["Dereferencing", "Double Pointers", "Pointer Arithmetic"] }
+                { name: "Pointers", key: "c_pointers", operations: ["Introduction", "Dereferencing", "Double Pointers", "Pointer Arithmetic"] }
             ]
         }
     ],
     java: [
         {
-            module: "Module 1: Arrays",
+            module: "Module 1: Array Layouts",
             lessons: [
-                { name: "Java Arrays", key: "java_arrays", operations: ["Traversals", "Inversions", "Searching"] }
+                { name: "Java Arrays", key: "java_arrays", operations: ["Declaration", "Traversals", "Inversions"] }
             ]
         },
         {
-            module: "Module 2: Collections",
+            module: "Module 2: Collections API",
             lessons: [
-                { name: "Collections API", key: "java_collections", operations: ["ArrayList add", "ArrayList remove", "HashMap put", "HashMap get"] }
+                { name: "Collections", key: "java_collections", operations: ["ArrayList add", "ArrayList remove", "HashMap put", "HashMap get"] }
             ]
         }
     ],
@@ -110,7 +110,7 @@ const STUDIO_SYLLABUS = {
         {
             module: "Module 1: Arrays",
             lessons: [
-                { name: "JS Array Methods", key: "javascript_arrays", operations: ["push", "pop", "shift", "unshift", "splice", "slice"] }
+                { name: "JS Arrays", key: "javascript_arrays", operations: ["push", "pop", "shift", "unshift", "splice", "slice"] }
             ]
         },
         {
@@ -136,21 +136,21 @@ const STUDIO_SYLLABUS = {
     ]
 };
 
-// Sub-lessons database catalog
+// Complete sub-lessons database
 const SUB_LESSONS_CATALOG = {
     "python_variables": [
         {
             name: "Introduction",
-            desc: "Learn Python variable dynamics and variable name bindings.",
+            desc: "Learn Python variable dynamics and target object labels mapping.",
             code: `x = 10\ny = 20\nsum = x + y`,
-            complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)" },
-            tip: "Use camelCase or snake_case consistently.",
-            mistake: "Reusing global keywords as local variable names.",
-            practice: "Define variables representing items details.",
+            complexity: { best: "Not Applicable", avg: "Not Applicable", worst: "Not Applicable", space: "Not Applicable" },
+            tip: "Python variables are labels bound to objects, not fixed memory slots.",
+            mistake: "Reusing global keywords like 'sum' or 'list' as local variables.",
+            practice: "Declare integer age and float height variables.",
             steps: [
-                { line: 1, vars: { x: "10" }, mem: ["x (0x500) -> 10"], explain: "Assign x to 10.", action: { type: "array_state", data: [10], active: [0] } },
-                { line: 2, vars: { x: "10", y: "20" }, mem: ["x -> 10", "y -> 20"], explain: "Assign y to 20.", action: { type: "array_state", data: [10, 20], active: [1] } },
-                { line: 3, vars: { x: "10", y: "20", sum: "30" }, mem: ["x -> 10", "y -> 20", "sum -> 30"], explain: "Compute sum x + y = 30.", action: { type: "array_state", data: [10, 20, 30], active: [2], complete: true } }
+                { line: 1, vars: { x: "10" }, mem: ["x (stack) -> 10"], explain: "Variable x is bound to integer object 10 in stack frame.", action: { type: "var_alloc", name: "x", val: 10, addr: "0x500", dtype: "int" } },
+                { line: 2, vars: { x: "10", y: "20" }, mem: ["x -> 10", "y -> 20"], explain: "Variable y is bound to integer object 20 in stack frame.", action: { type: "var_alloc", name: "y", val: 20, addr: "0x508", dtype: "int" } },
+                { line: 3, vars: { x: "10", y: "20", sum: "30" }, mem: ["x -> 10", "y -> 20", "sum -> 30"], explain: "Compute x + y = 30 and bind the result to variable 'sum'.", action: { type: "var_alloc", name: "sum", val: 30, addr: "0x510", dtype: "int" } }
             ]
         }
     ],
@@ -158,8 +158,8 @@ const SUB_LESSONS_CATALOG = {
         {
             name: "Introduction",
             desc: "Learn Tuple characteristics, memory structures, and contrast differences with python Lists.",
-            code: `# Tuples characteristics demo\ntup = (10, "Pravio", 3.14)\nprint(tup)\n# Note: Tuples are immutable!`,
-            complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(n)" },
+            code: `# Tuples characteristics demo\ntup = (10, "Pravio", 3.14)\n# Note: Tuples are immutable!`,
+            complexity: { best: "Not Applicable", avg: "Not Applicable", worst: "Not Applicable", space: "Not Applicable" },
             tip: "Use tuples for read-only dictionary keys.",
             mistake: "Attempting to overwrite a tuple index val.",
             practice: "Initialize tuple parameters.",
@@ -171,7 +171,7 @@ const SUB_LESSONS_CATALOG = {
             name: "Tuple Creation",
             desc: "Create new tuples in python via comma separation syntax.",
             code: `tup = (1, 2, 3)\nprint(tup)`,
-            complexity: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)" },
+            complexity: { best: "Not Applicable", avg: "Not Applicable", worst: "Not Applicable", space: "Not Applicable" },
             tip: "Parenthesis are optional but improve code readability.",
             mistake: "Omitting trailing comma when declaring single-element tuples.",
             practice: "Create single-element tuple.",
@@ -278,16 +278,17 @@ const SUB_LESSONS_CATALOG = {
     ],
     "c_variables": [
         {
-            name: "Declaration",
-            desc: "Declare static types and allocate storage values.",
+            name: "Introduction",
+            desc: "Learn C static variable declarations and type specs.",
             code: `int main() {\n    int age = 20;\n    float salary = 35000.5;\n    char grade = 'A';\n    return 0;\n}`,
-            complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)" },
-            tip: "Initialize variables to avoid garbage values.",
-            mistake: "Accessing uninitialized variable addresses.",
-            practice: "Declare coordinate bounds.",
+            complexity: { best: "Not Applicable", avg: "Not Applicable", worst: "Not Applicable", space: "Not Applicable" },
+            tip: "Static types are verified at compile time.",
+            mistake: "Assigning values of mismatched types without explicit casts.",
+            practice: "Declare an integer counter.",
             steps: [
-                { line: 2, vars: { age: 20 }, mem: ["age (0x7ffe) -> 20"], explain: "Allocate integer age at address 0x7ffe.", action: { type: "mem_set", addr: "0x7ffe", val: 20 } },
-                { line: 3, vars: { age: 20, salary: 35000.5 }, mem: ["age (0x7ffe) -> 20", "salary (0x7ffa) -> 35000.5"], explain: "Allocate float salary at address 0x7ffa.", action: { type: "mem_set", addr: "0x7ffa", val: 35000.5 } }
+                { line: 2, vars: { age: 20 }, mem: ["age (0x7ffe) -> 20"], explain: "Declare integer age and allocate stack storage.", action: { type: "var_alloc", name: "age", val: 20, addr: "0x7ffe", dtype: "int" } },
+                { line: 3, vars: { age: 20, salary: 35000.5 }, mem: ["age (0x7ffe) -> 20", "salary (0x7ffa) -> 35000.5"], explain: "Declare float salary and allocate stack storage.", action: { type: "var_alloc", name: "salary", val: 35000.5, addr: "0x7ffa", dtype: "float" } },
+                { line: 4, vars: { age: 20, salary: 35000.5, grade: "'A'" }, mem: ["age -> 20", "salary -> 35000.5", "grade -> 'A'"], explain: "Declare character grade and allocate stack storage.", action: { type: "var_alloc", name: "grade", val: "'A'", addr: "0x7ff9", dtype: "char" } }
             ]
         }
     ],
@@ -296,7 +297,7 @@ const SUB_LESSONS_CATALOG = {
             name: "Dereferencing",
             desc: "Modify target memory blocks by dereferencing pointers via `*ptr`.",
             code: `int val = 42;\nint *ptr = &val;\n*ptr = 99;`,
-            complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)" },
+            complexity: { best: "Not Applicable", avg: "Not Applicable", worst: "Not Applicable", space: "Not Applicable" },
             tip: "Ensure pointers are null-checked before dereferencing.",
             mistake: "Dereferencing unassigned garbage address blocks.",
             practice: "Dereference target variables.",
@@ -307,17 +308,47 @@ const SUB_LESSONS_CATALOG = {
             ]
         }
     ],
-    "sql_select_&_where": [
+    "java_arrays": [
         {
-            name: "SELECT Clause",
-            desc: "Select specific columns from query matches.",
+            name: "Declaration",
+            desc: "Declare static sized contiguous arrays in Java.",
+            code: `int[] arr = new int[3];\narr[0] = 5;\narr[1] = 10;`,
+            complexity: { best: "Not Applicable", avg: "Not Applicable", worst: "Not Applicable", space: "Not Applicable" },
+            tip: "Java arrays indices are 0-based.",
+            mistake: "IndexOutOfBoundsException when checking indices >= size.",
+            practice: "Initialize array of capacity 5.",
+            steps: [
+                { line: 1, vars: { arr: "[0, 0, 0]" }, mem: ["arr (0x3000) -> [0, 0, 0]"], explain: "Initialize array of size 3. Defaults to 0s.", action: { type: "array_state", data: [0, 0, 0], active: [] } },
+                { line: 2, vars: { arr: "[5, 0, 0]" }, mem: ["arr (0x3000) -> [5, 0, 0]"], explain: "Assign index 0 element to 5.", action: { type: "array_state", data: [5, 0, 0], active: [0], complete: true } }
+            ]
+        }
+    ],
+    "javascript_arrays": [
+        {
+            name: "push",
+            desc: "JS array element insertions operations.",
+            code: `let arr = [1, 2];\narr.push(3);`,
+            complexity: { best: "O(1)", avg: "O(1)", worst: "O(1)", space: "O(1)" },
+            tip: "Push modifies arrays in place and returns length.",
+            mistake: "Expecting copies to be generated on push.",
+            practice: "Push items into JS array.",
+            steps: [
+                { line: 1, vars: { arr: "[1, 2]" }, mem: ["arr -> [1, 2]"], explain: "Initialize array container.", action: { type: "array_state", data: [1, 2], active: [] } },
+                { line: 2, vars: { arr: "[1, 2, 3]" }, mem: ["arr -> [1, 2, 3]"], explain: "Push element to the end of list.", action: { type: "array_state", data: [1, 2, 3], active: [2], complete: true } }
+            ]
+        }
+    ],
+    "sql_clauses": [
+        {
+            name: "SELECT",
+            desc: "Retrieve column metrics.",
             code: `SELECT name, grade\nFROM Students;`,
             complexity: { best: "O(n)", avg: "O(n)", worst: "O(n)", space: "O(n)" },
-            tip: "Avoid SELECT * to reduce network overhead.",
-            mistake: "Querying unindexed target columns in huge tables.",
-            practice: "Query student data columns.",
+            tip: "Specify column titles explicitly.",
+            mistake: "SELECT * creates large data overhead.",
+            practice: "Retrieve name column.",
             steps: [
-                { line: 1, vars: { total_rows: 3 }, mem: ["Columns: name, grade"], explain: "Select only name and grade columns from the database rows.", action: { type: "sql_table", rows: [{ name: "Alice", grade: "A" }, { name: "Bob", grade: "B" }, { name: "Charlie", grade: "A" }], active: [0, 1, 2] } }
+                { line: 1, vars: { match: 3 }, mem: ["Students selected"], explain: "Select matching records.", action: { type: "sql_table", rows: [{ name: "Alice", grade: "A" }, { name: "Bob", grade: "B" }], active: [0, 1] } }
             ]
         }
     ]
@@ -598,21 +629,26 @@ function loadCurriculumTopic(studioId, topicKey, displayName) {
         sublessonToolbar.innerHTML = '';
         
         let activeKey = topicKey.toLowerCase();
+        
+        // Match specific topic key mappings and build dynamic fallbacks specifically for this key!
         if (!SUB_LESSONS_CATALOG[activeKey]) {
-            if (activeKey.includes('tuple')) activeKey = 'python_tuples';
-            else if (activeKey.includes('list')) activeKey = 'python_lists';
-            else if (activeKey.includes('pointer')) activeKey = 'c_pointers';
-            else if (activeKey.includes('select') || activeKey.includes('sql')) activeKey = 'sql_select_&_where';
+            SUB_LESSONS_CATALOG[activeKey] = [
+                {
+                    name: "Introduction",
+                    desc: `Learn the core concepts of ${displayName}.`,
+                    code: `// ${displayName} Fundamentals\n// Start learning...`,
+                    complexity: { best: "Not Applicable", avg: "Not Applicable", worst: "Not Applicable", space: "Not Applicable" },
+                    tip: `Practice writing code for ${displayName}.`,
+                    mistake: `Ignoring basic structural syntax parameters.`,
+                    practice: `Write a simple sample testing ${displayName}.`,
+                    steps: [
+                        { line: 1, vars: { topic: displayName }, mem: [`Topic -> ${displayName}`], explain: `Beginning interactive lesson for ${displayName}.`, action: { type: "generic" } }
+                    ]
+                }
+            ];
         }
 
-        const list = SUB_LESSONS_CATALOG[activeKey] || [
-            {
-                name: "Interactive Trace",
-                desc: "Generic traces",
-                code: `// Lesson: ${displayName}\nint main() {\n  return 0;\n}`,
-                complexity: { best: "O(1)", avg: "O(n)", worst: "O(n)", space: "O(1)" }
-            }
-        ];
+        const list = SUB_LESSONS_CATALOG[activeKey];
 
         list.forEach((sub, sIdx) => {
             const btn = document.createElement('button');
@@ -656,15 +692,7 @@ function loadCurriculumTopic(studioId, topicKey, displayName) {
 }
 
 function loadSelectedSubLesson(activeKey, sIdx, category, topic) {
-    const list = SUB_LESSONS_CATALOG[activeKey] || [
-        {
-            name: "Interactive Trace",
-            desc: "Dynamic code compiler step trace.",
-            code: `// Lesson concept: ${activeKey}\nint main() {\n  return 0;\n}`,
-            complexity: { best: "O(1)", avg: "O(n)", worst: "O(n)", space: "O(1)" }
-        }
-    ];
-    
+    const list = SUB_LESSONS_CATALOG[activeKey];
     const sub = list[sIdx];
     
     activeSession = {
@@ -688,6 +716,7 @@ function loadSelectedSubLesson(activeKey, sIdx, category, topic) {
         notesTextarea.value = workspaceNotes[sub.name] || '';
     }
 
+    // Complexity format check
     const bestC = document.getElementById('viz-best-case');
     const avgC = document.getElementById('viz-avg-case');
     const worstC = document.getElementById('viz-worst-case');
@@ -741,7 +770,7 @@ function renderCurrentStep() {
     let steps = [];
     const lowerName = activeSession.name.toLowerCase();
 
-    // Trace frames generator
+    // Trace frames selector
     if (lowerName.includes("slicing")) {
         steps = [
             { line: 1, vars: { tup: "(10, 20, 30, 40, 50)" }, mem: ["tup -> [10, 20, 30, 40, 50]"], explain: "Initialize tuple with 5 elements.", action: { type: "array_state", data: [10, 20, 30, 40, 50], active: [] } },
@@ -828,16 +857,16 @@ function renderCurrentStep() {
     const activeKey = activeSession.topic.toLowerCase();
     let subList = SUB_LESSONS_CATALOG[activeKey] || [];
     let subInfo = subList.find(s => s.name === activeSession.name) || {
-        tip: "Keep variables names clean and self-explanatory.",
-        mistake: "Accidentally modifying immutable variables.",
-        practice: "Write simple trace cases."
+        tip: "Keep variable declarations clean and initialize them appropriately.",
+        mistake: "Accessing out-of-bounds bounds scopes.",
+        practice: "Solve the sample output verification."
     };
 
     const explanation = document.getElementById('viz-explanation-panel');
     if (explanation) {
         explanation.innerHTML = `
             <div style="font-size:0.9rem; line-height:1.5; color:var(--text-body); margin-bottom:8px;">${step.explain}</div>
-            <div style="font-size:0.8rem; color:#f59e0b; font-style:italic; margin-bottom:10px;">💡 Analogy: Imagine baking cookies step-by-step. The variables are ingredients you set down on the counter.</div>
+            <div style="font-size:0.8rem; color:#f59e0b; font-style:italic; margin-bottom:10px;">💡 Analogy: Think of variables as labeled boxes in a storage room. Writing data changes the item inside the labeled box.</div>
             
             <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; border-top:1px dashed var(--border-color); padding-top:8px;">Common Mistake</div>
             <div style="font-size:0.8rem; color:#ef4444; margin-bottom:10px;">⚠️ ${subInfo.mistake}</div>
@@ -946,6 +975,21 @@ function renderInteractiveCanvas(action) {
             wrapper.appendChild(block);
         });
         canvas.appendChild(wrapper);
+    }
+    else if (action.type === "var_alloc") {
+        const block = document.createElement('div');
+        block.style.border = '1px solid var(--border-color)';
+        block.style.borderRadius = '8px';
+        block.style.background = 'rgba(20, 184, 166, 0.05)';
+        block.style.borderLeft = '4px solid #14b8a6'; // Teal variable memory box
+        block.style.padding = '12px';
+        block.style.fontFamily = 'monospace';
+        block.style.fontSize = '12px';
+        block.innerHTML = `
+            <div style="color:var(--text-muted); font-size:0.65rem;">Address: ${action.addr} | Type: ${action.dtype}</div>
+            <div style="font-weight:700; color:var(--text-body); font-size:1.1rem; margin-top:2px;">${action.name} = ${action.val}</div>
+        `;
+        canvas.appendChild(block);
     }
     else if (action.type === "mem_set" || action.type === "mem_update") {
         const block = document.createElement('div');
@@ -1235,6 +1279,7 @@ function toggleAITutorSettings() {
     }
 }
 
+// Bookmarks
 function toggleVizBookmark() {
     if (!activeSession) return;
     const topic = activeSession.name;
