@@ -221,6 +221,9 @@
             <button id="btn-theme-toggle" class="icon-btn" title="Toggle Theme" aria-label="Toggle Theme">
               <i class="fas fa-moon theme-icon"></i>
             </button>
+            <button id="btn-settings-key" class="icon-btn" title="Gemini API Key Settings" aria-label="Gemini API Key Settings">
+              <i class="fas fa-key"></i>
+            </button>
             <button id="btn-export-dropdown" class="icon-btn" title="Export History" aria-label="Export History">
               <i class="fas fa-download"></i>
             </button>
@@ -430,6 +433,34 @@
       <div class="modal-footer">
         <button id="btn-modal-cancel" class="btn btn-secondary font-outfit">Cancel</button>
         <button id="btn-modal-submit" class="btn btn-primary font-outfit">Generate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- API Key settings modal -->
+  <div id="api-key-modal" class="modal-overlay hidden">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="font-outfit" style="margin: 0; font-size: 1.15rem; color: var(--text-body);"><i class="fas fa-key"></i> Gemini API Key Settings</h3>
+        <button id="btn-close-key-modal" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 12px; font-size: 0.85rem; line-height: 1.4; color: var(--text-muted);">
+          By default, this application uses the shared system API key. To bypass shared rate limits, you can enter your own free Gemini API key below.
+        </p>
+        <p style="margin-bottom: 16px; font-size: 0.85rem; line-height: 1.4; color: var(--text-muted);">
+          Your key will be stored securely in your browser's LocalStorage and will never be exposed.
+        </p>
+        <label for="input-custom-api-key" style="display: block; margin-bottom: 8px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Custom Gemini API Key</label>
+        <input type="password" id="input-custom-api-key" placeholder="AIzaSy... (leave blank to use system key)" style="width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-body); border-radius: 8px; font-size: 0.9rem; outline: none; margin-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <input type="checkbox" id="chk-show-key" style="cursor: pointer; width: 14px; height: 14px; accent-color: var(--primary-color);">
+          <label for="chk-show-key" style="cursor: pointer; font-size: 0.8rem; color: var(--text-muted); margin: 0;">Show API Key</label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-key-modal-cancel" class="btn btn-secondary font-outfit">Cancel</button>
+        <button id="btn-key-modal-save" class="btn btn-primary font-outfit">Save Key</button>
       </div>
     </div>
   </div>

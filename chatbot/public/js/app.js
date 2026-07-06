@@ -15,7 +15,9 @@ let isListening = false; // Speech state reference
 const HEALTH_CHECK_INTERVAL = 30000; // Check server health every 30s
 
 // Resolve backend port or cross-origin URLs dynamically
-const API_BASE = window.location.protocol.startsWith('file:') ? 'http://localhost:3008' : '';
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? (window.location.port === '3008' ? '' : 'http://localhost:3008')
+  : 'https://studenthub-pr.onrender.com';
 
 // Theme Management
 const THEME_KEY = 'siteTheme';
@@ -292,6 +294,14 @@ const DOMElements = {
   btnExportPdf: document.getElementById('btn-export-pdf'),
   btnExportJson: document.getElementById('btn-export-json'),
   
+  btnSettingsKey: document.getElementById('btn-settings-key'),
+  apiKeyModal: document.getElementById('api-key-modal'),
+  btnCloseKeyModal: document.getElementById('btn-close-key-modal'),
+  btnKeyModalCancel: document.getElementById('btn-key-modal-cancel'),
+  btnKeyModalSave: document.getElementById('btn-key-modal-save'),
+  inputCustomApiKey: document.getElementById('input-custom-api-key'),
+  chkShowKey: document.getElementById('chk-show-key'),
+  
   activeChatTitle: document.getElementById('active-chat-title'),
   btnPinActive: document.getElementById('btn-pin-active'),
   btnLeaveChat: document.getElementById('btn-leave-chat'),
@@ -415,6 +425,44 @@ function setupEventListeners() {
   
   // Streaming Controller
   DOMElements.btnStopGeneration.addEventListener('click', stopResponseGeneration);
+
+  // API Key Settings Modal Trigger
+  if (DOMElements.btnSettingsKey) {
+    DOMElements.btnSettingsKey.addEventListener('click', () => {
+      const savedKey = localStorage.getItem('custom_gemini_api_key') || '';
+      DOMElements.inputCustomApiKey.value = savedKey;
+      DOMElements.inputCustomApiKey.type = 'password';
+      DOMElements.chkShowKey.checked = false;
+      DOMElements.apiKeyModal.classList.remove('hidden');
+    });
+  }
+
+  if (DOMElements.btnCloseKeyModal) {
+    DOMElements.btnCloseKeyModal.addEventListener('click', () => {
+      DOMElements.apiKeyModal.classList.add('hidden');
+    });
+  }
+
+  if (DOMElements.btnKeyModalCancel) {
+    DOMElements.btnKeyModalCancel.addEventListener('click', () => {
+      DOMElements.apiKeyModal.classList.add('hidden');
+    });
+  }
+
+  if (DOMElements.btnKeyModalSave) {
+    DOMElements.btnKeyModalSave.addEventListener('click', () => {
+      const newKey = DOMElements.inputCustomApiKey.value.trim();
+      localStorage.setItem('custom_gemini_api_key', newKey);
+      DOMElements.apiKeyModal.classList.add('hidden');
+      checkServerHealth(); // Instantly verify the new API key status
+    });
+  }
+
+  if (DOMElements.chkShowKey) {
+    DOMElements.chkShowKey.addEventListener('change', (e) => {
+      DOMElements.inputCustomApiKey.type = e.target.checked ? 'text' : 'password';
+    });
+  }
 }
 
 // Screen Routing Actions
@@ -845,11 +893,17 @@ async function submitUserMessage() {
   });
 
   try {
+    const customKey = localStorage.getItem('custom_gemini_api_key') || '';
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+    if (customKey) {
+      headers['X-API-Key'] = customKey;
+    }
+
     const response = await fetch(API_BASE + '/api/chat', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: headers,
       body: JSON.stringify({
         messages: apiHistory,
         stream: true
@@ -1136,7 +1190,12 @@ function downloadFile(content, fileName, contentType) {
 // Ping Server Health Status
 async function checkServerHealth() {
   try {
-    const res = await fetch(API_BASE + '/health');
+    const customKey = localStorage.getItem('custom_gemini_api_key') || '';
+    const headers = {};
+    if (customKey) {
+      headers['X-API-Key'] = customKey;
+    }
+    const res = await fetch(API_BASE + '/health', { headers });
     const data = await res.json();
     if (data.status === 'healthy' || data.status === 'ok') {
       const isConfigured = !!(data.geminiConfigured || data.ai === 'connected');
@@ -1382,6 +1441,10 @@ function uploadFileToServer(file, fileId) {
     };
 
     xhr.open('POST', API_BASE + '/api/upload', true);
+    const customKey = localStorage.getItem('custom_gemini_api_key') || '';
+    if (customKey) {
+      xhr.setRequestHeader('X-API-Key', customKey);
+    }
     xhr.send(formData);
   });
 }

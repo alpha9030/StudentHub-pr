@@ -47,6 +47,16 @@ const upload = multer({
 // Setup logging (compact logs for production, detailed for development)
 app.use(morgan(NODE_ENV === 'production' ? 'combined' : 'dev'));
 
+// Custom Request and Response logger middleware for Render deployment troubleshooting
+app.use((req, res, next) => {
+  const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  console.log(`[INCOMING REQUEST] IP: ${clientIp} | Method: ${req.method} | Path: ${req.path}`);
+  res.on('finish', () => {
+    console.log(`[RESPONSE STATUS] Path: ${req.path} | Status: ${res.statusCode}`);
+  });
+  next();
+});
+
 // Middlewares
 app.use(cors({
   origin: '*', // Allow all origins for local deployment flexibility
@@ -104,7 +114,8 @@ app.use('/api/', apiLimiter);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  const hasApiKey = !!process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here';
+  const customApiKey = req.headers['x-api-key'];
+  const hasApiKey = !!(customApiKey || (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here'));
   res.status(200).json({
     status: 'ok',
     ai: hasApiKey ? 'connected' : 'disconnected',
@@ -135,12 +146,13 @@ async function retryWithBackoff(fn, retries = 3, delay = 1000) {
 
 // REST API for chat communication
 app.post('/api/chat', async (req, res) => {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const customApiKey = req.headers['x-api-key'];
+  const apiKey = customApiKey || process.env.GEMINI_API_KEY;
 
   if (!apiKey || apiKey === 'your_gemini_api_key_here') {
     console.warn('[BACKEND LOG] /api/chat: Request blocked because GEMINI_API_KEY is not configured.');
     return res.status(401).json({
-      error: 'Gemini API key is not configured. Please add your GEMINI_API_KEY to the .env file.',
+      error: 'Gemini API key is not configured. Please add your GEMINI_API_KEY to the .env file or save your custom key in Settings.',
       status: 401
     });
   }
@@ -165,8 +177,8 @@ app.post('/api/chat', async (req, res) => {
 
   // Set up model options
   const genAI = new GoogleGenerativeAI(apiKey);
-  // Using gemini-2.5-flash as the default model for general purpose chats (supported by this API key)
-  const modelName = 'gemini-2.5-flash';
+  // Using gemini-1.5-flash as the default model for general purpose chats (supported by this API key)
+  const modelName = 'gemini-1.5-flash';
   const model = genAI.getGenerativeModel({ 
     model: modelName,
     generationConfig: {
@@ -241,7 +253,7 @@ app.post('/api/chat', async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('[BACKEND LOG] [Response Error] Gemini API Error:', error);
+    console.error('[BACKEND LOG] [Response Error] Gemini API Error Stack:', error.stack || error);
     
     // Map specific Gemini API errors to friendly user-facing messages
     let statusCode = 500;

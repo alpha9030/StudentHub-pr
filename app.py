@@ -1181,12 +1181,23 @@ def get_chatbot_connection(timeout=60):
 def start_chatbot_service():
     import subprocess
     import time
+    import socket
     
     url = os.environ.get("CHATBOT_BACKEND_URL", "http://127.0.0.1:3008")
     # If using an external remote service (e.g. Render https://...), skip starting Node locally
     if "127.0.0.1" not in url and "localhost" not in url:
         print(f"[INFO] CHATBOT_BACKEND_URL is external ({url}). Background Node.js startup bypassed.")
         return
+        
+    # Check if port 3008 is already listening (to avoid spawning duplicates under Gunicorn multiple workers)
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(1.0)
+            if s.connect_ex(('127.0.0.1', 3008)) == 0:
+                print("[INFO] Chatbot backend is already active on port 3008. Local startup bypassed.")
+                return
+    except Exception as e:
+        print(f"[WARNING] Port check failed: {e}. Attempting startup.")
         
     def run():
         chatbot_dir = os.path.join(os.path.dirname(__file__), 'chatbot')
@@ -1208,15 +1219,19 @@ def start_chatbot_service():
 
 @app.route('/api/chat', methods=['POST'])
 def proxy_chat():
+    print("[PROXY] Incoming request to /api/chat")
     body = request.get_data()
     headers = {
         "Content-Type": request.headers.get("Content-Type", "application/json"),
         "Accept": request.headers.get("Accept", "text/event-stream")
     }
+    if "X-API-Key" in request.headers:
+        headers["X-API-Key"] = request.headers.get("X-API-Key")
     try:
         conn, prefix = get_chatbot_connection(timeout=60)
         conn.request("POST", f"{prefix}/api/chat", body, headers)
         resp = conn.getresponse()
+        print(f"[PROXY] /api/chat connected to Node backend. Status: {resp.status}")
         
         def generate():
             try:
@@ -1226,7 +1241,7 @@ def proxy_chat():
                         break
                     yield chunk
             except Exception as e:
-                print(f"Proxy stream error: {e}")
+                print(f"[PROXY Error] Proxy stream error: {e}")
             finally:
                 conn.close()
                 
@@ -1236,20 +1251,24 @@ def proxy_chat():
                 flask_resp.headers[k] = v
         return flask_resp
     except Exception as e:
-        print(f"Proxy connection failed: {e}")
+        print(f"[PROXY Error] Proxy connection failed: {e}")
         return jsonify({"error": "Chatbot backend is temporarily offline.", "status": 503}), 503
 
 @app.route('/api/upload', methods=['POST'])
 def proxy_upload():
+    print("[PROXY] Incoming request to /api/upload")
     content_type = request.headers.get("Content-Type")
     body = request.get_data()
     headers = {
         "Content-Type": content_type
     }
+    if "X-API-Key" in request.headers:
+        headers["X-API-Key"] = request.headers.get("X-API-Key")
     try:
         conn, prefix = get_chatbot_connection(timeout=60)
         conn.request("POST", f"{prefix}/api/upload", body, headers)
         resp = conn.getresponse()
+        print(f"[PROXY] /api/upload connected to Node backend. Status: {resp.status}")
         res_data = resp.read()
         conn.close()
         
@@ -1259,15 +1278,19 @@ def proxy_upload():
                 flask_resp.headers[k] = v
         return flask_resp
     except Exception as e:
-        print(f"Proxy upload connection failed: {e}")
+        print(f"[PROXY Error] Proxy upload connection failed: {e}")
         return jsonify({"error": "Failed to connect to file extraction service.", "status": 503}), 503
 
 @app.route('/health', methods=['GET'])
 def proxy_health():
+    headers = {}
+    if "X-API-Key" in request.headers:
+        headers["X-API-Key"] = request.headers.get("X-API-Key")
     try:
         conn, prefix = get_chatbot_connection(timeout=5)
-        conn.request("GET", f"{prefix}/health")
+        conn.request("GET", f"{prefix}/health", headers=headers)
         resp = conn.getresponse()
+        print(f"[PROXY] /health connected to Node backend. Status: {resp.status}")
         res_data = resp.read()
         conn.close()
         
@@ -1291,11 +1314,11 @@ def serve_static(path):
     return send_from_directory('.', path)
 
 init_db()
+print("Database initialized.")
+validate_gemini_key()
+start_chatbot_service()
 
 if __name__ == '__main__':
-    print("Database initialized.")
-    validate_gemini_key()
-    start_chatbot_service()
     port = int(os.environ.get('PORT', 443))
     if 'PORT' in os.environ:
         app.run(host='0.0.0.0', port=port, debug=False)
