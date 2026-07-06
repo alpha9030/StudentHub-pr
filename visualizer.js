@@ -1,5 +1,5 @@
 // ==========================================
-// PRAVIO LEARNING STUDIOS INTERACTIVE ENGINE
+// PRAVIO VISUALIZER INTERACTIVE ENGINE
 // ==========================================
 
 // Global state
@@ -12,206 +12,160 @@ let learningMode = "intermediate"; // beginner, intermediate, expert
 let aiTutorLevel = "advanced"; // beginner, advanced
 let bookmarks = [];
 let completedTopics = [];
-let practiceRuns = 8;
-let activeStudio = null; // null represents the dashboard studio list view
+let practiceRuns = 5;
 
-// Studios Syllabus Catalog
-const STUDIOS_CATALOG = {
-    java: {
-        title: "Java Studio",
-        emoji: "☕",
-        desc: "Master JVM architecture, OOP abstractions, collections API, threads, GC, memory frames, Comparable, reflection, and practice problems.",
-        difficulty: "Medium",
-        hours: "12 Hours",
-        topics: [
-            "Introduction", "Installation", "IDE Setup", "Variables", "Data Types", "Operators", "Input Output",
-            "Conditional Statements", "Loops", "Arrays", "Strings", "Methods", "Recursion", "Classes", "Objects",
-            "Constructors", "Inheritance", "Polymorphism", "Abstraction", "Encapsulation", "Interfaces", "Packages",
-            "Collections", "Generics", "Streams", "Lambda Expressions", "Exception Handling", "File Handling",
-            "JDBC", "Networking", "Multithreading", "Memory Management", "Garbage Collection", "Comparable",
-            "Comparator", "Annotations", "Reflection", "Projects", "Interview Questions", "Practice Problems",
-            "Debugging", "Optimization"
+// Complete Curriculum Catalog
+const CURRICULUM_TREE = [
+    {
+        type: "category",
+        title: "Programming Languages",
+        icon: "fas fa-code",
+        children: [
+            {
+                type: "language",
+                title: "C",
+                icon: "💻 C",
+                children: [
+                    "Variables", "Data Types", "Operators", "Input Output", "Conditional Statements",
+                    "Loops", "Functions", "Arrays", "Strings", "Pointers", "Structures", "Unions",
+                    "File Handling", "Memory Management", "Preprocessors", "Interview Questions", "Practice Problems"
+                ]
+            },
+            {
+                type: "language",
+                title: "C++",
+                icon: "💻 C++",
+                children: [
+                    "Variables", "OOP Basics", "Classes & Objects", "Constructors", "Inheritance",
+                    "Polymorphism", "Abstraction", "Encapsulation", "Templates", "STL", "Exception Handling",
+                    "File Handling", "Interview Questions", "Practice Problems"
+                ]
+            },
+            {
+                type: "language",
+                title: "Java",
+                icon: "☕ Java",
+                children: [
+                    "Variables", "Data Types", "Operators", "Input Output", "Conditional Statements",
+                    "Loops", "Methods", "Arrays", "Strings", "Recursion", "Classes", "Objects",
+                    "Constructors", "Inheritance", "Polymorphism", "Abstraction", "Encapsulation",
+                    "Interfaces", "Packages", "Collections", "Generics", "Streams", "Lambda Expressions",
+                    "Exception Handling", "File Handling", "JDBC", "Networking", "Multithreading",
+                    "Memory Management", "Garbage Collection", "Comparable", "Comparator",
+                    "Annotations", "Reflection", "Projects", "Interview Questions", "Practice Problems",
+                    "Debugging", "Optimization"
+                ]
+            },
+            {
+                type: "language",
+                title: "Python",
+                icon: "🐍 Python",
+                children: [
+                    "Variables", "Data Types", "Lists", "Tuples", "Dicts", "Sets", "Conditional Statements",
+                    "Loops", "Functions", "List Comprehension", "Lambda Functions", "File I/O", "OOP",
+                    "Exception Handling", "Decorators", "Generators", "Iterators", "Regex", "Interview Questions", "Practice Problems"
+                ]
+            },
+            {
+                type: "language",
+                title: "JavaScript",
+                icon: "⚡ JavaScript",
+                children: [
+                    "Variables", "Data Types", "Operators", "Functions", "Objects", "Arrays", "Destructuring",
+                    "Promises", "Async Await", "DOM Manipulation", "Event Loop", "Closures", "Prototypes",
+                    "Modules", "ES6 Features", "Interview Questions", "Practice Problems"
+                ]
+            },
+            {
+                type: "language",
+                title: "TypeScript",
+                icon: "🟦 TypeScript",
+                children: [
+                    "Type Annotations", "Interfaces", "Classes", "Generics", "Enums", "Modules",
+                    "Config", "Advanced Types", "Interview Questions", "Practice Problems"
+                ]
+            },
+            {
+                type: "language",
+                title: "HTML",
+                icon: "🌐 HTML",
+                children: [
+                    "Structure", "Elements", "Attributes", "Headings", "Paragraphs", "Links", "Images",
+                    "Tables", "Lists", "Forms", "Semantic Tags", "SEO Basics"
+                ]
+            },
+            {
+                type: "language",
+                title: "CSS",
+                icon: "🎨 CSS",
+                children: [
+                    "Selectors", "Box Model", "Flexbox", "Grid", "Positioning", "Transitions",
+                    "Animations", "Media Queries", "Variables", "Specificity", "TailwindCSS"
+                ]
+            },
+            {
+                type: "language",
+                title: "SQL",
+                icon: "🗄 SQL",
+                children: [
+                    "SELECT & WHERE", "GROUP BY & HAVING", "ORDER BY Sorting", "INNER JOIN matching",
+                    "LEFT/RIGHT JOIN", "Aggregate Functions", "Indexing", "Transactions (ACID)", "Stored Procedures", "Views"
+                ]
+            },
+            {
+                type: "language",
+                title: "PHP",
+                icon: "🐘 PHP",
+                children: ["Syntax", "Variables", "Loops", "Arrays", "Superglobals", "Sessions", "OOP", "MySQL Integration"]
+            },
+            {
+                type: "language",
+                title: "Go",
+                icon: "🐹 Go",
+                children: ["Variables", "Structs", "Interfaces", "Goroutines", "Channels", "Pointers"]
+            },
+            {
+                type: "language",
+                title: "Rust",
+                icon: "🦀 Rust",
+                children: ["Variables", "Ownership", "Borrowing", "Lifetimes", "Structs", "Enums", "Pattern Matching"]
+            },
+            {
+                type: "language",
+                title: "Kotlin",
+                icon: "📱 Kotlin",
+                children: ["Syntax", "Null Safety", "Classes", "Lambdas", "Coroutines"]
+            },
+            {
+                type: "language",
+                title: "Swift",
+                icon: "🍎 Swift",
+                children: ["Variables", "Optionals", "Protocols", "Extensions", "Closures"]
+            },
+            {
+                type: "language",
+                title: "R",
+                icon: "📊 R",
+                children: ["Vectors", "Matrices", "Data Frames", "Vectorized Operations", "Plotting"]
+            }
         ]
     },
-    python: {
-        title: "Python Studio",
-        emoji: "🐍",
-        desc: "Beginner syntax to complex generators, list comprehensions, modules, file I/O, regex, OOP structure, and interview coding quizzes.",
-        difficulty: "Easy",
-        hours: "8 Hours",
-        topics: [
-            "Introduction", "Setup", "Variables", "Data Types", "Operators", "Input Output", "Conditional Statements",
-            "Loops", "Lists", "Tuples", "Dictionaries", "Sets", "Functions", "Recursion", "List Comprehension",
-            "Lambda Functions", "File I/O", "OOP Basics", "Classes & Objects", "Inheritance", "Polymorphism",
-            "Exception Handling", "Decorators", "Generators", "Iterators", "Regex", "Modules", "Virtual Environments",
-            "Projects", "Interview Questions", "Practice Problems"
-        ]
-    },
-    c: {
-        title: "C Studio",
-        emoji: "💻 C",
-        desc: "Pointers dereferencing, variable memory allocations, structure stacks, unions, and low level preprocessor directives.",
-        difficulty: "Hard",
-        hours: "10 Hours",
-        topics: [
-            "Introduction", "Setup", "Variables", "Data Types", "Operators", "Input Output", "Conditional Statements",
-            "Loops", "Functions", "Arrays", "Strings", "Pointers", "Pointer Arithmetic", "Structures", "Unions",
-            "File Handling", "Dynamic Memory Allocation", "Preprocessors", "Interview Questions", "Practice Problems"
-        ]
-    },
-    cpp: {
-        title: "C++ Studio",
-        emoji: "💻 C++",
-        desc: "Object Oriented polymorphism, classes, inheritance, pointers, abstraction, STL container vectors, templates, and dynamic arrays.",
-        difficulty: "Hard",
-        hours: "12 Hours",
-        topics: [
-            "Introduction", "Setup", "Variables", "OOP Basics", "Classes & Objects", "Constructors", "Destructors",
-            "Inheritance", "Polymorphism", "Abstraction", "Encapsulation", "Pointers & References", "Templates",
-            "Standard Template Library (STL)", "Exception Handling", "File Handling", "Interview Questions", "Practice Problems"
-        ]
-    },
-    javascript: {
-        title: "JavaScript Studio",
-        emoji: "⚡",
-        desc: "Interactive DOM manipulations, ES6 destructuring, closures, async promises, event loops, and fetch API.",
-        difficulty: "Medium",
-        hours: "8 Hours",
-        topics: [
-            "Introduction", "Variables", "Data Types", "Operators", "Conditional Statements", "Loops", "Functions",
-            "Objects", "Arrays", "Destructuring", "Spread & Rest", "Promises", "Async Await", "Fetch API",
-            "DOM Selection", "DOM Manipulation", "Event Listeners", "Event Loop", "Closures", "Prototypes",
-            "Modules", "ES6 Features", "Projects", "Interview Questions", "Practice Problems"
-        ]
-    },
-    typescript: {
-        title: "TypeScript Studio",
-        emoji: "🟦",
-        desc: "Strict type safety annotations, interfaces, generics, custom config setups, and advanced typings.",
-        difficulty: "Medium",
-        hours: "6 Hours",
-        topics: [
-            "Introduction", "Type Annotations", "Interfaces", "Classes", "Generics", "Enums", "Modules",
-            "TSConfig Setup", "Advanced Types", "Interview Questions", "Practice Problems"
-        ]
-    },
-    html: {
-        title: "HTML Studio",
-        emoji: "🌐 HTML",
-        desc: "Semantic elements structure, tables, forms validation, graphics layout canvases, and accessibility standards.",
-        difficulty: "Easy",
-        hours: "4 Hours",
-        topics: [
-            "Introduction", "Structure", "Elements", "Attributes", "Headings", "Paragraphs", "Links", "Images",
-            "Tables", "Lists", "Forms", "Input Types", "Semantic Tags", "Accessibility", "SVG & Canvas", "SEO Basics", "Projects"
-        ]
-    },
-    css: {
-        title: "CSS Studio",
-        emoji: "🎨 CSS",
-        desc: "Box model margins, borders, relative flexbox layout, grid alignment spacing, CSS variables, and keyframe animations.",
-        difficulty: "Easy",
-        hours: "8 Hours",
-        topics: [
-            "Introduction", "Selectors", "Box Model", "Flexbox Layout", "Grid Layout", "Positioning",
-            "Transitions", "Animations", "Media Queries", "Responsive Design", "Variables", "Specificity",
-            "TailwindCSS Basics", "Projects"
-        ]
-    },
-    sql: {
-        title: "SQL Studio",
-        emoji: "🗄 SQL",
-        desc: "Relational query statements, database selects, where conditional checks, indexing speed, transaction rollbacks, and views.",
-        difficulty: "Medium",
-        hours: "8 Hours",
-        topics: [
-            "Introduction", "SELECT & WHERE", "GROUP BY & HAVING", "ORDER BY Sorting", "INNER JOIN matching",
-            "LEFT/RIGHT JOIN", "Aggregate Functions", "Subqueries", "Indexing", "Transactions (ACID)",
-            "Stored Procedures", "Views", "Interview Questions", "Practice Problems"
-        ]
-    },
-    php: {
-        title: "PHP Studio",
-        emoji: "🐘",
-        desc: "Dynamic server-side web scripting, form variables, loops, superglobals, database connections, and session scopes.",
-        difficulty: "Medium",
-        hours: "8 Hours",
-        topics: [
-            "Introduction", "Syntax", "Variables", "Data Types", "Operators", "Conditional Statements",
-            "Loops", "Arrays", "Functions", "Superglobals", "Sessions", "OOP Basics", "MySQL Integration", "Practice Problems"
-        ]
-    },
-    go: {
-        title: "Go Studio",
-        emoji: "🐹",
-        desc: "Concurrent channel programming, structs, pointer safety, interface behaviors, goroutines execution.",
-        difficulty: "Hard",
-        hours: "6 Hours",
-        topics: [
-            "Introduction", "Variables", "Structs", "Interfaces", "Goroutines", "Channels", "Pointers", "Packages", "Practice Problems"
-        ]
-    },
-    rust: {
-        title: "Rust Studio",
-        emoji: "🦀",
-        desc: "Strict memory ownership compilers, borrow checker safety lifetimes, structs, and matching loops.",
-        difficulty: "Hard",
-        hours: "12 Hours",
-        topics: [
-            "Introduction", "Variables", "Ownership", "Borrowing", "Lifetimes", "Structs", "Enums",
-            "Pattern Matching", "Error Handling", "Practice Problems"
-        ]
-    },
-    kotlin: {
-        title: "Kotlin Studio",
-        emoji: "📱",
-        desc: "Android null safety types, basic constructors, lambdas functions, structures, and coroutine execution.",
-        difficulty: "Medium",
-        hours: "6 Hours",
-        topics: [
-            "Introduction", "Syntax", "Null Safety", "Classes", "Lambdas", "Coroutines", "Android Basics"
-        ]
-    },
-    swift: {
-        title: "Swift Studio",
-        emoji: "🍎",
-        desc: "iOS application options, protocols verification, structures, and closures.",
-        difficulty: "Medium",
-        hours: "6 Hours",
-        topics: [
-            "Introduction", "Variables", "Optionals", "Protocols", "Extensions", "Closures", "SwiftUI Basics"
-        ]
-    },
-    r: {
-        title: "R Studio",
-        emoji: "📊 R",
-        desc: "Statistical calculations vectors, data frames manipulation, vector operations, plotting graphics.",
-        difficulty: "Medium",
-        hours: "6 Hours",
-        topics: [
-            "Introduction", "Vectors", "Matrices", "Data Frames", "Vectorized Operations", "Plotting"
-        ]
-    },
-    structures: {
-        title: "Data Structures Studio",
-        emoji: "📦",
-        desc: "Detailed singly & doubly linked lists, circular lists, priority queue stacks, tree nodes traversal, BST, and graph mappings.",
-        difficulty: "Hard",
-        hours: "15 Hours",
-        topics: [
+    {
+        type: "category",
+        title: "Data Structures",
+        icon: "fas fa-project-diagram",
+        children: [
             "Arrays", "Strings", "Linked Lists", "Circular Linked Lists", "Doubly Linked Lists",
             "Stacks", "Queues", "Deque", "Priority Queue", "Hash Maps", "Hash Tables", "Hash Sets",
             "Trees", "Binary Trees", "BST", "AVL Trees", "Red Black Trees", "Trie", "Heap",
             "Segment Tree", "Fenwick Tree", "Graphs", "Disjoint Set", "Bloom Filter"
         ]
     },
-    algorithms: {
-        title: "Algorithms Studio",
-        emoji: "⚡",
-        desc: "Sorting (Bubble, Selection, Insertion, Merge, Quick), Linear & Binary Search, Sliding Window, DP optimization, DFS & BFS.",
-        difficulty: "Hard",
-        hours: "20 Hours",
-        topics: [
+    {
+        type: "category",
+        title: "Algorithms",
+        icon: "fas fa-random",
+        children: [
             "Bubble Sort", "Selection Sort", "Insertion Sort", "Merge Sort", "Quick Sort",
             "Heap Sort", "Counting Sort", "Bucket Sort", "Radix Sort", "Linear Search",
             "Binary Search", "Sliding Window", "Two Pointers", "Greedy", "Dynamic Programming",
@@ -219,88 +173,77 @@ const STUDIOS_CATALOG = {
             "Shortest Path", "Minimum Spanning Tree", "Topological Sort", "Tree Algorithms", "Graph Algorithms"
         ]
     },
-    patterns: {
-        title: "Pattern Studio",
-        emoji: "🎨",
-        desc: "Matrix index calculation star loop structures: pyramid, square, and triangle print statements.",
-        difficulty: "Easy",
-        hours: "4 Hours",
-        topics: [
-            "Square Pattern", "Right Angle Triangle", "Pyramid Pattern", "Diamond Pattern", "Inverted Pyramid", "Hollow Square"
-        ]
+    {
+        type: "category",
+        title: "Patterns",
+        icon: "fas fa-shapes",
+        children: ["Square Pattern", "Right Angle Triangle", "Pyramid Pattern", "Diamond Pattern", "Inverted Pyramid", "Hollow Square"]
     },
-    webdev: {
-        title: "Web Development Studio",
-        emoji: "🌐",
-        desc: "Fullstack request flow, DOM selections, flex spacing layout columns, and Javascript event processing loops.",
-        difficulty: "Medium",
-        hours: "10 Hours",
-        topics: [
-            "CSS Box Model", "DOM Tree Selection", "Flexbox Layout", "Grid Layout", "JS Event Loop",
-            "Promises & Async/Await", "HTTP Request Lifecycle"
-        ]
+    {
+        type: "category",
+        title: "Web Development",
+        icon: "fas fa-globe",
+        children: ["CSS Box Model", "DOM Tree Selection", "Flexbox Layout", "Grid Layout", "JS Event Loop", "Promises & Async/Await", "HTTP Request Lifecycle"]
     },
-    database: {
-        title: "Database Studio",
-        emoji: "🗄 Database",
-        desc: "Relational database tables, normalization keys form checks, indexes, ACID, and transactions.",
-        difficulty: "Medium",
-        hours: "6 Hours",
-        topics: [
-            "Relational Database", "NoSQL Basics", "Normalization Forms", "Indexing Strategies", "ACID Transactions", "Execution Plans"
-        ]
+    {
+        type: "category",
+        title: "Database",
+        icon: "fas fa-database",
+        children: ["Relational Database", "NoSQL Basics", "Normalization Forms", "Indexing Strategies", "ACID Transactions", "Execution Plans"]
     },
-    os: {
-        title: "Operating System Studio",
-        emoji: "💻 OS",
-        desc: "Process schedulers, virtual memory paging offsets, segmentation, thread boundaries, and CPU logic structures.",
-        difficulty: "Hard",
-        hours: "8 Hours",
-        topics: [
-            "Processes & Threads", "CPU Scheduling", "Deadlocks", "Memory Management", "Paging & Segmentation", "Virtual Memory"
-        ]
+    {
+        type: "category",
+        title: "Operating System",
+        icon: "fas fa-desktop",
+        children: ["Processes & Threads", "CPU Scheduling", "Deadlocks", "Memory Management", "Paging & Segmentation", "Virtual Memory"]
     },
-    networks: {
-        title: "Computer Networks Studio",
-        emoji: "🌍",
-        desc: "OSI layer packets, TCP handshake connection sockets, DNS resolution IP lookups.",
-        difficulty: "Medium",
-        hours: "8 Hours",
-        topics: [
-            "OSI Model Layers", "TCP/IP Protocol", "IP Addressing", "DNS Resolution", "HTTP vs HTTPS", "Sockets programming"
-        ]
+    {
+        type: "category",
+        title: "Computer Networks",
+        icon: "fas fa-network-wired",
+        children: ["OSI Model Layers", "TCP/IP Protocol", "IP Addressing", "DNS Resolution", "HTTP vs HTTPS", "Sockets programming"]
     },
-    system_design: {
-        title: "System Design Studio",
-        emoji: "☁",
-        desc: "Load balancers routing, CDNs cache structures, sharding data distributions, and backend scalability rules.",
-        difficulty: "Hard",
-        hours: "10 Hours",
-        topics: [
-            "Scalability", "Load Balancing", "Caching & CDNs", "Sharding & Replication", "Microservices", "API Gateways"
-        ]
+    {
+        type: "category",
+        title: "Cloud",
+        icon: "fas fa-cloud",
+        children: ["Virtualization", "AWS Basics", "GCP Core Services", "Docker Containers", "Kubernetes Orchestration", "Serverless Architecture"]
     },
-    interview_prep: {
-        title: "Interview Preparation Studio",
-        emoji: "🎯",
-        desc: "Big-O complexities, FAANG recursion stack puzzles, mock system designs, and algorithmic trace check sheets.",
-        difficulty: "Hard",
-        hours: "15 Hours",
-        topics: [
-            "Big-O Complexity analysis", "FAANG Preparation roadmap", "Mock Interviews checklist", "Behavioral questions prep", "System Design patterns"
-        ]
+    {
+        type: "category",
+        title: "AI / ML",
+        icon: "fas fa-robot",
+        children: ["Supervised Learning", "Unsupervised Learning", "Neural Networks", "Deep Learning", "Transformers", "LLMs introduction"]
+    },
+    {
+        type: "category",
+        title: "Interview Preparation",
+        icon: "fas fa-briefcase",
+        children: ["Big-O Complexity analysis", "FAANG Preparation roadmap", "Mock Interviews checklist", "Behavioral questions prep", "System Design patterns"]
+    },
+    {
+        type: "category",
+        title: "Saved Sessions",
+        icon: "fas fa-history",
+        isSessions: true,
+        children: []
     }
-};
+];
 
-// Preset code mapping (normalized keys)
+// Topic Presets & Templates
 const TOPIC_PRESETS = {
+    "c_variables": {
+        code: `int main() {\n    int age = 20;\n    float salary = 35000.5;\n    char grade = 'A';\n    return 0;\n}`,
+        category: "languages",
+        topic: "c"
+    },
     "c_pointers": {
         code: `// C Pointer Dereferencing\nint val = 42;\nint *ptr = &val;\n*ptr = 99;`,
         category: "languages",
         topic: "c"
     },
-    "c_variables": {
-        code: `// C Variables declaration\nint score = 100;\nfloat price = 19.99;\nchar grade = 'A';`,
+    "c_loops": {
+        code: `// C For Loop iterations\nfor (int i = 0; i < 4; i++) {\n    printf("%d", i);\n}`,
         category: "languages",
         topic: "c"
     },
@@ -335,7 +278,7 @@ const TOPIC_PRESETS = {
         topic: "select"
     },
     "css_box_model": {
-        code: `.box {\n  width: 100px;\n  padding: 10px;\n  border: 5px solid;\n  margin: 15px;\n}`,
+        code: `<!-- HTML Markup -->\n<div class="box">Pravio Layout</div>\n\n/* CSS styling declarations */\n.box {\n  width: 100px;\n  padding: 10px;\n  border: 5px solid #3b82f6;\n  margin: 15px;\n}`,
         category: "webdev",
         topic: "boxmodel"
     },
@@ -474,187 +417,209 @@ const VIZ_CATALOG = {
         topics: {
             boxmodel: {
                 steps: [
-                    { line: 2, vars: { content_width: "100px", prev_val: "none", type: "css_prop", scope: "layout" }, mem: [], explain: "Content layer dimensions are initialized to 100px wide.", action: { type: "box_model", layers: { content: "100px", padding: "0px", border: "0px", margin: "0px" } } },
-                    { line: 3, vars: { padding: "10px", prev_val: "0px", type: "css_prop", scope: "layout" }, mem: [], explain: "Padding adds 10px spacing inside the border, surrounding the content.", action: { type: "box_model", layers: { content: "100px", padding: "10px", border: "0px", margin: "0px" } } },
-                    { line: 4, vars: { border: "5px", prev_val: "0px", type: "css_prop", scope: "layout" }, mem: [], explain: "Border boundary adds 5px thickness, enclosing content and padding layers.", action: { type: "box_model", layers: { content: "100px", padding: "10px", border: "5px", margin: "0px" } } },
-                    { line: 5, vars: { margin: "15px", total_width: "150px", prev_val: "0px", type: "css_prop", scope: "layout" }, mem: [], explain: "Margin creates 15px outer space, pushing surrounding elements away. Total occupied width is 160px.", action: { type: "box_model", layers: { content: "100px", padding: "10px", border: "5px", margin: "15px" } } }
+                    { line: 3, vars: { content_width: "100px", prev_val: "none", type: "css_prop", scope: "layout" }, mem: [], explain: "Content layer dimensions are initialized to 100px wide.", action: { type: "box_model", layers: { content: "100px", padding: "0px", border: "0px", margin: "0px" } } },
+                    { line: 4, vars: { padding: "10px", prev_val: "0px", type: "css_prop", scope: "layout" }, mem: [], explain: "Padding adds 10px spacing inside the border, surrounding the content.", action: { type: "box_model", layers: { content: "100px", padding: "10px", border: "0px", margin: "0px" } } },
+                    { line: 5, vars: { border: "5px", prev_val: "0px", type: "css_prop", scope: "layout" }, mem: [], explain: "Border boundary adds 5px thickness, enclosing content and padding layers.", action: { type: "box_model", layers: { content: "100px", padding: "10px", border: "5px", margin: "0px" } } },
+                    { line: 6, vars: { margin: "15px", total_width: "150px", prev_val: "0px", type: "css_prop", scope: "layout" }, mem: [], explain: "Margin creates 15px outer space, pushing surrounding elements away. Total occupied width is 160px.", action: { type: "box_model", layers: { content: "100px", padding: "10px", border: "5px", margin: "15px" } } }
                 ]
             }
         }
     }
 };
 
-// Dashboard rendering
-function renderStudioDashboard() {
-    const grid = document.getElementById('viz-studios-grid');
-    if (!grid) return;
-
-    grid.innerHTML = '';
-    
-    Object.keys(STUDIOS_CATALOG).forEach(key => {
-        const studio = STUDIOS_CATALOG[key];
-        const card = document.createElement('div');
-        
-        // Dynamic stats calculation
-        const isBookmarked = bookmarks.includes(studio.title);
-        const estTime = studio.hours;
-        
-        // Progress calculator
-        const completedCount = completedTopics.filter(t => studio.topics.map(x => x.toLowerCase()).includes(t)).length;
-        const progressPct = studio.topics.length > 0 ? Math.round((completedCount / studio.topics.length) * 100) : 0;
-
-        card.className = 'studio-card';
-        card.setAttribute('data-studio', key);
-        card.style.background = 'var(--bg-card)';
-        card.style.border = '1px solid var(--border-color)';
-        card.style.borderRadius = '14px';
-        card.style.padding = '20px';
-        card.style.display = 'flex';
-        card.style.flexDirection = 'column';
-        card.style.justifyContent = 'space-between';
-        card.style.transition = 'all 0.3s ease';
-        card.style.boxShadow = 'var(--shadow-sm)';
-        card.style.position = 'relative';
-        card.style.overflow = 'hidden';
-
-        card.innerHTML = `
-            <div>
-                <!-- Studio Emoji & Bookmark -->
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <div style="font-size:2rem; width:50px; height:50px; background:rgba(59,130,246,0.06); border-radius:12px; display:flex; align-items:center; justify-content:center;">
-                        ${studio.emoji}
-                    </div>
-                    <button onclick="toggleStudioBookmark('${key}', event)" style="background:transparent; border:none; cursor:pointer; color:var(--text-muted); font-size:1.15rem; outline:none;">
-                        <i class="${isBookmarked ? 'fas fa-bookmark' : 'far fa-bookmark'}" style="${isBookmarked ? 'color:var(--primary-color);' : ''}"></i>
-                    </button>
-                </div>
-                
-                <!-- Title & Meta -->
-                <h3 style="margin: 0 0 6px 0; font-size: 1.15rem; font-weight: 700; color: var(--text-body);">${studio.title}</h3>
-                <div style="display:flex; gap:8px; align-items:center; margin-bottom:10px;">
-                    <span style="font-size:10.5px; padding:2px 8px; border-radius:10px; font-weight:700; background:rgba(59,130,246,0.1); color:var(--primary-color);">${studio.difficulty}</span>
-                    <span style="font-size:11px; color:var(--text-muted);"><i class="far fa-clock"></i> ${estTime}</span>
-                </div>
-                
-                <p style="margin:0 0 16px 0; font-size:12.5px; line-height:1.45; color:var(--text-muted); height:55px; overflow:hidden; text-overflow:ellipsis;">${studio.desc}</p>
-            </div>
-            
-            <div>
-                <!-- Progress bar -->
-                <div style="margin-bottom: 12px;">
-                    <div style="display:flex; justify-content:space-between; font-size:11.5px; margin-bottom:4px; font-weight:600; color:var(--text-body);">
-                        <span>Syllabus Progress</span>
-                        <span>${progressPct}%</span>
-                    </div>
-                    <div style="width:100%; height:6px; background:var(--border-color); border-radius:3px; overflow:hidden;">
-                        <div style="width:${progressPct}%; height:100%; background:linear-gradient(90deg, var(--primary-color) 0%, #3b82f6 100%); transition:width 0.3s ease;"></div>
-                    </div>
-                </div>
-                
-                <button onclick="enterStudioWorkspace('${key}')" class="btn btn-primary" style="width:100%; padding:10px; border-radius:8px; font-weight:700; font-size:12.5px; display:flex; justify-content:center; align-items:center; gap:6px;">
-                    Continue Learning <i class="fas fa-arrow-right" style="font-size:10px;"></i>
-                </button>
-            </div>
-        `;
-
-        grid.appendChild(card);
-    });
-}
-
-function filterStudioCards(query) {
-    const q = query.toLowerCase().trim();
-    const cards = document.querySelectorAll('.studio-card');
-    
-    cards.forEach(card => {
-        const studioKey = card.getAttribute('data-studio');
-        const studio = STUDIOS_CATALOG[studioKey];
-        if (studio.title.toLowerCase().includes(q) || studio.desc.toLowerCase().includes(q)) {
-            card.style.display = 'flex';
-        } else {
-            card.style.display = 'none';
-        }
-    });
-}
-
-// Workspace lifecycle triggers
-function enterStudioWorkspace(studioKey) {
-    const studio = STUDIOS_CATALOG[studioKey];
-    if (!studio) return;
-
-    activeStudio = studioKey;
-    
-    // Breadcrumbs labels updates
-    document.getElementById('breadcrumb-studio').innerText = studio.title;
-    document.getElementById('breadcrumb-topic').innerText = studio.topics[0];
-
-    // Transition panels visibility
-    document.getElementById('viz-dashboard-view').style.display = 'none';
-    document.getElementById('viz-workspace-view').style.display = 'flex';
-
-    // Populate Left curriculum trees specifically for this studio
-    buildStudioCurriculumTree(studioKey);
-
-    // Auto-select the first topic to start visualizing immediately
-    loadCurriculumTopic(studioKey, studioKey, studio.topics[0]);
-}
-
-function exitStudioToDashboard() {
-    activeStudio = null;
-    document.getElementById('viz-workspace-view').style.display = 'none';
-    document.getElementById('viz-dashboard-view').style.display = 'flex';
-    
-    // Playback safety resets
-    vizIsPlaying = false;
-    clearInterval(vizInterval);
-    updatePlayPauseButtonUI();
-
-    renderStudioDashboard();
-}
-
-function toggleStudioBookmark(studioKey, event) {
-    if (event) event.stopPropagation();
-    const studioName = STUDIOS_CATALOG[studioKey]?.title;
-    if (!studioName) return;
-
-    const idx = bookmarks.indexOf(studioName);
-    if (idx === -1) {
-        bookmarks.push(studioName);
-    } else {
-        bookmarks.splice(idx, 1);
-    }
-    saveVizSessions();
-    renderStudioDashboard();
-}
-
-function buildStudioCurriculumTree(studioKey) {
+// Curriculum Tree Builder
+function buildCurriculumTree() {
     const treeEl = document.getElementById('viz-curriculum-tree');
     if (!treeEl) return;
 
     treeEl.innerHTML = '';
-    const studio = STUDIOS_CATALOG[studioKey];
-    if (!studio) return;
 
-    // Direct items rendering (independent VS Code Project Explorer)
-    studio.topics.forEach(topic => {
-        const item = document.createElement('div');
-        item.className = 'tree-item';
-        item.innerText = topic;
-        item.style.padding = '6px 12px';
-        item.style.borderRadius = '4px';
-        item.style.cursor = 'pointer';
-        item.onclick = () => loadCurriculumTopic(studioKey, studioKey, topic);
-        treeEl.appendChild(item);
+    CURRICULUM_TREE.forEach(cat => {
+        const catFolder = document.createElement('div');
+        catFolder.className = 'curr-folder';
+
+        // Header
+        const header = document.createElement('div');
+        header.className = 'folder-header';
+        header.style.display = 'flex';
+        header.style.alignItems = 'center';
+        header.style.gap = '8px';
+        header.style.padding = '6px 8px';
+        header.style.borderRadius = '6px';
+        header.style.cursor = 'pointer';
+        header.style.fontWeight = '700';
+        header.style.color = 'var(--text-body)';
+        header.onclick = () => toggleFolderNode(header);
+
+        header.innerHTML = `
+            <i class="fas fa-chevron-right folder-chevron" style="font-size:10px; transition:transform 0.2s;"></i>
+            <i class="${cat.icon}" style="color:var(--primary-color);"></i>
+            <span>${cat.title}</span>
+        `;
+        catFolder.appendChild(header);
+
+        // Contents
+        const contents = document.createElement('div');
+        contents.className = 'folder-contents';
+        contents.style.paddingLeft = '14px';
+        contents.style.display = 'none';
+
+        if (cat.isSessions) {
+            if (vizSessions.length === 0) {
+                contents.innerHTML = `<div style="padding:6px 12px; font-size:12px; color:var(--text-muted); font-style:italic;">No saved sessions.</div>`;
+            } else {
+                vizSessions.forEach(sess => {
+                    const item = document.createElement('div');
+                    item.className = 'tree-item';
+                    item.style.display = 'flex';
+                    item.style.justifyContent = 'space-between';
+                    item.style.alignItems = 'center';
+                    item.innerHTML = `
+                        <span>${sess.name}</span>
+                        <i class="far fa-trash-alt" onclick="deleteVizSession('${sess.id}', event)" style="color:var(--text-muted); cursor:pointer;"></i>
+                    `;
+                    item.onclick = (e) => {
+                        if (e.target.tagName !== 'I') {
+                            selectVizSession(sess.id);
+                        }
+                    };
+                    contents.appendChild(item);
+                });
+            }
+        }
+        else {
+            cat.children.forEach(child => {
+                if (typeof child === 'string') {
+                    const item = document.createElement('div');
+                    item.className = 'tree-item';
+                    item.innerText = child;
+                    item.onclick = () => loadCurriculumTopic(cat.title.toLowerCase().replace(' ', '_'), 'general', child);
+                    contents.appendChild(item);
+                } else {
+                    // Nested languages
+                    const langFolder = document.createElement('div');
+                    langFolder.className = 'curr-folder';
+
+                    const langHeader = document.createElement('div');
+                    langHeader.className = 'folder-header';
+                    langHeader.style.display = 'flex';
+                    langHeader.style.alignItems = 'center';
+                    langHeader.style.gap = '6px';
+                    langHeader.style.padding = '4px 6px';
+                    langHeader.style.borderRadius = '6px';
+                    langHeader.style.cursor = 'pointer';
+                    langHeader.style.fontWeight = '600';
+                    langHeader.style.color = 'var(--text-body)';
+                    langHeader.onclick = () => toggleFolderNode(langHeader);
+
+                    langHeader.innerHTML = `
+                        <i class="fas fa-chevron-right folder-chevron" style="font-size:8px; transition:transform 0.2s;"></i>
+                        <span>${child.icon}</span>
+                    `;
+                    langFolder.appendChild(langHeader);
+
+                    const langContents = document.createElement('div');
+                    langContents.className = 'folder-contents';
+                    langContents.style.paddingLeft = '10px';
+                    langContents.style.display = 'none';
+
+                    child.children.forEach(topic => {
+                        const item = document.createElement('div');
+                        item.className = 'tree-item';
+                        item.innerText = topic;
+                        item.onclick = () => loadCurriculumTopic('languages', child.title.toLowerCase(), `${child.title} (${topic})`);
+                        langContents.appendChild(item);
+                    });
+
+                    langFolder.appendChild(langContents);
+                    contents.appendChild(langFolder);
+                }
+            });
+        }
+
+        catFolder.appendChild(contents);
+        treeEl.appendChild(catFolder);
     });
+}
+
+function toggleFolderNode(headerElement) {
+    const contents = headerElement.nextElementSibling;
+    const chevron = headerElement.querySelector('.folder-chevron');
+    if (contents) {
+        if (contents.style.display === 'none' || contents.style.display === '') {
+            contents.style.display = 'block';
+            if (chevron) {
+                chevron.style.transform = 'rotate(90deg)';
+            }
+        } else {
+            contents.style.display = 'none';
+            if (chevron) {
+                chevron.style.transform = 'rotate(0deg)';
+            }
+        }
+    }
+}
+
+// Map custom syllabus keys to preset codes
+function getCodeForTopic(category, lang, name) {
+    const key = (lang + "_" + name.replace(/ /g, '_')).toLowerCase();
+    const cleanName = name.toLowerCase().replace(/ /g, '_');
+    
+    if (TOPIC_PRESETS[key]) return TOPIC_PRESETS[key];
+    if (TOPIC_PRESETS[cleanName]) return TOPIC_PRESETS[cleanName];
+
+    // Generic code builder for complete directory coverage
+    let generatedCode = `// Pravio Trace: ${name}\n`;
+    let genericTopic = "general";
+    
+    if (category === "languages") {
+        if (lang === "python") {
+            generatedCode = `# Python Code: ${name}\ndef run_demo():\n    print("Executing ${name}")\nrun_demo()`;
+            genericTopic = "python";
+        } else if (lang === "java") {
+            generatedCode = `// Java Code: ${name}\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println("${name}");\n    }\n}`;
+            genericTopic = "java";
+        } else if (lang === "c") {
+            generatedCode = `// C Code: ${name}\n#include <stdio.h>\nint main() {\n    printf("${name}\\n");\n    return 0;\n}`;
+            genericTopic = "c";
+        } else if (lang === "cpp") {
+            generatedCode = `// C++ Code: ${name}\n#include <iostream>\nint main() {\n    std::cout << "${name}" << std::endl;\n    return 0;\n}`;
+            genericTopic = "cpp";
+        } else {
+            generatedCode = `// JavaScript Code: ${name}\nconst label = "${name}";\nconsole.log(label);`;
+            genericTopic = "javascript";
+        }
+    } else if (category === "patterns") {
+        generatedCode = `// Pattern Code: ${name}\nfor (int i = 0; i < 4; i++) {\n    for (int j = 0; j <= i; j++) {\n        print("*");\n    }\n    println();\n}`;
+        genericTopic = "bubble_sort";
+    } else {
+        generatedCode = `// Workspace Code: ${name}\nint val = 100;\nrun(${name});`;
+        genericTopic = "array";
+    }
+
+    return {
+        code: generatedCode,
+        category: category,
+        topic: genericTopic
+    };
 }
 
 function loadCurriculumTopic(category, lang, displayName) {
     const info = getCodeForTopic(category, lang, displayName);
     
-    // Update breadcrumb topic labels
-    const breadcrumbTopic = document.getElementById('breadcrumb-topic');
-    if (breadcrumbTopic) breadcrumbTopic.innerText = displayName;
+    // Update breadcrumbs labels
+    const breadStudio = document.getElementById('breadcrumb-studio');
+    const breadTopic = document.getElementById('breadcrumb-topic');
+    if (breadStudio) breadStudio.innerText = category.toUpperCase();
+    if (breadTopic) breadTopic.innerText = displayName;
 
-    // Create session payloads
+    // Reset console outputs
+    const consoleLog = document.getElementById('viz-console-log');
+    if (consoleLog) {
+        consoleLog.innerHTML = `[Console System Initialized]\nLoaded topic: ${displayName}\nReady for execution...`;
+    }
+
+    // Create session payload
     const newSess = {
         id: "viz_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
         name: displayName,
@@ -670,8 +635,8 @@ function loadCurriculumTopic(category, lang, displayName) {
     
     saveVizSessions();
     loadActiveVizSession();
-
-    // Focus selected item
+    
+    // Active sidebar tree styling
     const items = document.querySelectorAll('.tree-item');
     items.forEach(i => {
         i.style.background = 'transparent';
@@ -680,64 +645,24 @@ function loadCurriculumTopic(category, lang, displayName) {
         i.style.borderLeftColor = 'transparent';
     });
     
-    const clicked = Array.from(items).find(i => i.innerText.trim() === displayName);
+    const clicked = Array.from(items).find(i => i.innerText.trim() === displayName || i.innerText.includes(displayName));
     if (clicked) {
         clicked.style.background = 'rgba(59, 130, 246, 0.08)';
         clicked.style.color = 'var(--primary-color)';
-        clicked.style.fontWeight = '700';
+        clicked.style.fontWeight = 'bold';
         clicked.style.borderLeftColor = 'var(--primary-color)';
     }
-}
 
-// Map custom syllabus keys to preset code vectors
-function getCodeForTopic(category, lang, name) {
-    const key = (lang + "_" + name.replace(/ /g, '_')).toLowerCase();
-    const cleanName = name.toLowerCase().replace(/ /g, '_');
-    
-    if (TOPIC_PRESETS[key]) return TOPIC_PRESETS[key];
-    if (TOPIC_PRESETS[cleanName]) return TOPIC_PRESETS[cleanName];
-
-    // Generic fallback code compiler generator for full catalog coverage
-    let generatedCode = `// Pravio Trace: ${name}\n`;
-    let genericTopic = "general";
-    
-    if (lang === "python") {
-        generatedCode = `# Python Code: ${name}\ndef run_demo():\n    print("Executing ${name}")\nrun_demo()`;
-        genericTopic = "python";
-    } else if (lang === "java") {
-        generatedCode = `// Java Code: ${name}\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println("${name}");\n    }\n}`;
-        genericTopic = "java";
-    } else if (lang === "c") {
-        generatedCode = `// C Code: ${name}\n#include <stdio.h>\nint main() {\n    printf("${name}\\n");\n    return 0;\n}`;
-        genericTopic = "c";
-    } else if (lang === "cpp") {
-        generatedCode = `// C++ Code: ${name}\n#include <iostream>\nint main() {\n    std::cout << "${name}" << std::endl;\n    return 0;\n}`;
-        genericTopic = "cpp";
-    } else if (lang === "javascript" || lang === "typescript") {
-        generatedCode = `// JS Code: ${name}\nconst label = "${name}";\nconsole.log(label);`;
-        genericTopic = "javascript";
-    } else if (lang === "sql") {
-        generatedCode = `SELECT * FROM ${name.replace(/ /g, '_')};\n-- Performing query analysis`;
-        genericTopic = "select";
-    } else if (lang === "css" || lang === "html") {
-        generatedCode = `/* CSS Styles: ${name} */\n.container {\n  display: flex;\n  border: 1px solid;\n}`;
-        genericTopic = "boxmodel";
-    } else if (category === "patterns") {
-        generatedCode = `// Pattern Code: ${name}\nfor (int i = 0; i < 4; i++) {\n    for (int j = 0; j <= i; j++) {\n        print("*");\n    }\n    println();\n}`;
-        genericTopic = "bubble_sort";
-    } else if (category === "structures") {
-        generatedCode = `// DS Node operation: ${name}\nNode* target = search(${name});`;
-        genericTopic = "array";
-    } else {
-        generatedCode = `// Workspace Code: ${name}\nint val = 100;\nrun(${name});`;
-        genericTopic = "array";
+    // Toggle live webpage iframe layout split if HTML/CSS
+    const previewContainer = document.getElementById('viz-html-preview-container');
+    if (previewContainer) {
+        if (displayName.toLowerCase().includes('css') || displayName.toLowerCase().includes('html') || displayName.toLowerCase().includes('box model')) {
+            previewContainer.style.display = 'flex';
+            updateHTMLPreview(info.code);
+        } else {
+            previewContainer.style.display = 'none';
+        }
     }
-
-    return {
-        code: generatedCode,
-        category: category,
-        topic: genericTopic
-    };
 }
 
 function searchVizCurriculum(query) {
@@ -748,33 +673,135 @@ function searchVizCurriculum(query) {
         const text = item.innerText.toLowerCase();
         if (text.includes(q)) {
             item.style.display = 'block';
+            let parent = item.parentElement;
+            while (parent && parent.id !== 'viz-curriculum-tree') {
+                if (parent.classList.contains('folder-contents')) {
+                    parent.style.display = 'block';
+                    const folderHeader = parent.previousElementSibling;
+                    if (folderHeader) {
+                        const chevron = folderHeader.querySelector('.folder-chevron');
+                        if (chevron) {
+                            chevron.style.transform = 'rotate(90deg)';
+                        }
+                    }
+                }
+                parent = parent.parentElement;
+            }
         } else {
             item.style.display = 'none';
         }
     });
 }
 
-// ==========================================
-// SESSION LIFE ACTIONS
-// ==========================================
-function initVizSessions() {
-    try {
-        bookmarks = JSON.parse(localStorage.getItem('pravio_visualizer_bookmarks') || '[]');
-        completedTopics = JSON.parse(localStorage.getItem('pravio_visualizer_completed') || '[]');
-    } catch(e) {
-        bookmarks = [];
-        completedTopics = [];
+// Live webpage split screen render updating
+function updateHTMLPreview(code) {
+    const iframe = document.getElementById('viz-html-preview-iframe');
+    if (!iframe) return;
+
+    let doc = iframe.contentDocument || iframe.contentWindow.document;
+    doc.open();
+    
+    // Inject structural container wraps
+    if (code.includes('<div') || code.includes('<p>')) {
+        doc.write(code);
+    } else {
+        doc.write(`
+            <html>
+            <head>
+                <style>
+                    body { font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f9fafb; }
+                    ${code}
+                </style>
+            </head>
+            <body>
+                <div class="box">Pravio Layout Preview</div>
+            </body>
+            </html>
+        `);
     }
-
-    if (!Array.isArray(bookmarks)) bookmarks = [];
-    if (!Array.isArray(completedTopics)) completedTopics = [];
-
-    renderStudioDashboard();
+    doc.close();
 }
 
+// User clicks "Run Code" inside code editor
+function runCustomCode() {
+    if (!activeSession) return;
+    const editor = document.getElementById('viz-code-editor');
+    if (!editor) return;
+
+    activeSession.code = editor.value;
+    activeSession.currentStep = 0;
+    
+    // Update live rendering if HTML/CSS
+    if (activeSession.name.toLowerCase().includes('css') || activeSession.name.toLowerCase().includes('html') || activeSession.name.toLowerCase().includes('box')) {
+        updateHTMLPreview(editor.value);
+    }
+
+    saveVizSessions();
+    
+    // Append compile status console logs
+    const consoleLog = document.getElementById('viz-console-log');
+    if (consoleLog) {
+        consoleLog.innerHTML += `\n[Pravio GCC] Code updated. Parsing syntax...`;
+        consoleLog.innerHTML += `\n[Pravio GCC] Success. Regenerating step frames.`;
+        consoleLog.scrollTop = consoleLog.scrollHeight;
+    }
+
+    renderCurrentStep();
+}
+
+// Bookmark management
+function toggleVizBookmark() {
+    if (!activeSession) return;
+    const topic = activeSession.name;
+    const idx = bookmarks.indexOf(topic);
+    
+    if (idx === -1) {
+        bookmarks.push(topic);
+        alert(`🔖 Bookmarked topic: ${topic}`);
+    } else {
+        bookmarks.splice(idx, 1);
+        alert(`Unbookmarked topic: ${topic}`);
+    }
+    
+    saveVizSessions();
+    updateBookmarkIconUI();
+}
+
+function updateBookmarkIconUI() {
+    const btn = document.getElementById('viz-bookmark-btn');
+    if (!btn || !activeSession) return;
+    
+    const isBookmarked = bookmarks.includes(activeSession.name);
+    btn.innerHTML = isBookmarked 
+        ? `<i class="fas fa-bookmark" style="color:var(--primary-color);"></i>` 
+        : `<i class="far fa-bookmark"></i>`;
+}
+
+// Save sessions
 function saveVizSessions() {
     localStorage.setItem('pravio_visualizer_bookmarks', JSON.stringify(bookmarks));
     localStorage.setItem('pravio_visualizer_completed', JSON.stringify(completedTopics));
+}
+
+function selectVizSession(id) {
+    const found = vizSessions.find(s => s.id === id);
+    if (found) {
+        activeSession = found;
+        loadActiveVizSession();
+    }
+}
+
+function deleteVizSession(id, event) {
+    if (event) event.stopPropagation();
+    vizSessions = vizSessions.filter(s => s.id !== id);
+    if (activeSession && activeSession.id === id) {
+        activeSession = vizSessions[0] || null;
+    }
+    saveVizSessions();
+    buildCurriculumTree();
+    if (activeSession) {
+        loadActiveVizSession();
+    }
 }
 
 function loadActiveVizSession() {
@@ -783,8 +810,6 @@ function loadActiveVizSession() {
     vizIsPlaying = false;
     clearInterval(vizInterval);
     updatePlayPauseButtonUI();
-
-    document.getElementById('viz-active-topic-name').innerText = activeSession.name;
 
     const editor = document.getElementById('viz-code-editor');
     if (editor) {
@@ -809,6 +834,14 @@ function syncEditorLineNumbers() {
         div.setAttribute('data-line', idx + 1);
         gutter.appendChild(div);
     });
+}
+
+// Toggle Tutor Settings panel
+function toggleAITutorSettings() {
+    const dropdown = document.getElementById('viz-ai-settings-dropdown');
+    if (dropdown) {
+        dropdown.style.display = dropdown.style.display === 'none' ? 'flex' : 'none';
+    }
 }
 
 // ==========================================
@@ -860,10 +893,10 @@ function renderCurrentStep() {
             // Blue for current executing line
             div.style.background = '#3b82f6';
             div.style.color = '#ffffff';
-            div.style.boxShadow = '0 0 8px rgba(59, 130, 246, 0.4)';
+            div.style.boxShadow = '0 0 6px rgba(59,130,246,0.3)';
         } else if (line < step.line) {
             // Gray for executed lines
-            div.style.background = '#e5e7eb';
+            div.style.background = '#f3f4f6';
             div.style.color = '#9ca3af';
         } else {
             div.style.background = 'transparent';
@@ -871,25 +904,10 @@ function renderCurrentStep() {
         }
     });
 
-    const bestC = document.getElementById('viz-best-case');
-    const avgC = document.getElementById('viz-avg-case');
-    const worstC = document.getElementById('viz-worst-case');
-    const spaceC = document.getElementById('viz-space-case');
-    const stableC = document.getElementById('viz-stable-case');
-    const inplaceC = document.getElementById('viz-inplace-case');
-    
-    const defaults = VIZ_COMPLEXITIES[activeSession.topic] || { best: "O(1)", avg: "O(n)", worst: "O(n)", space: "O(1)", stable: "Yes", inplace: "Yes" };
-    
-    if (bestC) bestC.innerText = defaults.best;
-    if (avgC) avgC.innerText = defaults.avg;
-    if (worstC) worstC.innerText = defaults.worst;
-    if (spaceC) spaceC.innerText = defaults.space;
-    if (stableC) stableC.innerText = defaults.stable;
-    if (inplaceC) inplaceC.innerText = defaults.inplace;
-
-    // Timeline Slider progress update
+    // Update timelines slider
     const progress = document.getElementById('viz-step-slider');
     const label = document.getElementById('viz-step-label-nav');
+    const sliderLabel = document.getElementById('viz-step-label-slider');
     const bar = document.getElementById('viz-step-progressbar');
     
     if (progress) {
@@ -899,55 +917,94 @@ function renderCurrentStep() {
     if (label) {
         label.innerText = `Step: ${stepIdx + 1} / ${totalSteps}`;
     }
+    if (sliderLabel) {
+        sliderLabel.innerText = `${stepIdx + 1} / ${totalSteps}`;
+    }
     if (bar) {
         const pct = totalSteps > 1 ? (stepIdx / (totalSteps - 1)) * 100 : 100;
         bar.style.width = `${pct}%`;
     }
 
-    // AI Tutor explanations
+    // Complexity mapping
+    const bestC = document.getElementById('viz-best-case');
+    const avgC = document.getElementById('viz-avg-case');
+    const worstC = document.getElementById('viz-worst-case');
+    const spaceC = document.getElementById('viz-space-case');
+    
+    const defaults = VIZ_COMPLEXITIES[activeSession.topic] || { best: "O(1)", avg: "O(n)", worst: "O(n)", space: "O(1)" };
+    if (bestC) bestC.innerText = defaults.best;
+    if (avgC) avgC.innerText = defaults.avg;
+    if (worstC) worstC.innerText = defaults.worst;
+    if (spaceC) spaceC.innerText = defaults.space;
+
+    // AI Tutor Guide explanation styles
     const explanation = document.getElementById('viz-explanation-panel');
     if (explanation) {
-        const isAdvanced = aiTutorLevel === "advanced";
-        let explanationText = step.explain;
-        
+        let textExplanation = step.explain;
         let analogyText = "Analogy: Sequential compiles resemble checking checklist items off step-by-step.";
-        let optTip = "Optimization: Avoid redundant lookups in loops.";
+        let mistakeText = "Common Mistake: Assigning incorrect data types to pointer address scopes.";
         
         if (learningMode === "beginner") {
-            analogyText = "Analogy: Imagine a recipe being cooked. active variable changes are local ingredients on the counter.";
+            analogyText = "Analogy: Imagine baking cookies step-by-step. The variables are ingredients you set down on the counter.";
         }
 
         explanation.innerHTML = `
-            <div style="font-weight:600; color:var(--primary-color); margin-bottom:8px; display:flex; align-items:center; gap:6px;">
-                <i class="fas fa-graduation-cap"></i> AI Tutor (${isAdvanced ? 'Advanced' : 'Beginner'}):
-            </div>
-            <div style="font-size:0.9rem; line-height:1.5; color:var(--text-body); margin-bottom:8px;">${explanationText}</div>
-            <div style="font-size:0.82rem; color:var(--text-muted); font-style:italic; margin-bottom:12px;">💡 ${analogyText}</div>
+            <div style="font-size:0.9rem; line-height:1.5; color:var(--text-body); margin-bottom:8px;">${textExplanation}</div>
+            <div style="font-size:0.8rem; color:#f59e0b; font-style:italic; margin-bottom:10px;">💡 ${analogyText}</div>
             
-            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px; border-top:1px dashed var(--border-color); padding-top:8px;">Variables Inspect</div>
-            <table style="width: 100%; border-collapse: collapse; font-size: 11.5px; margin-bottom: 12px;">
-                ${Object.keys(step.vars).map(vKey => {
-                    if (vKey === "prev_val" || vKey === "type" || vKey === "scope") return "";
-                    // Orange variables color mapping
-                    return `
-                        <tr>
-                            <td style="padding:4px 0; color:#f97316; font-family:monospace; font-weight:600;">${vKey}</td>
-                            <td style="padding:4px 0 4px 10px; color:var(--text-body); font-family:monospace; text-align:right;">${step.vars[vKey]}</td>
-                        </tr>
-                    `;
-                }).join('')}
-            </table>
+            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; border-top:1px dashed var(--border-color); padding-top:8px;">Common Mistake</div>
+            <div style="font-size:0.8rem; color:#ef4444; margin-bottom:10px;">⚠️ ${mistakeText}</div>
             
-            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px; border-top:1px dashed var(--border-color); padding-top:8px;">Memory Stack</div>
-            <ul style="list-style:none; padding:0; margin:0; font-family:monospace; font-size:11px;">
-                ${step.mem.map(m => `<li style="padding:4px 6px; background:rgba(20,184,166,0.05); border-left:3px solid #14b8a6; margin-bottom:3px; color:var(--text-body);">${m}</li>`).join('')}
-            </ul>
+            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px; border-top:1px dashed var(--border-color); padding-top:8px;">Interview Insights</div>
+            <div style="font-size:0.8rem; color:var(--text-body);">Always keep space complexity down to O(1) by reusing local variable stack assignments.</div>
         `;
+    }
+
+    // Dynamic Variables Inspect mapping
+    const variablesGrid = document.getElementById('viz-variables-inspect');
+    if (variablesGrid) {
+        variablesGrid.innerHTML = '';
+        Object.keys(step.vars).forEach(vKey => {
+            if (vKey === "prev_val" || vKey === "type" || vKey === "scope") return;
+            
+            const row = document.createElement('div');
+            row.style.display = 'flex';
+            row.style.justifyContent = 'space-between';
+            row.style.fontSize = '11.5px';
+            row.style.padding = '4px 0';
+            row.style.borderBottom = '1px solid rgba(0,0,0,0.03)';
+            
+            // Orange text variable
+            row.innerHTML = `
+                <span style="font-family:monospace; color:#f97316; font-weight:600;">${vKey}</span>
+                <span style="font-family:monospace; color:var(--text-body);">${step.vars[vKey]}</span>
+            `;
+            variablesGrid.appendChild(row);
+        });
+    }
+
+    // Dynamic Memory Stack mapping
+    const memoryStack = document.getElementById('viz-memory-stack');
+    if (memoryStack) {
+        memoryStack.innerHTML = '';
+        step.mem.forEach(m => {
+            const block = document.createElement('div');
+            block.style.padding = '4px 8px';
+            block.style.fontSize = '11px';
+            block.style.fontFamily = 'monospace';
+            // Teal memory blocks
+            block.style.background = 'rgba(20,184,166,0.05)';
+            block.style.borderLeft = '3px solid #14b8a6';
+            block.style.color = 'var(--text-body)';
+            block.style.marginBottom = '3px';
+            block.innerText = m;
+            memoryStack.appendChild(block);
+        });
     }
 
     renderInteractiveCanvas(step.action, activeSession.category, activeSession.topic);
 
-    // Save progress updates
+    // Save completed topics list
     const normalizedName = activeSession.name.toLowerCase();
     if (stepIdx === totalSteps - 1 && !completedTopics.includes(normalizedName)) {
         completedTopics.push(normalizedName);
@@ -960,7 +1017,6 @@ function renderInteractiveCanvas(action, category, topic) {
     if (!canvas) return;
 
     canvas.innerHTML = '';
-    
     canvas.style.display = 'flex';
     canvas.style.alignItems = 'center';
     canvas.style.justifyContent = 'center';
@@ -973,21 +1029,21 @@ function renderInteractiveCanvas(action, category, topic) {
         
         const wrapper = document.createElement('div');
         wrapper.style.display = 'flex';
-        wrapper.style.gap = '12px';
+        wrapper.style.gap = '10px';
         wrapper.style.flexWrap = 'wrap';
         wrapper.style.justifyContent = 'center';
 
         arr.forEach((val, idx) => {
             const block = document.createElement('div');
-            block.style.width = '55px';
-            block.style.height = '55px';
+            block.style.width = '50px';
+            block.style.height = '50px';
             block.style.display = 'flex';
             block.style.flexDirection = 'column';
             block.style.alignItems = 'center';
             block.style.justifyContent = 'center';
-            block.style.borderRadius = '10px';
+            block.style.borderRadius = '8px';
             block.style.border = '1px solid var(--border-color)';
-            block.style.fontSize = '1.05rem';
+            block.style.fontSize = '1rem';
             block.style.fontWeight = '700';
             block.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
             block.style.boxShadow = '0 4px 10px rgba(0,0,0,0.03)';
@@ -1013,7 +1069,7 @@ function renderInteractiveCanvas(action, category, topic) {
             }
 
             block.innerHTML = `
-                <div style="font-size:0.75rem; color:${isActive ? 'rgba(255,255,255,0.7)' : 'var(--text-muted)'}; margin-bottom:2px;">[${idx}]</div>
+                <div style="font-size:0.7rem; color:${isActive ? 'rgba(255,255,255,0.7)' : 'var(--text-muted)'}; margin-bottom:2px;">[${idx}]</div>
                 <div>${val}</div>
             `;
             wrapper.appendChild(block);
@@ -1024,7 +1080,7 @@ function renderInteractiveCanvas(action, category, topic) {
         const wrapper = document.createElement('div');
         wrapper.style.display = 'flex';
         wrapper.style.alignItems = 'center';
-        wrapper.style.gap = '14px';
+        wrapper.style.gap = '12px';
         wrapper.style.flexWrap = 'wrap';
 
         action.list.forEach((node, idx) => {
@@ -1037,22 +1093,22 @@ function renderInteractiveCanvas(action, category, topic) {
             // Cyan pointer
             block.style.background = action.active.includes(node.addr) ? '#06b6d4' : 'rgba(255,255,255,0.04)';
             block.style.boxShadow = '0 4px 10px rgba(0,0,0,0.03)';
-            block.style.padding = '8px 12px';
+            block.style.padding = '6px 10px';
             block.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
             block.style.color = action.active.includes(node.addr) ? '#ffffff' : 'var(--text-body)';
 
             block.innerHTML = `
-                <div style="font-family:monospace; text-align:left;">
-                    <div style="font-size:0.68rem; color:${action.active.includes(node.addr) ? 'rgba(255,255,255,0.7)' : 'var(--text-muted)'};">${node.addr}</div>
-                    <div style="font-size:0.95rem; font-weight:700; margin:2px 0;">val: ${node.val}</div>
-                    <div style="font-size:0.68rem; color:${action.active.includes(node.addr) ? 'rgba(255,255,255,0.7)' : 'var(--text-muted)'};">next: ${node.next}</div>
+                <div style="font-family:monospace; text-align:left; font-size:11px;">
+                    <div style="font-size:0.65rem; color:${action.active.includes(node.addr) ? 'rgba(255,255,255,0.7)' : 'var(--text-muted)'};">${node.addr}</div>
+                    <div style="font-size:0.85rem; font-weight:700; margin:1px 0;">val: ${node.val}</div>
+                    <div style="font-size:0.65rem; color:${action.active.includes(node.addr) ? 'rgba(255,255,255,0.7)' : 'var(--text-muted)'};">next: ${node.next}</div>
                 </div>
             `;
             wrapper.appendChild(block);
 
             if (idx < action.list.length - 1) {
                 const arrow = document.createElement('div');
-                arrow.innerHTML = `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#06b6d4" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+                arrow.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#06b6d4" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
                 wrapper.appendChild(arrow);
             }
         });
@@ -1061,14 +1117,14 @@ function renderInteractiveCanvas(action, category, topic) {
     else if (action.type === "sql_table" || action.type === "sql_result") {
         const wrapper = document.createElement('div');
         wrapper.style.width = '100%';
-        wrapper.style.maxWidth = '500px';
+        wrapper.style.maxWidth = '450px';
         wrapper.style.background = 'var(--bg-container)';
         wrapper.style.border = '1px solid var(--border-color)';
-        wrapper.style.borderRadius = '10px';
+        wrapper.style.borderRadius = '8px';
         wrapper.style.overflow = 'hidden';
 
         let headers = Object.keys(action.rows[0] || {}).filter(k => k !== "filter");
-        let headerHtml = headers.map(h => `<th style="padding:10px 14px; text-align:left; background:var(--bg-secondary); border-bottom:1px solid var(--border-color); font-size:0.75rem; text-transform:uppercase; font-weight:700; color:var(--text-muted);">${h}</th>`).join('');
+        let headerHtml = headers.map(h => `<th style="padding:8px 12px; text-align:left; background:var(--bg-secondary); border-bottom:1px solid var(--border-color); font-size:0.7rem; text-transform:uppercase; font-weight:700; color:var(--text-muted);">${h}</th>`).join('');
         
         let rowsHtml = action.rows.map((r, idx) => {
             const isActive = action.active && action.active.includes(idx);
@@ -1080,7 +1136,7 @@ function renderInteractiveCanvas(action, category, topic) {
             } else if (r.filter === "fail") {
                 rowBg = 'rgba(239, 68, 68, 0.05)';
             }
-            let cells = headers.map(h => `<td style="padding:10px 14px; border-bottom:1px solid var(--border-color); font-size:0.85rem; color:${isActive ? 'var(--color-executing)' : 'var(--text-body)'}; font-family:monospace;">${r[h]}</td>`).join('');
+            let cells = headers.map(h => `<td style="padding:8px 12px; border-bottom:1px solid var(--border-color); font-size:0.8rem; color:${isActive ? 'var(--color-executing)' : 'var(--text-body)'}; font-family:monospace;">${r[h]}</td>`).join('');
             return `<tr style="background:${rowBg};">${cells}</tr>`;
         }).join('');
 
@@ -1100,44 +1156,44 @@ function renderInteractiveCanvas(action, category, topic) {
         wrapper.style.alignItems = 'center';
         wrapper.style.justifyContent = 'center';
         wrapper.style.width = '100%';
-        wrapper.style.maxWidth = '300px';
+        wrapper.style.maxWidth = '250px';
 
         const marginBox = document.createElement('div');
         marginBox.style.width = '100%';
-        marginBox.style.padding = layers.margin !== "0px" ? "14px" : "4px";
+        marginBox.style.padding = layers.margin !== "0px" ? "12px" : "4px";
         marginBox.style.border = '1px dashed var(--border-color)';
-        marginBox.style.borderRadius = '10px';
+        marginBox.style.borderRadius = '8px';
         marginBox.style.background = 'rgba(249, 115, 22, 0.02)';
         marginBox.style.textAlign = 'center';
-        marginBox.innerHTML = `<span style="font-size:0.65rem; color:var(--text-muted); position:absolute; top:2px; left:8px;">margin: ${layers.margin}</span>`;
+        marginBox.innerHTML = `<span style="font-size:0.6rem; color:var(--text-muted); position:absolute; top:1px; left:6px;">margin: ${layers.margin}</span>`;
 
         const borderBox = document.createElement('div');
-        borderBox.style.padding = layers.border !== "0px" ? "6px" : "2px";
+        borderBox.style.padding = layers.border !== "0px" ? "4px" : "2px";
         borderBox.style.background = 'var(--primary-color)';
-        borderBox.style.borderRadius = '8px';
+        borderBox.style.borderRadius = '6px';
         borderBox.style.position = 'relative';
-        borderBox.innerHTML = `<span style="font-size:0.65rem; color:#ffffff; position:absolute; top:1px; left:6px;">border: ${layers.border}</span>`;
+        borderBox.innerHTML = `<span style="font-size:0.6rem; color:#ffffff; position:absolute; top:0; left:4px;">border: ${layers.border}</span>`;
 
         const paddingBox = document.createElement('div');
-        paddingBox.style.padding = layers.padding !== "0px" ? "12px" : "4px";
+        paddingBox.style.padding = layers.padding !== "0px" ? "10px" : "2px";
         paddingBox.style.background = 'rgba(16, 185, 129, 0.1)';
-        paddingBox.style.borderRadius = '6px';
+        paddingBox.style.borderRadius = '4px';
         paddingBox.style.border = '1px solid rgba(16, 185, 129, 0.2)';
         paddingBox.style.position = 'relative';
-        paddingBox.innerHTML = `<span style="font-size:0.65rem; color:#10b981; position:absolute; top:1px; left:6px;">padding: ${layers.padding}</span>`;
+        paddingBox.innerHTML = `<span style="font-size:0.6rem; color:#10b981; position:absolute; top:0; left:4px;">padding: ${layers.padding}</span>`;
 
         const contentBox = document.createElement('div');
         contentBox.style.width = layers.content;
-        contentBox.style.height = '40px';
+        contentBox.style.height = '35px';
         contentBox.style.background = 'var(--bg-container)';
         contentBox.style.border = '1px solid var(--border-color)';
         contentBox.style.borderRadius = '4px';
         contentBox.style.display = 'flex';
         contentBox.style.alignItems = 'center';
         contentBox.style.justifyContent = 'center';
-        contentBox.style.fontSize = '0.8rem';
+        contentBox.style.fontSize = '0.75rem';
         contentBox.style.fontWeight = '700';
-        contentBox.innerText = `Content: ${layers.content}`;
+        contentBox.innerText = `content: ${layers.content}`;
 
         paddingBox.appendChild(contentBox);
         borderBox.appendChild(paddingBox);
@@ -1147,7 +1203,7 @@ function renderInteractiveCanvas(action, category, topic) {
     }
     else {
         const tr = document.createElement('div');
-        tr.style.fontSize = '1.4rem';
+        tr.style.fontSize = '1.3rem';
         tr.style.color = 'var(--text-body)';
         tr.innerText = `Visualizing operation trace...`;
         canvas.appendChild(tr);
@@ -1159,8 +1215,8 @@ function updatePlayPauseButtonUI() {
     const playBtn = document.getElementById('viz-play-btn');
     if (!playBtn) return;
     playBtn.innerHTML = vizIsPlaying 
-        ? `<i class="fas fa-pause"></i> Pause` 
-        : `<i class="fas fa-play"></i> Run`;
+        ? `<i class="fas fa-pause"></i>` 
+        : `<i class="fas fa-play"></i>`;
 }
 
 function toggleVizPlayback() {
@@ -1268,7 +1324,9 @@ function restartViz() {
 function setVizSpeed(val) {
     vizSpeed = parseInt(val, 10);
     const display = document.getElementById('viz-speed-display');
+    const displayLbl = document.getElementById('viz-speed-display-lbl');
     if (display) display.innerText = `${vizSpeed}ms`;
+    if (displayLbl) displayLbl.innerText = `${vizSpeed}ms`;
 
     if (vizIsPlaying) {
         clearInterval(vizInterval);
@@ -1345,81 +1403,12 @@ function setAITutorLevel(level) {
     renderCurrentStep();
 }
 
-// Bookmarks toggle
-function toggleVizBookmark() {
-    if (!activeSession) return;
-    const topic = activeSession.name;
-    const idx = bookmarks.indexOf(topic);
-    
-    if (idx === -1) {
-        bookmarks.push(topic);
-    } else {
-        bookmarks.splice(idx, 1);
-    }
-    
-    saveVizSessions();
-    updateBookmarkIconUI();
-}
-
-function updateBookmarkIconUI() {
-    const btn = document.getElementById('viz-bookmark-btn');
-    if (!btn || !activeSession) return;
-    
-    const isBookmarked = bookmarks.includes(activeSession.name);
-    btn.innerHTML = isBookmarked 
-        ? `<i class="fas fa-bookmark" style="color:var(--primary-color);"></i>` 
-        : `<i class="far fa-bookmark"></i>`;
-}
-
-// Export trace logs and shareable state parameters
-function exportVizReport(type) {
-    if (!activeSession) return;
-    
-    const reportData = {
-        name: activeSession.name,
-        category: activeSession.category,
-        topic: activeSession.topic,
-        code: activeSession.code,
-        currentStep: activeSession.currentStep,
-        timestamp: new Date().toISOString()
-    };
-
-    if (type === 'markdown') {
-        const markdown = `# Pravio Learning Studio Report: ${reportData.name}\n\n* **Topic**: ${reportData.topic}\n* **Timestamp**: ${reportData.timestamp}\n\n## Code\n\`\`\`\n${reportData.code}\n\`\`\`\n\n*Report exported natively from Student Hub.*`;
-        
-        const blob = new Blob([markdown], { type: 'text/markdown' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `pravio_studio_report_${activeSession.topic}.md`;
-        a.click();
-    }
-}
-
-function shareVizSessionState() {
-    if (!activeSession) return;
-
-    const payload = {
-        name: activeSession.name,
-        category: activeSession.category,
-        topic: activeSession.topic,
-        code: activeSession.code,
-        step: activeSession.currentStep
-    };
-
-    const encoded = btoa(JSON.stringify(payload));
-    const shareUrl = `${window.location.origin}${window.location.pathname}#visualizer?state=${encoded}`;
-    
-    navigator.clipboard.writeText(shareUrl).then(() => {
-        alert("🔗 Shareable studio link copied to clipboard! Open it in any browser tab to restore this exact visualizer state.");
-    });
-}
-
 // Auto dynamic steps generator fallback
 function generateDynamicSteps(category, topic, code) {
     const steps = [];
     const lines = code.split('\n');
 
-    let currentArray = [10, 20, 30, 40, 50];
+    let currentArray = [12, 24, 8, 19, 30];
     let currentList = [
         { val: 10, addr: "0x1000", next: "0x2000" },
         { val: 20, addr: "0x2000", next: "0x3000" },
@@ -1477,7 +1466,7 @@ function generateDynamicSteps(category, topic, code) {
             step.explain = `SQL executor parses queries, filters row items by WHERE filters, and projects SELECT columns.`;
             step.action = { type: "sql_table", rows: currentSQLRows, active: [idx % 3] };
         }
-        else if (category === "webdev" || category === "css") {
+        else if (category === "webdev" || category === "css" || category === "html") {
             step.vars.type = "dom_node";
             step.explain = `Browser layouts flex direction alignments, adjusts grid spacing gaps, or triggers async events.`;
             step.action = { type: "box_model", layers: { content: "120px", padding: `${idx * 4}px`, border: "2px", margin: "10px" } };
@@ -1501,13 +1490,11 @@ function generateDynamicSteps(category, topic, code) {
 
 // Start listener hooks
 document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('viz-studio-search')) {
-        initVizSessions();
-        document.getElementById('viz-step-slider')?.addEventListener('input', (e) => {
-            jumpToStep(e.target.value);
-        });
-        document.getElementById('viz-speed-slider')?.addEventListener('input', (e) => {
-            setVizSpeed(e.target.value);
-        });
-    }
+    initVizSessions();
+    document.getElementById('viz-step-slider')?.addEventListener('input', (e) => {
+        jumpToStep(e.target.value);
+    });
+    document.getElementById('viz-speed-slider')?.addEventListener('input', (e) => {
+        setVizSpeed(e.target.value);
+    });
 });

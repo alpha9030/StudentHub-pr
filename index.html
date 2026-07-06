@@ -1527,134 +1527,163 @@
 
         <!-- ==================== VIEW 3.5: PRAVIO VISUALIZER ==================== -->
         <div id="visualizer-panel" class="view-panel" style="width: 100%; height: calc(100vh - 120px); min-height: 500px; padding: 0; margin: 0; overflow: hidden; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); background: var(--bg-secondary);">
-            
-            <!-- Studio Dashboard View -->
-            <div id="viz-dashboard-view" style="display: flex; flex-direction: column; width: 100%; height: 100%; overflow-y: auto; background: var(--bg-body); padding: 30px; box-sizing: border-box;">
-                <div style="margin-bottom: 24px; text-align: center;">
-                    <h2 style="margin: 0 0 8px 0; font-size: 2rem; font-weight: 800; color: var(--text-body); background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Pravio Learning Studios</h2>
-                    <p style="margin: 0; font-size: 15px; color: var(--text-muted);">Step into an immersive, interactive, AI-powered classroom. Select a studio domain to begin learning.</p>
-                </div>
-                <!-- Search bar for Studios -->
-                <div style="max-width: 500px; margin: 0 auto 30px auto; width: 100%;">
-                    <input type="text" id="viz-studio-search" placeholder="Search studios (e.g. Java, Python, Algorithms)..." oninput="filterStudioCards(this.value)" style="width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-body); font-size: 14.5px; outline: none; box-shadow: var(--shadow-sm);">
-                </div>
-                <!-- Grid Container -->
-                <div id="viz-studios-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(285px, 1fr)); gap: 24px; padding-bottom: 40px;">
-                    <!-- Studio cards rendered dynamically -->
-                </div>
-            </div>
-
-            <!-- Workspace View (Hidden on boot) -->
-            <div id="viz-workspace-view" style="display: none; height: 100%; width: 100%; flex-direction: column; background: var(--bg-body);">
-                <!-- Workspace Header with Breadcrumb -->
-                <div style="padding: 12px 24px; border-bottom: 1px solid var(--border-color); background: var(--bg-secondary); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <button onclick="exitStudioToDashboard()" class="btn btn-secondary" style="padding: 6px 12px; border-radius: 6px; font-size: 12px; display:flex; align-items:center; gap:6px; background:var(--bg-container); border:1px solid var(--border-color);"><i class="fas fa-arrow-left"></i> Back to Studios</button>
-                        <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); font-weight: 500;">
-                            <span>Pravio Visualizer</span> <i class="fas fa-chevron-right" style="font-size: 9px;"></i>
-                            <span id="breadcrumb-studio" style="color: var(--primary-color); font-weight:700;">Java Studio</span> <i class="fas fa-chevron-right" style="font-size: 9px;"></i>
-                            <span id="breadcrumb-topic" style="color: var(--text-body);">Loops</span>
-                        </div>
+            <div style="display: flex; height: 100%; width: 100%; background: var(--bg-body); overflow: hidden;">
+                
+                <!-- LEFT SIDEBAR (22%) -->
+                <div style="width: 22%; min-width: 220px; max-width: 280px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; background: var(--bg-secondary); flex-shrink: 0; height: 100%;">
+                    <div style="padding: 12px; border-bottom: 1px solid var(--border-color);">
+                        <input type="text" id="viz-curriculum-search" placeholder="Search curriculum..." oninput="searchVizCurriculum(this.value)" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-container); color: var(--text-body); font-size: 12.5px; outline: none;">
                     </div>
                     
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                        <select id="viz-learning-mode" onchange="setLearningMode(this.value)" style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-container); color: var(--text-body); font-size: 12px; outline: none; cursor: pointer;">
-                            <option value="beginner">Beginner Mode</option>
-                            <option value="intermediate" selected>Intermediate Mode</option>
-                            <option value="expert">Expert Mode</option>
-                        </select>
-                        
-                        <select id="viz-ai-mode" onchange="setAITutorLevel(this.value)" style="padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-container); color: var(--text-body); font-size: 12px; outline: none; cursor: pointer;">
-                            <option value="beginner">Beginner Explanation</option>
-                            <option value="advanced" selected>Advanced Explanation</option>
-                        </select>
-
-                        <!-- Hidden elements to satisfy visualizer.js scripts -->
-                        <select id="viz-category-select" style="display:none;"><option value="languages">Languages</option></select>
-                        <select id="viz-topic-select" style="display:none;"><option value="python">Python</option></select>
-
-                        <button id="viz-bookmark-btn" onclick="toggleVizBookmark()" style="background:transparent; border:none; cursor:pointer; color:var(--text-muted); font-size:1.1rem; padding: 0 4px;" title="Bookmark topic"><i class="far fa-bookmark"></i></button>
-                        <button onclick="shareVizSessionState()" class="btn btn-secondary" style="padding: 6px 10px; border-radius: 6px; font-size: 12px; background:var(--bg-container); border:1px solid var(--border-color);"><i class="fas fa-share-alt"></i> Share</button>
-                        <button onclick="exportVizReport('markdown')" class="btn btn-secondary" style="padding: 6px 10px; border-radius: 6px; font-size: 12px; background:var(--bg-container); border:1px solid var(--border-color);"><i class="fas fa-file-export"></i> Export</button>
+                    <!-- Curriculum Tree View -->
+                    <div id="viz-curriculum-tree" style="flex: 1; overflow-y: auto; padding: 12px 8px; font-size: 13px;">
+                        <!-- Mount tree nodes dynamically -->
                     </div>
                 </div>
 
-                <!-- Workspace Columns Grid -->
-                <div style="flex: 1; display: flex; height: 100%; width: 100%; overflow: hidden; min-height: 0;">
-                    <!-- LEFT Sidebar Tree for Current Studio only -->
-                    <div style="width: 250px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; background: var(--bg-secondary); flex-shrink: 0; height: 100%;">
-                        <div style="padding: 10px 14px; border-bottom: 1px solid var(--border-color);">
-                            <input type="text" id="viz-curriculum-search" placeholder="Search studio syllabus..." oninput="searchVizCurriculum(this.value)" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-container); color: var(--text-body); font-size: 12px; outline: none;">
+                <!-- CENTER AREA (55%) & BOTTOM PANEL -->
+                <div style="flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; min-width: 0; border-right: 1px solid var(--border-color);">
+                    <!-- Breadcrumbs Header -->
+                    <div style="padding: 12px 24px; border-bottom: 1px solid var(--border-color); background: var(--bg-secondary); display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-muted); font-weight: 500;">
+                            <span>Pravio Visualizer</span> <i class="fas fa-chevron-right" style="font-size: 9px;"></i>
+                            <span id="breadcrumb-studio" style="color: var(--primary-color); font-weight:700;">Java</span> <i class="fas fa-chevron-right" style="font-size: 9px;"></i>
+                            <span id="breadcrumb-topic" style="color: var(--text-body);">Variables</span>
                         </div>
-                        <div id="viz-curriculum-tree" style="flex: 1; overflow-y: auto; padding: 12px 8px; font-size: 13px;">
-                            <!-- Curriculum tree loaded dynamically -->
+                        
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <button id="viz-bookmark-btn" onclick="toggleVizBookmark()" style="background:transparent; border:none; cursor:pointer; color:var(--text-muted); font-size:1.05rem;" title="Bookmark topic"><i class="far fa-bookmark"></i></button>
+                            <button onclick="shareVizSessionState()" class="btn btn-secondary" style="padding: 4px 8px; border-radius: 6px; font-size: 11.5px; background:var(--bg-container); border:1px solid var(--border-color);"><i class="fas fa-share-alt"></i> Share</button>
+                            <button onclick="exportVizReport('markdown')" class="btn btn-secondary" style="padding: 4px 8px; border-radius: 6px; font-size: 11.5px; background:var(--bg-container); border:1px solid var(--border-color);"><i class="fas fa-file-export"></i> Export</button>
                         </div>
                     </div>
 
-                    <!-- CENTER + BOTTOM (Visualizer Canvas & Code Editor) -->
-                    <div style="flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; min-width: 0; border-right: 1px solid var(--border-color);">
-                        <!-- Step Progress Header -->
-                        <div style="padding: 10px 24px; background: var(--bg-container); border-bottom: 1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                            <div style="display:flex; align-items:center; gap:12px;">
-                                <span id="viz-step-label-nav" style="font-weight:700; font-size:13px; color:var(--primary-color);">Step: 1 / 1</span>
-                                <div style="width: 120px; height: 6px; background: var(--border-color); border-radius:3px; overflow:hidden;">
-                                    <div id="viz-step-progressbar" style="width: 10%; height:100%; background:var(--primary-color);"></div>
-                                </div>
-                            </div>
-                            <div style="font-size:12px; color:var(--text-muted); display:flex; gap:12px;">
-                                <span>Topic: <strong id="viz-active-topic-name" style="color:var(--text-body);">Bubble Sort</strong></span>
-                                <span>Interval: <strong id="viz-speed-display" style="color:var(--text-body);">500ms</strong></span>
+                    <!-- Live Visualization Canvas (Center) -->
+                    <div style="flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0;">
+                        <div style="padding: 8px 24px; background: var(--bg-container); border-bottom: 1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+                            <span id="viz-step-label-nav" style="font-weight:700; font-size:13px; color:var(--primary-color);">Step: 1 / 1</span>
+                            <div style="width: 120px; height: 6px; background: var(--border-color); border-radius:3px; overflow:hidden;">
+                                <div id="viz-step-progressbar" style="width: 10%; height:100%; background:var(--primary-color);"></div>
                             </div>
                         </div>
-
-                        <!-- Visualization Area (Center - 70%) -->
-                        <div id="viz-display-area" style="flex: 1; min-height: 250px; background: rgba(0,0,0,0.01); display: flex; align-items: center; justify-content: center; overflow-y: auto;">
-                            <!-- Canvas items rendered here -->
+                        
+                        <div style="flex: 1; display: flex; min-height: 0; width: 100%;">
+                            <!-- Normal canvas -->
+                            <div id="viz-display-area" style="flex: 1; height: 100%; background: rgba(0,0,0,0.01); display: flex; align-items: center; justify-content: center; overflow-y: auto;">
+                                <!-- Canvas renders here -->
+                            </div>
+                            <!-- Live render iframe for HTML/CSS -->
+                            <div id="viz-html-preview-container" style="width: 50%; height: 100%; border-left: 1px solid var(--border-color); display: none; flex-direction: column; background: #ffffff;">
+                                <div style="padding: 4px 8px; background: #f3f4f6; font-size: 11px; font-weight: bold; border-bottom: 1px solid var(--border-color); color: #374151;">Live Render Preview</div>
+                                <iframe id="viz-html-preview-iframe" style="width: 100%; flex: 1; border: none;"></iframe>
+                            </div>
                         </div>
+                    </div>
 
-                        <!-- Code Editor + Complexity (Bottom - 30%) -->
-                        <div style="height: 190px; border-top: 1px solid var(--border-color); display: flex; background: var(--bg-secondary);">
-                            <!-- Editor Gutter & Textarea -->
-                            <div style="flex: 1; display: flex; border-right: 1px solid var(--border-color); font-family: monospace; font-size: 13px; line-height: 1.5; overflow: hidden;">
+                    <!-- BOTTOM PANEL -->
+                    <div style="height: 220px; border-top: 1px solid var(--border-color); display: flex; background: var(--bg-secondary); flex-shrink: 0;">
+                        <!-- Code Editor (60% width) -->
+                        <div style="flex: 3; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); min-width: 0; height: 100%;">
+                            <div style="padding: 6px 12px; background: rgba(0,0,0,0.02); font-size: 11px; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+                                <span>Editable Source Code</span>
+                                <button onclick="runCustomCode()" class="btn btn-primary" style="padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 700;"><i class="fas fa-play"></i> Run Code</button>
+                            </div>
+                            <div style="flex: 1; display: flex; font-family: monospace; font-size: 12.5px; line-height: 1.5; overflow: hidden; background: var(--bg-container);">
                                 <div id="viz-line-gutter" style="padding: 10px 6px; border-right: 1px solid var(--border-color); background: rgba(0,0,0,0.05); color: var(--text-muted); text-align: right; user-select: none; min-width: 32px; box-sizing: border-box;"></div>
-                                <textarea id="viz-code-editor" style="flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-body); resize: none; outline: none; font-family: inherit; font-size: inherit; line-height: inherit; overflow-y: auto;" oninput="handlePracticeCodeInput(this.value)"></textarea>
+                                <textarea id="viz-code-editor" style="flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-body); resize: none; outline: none; font-family: inherit; font-size: inherit; line-height: inherit; overflow-y: auto;"></textarea>
                             </div>
-                            <!-- Complexity Card (Bottom Right) -->
-                            <div style="width: 250px; padding: 14px; background: var(--bg-container); display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto; box-sizing: border-box;">
-                                <div>
-                                    <div style="font-size: 10.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Complexity Matrix</div>
-                                    <div style="display: flex; flex-direction: column; gap: 5px; font-size: 11.5px;">
-                                        <div>Best Case: <strong id="viz-best-case" style="color: #10b981;">O(1)</strong></div>
-                                        <div>Average: <strong id="viz-avg-case" style="color: #f59e0b;">O(n)</strong></div>
-                                        <div>Worst Case: <strong id="viz-worst-case" style="color: #ef4444;">O(n)</strong></div>
-                                        <div>Space: <strong id="viz-space-case" style="color: var(--primary-color);">O(1)</strong></div>
-                                    </div>
+                        </div>
+
+                        <!-- Console Output (20% width) -->
+                        <div style="flex: 1; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); min-width: 0; height: 100%;">
+                            <div style="padding: 6px 12px; background: rgba(0,0,0,0.02); font-size: 11px; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">Console Output</div>
+                            <div id="viz-console-log" style="flex: 1; padding: 10px; background: #1f2937; color: #10b981; font-family: monospace; font-size: 11.5px; overflow-y: auto; white-space: pre-wrap; line-height: 1.45;"></div>
+                        </div>
+
+                        <!-- Execution Controls (20% width) -->
+                        <div style="flex: 1; display: flex; flex-direction: column; min-width: 180px; height: 100%; background: var(--bg-container);">
+                            <div style="padding: 6px 12px; background: rgba(0,0,0,0.02); font-size: 11px; font-weight: 700; color: var(--text-muted); border-bottom: 1px solid var(--border-color);">Execution Controls</div>
+                            <div style="flex: 1; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box;">
+                                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px;">
+                                    <button onclick="stepBackwardViz()" class="btn btn-secondary" style="padding: 6px; border-radius: 4px; font-size: 10px; background:var(--bg-secondary); border:1px solid var(--border-color);" title="Previous Step"><i class="fas fa-step-backward"></i></button>
+                                    <button id="viz-play-btn" onclick="toggleVizPlayback()" class="btn btn-primary" style="padding: 6px; border-radius: 4px; font-size: 10px; font-weight: 700;" title="Play/Pause"><i class="fas fa-play"></i></button>
+                                    <button onclick="stepForwardViz()" class="btn btn-secondary" style="padding: 6px; border-radius: 4px; font-size: 10px; background:var(--bg-secondary); border:1px solid var(--border-color);" title="Next Step"><i class="fas fa-step-forward"></i></button>
+                                    <button onclick="restartViz()" class="btn btn-secondary" style="padding: 6px; border-radius: 4px; font-size: 10px; background:var(--bg-secondary); border:1px solid var(--border-color);" title="Restart"><i class="fas fa-sync-alt"></i></button>
                                 </div>
-                                <div style="font-size:10px; color:var(--text-muted); border-top:1px dashed var(--border-color); padding-top:6px; margin-top:4px;">
-                                    Stable: <strong id="viz-stable-case" style="color:var(--text-body);">Yes</strong> | 
-                                    In-Place: <strong id="viz-inplace-case" style="color:var(--text-body);">Yes</strong>
+                                
+                                <div style="display:flex; flex-direction:column; gap:6px;">
+                                    <div style="display:flex; align-items:center; justify-content:space-between; font-size:10px; color:var(--text-muted);">
+                                        <span>Step timeline</span>
+                                        <span id="viz-step-label-slider">0 / 0</span>
+                                    </div>
+                                    <input type="range" id="viz-step-slider" min="0" max="0" value="0" style="width: 100%; cursor: pointer; accent-color: var(--primary-color);">
+                                    
+                                    <div style="display:flex; align-items:center; justify-content:space-between; font-size:10px; color:var(--text-muted); margin-top:2px;">
+                                        <span>Speed interval</span>
+                                        <span id="viz-speed-display-lbl">500ms</span>
+                                    </div>
+                                    <input type="range" id="viz-speed-slider" min="100" max="1500" step="50" value="500" style="width: 100%; cursor: pointer; accent-color: var(--primary-color);">
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- RIGHT Pane (AI Tutor & Controls) -->
-                    <div style="width: 250px; display: flex; flex-direction: column; background: var(--bg-secondary); height: 100%; flex-shrink: 0;">
-                        <div style="padding: 10px 16px; background: rgba(0,0,0,0.02); border-bottom: 1px solid var(--border-color); font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">AI Classroom Guidance</div>
-                        <div id="viz-explanation-panel" style="flex: 1; padding: 16px; overflow-y: auto; font-size: 12.5px; line-height: 1.5; color: var(--text-body);">
-                            <!-- Updates dynamically -->
+                <!-- RIGHT PANEL (23%) -->
+                <div style="width: 23%; min-width: 220px; max-width: 300px; display: flex; flex-direction: column; background: var(--bg-secondary); flex-shrink: 0; height: 100%; overflow-y: auto;">
+                    <div style="padding: 10px 14px; background: rgba(0,0,0,0.02); border-bottom: 1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; display:flex; align-items:center; gap:5px;"><i class="fas fa-graduation-cap"></i> AI Tutor Guide</span>
+                        <button onclick="toggleAITutorSettings()" style="background:transparent; border:none; cursor:pointer; color:var(--text-muted); font-size:11px; outline:none;" title="Tutor Settings"><i class="fas fa-cog"></i></button>
+                    </div>
+                    
+                    <div id="viz-ai-settings-dropdown" style="display:none; padding:10px; background:var(--bg-container); border-bottom:1px solid var(--border-color); font-size:11px; flex-direction:column; gap:6px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span>Explanation Style:</span>
+                            <select id="viz-learning-mode" onchange="setLearningMode(this.value)" style="padding: 2px 4px; border-radius: 4px; font-size: 11px; border:1px solid var(--border-color); background:var(--bg-body); color:var(--text-body);">
+                                <option value="beginner">Beginner Analogy</option>
+                                <option value="intermediate" selected>Intermediate Tips</option>
+                                <option value="expert">Expert Complexity</option>
+                            </select>
                         </div>
-                        <div style="padding: 14px; background: var(--bg-container); border-top: 1px solid var(--border-color);">
-                            <div style="display: flex; gap: 6px; margin-bottom: 10px; justify-content: center;">
-                                <button onclick="stepBackwardViz()" class="btn btn-secondary" style="padding: 5px 8px; border-radius: 4px; font-size: 11px; background:var(--bg-container); border:1px solid var(--border-color);" title="Step Backward"><i class="fas fa-step-backward"></i></button>
-                                <button id="viz-play-btn" onclick="toggleVizPlayback()" class="btn btn-primary" style="padding: 5px 12px; border-radius: 4px; font-size: 11px; font-weight: 700;"><i class="fas fa-play"></i> Run</button>
-                                <button onclick="stepForwardViz()" class="btn btn-secondary" style="padding: 5px 8px; border-radius: 4px; font-size: 11px; background:var(--bg-container); border:1px solid var(--border-color);" title="Step Forward"><i class="fas fa-step-forward"></i></button>
-                                <button onclick="restartViz()" class="btn btn-secondary" style="padding: 5px 8px; border-radius: 4px; font-size: 11px; background:var(--bg-container); border:1px solid var(--border-color);" title="Restart"><i class="fas fa-sync-alt"></i></button>
-                            </div>
-                            <div style="display:flex; flex-direction:column; gap:6px;">
-                                <input type="range" id="viz-step-slider" min="0" max="0" value="0" style="width: 100%; cursor: pointer; accent-color: var(--primary-color);">
-                                <input type="range" id="viz-speed-slider" min="100" max="1500" step="50" value="500" style="width: 100%; cursor: pointer; accent-color: var(--primary-color);">
-                            </div>
+                    </div>
+
+                    <div id="viz-explanation-panel" style="padding: 14px; font-size: 12.5px; line-height: 1.5; color: var(--text-body); border-bottom: 1px solid var(--border-color);">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <div style="padding: 14px; border-bottom: 1px solid var(--border-color); background: var(--bg-container);">
+                        <div style="font-size: 10.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;">Complexity Card</div>
+                        <table style="width:100%; border-collapse:collapse; font-size:11.5px;">
+                            <tr>
+                                <td style="padding:2px 0; color:var(--text-muted);">Best Case:</td>
+                                <td style="padding:2px 0; text-align:right; font-weight:700; color:#10b981;" id="viz-best-case">O(1)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:2px 0; color:var(--text-muted);">Average:</td>
+                                <td style="padding:2px 0; text-align:right; font-weight:700; color:#f59e0b;" id="viz-avg-case">O(n)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:2px 0; color:var(--text-muted);">Worst Case:</td>
+                                <td style="padding:2px 0; text-align:right; font-weight:700; color:#ef4444;" id="viz-worst-case">O(n)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:2px 0; color:var(--text-muted);">Space complexity:</td>
+                                <td style="padding:2px 0; text-align:right; font-weight:700; color:var(--primary-color);" id="viz-space-case">O(1)</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div style="padding: 14px; border-bottom: 1px solid var(--border-color);">
+                        <div style="font-size: 10.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Variables Inspect</div>
+                        <div id="viz-variables-inspect" style="display:flex; flex-direction:column; gap:4px;">
+                            <!-- Dynamic variable rows -->
+                        </div>
+                    </div>
+
+                    <div style="padding: 14px;">
+                        <div style="font-size: 10.5px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Memory Frame Stack</div>
+                        <div id="viz-memory-stack" style="display:flex; flex-direction:column; gap:4px;">
+                            <!-- Dynamic stack list -->
                         </div>
                     </div>
                 </div>
