@@ -1659,9 +1659,11 @@
                                 <textarea id="workspace-notes-textarea" placeholder="Add study codes, highlights, variables tracking rules..." style="width:100%; flex:1; padding:6px; border:1px solid var(--border-color); border-radius:4px; font-size:12px; background:var(--bg-body); color:var(--text-body); resize:none; outline:none;"></textarea>
                             </div>
                             <!-- Revision Tab contents -->
-                            <div id="workspace-tab-revision" style="display:none; font-size:12px; line-height:1.5; color:var(--text-body);">
-                                <div style="font-weight:700; color:var(--primary-color); margin-bottom:4px;">Cheat Sheet & Takeaways</div>
-                                <p>Tuples are ordered collections of immutable items. Slicing complexity is O(k) where k is slice length. Do not attempt modification, or a TypeError exception will be thrown. Use packing/unpacking assignments to return multiple outputs from custom python methods.</p>
+                            <div id="workspace-tab-revision" style="display:none; font-size:12px; line-height:1.5; color:var(--text-body); padding: 4px 0;">
+                                <div id="viz-revision-text">
+                                    <div style="font-weight:700; color:var(--primary-color); margin-bottom:4px;">Cheat Sheet & Takeaways</div>
+                                    <p>Tuples are ordered collections of immutable items. Slicing complexity is O(k) where k is slice length. Do not attempt modification, or a TypeError exception will be thrown. Use packing/unpacking assignments to return multiple outputs from custom python methods.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3516,7 +3518,7 @@
             document.body.appendChild(modal);
         }
     </script>
-    <script src="visualizer.js?v=2.0.6"></script>
+    <script src="visualizer.js?v=2.0.7"></script>
 
     <!-- Google Account Chooser Modal -->
     <div id="google-auth-modal" class="google-modal-backdrop" onclick="closeGoogleAuthModal()">

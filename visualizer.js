@@ -301,6 +301,96 @@ function getDynamicAnalogyAndTips(category, topicKey, displayName) {
     };
 }
 
+// Generate topic-specific dynamic revision guide layout
+function getTopicRevisionGuide(studioId, topicKey, displayName) {
+    const key = topicKey.toLowerCase();
+    
+    if (key.includes("pointer")) {
+        return `
+            <div style="font-weight:700; color:var(--primary-color); margin-bottom:8px;">C Pointers Cheat Sheet & Takeaways</div>
+            <p><strong>Definition:</strong> A pointer is a variable that stores the memory address of another variable.</p>
+            <p><strong>Key Concepts:</strong> Dereferencing (*ptr) accesses the value at that address. Pointer arithmetic allows moving through contiguous memory array offsets.</p>
+            <p><strong>Complexity:</strong> Address referencing and dereferencing take <strong>O(1) constant time</strong>.</p>
+            <p><strong>Common Mistakes:</strong> Accessing unassigned wild pointers or dereferencing NULL pointers (causes Segmentation Fault crashes).</p>
+            <p><strong>Best Practices:</strong> Always initialize pointers to <code>NULL</code> when declaring them, and verify pointers are not NULL before dereferencing.</p>
+            <p><strong>Interview Question:</strong> What is the difference between pointer pass-by-value and pass-by-reference in C functions?</p>
+            <p><strong>Real-world Use:</strong> Direct hardware mapping, dynamic memory allocations, and high-performance buffer streaming.</p>
+        `;
+    }
+    if (key.includes("tuple")) {
+        return `
+            <div style="font-weight:700; color:var(--primary-color); margin-bottom:8px;">Python Tuples Cheat Sheet & Takeaways</div>
+            <p><strong>Definition:</strong> Tuples are ordered, immutable collections of heterogeneous items declared with parentheses <code>()</code>.</p>
+            <p><strong>Key Concepts:</strong> Slicing, packing, unpacking, element membership testing, iteration loop pipelines.</p>
+            <p><strong>Complexity:</strong> Index lookup takes <strong>O(1) time</strong>. Concatenation takes <strong>O(n + m) time</strong>.</p>
+            <p><strong>Common Mistakes:</strong> Mismatched unpacking variable lengths, or attempting to write or update indices in-place (raises TypeError).</p>
+            <p><strong>Best Practices:</strong> Use tuples for read-only static records or as keys inside dictionaries.</p>
+            <p><strong>Interview Question:</strong> Why are Python tuples more memory-efficient than lists?</p>
+            <p><strong>Real-world Use:</strong> Returning multiple coordinates or status outputs from clean database queries.</p>
+        `;
+    }
+    if (key.includes("array") || key.includes("list")) {
+        return `
+            <div style="font-weight:700; color:var(--primary-color); margin-bottom:8px;">Arrays & Lists Cheat Sheet & Takeaways</div>
+            <p><strong>Definition:</strong> Contiguous memory cells storing elements of homogeneous types accessible via 0-based indices.</p>
+            <p><strong>Key Concepts:</strong> Linear traversals, element swapping, index-based edits, bounds checking.</p>
+            <p><strong>Complexity:</strong> Access is <strong>O(1) time</strong>. Insertion/Deletion takes <strong>O(n) linear time</strong> due to element shifting.</p>
+            <p><strong>Common Mistakes:</strong> Traversing beyond index boundaries (leads to OutOfBounds exceptions).</p>
+            <p><strong>Best Practices:</strong> Pre-allocate capacity when possible to prevent frequent resizing allocations.</p>
+            <p><strong>Interview Question:</strong> Describe how dynamic arrays resize when they exceed capacity thresholds.</p>
+            <p><strong>Real-world Use:</strong> Storage buffer queues, database index vectors, and image pixel matrices.</p>
+        `;
+    }
+    if (key.includes("tree")) {
+        return `
+            <div style="font-weight:700; color:var(--primary-color); margin-bottom:8px;">Binary Trees Cheat Sheet & Takeaways</div>
+            <p><strong>Definition:</strong> Non-linear hierarchical structure where each parent node contains at most two children nodes (left/right).</p>
+            <p><strong>Key Concepts:</strong> Node relations, height depth tracking, BFS (level traversal), and DFS (Pre/In/Post order traversals).</p>
+            <p><strong>Complexity:</strong> Search & Insertion take <strong>O(log n) average time</strong>, and <strong>O(n) worst-case time</strong> (unbalanced trees).</p>
+            <p><strong>Common Mistakes:</strong> Traversal logic missing null checking conditions (leads to NullPointer exception failures).</p>
+            <p><strong>Best Practices:</strong> Balance trees (e.g. AVL or Red-Black trees) to keep optimal search complexity.</p>
+            <p><strong>Interview Question:</strong> Write an algorithm to find the maximum depth height of a Binary Search Tree.</p>
+            <p><strong>Real-world Use:</strong> Compilers syntax parsing, DOM representations, and hierarchical file systems.</p>
+        `;
+    }
+    if (key.includes("sql") || key.includes("join") || key.includes("clause")) {
+        return `
+            <div style="font-weight:700; color:var(--primary-color); margin-bottom:8px;">SQL Relational Operations Cheat Sheet & Takeaways</div>
+            <p><strong>Definition:</strong> SQL clauses query and combine data subsets across relational tables using constraints filters.</p>
+            <p><strong>Key Concepts:</strong> Row projection filtering (SELECT / WHERE), join mappings (INNER / LEFT / RIGHT), aggregate grouping.</p>
+            <p><strong>Complexity:</strong> Joins take <strong>O(n * m) time</strong> without indexes; optimized to <strong>O(n log m) time</strong> with indexes.</p>
+            <p><strong>Common Mistakes:</strong> Joining columns without index properties, or causing Cartesian product overflows.</p>
+            <p><strong>Best Practices:</strong> Always write query plans (EXPLAIN) and select columns explicitly instead of using * wildcards.</p>
+            <p><strong>Interview Question:</strong> Explain the structural differences between LEFT JOIN and INNER JOIN operations.</p>
+            <p><strong>Real-world Use:</strong> Financial reports generation, user authentication tables matching, and analytical queries.</p>
+        `;
+    }
+    if (key.includes("html") || key.includes("css")) {
+        return `
+            <div style="font-weight:700; color:var(--primary-color); margin-bottom:8px;">HTML/CSS Web Layouts Cheat Sheet & Takeaways</div>
+            <p><strong>Definition:</strong> HTML tags structure content elements on screen, while CSS rules apply formatting rules.</p>
+            <p><strong>Key Concepts:</strong> Document Object Model (DOM) hierarchies, Box Model spacing, positioning layout schemes.</p>
+            <p><strong>Complexity:</strong> Style rules match against elements in <strong>O(1) to O(n) rendering cycles</strong>.</p>
+            <p><strong>Common Mistakes:</strong> Overlooking margin collapse properties, or nesting tags incorrectly.</p>
+            <p><strong>Best Practices:</strong> Enforce responsive structures using relative measurements (em, rem, percentages).</p>
+            <p><strong>Interview Question:</strong> Explain how padding, margin, border, and content calculate in the CSS Box Model.</p>
+            <p><strong>Real-world Use:</strong> Interactive web clients dashboard, SEO responsive layouts, and responsive interfaces.</p>
+        `;
+    }
+
+    // Dynamic general fallback matching target displayName
+    return `
+        <div style="font-weight:700; color:var(--primary-color); margin-bottom:8px;">${displayName} Revision Guide & Takeaways</div>
+        <p><strong>Definition:</strong> Core concepts, syntax models, and runtime parameters of ${displayName} in ${studioId.toUpperCase()}.</p>
+        <p><strong>Key Concepts:</strong> Structural variables, namespace scopes, loop iterators, code debugging.</p>
+        <p><strong>Complexity:</strong> Operations complexity varies; simple values access takes constant O(1) CPU registers lookup.</p>
+        <p><strong>Common Mistakes:</strong> Syntax typos, missing keywords, and scope mismatch bindings.</p>
+        <p><strong>Best Practices:</strong> Keep variables encapsulated inside minimal functional parameters.</p>
+        <p><strong>Interview Question:</strong> How does ${displayName} execute inside standard runtime execution environments?</p>
+        <p><strong>Real-world Use:</strong> Modular software design and structural parameters tracking.</p>
+    `;
+}
+
 // Build studio cards
 function buildStudioDashboard() {
     const grid = document.getElementById('viz-studios-grid');
@@ -670,6 +760,11 @@ function loadSelectedSubLesson(activeKey, sIdx, category, topic) {
     const notesTextarea = document.getElementById('workspace-notes-textarea');
     if (notesTextarea) {
         notesTextarea.value = workspaceNotes[sub.name] || '';
+    }
+
+    const revisionText = document.getElementById('viz-revision-text');
+    if (revisionText) {
+        revisionText.innerHTML = getTopicRevisionGuide(category, topic, sub.name);
     }
 
     const bestC = document.getElementById('viz-best-case');
@@ -1217,7 +1312,7 @@ function setVizSpeed(val) {
                 ];
             } else if (lowerName.includes("packing")) {
                 steps = [
-                    { line: 1, vars: { a: 10 }, mem: ["a -> 10"], explain: "Assign variable a to 10.", action: { type: "array_state", data: [10], active: [0] } },
+                    { line: 1, vars: { a: 10 }, mem: ["a -> 10"], explain: "Assign variable a to 10.", action: { type: "array_state", data: [10, 20], active: [0] } },
                     { line: 2, vars: { a: 10, b: 20 }, mem: ["b -> 20"], explain: "Assign variable b to 20.", action: { type: "array_state", data: [10, 20], active: [1] } },
                     { line: 4, vars: { tup: "(10, 20, 30)" }, mem: ["tup -> (10, 20, 30)"], explain: "Animate variables combining/packing into a single tuple index structure.", action: { type: "array_state", data: [10, 20, 30], active: [0, 1, 2], complete: true } }
                 ];
