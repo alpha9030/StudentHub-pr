@@ -1613,7 +1613,6 @@ function initSpeechRecognition() {
     if (prefix && !prefix.endsWith(' ')) prefix += ' ';
     
     DOMElements.chatTextarea.placeholder = 'Listening... Speak now.';
-    showToast("Voice input active. Listening...", "success");
   };
   
   rec.onend = () => {
@@ -1621,12 +1620,6 @@ function initSpeechRecognition() {
     DOMElements.btnVoiceInput.classList.remove('active');
     DOMElements.btnVoiceInput.innerHTML = '<i class="fas fa-microphone"></i>';
     DOMElements.chatTextarea.placeholder = 'Message Pravio AI or ask about files...';
-    
-    // Stop getUserMedia stream tracks to release device lock
-    if (micStream) {
-      micStream.getTracks().forEach(track => track.stop());
-      micStream = null;
-    }
   };
   
   rec.onresult = (event) => {
@@ -1651,18 +1644,14 @@ function initSpeechRecognition() {
     DOMElements.btnVoiceInput.classList.remove('active');
     DOMElements.btnVoiceInput.innerHTML = '<i class="fas fa-microphone"></i>';
     
-    // Stop getUserMedia stream tracks
-    if (micStream) {
-      micStream.getTracks().forEach(track => track.stop());
-      micStream = null;
-    }
-    
     if (event.error === 'not-allowed' || event.error === 'permission-denied') {
       showToast("Microphone access denied. Please enable mic permissions in settings.");
     } else if (event.error === 'no-speech') {
-      showToast("No speech detected. Stopping microphone.");
+      // Silent timeout is a natural end of speaking; no toast needed
     } else if (event.error === 'network') {
       showToast("Network error occurred during speech recognition.");
+    } else if (event.error === 'audio-capture') {
+      showToast("No microphone detected or device is busy. Please verify your connection.");
     } else {
       showToast(`Speech recognition error: ${event.error}`);
     }
@@ -1690,25 +1679,21 @@ function toggleSpeechRecognition() {
   if (isListening) {
     recognition.stop();
   } else {
-    // Request mic permission first and hold stream active to prevent browser hardware cutoff aborts
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ audio: true })
-        .then((stream) => {
-          micStream = stream;
-          recognition.start();
-        })
-        .catch((err) => {
-          console.error('getUserMedia error:', err);
-          if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
-            showToast("Microphone access denied. Please enable mic permissions in settings.");
-          } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
-            showToast("No microphone detected. Please connect a microphone.");
-          } else {
-            showToast(`Microphone error: ${err.name || err.message}`);
-          }
-        });
-    } else {
+    try {
       recognition.start();
+    } catch (err) {
+      console.error('SpeechRecognition start error:', err);
+      // Attempt safe reset and restart
+      try {
+        recognition.stop();
+      } catch(e) {}
+      setTimeout(() => {
+        try {
+          recognition.start();
+        } catch(retryErr) {
+          showToast("Failed to start voice recognition. Please try again.");
+        }
+      }, 200);
     }
   }
 }
