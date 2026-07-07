@@ -157,6 +157,29 @@
           </button>
         </div>
 
+        <!-- Collapsible AI Tools Section -->
+        <div class="sidebar-ai-tools-section" style="padding: 12px 16px 0 16px; display: flex; flex-direction: column; flex-shrink: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 8px;">
+          <div onclick="toggleAIToolsPanel()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding-left: 4px; margin-bottom: 6px; user-select: none;">
+            <div class="section-title-label font-outfit" style="margin: 0; padding: 0; display: flex; align-items: center; gap: 6px; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 1px;">
+              <i class="fas fa-robot"></i> AI Tools
+            </div>
+            <i id="ai-tools-chevron" class="fas fa-chevron-down" style="font-size: 10px; color: var(--text-muted); transition: transform 0.2s;"></i>
+          </div>
+          <div id="sidebar-ai-tools-list" class="sidebar-tools-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 220px; overflow-y: auto; transition: max-height 0.3s ease, opacity 0.3s ease; opacity: 1;">
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="study-planner"><i class="fas fa-calendar-alt"></i> <span>Study Planner</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="roadmap"><i class="fas fa-map-signs"></i> <span>Career Roadmaps</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="resume"><i class="fas fa-file-invoice"></i> <span>Resume Assistant</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="career"><i class="fas fa-compass"></i> <span>Career Guide</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="interview"><i class="fas fa-user-tie"></i> <span>Interview Prep</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="college"><i class="fas fa-university"></i> <span>College Advisor</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="notes"><i class="fas fa-sticky-note"></i> <span>Smart Notes</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="doc-intel"><i class="fas fa-brain"></i> <span>Document Intel</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="coding"><i class="fas fa-code"></i> <span>Coding Assistant</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="research"><i class="fas fa-microscope"></i> <span>Research Assistant</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="productivity"><i class="fas fa-tasks"></i> <span>Productivity</span></button>
+          </div>
+        </div>
+
         <!-- New Chat Button -->
         <div class="sidebar-action-container">
           <button id="btn-new-chat" class="btn btn-new-chat font-outfit">
@@ -342,20 +365,7 @@
           <!-- File Previews Container -->
           <div id="file-previews-container" class="file-previews-container hidden"></div>
 
-          <!-- Input Quick Actions Bar -->
-          <div id="input-quick-actions" class="input-quick-actions-bar">
-            <button type="button" class="quick-action-chip" data-tool="study-planner"><i class="fas fa-calendar-alt"></i> Study Planner</button>
-            <button type="button" class="quick-action-chip" data-tool="roadmap"><i class="fas fa-map-signs"></i> Career Roadmaps</button>
-            <button type="button" class="quick-action-chip" data-tool="resume"><i class="fas fa-file-invoice"></i> Resume Assistant</button>
-            <button type="button" class="quick-action-chip" data-tool="career"><i class="fas fa-compass"></i> Career Guide</button>
-            <button type="button" class="quick-action-chip" data-tool="interview"><i class="fas fa-user-tie"></i> Interview Prep</button>
-            <button type="button" class="quick-action-chip" data-tool="college"><i class="fas fa-university"></i> College Advisor</button>
-            <button type="button" class="quick-action-chip" data-tool="notes"><i class="fas fa-sticky-note"></i> Smart Notes</button>
-            <button type="button" class="quick-action-chip" data-tool="doc-intel"><i class="fas fa-brain"></i> Document Intel</button>
-            <button type="button" class="quick-action-chip" data-tool="coding"><i class="fas fa-code"></i> Coding Assistant</button>
-            <button type="button" class="quick-action-chip" data-tool="research"><i class="fas fa-microscope"></i> Research Assistant</button>
-            <button type="button" class="quick-action-chip" data-tool="productivity"><i class="fas fa-tasks"></i> Productivity</button>
-          </div>
+          <!-- Input Quick Actions Bar Removed for spacious workspace -->
 
           <!-- Active Generation Control -->
           <div id="generation-control-panel" class="generation-control hidden">
@@ -469,6 +479,21 @@
   </div>
 
   <!-- App logic scripts -->
+  <script>
+    function toggleAIToolsPanel() {
+      const list = document.getElementById('sidebar-ai-tools-list');
+      const chevron = document.getElementById('ai-tools-chevron');
+      if (list && chevron) {
+        if (list.style.display === 'none') {
+          list.style.display = 'flex';
+          chevron.style.transform = 'rotate(0deg)';
+        } else {
+          list.style.display = 'none';
+          chevron.style.transform = 'rotate(-90deg)';
+        }
+      }
+    }
+  </script>
   <script src="js/app.js"></script>
 </body>
 </html>

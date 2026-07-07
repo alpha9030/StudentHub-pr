@@ -1832,6 +1832,53 @@ html, body, main, .app-main-layout {
   font-size: 0.85rem;
 }
 
+/* Sidebar AI Tools styles */
+.sidebar-tool-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.sidebar-tool-item:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-tertiary);
+  border-color: var(--border-color);
+  transform: translateX(2px);
+}
+
+.sidebar-tool-item i {
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* Hide scrollbar for sidebar-tools-list */
+.sidebar-tools-list::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-tools-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+[data-theme="light"] .sidebar-tools-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+}
+
 /* Modal Styling */
 .modal-overlay {
   position: fixed;
