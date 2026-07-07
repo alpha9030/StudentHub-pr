@@ -12,6 +12,7 @@ let isGenerating = false;
 let attachedFiles = []; // Currently attached files
 let recognition = null; // SpeechRecognition reference
 let isListening = false; // Speech state reference
+let micStream = null; // Scoped microphone stream reference
 const HEALTH_CHECK_INTERVAL = 30000; // Check server health every 30s
 
 const API_BASE = '';
@@ -1620,6 +1621,12 @@ function initSpeechRecognition() {
     DOMElements.btnVoiceInput.classList.remove('active');
     DOMElements.btnVoiceInput.innerHTML = '<i class="fas fa-microphone"></i>';
     DOMElements.chatTextarea.placeholder = 'Message Pravio AI or ask about files...';
+    
+    // Stop getUserMedia stream tracks to release device lock
+    if (micStream) {
+      micStream.getTracks().forEach(track => track.stop());
+      micStream = null;
+    }
   };
   
   rec.onresult = (event) => {
@@ -1643,6 +1650,12 @@ function initSpeechRecognition() {
     isListening = false;
     DOMElements.btnVoiceInput.classList.remove('active');
     DOMElements.btnVoiceInput.innerHTML = '<i class="fas fa-microphone"></i>';
+    
+    // Stop getUserMedia stream tracks
+    if (micStream) {
+      micStream.getTracks().forEach(track => track.stop());
+      micStream = null;
+    }
     
     if (event.error === 'not-allowed' || event.error === 'permission-denied') {
       showToast("Microphone access denied. Please enable mic permissions in settings.");
@@ -1677,11 +1690,11 @@ function toggleSpeechRecognition() {
   if (isListening) {
     recognition.stop();
   } else {
-    // Request mic permission first
+    // Request mic permission first and hold stream active to prevent browser hardware cutoff aborts
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia({ audio: true })
         .then((stream) => {
-          stream.getTracks().forEach(track => track.stop());
+          micStream = stream;
           recognition.start();
         })
         .catch((err) => {
