@@ -949,7 +949,8 @@ html, body, main, .app-main-layout {
 
 /* WELCOME SCREEN */
 .chat-welcome-screen {
-  max-width: 800px;
+  max-width: 1400px;
+  width: 95%;
   margin: 0 auto;
   padding: 80px 24px;
   display: flex;
@@ -1043,7 +1044,8 @@ html, body, main, .app-main-layout {
 
 /* MESSAGES LIST */
 .messages-list {
-  max-width: 900px;
+  max-width: 1400px;
+  width: 95%;
   margin: 0 auto;
   padding: 24px 24px 60px;
   display: flex;
@@ -1240,7 +1242,8 @@ html, body, main, .app-main-layout {
 
 /* TYPING INDICATOR */
 .ai-typing-indicator {
-  max-width: 900px;
+  max-width: 1400px;
+  width: 95%;
   margin: 0 auto;
   padding: 0 24px;
 }
@@ -1304,8 +1307,8 @@ html, body, main, .app-main-layout {
 }
 
 .chat-input-form {
-  max-width: 900px;
-  width: 100%;
+  max-width: 1400px;
+  width: 95%;
   margin: 0 auto;
   display: flex;
   gap: 12px;
@@ -1581,8 +1584,8 @@ html, body, main, .app-main-layout {
   background-color: var(--bg-primary);
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
-  max-width: 900px;
-  width: 100%;
+  max-width: 1400px;
+  width: 95%;
   margin: 0 auto;
   margin-bottom: 8px;
 }
@@ -1796,6 +1799,10 @@ html, body, main, .app-main-layout {
   overflow-x: auto;
   padding: 8px 12px;
   margin-bottom: 8px;
+  max-width: 1400px;
+  width: 95%;
+  margin-left: auto;
+  margin-right: auto;
   scrollbar-width: none; /* Hide scrollbar for clean style */
 }
 .input-quick-actions-bar::-webkit-scrollbar {
