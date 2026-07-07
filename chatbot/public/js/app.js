@@ -459,12 +459,31 @@ function setupEventListeners() {
       DOMElements.apiKeyModal.classList.add('hidden');
       updateKeyStatusUI();
       checkServerHealth(); // Instantly verify the new API key status
+      
+      const warningBanner = document.getElementById('quota-warning-banner');
+      if (warningBanner) {
+        warningBanner.classList.add('hidden');
+      }
     });
   }
 
   if (DOMElements.chkShowKey) {
     DOMElements.chkShowKey.addEventListener('change', (e) => {
       DOMElements.inputCustomApiKey.type = e.target.checked ? 'text' : 'password';
+    });
+  }
+
+  // Quota warning banner settings link click handler
+  const warningSettingsLink = document.getElementById('quota-warning-settings-link');
+  if (warningSettingsLink) {
+    warningSettingsLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      const savedKey = localStorage.getItem('custom_gemini_api_key') || '';
+      DOMElements.inputCustomApiKey.value = savedKey;
+      DOMElements.inputCustomApiKey.type = 'password';
+      DOMElements.chkShowKey.checked = false;
+      updateKeyStatusUI();
+      DOMElements.apiKeyModal.classList.remove('hidden');
     });
   }
 }
@@ -811,6 +830,12 @@ async function submitUserMessage() {
   const text = DOMElements.chatTextarea.value.trim();
   if (!text && attachedFiles.length === 0) return;
   
+  // Hide quota warning banner on new message
+  const warningBanner = document.getElementById('quota-warning-banner');
+  if (warningBanner) {
+    warningBanner.classList.add('hidden');
+  }
+  
   // Reset input field height & content
   DOMElements.chatTextarea.value = '';
   DOMElements.chatTextarea.style.height = 'auto';
@@ -1010,6 +1035,20 @@ async function submitUserMessage() {
       DOMElements.aiTypingIndicator.classList.add('hidden');
       
       let errMsg = error.message;
+      
+      // Check if it's a quota or rate limit error
+      const isQuotaError = errMsg.toLowerCase().includes('quota') || 
+                           errMsg.toLowerCase().includes('limit') || 
+                           errMsg.toLowerCase().includes('429') || 
+                           errMsg.toLowerCase().includes('too many requests');
+                           
+      if (isQuotaError) {
+        const warningBanner = document.getElementById('quota-warning-banner');
+        if (warningBanner) {
+          warningBanner.classList.remove('hidden');
+        }
+      }
+      
       if (errMsg.includes('API key') || errMsg.includes('401') || errMsg.includes('403') || errMsg.includes('not configured')) {
         errMsg = 'AI service is temporarily unavailable. Please try again later.';
       }
