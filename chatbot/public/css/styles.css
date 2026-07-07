@@ -2082,5 +2082,68 @@ html, body, main, .app-main-layout {
 .todo-del-btn:hover {
   color: #ef4444;
 }
+/* Sidebar Settings Popup styling */
+.sidebar-settings-popup {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  padding: 6px;
+  position: absolute;
+  bottom: 50px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 1000;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
+.sidebar-settings-popup.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  display: none !important;
+}
 
+.sidebar-settings-popup .dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-align: left;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.sidebar-settings-popup .dropdown-item:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-tertiary);
+}
+
+.sidebar-settings-popup .dropdown-item.danger-item:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.sidebar-settings-popup .dropdown-item i {
+  color: var(--primary-color);
+  font-size: 0.85rem;
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.sidebar-settings-popup .dropdown-item.danger-item i {
+  color: #ef4444;
+}

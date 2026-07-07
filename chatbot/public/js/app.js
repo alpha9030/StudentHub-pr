@@ -1702,10 +1702,27 @@ function saveTodoTasks() {
 function renderTodoTasks() {
   const listEl = document.getElementById('todo-tasks-list');
   if (!listEl) return;
-  
+
+  const countEl = document.getElementById('todo-goals-count');
+  if (countEl) countEl.innerText = todoTasks.length;
+
+  const contentPanel = document.getElementById('todo-panel-content');
+  const chevron = document.getElementById('todo-chevron');
+
+  // Collapse automatically if there are no active goals by default
   if (todoTasks.length === 0) {
+    if (contentPanel && !contentPanel.classList.contains('manually-collapsed')) {
+      contentPanel.style.display = 'none';
+      if (chevron) chevron.style.transform = 'rotate(-90deg)';
+    }
     listEl.innerHTML = '<li class="todo-item" style="color: var(--text-muted); justify-content: center; width: 100%;">No active goals</li>';
     return;
+  }
+
+  // Auto-expand if active goals are loaded and it wasn't manually collapsed
+  if (contentPanel && contentPanel.style.display === 'none' && !contentPanel.classList.contains('manually-collapsed')) {
+    contentPanel.style.display = 'flex';
+    if (chevron) chevron.style.transform = 'rotate(0deg)';
   }
   
   listEl.innerHTML = todoTasks.map((task, idx) => `

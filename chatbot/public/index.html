@@ -188,7 +188,7 @@
         </div>
 
         <!-- Search Bar -->
-        <div class="sidebar-search">
+        <div class="sidebar-search" style="padding: 0 16px; margin-bottom: 8px;">
           <div class="search-input-wrapper">
             <i class="fas fa-search search-icon"></i>
             <input type="text" id="search-chats" placeholder="Search conversations..." aria-label="Search chats">
@@ -199,71 +199,86 @@
         </div>
 
         <!-- Conversations List -->
-        <div class="conversations-list-container">
+        <div class="conversations-list-container" style="flex: 1; overflow-y: auto; padding: 8px 16px; display: flex; flex-direction: column; gap: 8px;">
           <!-- Pinned Chats -->
-          <div id="pinned-chats-section" class="list-section hidden">
-            <div class="section-title-label font-outfit"><i class="fas fa-thumbtack"></i> Pinned Chats</div>
-            <ul id="pinned-chats-list" class="chats-list"></ul>
+          <div id="pinned-chats-section" class="list-section hidden" style="margin-bottom: 8px;">
+            <div class="section-title-label font-outfit" style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; padding-left: 4px; display: flex; align-items: center; gap: 6px;">
+              <i class="fas fa-thumbtack"></i> Pinned Chats
+            </div>
+            <ul id="pinned-chats-list" class="chats-list" style="margin: 0; padding: 0; list-style: none;"></ul>
           </div>
           
           <!-- Recent Chats -->
-          <div id="recent-chats-section" class="list-section">
-            <div class="section-title-label font-outfit"><i class="fas fa-history"></i> Recent Chats</div>
-            <ul id="recent-chats-list" class="chats-list"></ul>
+          <div id="recent-chats-section" class="list-section" style="margin-bottom: 8px;">
+            <div onclick="toggleRecentChatsPanel()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding-left: 4px; margin-bottom: 6px; user-select: none;">
+              <div class="section-title-label font-outfit" style="margin: 0; padding: 0; display: flex; align-items: center; gap: 6px; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 1px;">
+                <i class="fas fa-history"></i> Recent Chats (<span id="recent-chats-count">0</span>)
+              </div>
+              <i id="recent-chats-chevron" class="fas fa-chevron-down" style="font-size: 10px; color: var(--text-muted); transition: transform 0.2s;"></i>
+            </div>
+            <ul id="recent-chats-list" class="chats-list" style="display: flex; flex-direction: column; gap: 4px; list-style: none; margin: 0; padding: 0; transition: max-height 0.3s ease, opacity 0.3s ease;"></ul>
           </div>
 
           <!-- Empty Chats View -->
-          <div id="empty-history-view" class="empty-history hidden">
-            <i class="far fa-comments"></i>
+          <div id="empty-history-view" class="empty-history hidden" style="text-align: center; padding: 20px 10px; color: var(--text-muted); font-size: 0.85rem;">
+            <i class="far fa-comments" style="font-size: 1.5rem; margin-bottom: 8px; display: block;"></i>
             <p>No chats found</p>
           </div>
         </div>
 
         <!-- To-Do Productivity Widget -->
-        <div class="todo-section">
-          <div class="todo-title font-outfit"><i class="fas fa-tasks"></i> Active Goals & Tasks</div>
-          <div class="todo-input-wrapper">
-            <input type="text" id="todo-new-task" class="todo-input" placeholder="Add study goal..." aria-label="New study goal">
-            <button type="button" id="btn-add-todo" class="todo-add-btn" title="Add Goal"><i class="fas fa-plus"></i></button>
+        <div class="todo-section" style="border-top: 1px solid var(--border-color); padding: 12px 16px 8px 16px; margin-top: auto; flex-shrink: 0;">
+          <div onclick="toggleTodoPanel()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding-left: 4px; margin-bottom: 6px; user-select: none;">
+            <div class="todo-title font-outfit" style="margin: 0; padding: 0; display: flex; align-items: center; gap: 6px; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 1px;">
+              <i class="fas fa-tasks"></i> Goals & Tasks (<span id="todo-goals-count">0</span>)
+            </div>
+            <i id="todo-chevron" class="fas fa-chevron-down" style="font-size: 10px; color: var(--text-muted); transition: transform 0.2s;"></i>
           </div>
-          <ul id="todo-tasks-list" class="todo-list">
-            <!-- Injected dynamically -->
-          </ul>
+          <div id="todo-panel-content" style="display: none; flex-direction: column; gap: 8px;">
+            <div class="todo-input-wrapper" style="display: flex; gap: 8px; margin-bottom: 4px;">
+              <input type="text" id="todo-new-task" class="todo-input" placeholder="Add study goal..." aria-label="New study goal" style="flex: 1; padding: 6px 10px; background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-body); border-radius: var(--radius-sm); font-size: 0.8rem; outline: none;">
+              <button type="button" id="btn-add-todo" class="todo-add-btn" title="Add Goal" style="padding: 6px 10px; border-radius: var(--radius-sm); background: var(--primary-color); border: none; color: #fff; cursor: pointer; font-size: 0.8rem;"><i class="fas fa-plus"></i></button>
+            </div>
+            <ul id="todo-tasks-list" class="todo-list" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; max-height: 120px; overflow-y: auto;">
+              <!-- Injected dynamically -->
+            </ul>
+          </div>
         </div>
 
         <!-- Sidebar Footer -->
-        <div class="sidebar-footer">
+        <div class="sidebar-footer" style="padding: 12px 16px; background-color: var(--bg-secondary); border-top: 1px solid var(--border-color); position: relative; flex-shrink: 0;">
           <!-- Connection Status Info -->
-          <div class="status-indicator-wrapper">
-            <span class="status-dot online" id="status-dot"></span>
+          <div class="status-indicator-wrapper" style="display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px; padding-left: 4px;">
+            <span class="status-dot online" id="status-dot" style="width: 7px; height: 7px; border-radius: 50%; background-color: #10b981; box-shadow: 0 0 6px #10b981;"></span>
             <span class="status-text font-outfit" id="status-text">Connected</span>
           </div>
 
-          <!-- Quick Tools Row -->
-          <div class="footer-tools">
-            <button id="btn-theme-toggle" class="icon-btn" title="Toggle Theme" aria-label="Toggle Theme">
-              <i class="fas fa-moon theme-icon"></i>
+          <!-- Single Settings Trigger Row -->
+          <div style="position: relative; width: 100%;">
+            <button id="btn-settings-trigger" onclick="toggleSidebarSettingsMenu(event)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-body); border-radius: var(--radius-md); font-family: var(--font-sans); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">
+              <span style="display: flex; align-items: center; gap: 8px;"><i class="fas fa-cog"></i> Settings & Utilities</span>
+              <i id="settings-chevron" class="fas fa-chevron-up" style="font-size: 10px; color: var(--text-muted); transition: transform 0.2s;"></i>
             </button>
-            <button id="btn-settings-key" class="icon-btn" title="Gemini API Key Settings" aria-label="Gemini API Key Settings">
-              <i class="fas fa-key"></i>
-            </button>
-            <button id="btn-export-dropdown" class="icon-btn" title="Export History" aria-label="Export History">
-              <i class="fas fa-download"></i>
-            </button>
-            <button id="btn-clear-all" class="icon-btn danger" title="Clear All Conversations" aria-label="Clear All Conversations">
-              <i class="fas fa-trash-alt"></i>
-            </button>
-          </div>
-
-          <!-- Export Dropdown Menu (Hidden by default) -->
-          <div id="export-dropdown-menu" class="export-menu hidden">
-            <button id="btn-export-txt" class="dropdown-item"><i class="far fa-file-alt"></i> Export as Text (.txt)</button>
-            <button id="btn-export-md" class="dropdown-item"><i class="fab fa-markdown"></i> Export as Markdown (.md)</button>
-            <button id="btn-export-pdf" class="dropdown-item"><i class="far fa-file-pdf"></i> Export as PDF Document</button>
-            <button id="btn-export-json" class="dropdown-item"><i class="far fa-file-code"></i> Backup History (.json)</button>
+            
+            <!-- Unified Popup Settings Menu -->
+            <div id="sidebar-settings-menu" class="sidebar-settings-popup hidden" style="position: absolute; bottom: 50px; left: 0; right: 0; background-color: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); padding: 6px; z-index: 999; display: flex; flex-direction: column; gap: 4px;">
+              <button id="btn-theme-toggle" class="dropdown-item" style="border: none; background: transparent; cursor: pointer; text-align: left; width: 100%;"><i class="fas fa-moon theme-icon"></i> Change Theme</button>
+              <button id="btn-settings-key" class="dropdown-item" style="border: none; background: transparent; cursor: pointer; text-align: left; width: 100%;"><i class="fas fa-key"></i> Gemini API Key</button>
+              
+              <div style="height: 1px; background: var(--border-color); margin: 4px 0;"></div>
+              
+              <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; padding: 4px 12px 2px 12px;">Export Conversation</div>
+              <button id="btn-export-txt" class="dropdown-item" style="border: none; background: transparent; cursor: pointer; text-align: left; width: 100%;"><i class="far fa-file-alt"></i> Export as Text (.txt)</button>
+              <button id="btn-export-md" class="dropdown-item" style="border: none; background: transparent; cursor: pointer; text-align: left; width: 100%;"><i class="fab fa-markdown"></i> Export as Markdown (.md)</button>
+              <button id="btn-export-pdf" class="dropdown-item" style="border: none; background: transparent; cursor: pointer; text-align: left; width: 100%;"><i class="far fa-file-pdf"></i> Export as PDF</button>
+              <button id="btn-export-json" class="dropdown-item" style="border: none; background: transparent; cursor: pointer; text-align: left; width: 100%;"><i class="far fa-file-code"></i> Backup History (.json)</button>
+              
+              <div style="height: 1px; background: var(--border-color); margin: 4px 0;"></div>
+              
+              <button id="btn-clear-all" class="dropdown-item" style="border: none; background: transparent; cursor: pointer; text-align: left; width: 100%; color: #ef4444;"><i class="fas fa-trash-alt"></i> Clear All Chats</button>
+            </div>
           </div>
         </div>
-      </aside>
 
       <!-- Sidebar Mobile Overlay -->
       <div id="sidebar-overlay" class="sidebar-overlay hidden"></div>
@@ -478,6 +493,12 @@
     </div>
   </div>
 
+  <!-- Compatibility anchors for app.js (do not remove) -->
+  <div style="display: none !important;">
+    <button id="btn-export-dropdown"></button>
+    <div id="export-dropdown-menu"></div>
+  </div>
+
   <!-- App logic scripts -->
   <script>
     function toggleAIToolsPanel() {
@@ -493,6 +514,96 @@
         }
       }
     }
+
+    function toggleRecentChatsPanel() {
+      const list = document.getElementById('recent-chats-list');
+      const chevron = document.getElementById('recent-chats-chevron');
+      if (list && chevron) {
+        if (list.style.display === 'none') {
+          list.style.display = 'flex';
+          chevron.style.transform = 'rotate(0deg)';
+        } else {
+          list.style.display = 'none';
+          chevron.style.transform = 'rotate(-90deg)';
+        }
+      }
+    }
+
+    function toggleTodoPanel() {
+      const content = document.getElementById('todo-panel-content');
+      const chevron = document.getElementById('todo-chevron');
+      if (content && chevron) {
+        if (content.style.display === 'none') {
+          content.style.display = 'flex';
+          content.classList.remove('manually-collapsed');
+          chevron.style.transform = 'rotate(0deg)';
+        } else {
+          content.style.display = 'none';
+          content.classList.add('manually-collapsed');
+          chevron.style.transform = 'rotate(-90deg)';
+        }
+      }
+    }
+
+    function toggleSidebarSettingsMenu(event) {
+      if (event) event.stopPropagation();
+      const menu = document.getElementById('sidebar-settings-menu');
+      const chevron = document.getElementById('settings-chevron');
+      if (menu && chevron) {
+        if (menu.classList.contains('hidden')) {
+          menu.classList.remove('hidden');
+          chevron.style.transform = 'rotate(-180deg)';
+        } else {
+          menu.classList.add('hidden');
+          chevron.style.transform = 'rotate(0deg)';
+        }
+      }
+    }
+
+    // Close settings popup when clicking anywhere else
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('sidebar-settings-menu');
+      const btn = document.getElementById('btn-settings-trigger');
+      const chevron = document.getElementById('settings-chevron');
+      if (menu && !menu.classList.contains('hidden')) {
+        if (btn && e.target !== btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.add('hidden');
+          if (chevron) chevron.style.transform = 'rotate(0deg)';
+        }
+      }
+    });
+
+    // Keep recent chats count updated dynamically
+    setInterval(() => {
+      const list = document.getElementById('recent-chats-list');
+      const countSpan = document.getElementById('recent-chats-count');
+      if (list && countSpan) {
+        const count = list.querySelectorAll('.chat-item').length;
+        countSpan.innerText = count;
+        
+        // Hide Recent Chats section if search returns 0 result, or collapse if empty
+        const section = document.getElementById('recent-chats-section');
+        if (section) {
+          if (count === 0) {
+            section.style.display = 'none';
+          } else {
+            section.style.display = 'block';
+          }
+        }
+      }
+      
+      // Auto-collapse pinned chats if it has 0 items
+      const pinnedSection = document.getElementById('pinned-chats-section');
+      if (pinnedSection) {
+        const pinnedList = document.getElementById('pinned-chats-list');
+        const pinnedCount = pinnedList ? pinnedList.querySelectorAll('.chat-item').length : 0;
+        if (pinnedCount === 0) {
+          pinnedSection.classList.add('hidden');
+        } else {
+          pinnedSection.classList.remove('hidden');
+        }
+      }
+    }, 500);
   </script>
   <script src="js/app.js"></script>
 </body>
