@@ -1781,8 +1781,27 @@
         </div>
 
         <!-- ==================== VIEW 4: STUDENT HUB AI CHATBOT ==================== -->
-        <div id="chatbot-panel" class="view-panel" style="width: 100%; height: calc(100vh - 120px); min-height: 500px; padding: 0; margin: 0; overflow: hidden; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); background: var(--bg-secondary);">
-            <iframe src="/chatbot/public/index.html" style="width: 100%; height: 100%; border: none; overflow: hidden;" id="chatbot-iframe"></iframe>
+        <div id="chatbot-panel" class="view-panel" style="width: 100%; height: calc(100vh - 120px); min-height: 500px; padding: 0; margin: 0; overflow: hidden; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); background: var(--bg-secondary); display: flex; flex-direction: column;">
+            <!-- Minimal Workspace Top Bar -->
+            <div id="chatbot-workspace-topbar" style="height: 55px; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; flex-shrink: 0; box-sizing: border-box;">
+                <!-- Left Logo -->
+                <div style="display: flex; align-items: center; gap: 10px; font-family: 'Outfit', sans-serif;">
+                    <span style="font-size: 1.5rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));">🎓</span>
+                    <span style="font-weight: 800; font-size: 15.5px; letter-spacing: -0.3px; color: var(--text-body); background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Pravio AI</span>
+                </div>
+                <!-- Middle active conversation title -->
+                <div style="flex: 1; text-align: center; max-width: 50%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 20px;">
+                    <span id="parent-active-chat-title" style="font-weight: 600; font-size: 13.5px; color: var(--text-muted); font-family: 'Outfit', sans-serif;">New Conversation</span>
+                </div>
+                <!-- Right Action Button -->
+                <div>
+                    <button onclick="exitChatbotWorkspace()" class="btn btn-secondary" style="padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; background: var(--bg-container); border: 1px solid var(--border-color); cursor: pointer; color: var(--text-body); display: flex; align-items: center; gap: 6px; transition: all 0.2s ease; box-shadow: var(--shadow-sm);" onmouseover="this.style.borderColor='var(--primary-color)'; this.style.color='var(--primary-color)'" onmouseout="this.style.borderColor='var(--border-color)'; this.style.color='var(--text-body)'">
+                        <i class="fas fa-arrow-left"></i> Back to StudentHub
+                    </button>
+                </div>
+            </div>
+            <!-- Chatbot Iframe -->
+            <iframe src="/chatbot/public/index.html" style="flex: 1; width: 100%; border: none; overflow: hidden;" id="chatbot-iframe"></iframe>
         </div>
 
         <!-- ==================== MODAL: GEMINI KEY CONFIGURATION ==================== -->
@@ -1799,6 +1818,27 @@
     <script src="dashboard_extras.js"></script>
     <script>
         // Simple page view switching logic
+        let chatbotTitleInterval = null;
+        function syncChatbotTitle() {
+            const iframe = document.getElementById('chatbot-iframe');
+            const parentTitle = document.getElementById('parent-active-chat-title');
+            if (iframe && parentTitle) {
+                try {
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    const childTitle = iframeDoc.getElementById('active-chat-title');
+                    if (childTitle) {
+                        parentTitle.innerText = childTitle.innerText;
+                    }
+                } catch(e) {
+                    // Ignore cross-origin latency
+                }
+            }
+        }
+
+        function exitChatbotWorkspace() {
+            showView('dashboard');
+        }
+
         function showView(viewId) {
             // Redirect landing to dashboard if user is logged in
             const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
@@ -1819,10 +1859,27 @@
             // Toggle full-screen class on app container for chatbot/visualizer page
             const appContainer = document.querySelector('.app-container');
             if (appContainer) {
-                if (viewId === 'chatbot' || viewId === 'visualizer') {
+                if (viewId === 'chatbot') {
+                    appContainer.classList.add('chatbot-workspace-active');
+                    appContainer.classList.remove('full-screen-chat');
+                } else if (viewId === 'visualizer') {
                     appContainer.classList.add('full-screen-chat');
+                    appContainer.classList.remove('chatbot-workspace-active');
                 } else {
                     appContainer.classList.remove('full-screen-chat');
+                    appContainer.classList.remove('chatbot-workspace-active');
+                }
+            }
+
+            // Sync chatbot conversation title
+            if (viewId === 'chatbot') {
+                if (!chatbotTitleInterval) {
+                    chatbotTitleInterval = setInterval(syncChatbotTitle, 1000);
+                }
+            } else {
+                if (chatbotTitleInterval) {
+                    clearInterval(chatbotTitleInterval);
+                    chatbotTitleInterval = null;
                 }
             }
 

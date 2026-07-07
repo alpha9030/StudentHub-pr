@@ -3851,10 +3851,42 @@ body.theme-light .career-wrapper .career-select option {
     overflow: hidden !important;
 }
 
-.app-container.full-screen-chat #chatbot-panel,
 .app-container.full-screen-chat #visualizer-panel {
     flex: 1 !important;
     height: calc(100vh - 65px) !important; /* height of header is 65px */
+    min-height: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Dedicated chatbot full-screen workspace mode */
+.app-container.chatbot-workspace-active {
+    padding: 0 !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    background-color: var(--bg-secondary) !important;
+}
+
+.app-container.chatbot-workspace-active .global-navbar {
+    display: none !important;
+}
+
+.app-container.chatbot-workspace-active .app-footer {
+    display: none !important;
+}
+
+.app-container.chatbot-workspace-active #chatbot-panel {
+    flex: 1 !important;
+    height: 100vh !important;
     min-height: 0 !important;
     border-radius: 0 !important;
     border: none !important;
