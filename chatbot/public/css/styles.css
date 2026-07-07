@@ -2147,3 +2147,19 @@ html, body, main, .app-main-layout {
 .sidebar-settings-popup .dropdown-item.danger-item i {
   color: #ef4444;
 }
+
+/* Speech Recognition Pulse animation */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

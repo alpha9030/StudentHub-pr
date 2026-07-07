@@ -1534,61 +1534,169 @@ function formatBytes(bytes, decimals = 2) {
 }
 
 // Speech Recognition Handlers
+
+
+function showToast(message, type = 'error') {
+  let container = document.getElementById('toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    container.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; pointer-events: none;';
+    document.body.appendChild(container);
+  }
+  
+  const toast = document.createElement('div');
+  toast.className = 'custom-toast';
+  toast.style.cssText = `
+    padding: 12px 20px;
+    border-radius: 8px;
+    background: ${type === 'success' ? '#10b981' : '#ef4444'};
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    pointer-events: auto;
+  `;
+  
+  const icon = document.createElement('i');
+  icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+  toast.appendChild(icon);
+  
+  const textNode = document.createElement('span');
+  textNode.innerText = message;
+  toast.appendChild(textNode);
+  
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateY(0)';
+  }, 10);
+  
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(-20px)';
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  }, 4000);
+}
+
 function initSpeechRecognition() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) return null;
+  if (!SpeechRecognition) {
+    return null;
+  }
   
   const rec = new SpeechRecognition();
   rec.continuous = false;
-  rec.interimResults = false;
+  rec.interimResults = true;
   rec.lang = 'en-US';
   
+  let prefix = '';
+
   rec.onstart = () => {
     isListening = true;
     DOMElements.btnVoiceInput.classList.add('active');
-    DOMElements.btnVoiceInput.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+    DOMElements.btnVoiceInput.innerHTML = '<i class="fas fa-microphone" style="color: #ef4444; animation: pulse 1.2s infinite;"></i>';
+    
+    // Save current textarea prefix
+    prefix = DOMElements.chatTextarea.value;
+    if (prefix && !prefix.endsWith(' ')) prefix += ' ';
+    
     DOMElements.chatTextarea.placeholder = 'Listening... Speak now.';
+    showToast("Voice input active. Listening...", "success");
   };
   
   rec.onend = () => {
     isListening = false;
     DOMElements.btnVoiceInput.classList.remove('active');
     DOMElements.btnVoiceInput.innerHTML = '<i class="fas fa-microphone"></i>';
-    DOMElements.chatTextarea.placeholder = 'Message Lumina AI or ask about files...';
+    DOMElements.chatTextarea.placeholder = 'Message Pravio AI or ask about files...';
   };
   
   rec.onresult = (event) => {
-    const text = event.results[0][0].transcript;
-    if (text) {
-      const val = DOMElements.chatTextarea.value;
-      DOMElements.chatTextarea.value = val ? (val + ' ' + text) : text;
-      autoScaleTextarea();
-      DOMElements.chatTextarea.focus();
+    let interimTranscript = '';
+    let finalTranscript = '';
+    
+    for (let i = event.resultIndex; i < event.results.length; ++i) {
+      if (event.results[i].isFinal) {
+        finalTranscript += event.results[i][0].transcript;
+      } else {
+        interimTranscript += event.results[i][0].transcript;
+      }
     }
+    
+    DOMElements.chatTextarea.value = prefix + finalTranscript + interimTranscript;
+    autoScaleTextarea();
   };
   
   rec.onerror = (event) => {
     console.error('Speech recognition error:', event.error);
-    alert(`Voice Recognition Error: ${event.error}`);
+    isListening = false;
+    DOMElements.btnVoiceInput.classList.remove('active');
+    DOMElements.btnVoiceInput.innerHTML = '<i class="fas fa-microphone"></i>';
+    
+    if (event.error === 'not-allowed' || event.error === 'permission-denied') {
+      showToast("Microphone access denied. Please enable mic permissions in settings.");
+    } else if (event.error === 'no-speech') {
+      showToast("No speech detected. Stopping microphone.");
+    } else if (event.error === 'network') {
+      showToast("Network error occurred during speech recognition.");
+    } else {
+      showToast(`Speech recognition error: ${event.error}`);
+    }
   };
   
   return rec;
 }
 
 function toggleSpeechRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    showToast("Voice input is not supported in this browser. Please use Chrome or Edge.");
+    return;
+  }
+
   if (!recognition) {
     recognition = initSpeechRecognition();
   }
   
   if (!recognition) {
-    alert('Voice input is not supported in this browser. Please use Chrome or Safari.');
+    showToast("Failed to initialize speech recognition.");
     return;
   }
   
   if (isListening) {
     recognition.stop();
   } else {
-    recognition.start();
+    // Request mic permission first
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then((stream) => {
+          stream.getTracks().forEach(track => track.stop());
+          recognition.start();
+        })
+        .catch((err) => {
+          console.error('getUserMedia error:', err);
+          if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+            showToast("Microphone access denied. Please enable mic permissions in settings.");
+          } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+            showToast("No microphone detected. Please connect a microphone.");
+          } else {
+            showToast(`Microphone error: ${err.name || err.message}`);
+          }
+        });
+    } else {
+      recognition.start();
+    }
   }
 }
 
