@@ -949,9 +949,10 @@ html, body, main, .app-main-layout {
 
 /* WELCOME SCREEN */
 .chat-welcome-screen {
-  max-width: 1400px;
-  width: 95%;
-  margin: 0 auto;
+  max-width: 100%;
+  width: 100%;
+  padding-left: 40px;
+  padding-right: 40px;
   padding: 80px 24px;
   display: flex;
   flex-direction: column;
@@ -1044,9 +1045,10 @@ html, body, main, .app-main-layout {
 
 /* MESSAGES LIST */
 .messages-list {
-  max-width: 1400px;
-  width: 95%;
-  margin: 0 auto;
+  max-width: 100%;
+  width: 100%;
+  padding-left: 40px;
+  padding-right: 40px;
   padding: 24px 24px 60px;
   display: flex;
   flex-direction: column;
@@ -1242,9 +1244,10 @@ html, body, main, .app-main-layout {
 
 /* TYPING INDICATOR */
 .ai-typing-indicator {
-  max-width: 1400px;
-  width: 95%;
-  margin: 0 auto;
+  max-width: 100%;
+  width: 100%;
+  padding-left: 40px;
+  padding-right: 40px;
   padding: 0 24px;
 }
 .typing-bubble {
@@ -1281,7 +1284,7 @@ html, body, main, .app-main-layout {
 .chat-input-container {
   background-color: var(--bg-secondary);
   border-top: 1px solid var(--border-color);
-  padding: 16px 24px;
+  padding: 16px 40px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -1307,9 +1310,8 @@ html, body, main, .app-main-layout {
 }
 
 .chat-input-form {
-  max-width: 1400px;
-  width: 95%;
-  margin: 0 auto;
+  max-width: 100%;
+  width: 100%;
   display: flex;
   gap: 12px;
   background-color: var(--bg-primary);
@@ -1584,9 +1586,8 @@ html, body, main, .app-main-layout {
   background-color: var(--bg-primary);
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
-  max-width: 1400px;
-  width: 95%;
-  margin: 0 auto;
+  max-width: 100%;
+  width: 100%;
   margin-bottom: 8px;
 }
 .file-previews-container.hidden {
@@ -1799,10 +1800,8 @@ html, body, main, .app-main-layout {
   overflow-x: auto;
   padding: 8px 12px;
   margin-bottom: 8px;
-  max-width: 1400px;
-  width: 95%;
-  margin-left: auto;
-  margin-right: auto;
+  max-width: 100%;
+  width: 100%;
   scrollbar-width: none; /* Hide scrollbar for clean style */
 }
 .input-quick-actions-bar::-webkit-scrollbar {
