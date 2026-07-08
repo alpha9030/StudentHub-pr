@@ -5908,3 +5908,8 @@ body #notes-panel.theme-dark #notes-panel .template-sticky {
 
 }
 
+#chatbot-panel.active,
+#notes-panel.active {
+    display: flex !important;
+}
+
