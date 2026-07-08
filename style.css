@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;700&family=Architects+Daughter&display=swap');
 
 /* ==========================================================================
    BEGINNER-FRIENDLY ACADEMIC STYLESHEET (CSS VARIABLES BASED)
@@ -4128,4 +4128,1789 @@ a, button, .dash-stat-card, .btn, input, select {
 
 
 
+
+
+
+/* ==========================================================================
+   PRAVIO NOTES INTEGRATION MODULE - SCOPED STYLES
+   ========================================================================== */
+#notes-panel /* Global Variables & Themes */
+#notes-panel {
+
+    /* Color Palette */
+    --color-primary: #6366f1;
+    --color-primary-light: #818cf8;
+    --color-primary-glow: rgba(99, 102, 241, 0.15);
+    --color-secondary: #14b8a6;
+    --color-secondary-light: #2dd4bf;
+    --color-accent: #f43f5e;
+    
+    --bg-app: #f8fafc;
+    --bg-sidebar: #ffffff;
+    --bg-card: #ffffff;
+    --bg-input: #f1f5f9;
+    
+    --border-color: #e2e8f0;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --text-dark: #334155;
+    
+    /* Box shadows & borders */
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+    --shadow-lg: 0 10px 15px -3px rgba(99,102,241,0.05), 0 4px 6px -2px rgba(99,102,241,0.02);
+    --shadow-notebook: 0 20px 40px rgba(0,0,0,0.08);
+    
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    
+    --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-hand: 'Caveat', 'Architects Daughter', cursive;
+    --font-mono: 'JetBrains Mono', monospace;
+    
+    /* Ruled paper background defaults */
+    --paper-line-color: rgba(99, 102, 241, 0.09);
+    --paper-margin-color: #f43f5e;
+
+}
+#notes-panel /* Dark Mode Variables */
+body.theme-dark #notes-panel {
+
+    --bg-app: #090715;
+    --bg-sidebar: #110e24;
+    --bg-card: rgba(21, 18, 44, 0.6);
+    --bg-input: #1b1637;
+    
+    --border-color: rgba(255, 255, 255, 0.08);
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --text-dark: #cbd5e1;
+    
+    --shadow-lg: 0 10px 30px rgba(0,0,0,0.3);
+    --paper-line-color: rgba(255, 255, 255, 0.05);
+    --paper-margin-color: #ec4899;
+
+}
+#notes-panel /* Base resets */
+* {
+
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+}
+body #notes-panel {
+
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    transition: background-color 0.3s, color 0.3s;
+
+}
+#notes-panel /* App Shell Grid */
+.app-shell {
+
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+
+}
+@media (max-width: 1200px) {
+#notes-panel .app-shell {
+
+        grid-template-columns: 240px 1fr;
+    
+}
+#notes-panel .ai-copilot {
+
+        display: none !important; /* Hide sidebar on small layouts */
+    
+}
+
+
+}
+#notes-panel /* 1. LEFT SIDEBAR */
+.sidebar {
+
+    background-color: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    z-index: 10;
+
+}
+#notes-panel .brand {
+
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border-color);
+
+}
+#notes-panel .brand-icon {
+
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+
+}
+#notes-panel .brand-text h2 {
+
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+
+}
+#notes-panel .brand-text span {
+
+    font-size: 0.75rem;
+    color: var(--text-muted);
+
+}
+#notes-panel .sidebar-nav {
+
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+}
+#notes-panel .nav-btn {
+
+    background: transparent;
+    border: none;
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+
+}
+#notes-panel .nav-btn:hover {
+
+    background-color: var(--bg-input);
+    color: var(--text-main);
+
+}
+#notes-panel .nav-btn.active {
+
+    background-color: var(--color-primary-glow);
+    color: var(--color-primary);
+    font-weight: 600;
+
+}
+#notes-panel .sidebar-section {
+
+    padding: 16px 20px;
+    flex: 1;
+    overflow-y: auto;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+
+}
+#notes-panel .section-header {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 1.2px;
+    margin-bottom: 12px;
+
+}
+#notes-panel .folder-tree {
+
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+}
+#notes-panel .folder-item {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+
+}
+#notes-panel .folder-item:hover, #notes-panel .folder-item.active {
+
+    background-color: var(--bg-input);
+    color: var(--text-main);
+
+}
+#notes-panel .folder-meta {
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+}
+#notes-panel .tag-cloud {
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+}
+#notes-panel .tag-badge {
+
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 12px;
+    background-color: var(--bg-input);
+    color: var(--text-muted);
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+
+}
+#notes-panel .tag-badge:hover, #notes-panel .tag-badge.active {
+
+    background-color: var(--color-primary);
+    color: white;
+
+}
+#notes-panel .sidebar-footer {
+
+    padding: 16px;
+    border-top: 1px solid var(--border-color);
+
+}
+#notes-panel .theme-toggle-btn {
+
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    cursor: pointer;
+
+}
+#notes-panel /* 2. MAIN HUB */
+.main-hub {
+
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+
+}
+#notes-panel .hub-header {
+
+    height: 72px;
+    background-color: var(--bg-sidebar);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    z-index: 5;
+
+}
+#notes-panel .search-bar-container {
+
+    position: relative;
+    width: 320px;
+
+}
+#notes-panel .search-icon {
+
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: var(--text-muted);
+
+}
+#notes-panel #search-input {
+
+    width: 100%;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    padding: 8px 12px 8px 36px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: var(--text-main);
+    outline: none;
+
+}
+#notes-panel .viewport {
+
+    flex: 1;
+    padding: 28px;
+    overflow-y: auto;
+    position: relative;
+
+}
+#notes-panel /* Buttons */
+.btn {
+
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    transition: all 0.2s;
+
+}
+#notes-panel .btn-primary {
+
+    background-color: var(--color-primary);
+    color: white;
+
+}
+#notes-panel .btn-primary:hover {
+
+    background-color: var(--color-primary-light);
+    transform: translateY(-1px);
+
+}
+#notes-panel .btn-secondary {
+
+    background-color: var(--bg-input);
+    color: var(--text-dark);
+    border: 1px solid var(--border-color);
+
+}
+#notes-panel .btn-secondary:hover {
+
+    background-color: var(--border-color);
+
+}
+#notes-panel .btn-sm {
+
+    padding: 6px 12px;
+    font-size: 0.8rem;
+
+}
+#notes-panel .icon-btn {
+
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+
+}
+#notes-panel .icon-btn:hover {
+
+    background-color: var(--bg-input);
+    color: var(--text-main);
+
+}
+#notes-panel .btn-icon-round {
+
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-input);
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+}
+#notes-panel /* Modals */
+.modal-backdrop {
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+
+}
+#notes-panel .modal {
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    background-color: var(--bg-sidebar);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    z-index: 1001;
+    overflow: hidden;
+
+}
+#notes-panel .modal-header {
+
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+#notes-panel .modal-body {
+
+    padding: 24px;
+
+}
+#notes-panel .modal-close {
+
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+
+}
+#notes-panel .import-dropzone {
+
+    border: 2px dashed var(--color-primary-light);
+    border-radius: var(--radius-md);
+    background-color: var(--color-primary-glow);
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+#notes-panel .import-processing {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    padding: 20px 0;
+
+}
+#notes-panel /* 3. RIGHT SIDEBAR: AI CO-PILOT */
+.ai-copilot {
+
+    background-color: var(--bg-sidebar);
+    border-left: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+}
+#notes-panel .copilot-header {
+
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border-color);
+
+}
+#notes-panel .copilot-title {
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+
+}
+#notes-panel .copilot-chat-history {
+
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+}
+#notes-panel .chat-bubble {
+
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    line-height: 1.5;
+
+}
+#notes-panel .chat-bubble.ai {
+
+    background-color: var(--color-primary-glow);
+    color: var(--text-main);
+    border: 1px solid rgba(99, 102, 241, 0.15);
+    border-bottom-left-radius: 2px;
+
+}
+#notes-panel .chat-bubble.user {
+
+    background-color: var(--bg-input);
+    color: var(--text-main);
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+
+}
+#notes-panel .chat-tips {
+
+    margin-top: 10px;
+    padding-left: 16px;
+    color: var(--text-muted);
+
+}
+#notes-panel .copilot-input-area {
+
+    padding: 16px;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-sidebar);
+
+}
+#notes-panel #copilot-input {
+
+    width: 100%;
+    height: 80px;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 10px;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    resize: none;
+    outline: none;
+    color: var(--text-main);
+    margin-bottom: 10px;
+
+}
+#notes-panel .copilot-controls {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+#notes-panel /* ==========================================
+   HOMEPAGE / LEARNING DASHBOARD
+   ========================================== */
+.dashboard-grid {
+
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 28px;
+    margin-top: 20px;
+
+}
+@media (max-width: 1000px) {
+#notes-panel .dashboard-grid {
+
+        grid-template-columns: 1fr;
+    
+}
+
+
+}
+#notes-panel .dashboard-title-row {
+
+    margin-bottom: 12px;
+
+}
+#notes-panel .dashboard-panel {
+
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    padding: 24px;
+    margin-bottom: 28px;
+
+}
+#notes-panel .analytics-grid {
+
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+
+}
+#notes-panel .analytic-card {
+
+    background-color: var(--bg-input);
+    border-radius: var(--radius-md);
+    padding: 10px 18px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    width: 140px; /* Compact fixed size */
+
+}
+#notes-panel .analytic-val {
+
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--color-primary);
+
+}
+#notes-panel .analytic-lbl {
+
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 600;
+
+}
+#notes-panel /* GitHub Revision Grid */
+.streak-heatmap {
+
+    margin-top: 20px;
+
+}
+#notes-panel .heatmap-grid {
+
+    display: grid;
+    grid-template-flow: column;
+    grid-template-columns: repeat(53, 14px);
+    grid-template-rows: repeat(7, 14px);
+    gap: 4px;
+    overflow-x: auto;
+    padding: 8px 0;
+
+}
+#notes-panel .heatmap-cell {
+
+    width: 14px;
+    height: 14px;
+    background-color: rgba(255,255,255,0.05);
+    border-radius: 2px;
+    border: 1px solid rgba(0,0,0,0.05);
+
+}
+#notes-panel .heatmap-cell.level-0 {
+ background-color: var(--border-color); 
+}
+#notes-panel .heatmap-cell.level-1 {
+ background-color: #d9f99d; 
+}
+#notes-panel .heatmap-cell.level-2 {
+ background-color: #a3e635; 
+}
+#notes-panel .heatmap-cell.level-3 {
+ background-color: #22c55e; 
+}
+#notes-panel .heatmap-cell.level-4 {
+ background-color: #15803d; 
+}
+#notes-panel .heatmap-days {
+
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+
+}
+#notes-panel /* Notes Cards Row */
+.recent-notes-list {
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+
+}
+#notes-panel .note-grid-card {
+
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s;
+    position: relative;
+    border-left: 4px solid var(--color-primary);
+
+}
+#notes-panel .note-grid-card:hover {
+
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-primary-light);
+
+}
+#notes-panel .note-grid-card.pinned {
+
+    border-left-color: var(--color-accent);
+
+}
+#notes-panel .note-grid-card h4 {
+
+    font-size: 0.95rem;
+    color: var(--text-main);
+    margin-bottom: 6px;
+    font-weight: 600;
+
+}
+#notes-panel .note-grid-card p {
+
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    height: 40px;
+    overflow: hidden;
+
+}
+#notes-panel .note-card-footer {
+
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+
+}
+#notes-panel .note-card-actions {
+
+    display: flex;
+    gap: 8px;
+
+}
+#notes-panel /* ==========================================
+   NOTEBOOK WORKSPACE / TEMPLATES
+   ========================================== */
+.workspace-grid {
+
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 24px;
+    height: 100%;
+
+}
+#notes-panel .note-selector-sidebar {
+
+    border-right: 1px solid var(--border-color);
+    padding-right: 16px;
+    overflow-y: auto;
+
+}
+#notes-panel /* Swappable Templates */
+.note-page-container {
+
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-notebook);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    background-color: var(--bg-card);
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+
+}
+#notes-panel /* Style switch header */
+.template-bar {
+
+    background-color: var(--bg-input);
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+
+}
+#notes-panel .template-bar select {
+
+    background: var(--bg-card);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+
+}
+#notes-panel /* 1. Classic Notebook */
+.template-classic {
+
+    padding: 40px;
+    background-color: #fdfdfd;
+    font-family: var(--font-sans);
+    color: #1e293b;
+    line-height: 1.6;
+
+}
+#notes-panel /* 2. Handwritten Notebook */
+.template-handwritten {
+
+    padding: 40px 40px 40px 60px;
+    background-color: #fcfcf4;
+    background-image: linear-gradient(var(--paper-line-color) 1px, transparent 1px);
+    background-size: 100% 28px;
+    font-family: var(--font-hand);
+    font-size: 1.3rem;
+    color: #0c1c3a;
+    line-height: 28px;
+    position: relative;
+    border-left: 3px double var(--paper-margin-color);
+    margin-left: 20px;
+
+}
+#notes-panel .template-handwritten::before {
+
+    content: '';
+    position: absolute;
+    left: -20px;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    border-left: 1px dashed var(--text-muted);
+
+}
+#notes-panel .template-handwritten h2, #notes-panel .template-handwritten h3 {
+
+    font-family: var(--font-hand);
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 8px;
+
+}
+#notes-panel /* 3. Grid / Engineering notes */
+.template-grid {
+
+    padding: 40px;
+    background-color: #fafbfc;
+    background-image: 
+        linear-gradient(rgba(14, 165, 233, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(14, 165, 233, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+    font-family: var(--font-sans);
+    line-height: 1.6;
+
+}
+#notes-panel /* 4. Cornell Notes layout */
+.template-cornell {
+
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    grid-template-rows: 1fr 120px;
+    min-height: 600px;
+
+}
+#notes-panel .cornell-cue {
+
+    border-right: 2px solid var(--border-color);
+    padding: 30px 20px;
+    background-color: rgba(0,0,0,0.01);
+
+}
+#notes-panel .cornell-notes {
+
+    padding: 30px;
+    background-color: var(--bg-card);
+
+}
+#notes-panel .cornell-summary {
+
+    grid-column: span 2;
+    border-top: 2px solid var(--border-color);
+    padding: 20px;
+    background-color: rgba(99, 102, 241, 0.02);
+
+}
+#notes-panel /* 5. Sticky Note */
+.template-sticky {
+
+    padding: 40px;
+    background: linear-gradient(135deg, #fef08a 0%, #fde047 100%);
+    color: #854d0e;
+    font-family: var(--font-hand);
+    font-size: 1.25rem;
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.05);
+
+}
+#notes-panel /* Highlight boxes inside templates */
+.note-box {
+
+    padding: 16px;
+    border-radius: var(--radius-sm);
+    margin: 16px 0;
+    font-size: 0.9rem;
+    border-left: 4px solid;
+
+}
+#notes-panel .note-box-tip {
+ background-color: rgba(20, 184, 166, 0.1); border-left-color: var(--color-secondary); color: var(--text-main); 
+}
+#notes-panel .note-box-warning {
+ background-color: rgba(244, 63, 94, 0.1); border-left-color: var(--color-accent); color: var(--text-main); 
+}
+#notes-panel .note-box-note {
+ background-color: rgba(99, 102, 241, 0.1); border-left-color: var(--color-primary); color: var(--text-main); 
+}
+#notes-panel /* Code Block wrapper */
+.code-block-wrapper {
+
+    background-color: #0b0f19;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin: 16px 0;
+    border: 1px solid var(--border-color);
+
+}
+#notes-panel .code-block-header {
+
+    background-color: #111827;
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+
+}
+#notes-panel .code-actions {
+
+    display: flex;
+    gap: 8px;
+
+}
+#notes-panel .code-actions button {
+
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: all 0.2s;
+
+}
+#notes-panel .code-actions button:hover {
+
+    background-color: rgba(255,255,255,0.05);
+    color: white;
+
+}
+#notes-panel .code-editor-area {
+
+    height: 150px;
+    width: 100%;
+
+}
+#notes-panel /* Split Visualizer panel in notes */
+.notes-visualizer-split {
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+
+}
+@media (max-width: 1000px) {
+#notes-panel .notes-visualizer-split {
+
+        grid-template-columns: 1fr;
+    
+}
+
+
+}
+#notes-panel /* Visualizer Overlay in Notes */
+.notes-viz-viewport {
+
+    height: 350px;
+    border-radius: var(--radius-md);
+    background-color: #0a0718;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+
+}
+#notes-panel .viz-screen {
+
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 20px;
+
+}
+#notes-panel .viz-overlay-controls {
+
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+
+}
+#notes-panel /* Complexity Panel inside notes sidebar */
+.complexity-panel {
+
+    background-color: var(--bg-input);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    padding: 16px;
+    margin-top: 16px;
+    font-size: 0.8rem;
+
+}
+#notes-panel .complexity-table {
+
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+
+}
+#notes-panel .complexity-table td {
+
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+
+}
+#notes-panel .complexity-table td:last-child {
+
+    font-family: var(--font-mono);
+    color: var(--color-primary);
+    text-align: right;
+
+}
+#notes-panel /* ==========================================
+   DRAWING CANVAS COMPONENT
+   ========================================== */
+.canvas-panel {
+
+    display: flex;
+    flex-direction: column;
+    height: 600px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+
+}
+#notes-panel .canvas-toolbar {
+
+    background-color: var(--bg-input);
+    border-bottom: 1px solid var(--border-color);
+    padding: 8px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+
+}
+#notes-panel .tool-group {
+
+    display: flex;
+    gap: 6px;
+    border-right: 1px solid var(--border-color);
+    padding-right: 10px;
+
+}
+#notes-panel .tool-btn.active {
+
+    background-color: var(--color-primary) !important;
+    color: white !important;
+    border-color: var(--color-primary) !important;
+
+}
+#notes-panel .color-dot {
+
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+
+}
+#notes-panel .color-dot.active {
+
+    border-color: var(--text-main);
+
+}
+#notes-panel .canvas-element-wrapper {
+
+    flex: 1;
+    position: relative;
+    cursor: crosshair;
+
+}
+#notes-panel .canvas-sketch {
+
+    width: 100%;
+    height: 100%;
+    display: block;
+
+}
+#notes-panel /* ==========================================
+   FLOWCHART / MIND MAP GENERATOR
+   ========================================== */
+.flowchart-canvas {
+
+    background-color: #fafafa;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    height: 350px;
+    position: relative;
+    overflow: hidden;
+    margin-top: 16px;
+
+}
+#notes-panel .flowchart-svg {
+
+    width: 100%;
+    height: 100%;
+
+}
+#notes-panel .flow-node {
+
+    fill: #ffffff;
+    stroke: var(--color-primary);
+    stroke-width: 2px;
+    rx: 6;
+
+}
+#notes-panel .flow-node-text {
+
+    font-size: 11px;
+    font-weight: 600;
+    fill: #0f172a;
+    text-anchor: middle;
+    dominant-baseline: middle;
+
+}
+#notes-panel .flow-link {
+
+    fill: none;
+    stroke: var(--text-muted);
+    stroke-width: 1.5px;
+
+}
+#notes-panel /* ==========================================
+   FLASHCARDS PRACTICE VIEW
+   ========================================== */
+.flashcards-layout {
+
+    width: 100%;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+
+}
+#notes-panel .fc-scene {
+
+    perspective: 1000px;
+    width: 100%;
+    height: 300px;
+
+}
+#notes-panel .fc-card {
+
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+
+}
+#notes-panel .fc-card.is-flipped {
+
+    transform: rotateY(180deg);
+
+}
+#notes-panel .fc-face {
+
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: var(--shadow-lg);
+
+}
+#notes-panel .fc-face-front {
+
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.03) 0%, rgba(20, 184, 166, 0.02) 100%), var(--bg-card);
+
+}
+#notes-panel .fc-face-back {
+
+    background-color: var(--bg-card);
+    transform: rotateY(180deg);
+    border-color: var(--color-secondary-light);
+
+}
+#notes-panel .fc-question {
+
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin: auto 0;
+    line-height: 1.4;
+
+}
+#notes-panel .fc-answer {
+
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin: auto 0;
+
+}
+#notes-panel /* Animations for concept replays */
+/* Array visual elements */
+.arr-element {
+
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+    border-radius: var(--radius-sm);
+    color: white;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+
+}
+#notes-panel .arr-element.highlighted {
+
+    background: var(--color-secondary);
+    transform: translateY(-5px);
+
+}
+#notes-panel /* SQL animate layouts */
+.sql-table-grid {
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    width: 100%;
+
+}
+#notes-panel .sql-row {
+
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 6px;
+    text-align: center;
+    border-radius: 4px;
+    font-size: 0.75rem;
+
+}
+#notes-panel .sql-row.matched {
+
+    background: rgba(20, 184, 166, 0.15);
+    border-color: var(--color-secondary);
+    color: var(--color-secondary-light);
+
+}
+#notes-panel /* JS Event Loop elements */
+.event-loop-wheel {
+
+    width: 80px;
+    height: 80px;
+    border: 4px dashed var(--color-primary-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: spin-loop 4s linear infinite;
+    animation-play-state: paused;
+
+}
+#notes-panel .event-loop-wheel.spinning {
+
+    animation-play-state: running;
+
+}
+@keyframes spin-loop {
+
+    to { transform: rotate(360deg); }
+
+}
+#notes-panel .icon-spin {
+
+    animation: spin-loader 1s linear infinite;
+
+}
+@keyframes spin-loader {
+
+    to { transform: rotate(360deg); }
+
+}
+#notes-panel .hidden {
+
+    display: none !important;
+
+}
+#notes-panel #note-text-edit {
+
+    position: relative;
+    outline: none;
+    min-height: 500px;
+
+}
+#notes-panel .floating-text-block {
+
+    position: absolute;
+    min-width: 100px;
+    min-height: 1.5em;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    outline: none;
+    cursor: text;
+    z-index: 5;
+
+}
+body #notes-panel.theme-dark #notes-panel .floating-text-block {
+
+    background: transparent;
+    border: none;
+
+}
+#notes-panel .floating-text-block:hover {
+
+    outline: 1px dashed rgba(99, 102, 241, 0.15);
+
+}
+#notes-panel .floating-text-block:focus {
+
+    outline: none;
+
+}
+#notes-panel /* Dark Mode Notebook Sheet Overrides */
+body.theme-dark #notes-panel .template-classic {
+
+    background-color: #110e24 !important;
+    color: var(--text-main) !important;
+
+}
+body #notes-panel.theme-dark #notes-panel .template-handwritten {
+
+    background-color: #0f0a1c !important;
+    color: #a5f3fc !important; /* Cyan ink handwriting */
+
+}
+body #notes-panel.theme-dark #notes-panel .template-grid {
+
+    background-color: #0c081d !important;
+    color: var(--text-main) !important;
+    background-image: 
+        linear-gradient(rgba(14, 165, 233, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px) !important;
+
+}
+body #notes-panel.theme-dark #notes-panel .template-cornell {
+
+    background-color: #110e24 !important;
+    color: var(--text-main) !important;
+
+}
+body #notes-panel.theme-dark #notes-panel .cornell-cue {
+
+    border-color: rgba(255, 255, 255, 0.08) !important;
+
+}
+body #notes-panel.theme-dark #notes-panel .cornell-notes {
+
+    background-color: #110e24 !important;
+
+}
+body #notes-panel.theme-dark #notes-panel .cornell-summary {
+
+    border-color: rgba(255, 255, 255, 0.08) !important;
+
+}
+body #notes-panel.theme-dark #notes-panel .template-sticky {
+
+    background: linear-gradient(135deg, #78350f 0%, #451a03 100%) !important;
+    color: #fef08a !important;
+
+}
+#notes-panel /* Autosave Indicators */
+.autosave-badge {
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--color-secondary);
+    background-color: var(--color-secondary-glow);
+    padding: 6px 12px;
+    border-radius: 20px;
+    transition: opacity 0.5s ease-in-out;
+    opacity: 0.8;
+
+}
+#notes-panel .autosave-badge.saving-fade {
+
+    animation: fadePulse 1.5s ease-out;
+
+}
+@keyframes fadePulse {
+
+    0% { opacity: 1; transform: scale(1.02); }
+    50% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0.8; }
+
+}
+#notes-panel /* Bookshelf Workspace Shelf */
+.notebooks-grid {
+
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 24px;
+    margin-top: 20px;
+
+}
+#notes-panel .notebook-binder-card {
+
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    display: flex;
+    position: relative;
+    height: 180px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.25s ease-out;
+    box-shadow: var(--shadow-sm);
+
+}
+#notes-panel .notebook-binder-card:hover {
+
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-primary-light);
+
+}
+#notes-panel .binder-spine {
+
+    width: 16px;
+    height: 100%;
+    opacity: 0.85;
+
+}
+#notes-panel .binder-cover {
+
+    flex: 1;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+}
+#notes-panel .binder-title {
+
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 6px;
+    line-height: 1.3;
+
+}
+#notes-panel .binder-count {
+
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-top: auto;
+
+}
+#notes-panel /* Digital Ink Overlay Layer */
+#drawing-canvas-overlay {
+
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+
+}
+#notes-panel #drawing-canvas-overlay.drawing-active {
+
+    pointer-events: auto !important;
+
+}
+#notes-panel #drawing-canvas-overlay .canvas-toolbar {
+
+    display: none !important;
+    position: fixed;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    pointer-events: auto !important;
+    box-shadow: var(--shadow-lg);
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 6px 12px;
+
+}
+#notes-panel #drawing-canvas-overlay.drawing-active .canvas-toolbar {
+
+    display: flex !important;
+
+}
+#notes-panel /* Sidebar Collapsed Focus Mode */
+.workspace-grid.sidebar-collapsed {
+
+    grid-template-columns: 1fr !important;
+
+}
+#notes-panel .workspace-grid.sidebar-collapsed .note-selector-sidebar {
+
+    display: none !important;
+
+}
+#notes-panel /* Embedded Drag-and-Write Sticky Notes */
+.embedded-sticky-note {
+
+    width: 170px;
+    min-height: 170px;
+    padding: 22px 14px 14px 14px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    color: #0f172a !important;
+    font-family: var(--font-handwritten), 'Kalam', 'Architects Daughter', cursive, var(--font-sans);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    outline: none;
+    cursor: text;
+    z-index: 5;
+    border-top: 14px solid rgba(0,0,0,0.06);
+    user-select: text;
+    transition: box-shadow 0.2s ease-out;
+
+}
+#notes-panel .embedded-sticky-note:hover {
+
+    box-shadow: var(--shadow-lg);
+
+}
+#notes-panel /* Resizable Embedded Images */
+.resizable-image-container {
+
+    display: inline-block;
+    position: relative;
+    resize: both;
+    overflow: hidden;
+    max-width: 100%;
+    min-width: 80px;
+    min-height: 80px;
+    border: 2px dashed transparent;
+    border-radius: var(--radius-md);
+    padding: 4px;
+    cursor: nwse-resize;
+    vertical-align: middle;
+    box-sizing: border-box;
+
+}
+#notes-panel .resizable-image-container:hover {
+
+    border-color: var(--color-primary-light);
+    background-color: rgba(99, 102, 241, 0.05);
+
+}
+#notes-panel .resizable-image-container img {
+
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    pointer-events: none; /* Allows dragging from the borders/handle directly */
+    display: block;
+
+}
+#notes-panel /* Sticky notes color selector dot hover zooms */
+.sticky-color-dot {
+
+    transition: transform 0.15s ease-out;
+
+}
+#notes-panel .sticky-color-dot:hover {
+
+    transform: scale(1.22);
+
+}
+#notes-panel /* Flowchart Shapes Library Hover states */
+.shape-library-item {
+
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-input);
+    transition: border-color 0.15s ease-out, background-color 0.15s ease-out, transform 0.15s ease-out;
+
+}
+#notes-panel .shape-library-item:hover {
+
+    border-color: var(--color-primary) !important;
+    background-color: var(--color-primary-glow) !important;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+
+}
+#notes-panel .shape-library-item svg text {
+
+    fill: var(--text-main);
+    transition: fill 0.15s ease-out;
+
+}
+#notes-panel .shape-library-item:hover svg text {
+
+    fill: var(--color-primary) !important;
+
+}
+#notes-panel .shape-library-item svg rect, #notes-panel .shape-library-item svg polygon {
+
+    stroke: var(--color-primary-light);
+    transition: stroke 0.15s ease-out, fill 0.15s ease-out;
+
+}
+#notes-panel .shape-library-item:hover svg rect, #notes-panel .shape-library-item:hover svg polygon {
+
+    stroke: var(--color-primary) !important;
+    fill: var(--color-primary-glow) !important;
+
+}
+#notes-panel /* Global utility classes */
+.hidden {
+
+    display: none !important;
+
+}
+#notes-panel .sticky-color-swatch {
+
+    transition: transform 0.15s ease-out;
+
+}
+#notes-panel .sticky-color-swatch:hover {
+
+    transform: scale(1.3);
+
+}
+#notes-panel .export-dropdown-item {
+
+    transition: background-color 0.15s ease-out, color 0.15s ease-out;
+
+}
+#notes-panel .export-dropdown-item:hover {
+
+    background-color: var(--bg-input) !important;
+    color: var(--color-primary) !important;
+
+}
+#notes-panel /* Print Overrides: Export only notes to PDF */
+@media print {
+
+    body, html {
+        background-color: white !important;
+        color: black !important;
+    }
+    
+    .sidebar, 
+    .hub-header, 
+    .template-bar, 
+    .formatting-bar, 
+    .canvas-toolbar, 
+    #flowchart-shapes-library, 
+    #flowchart-properties-panel,
+    #element-floating-toolbar,
+    #sticky-color-popover,
+    .btn-create-note {
+        display: none !important;
+    }
+    
+    .main-hub {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    .workspace-grid {
+        display: block !important;
+        grid-template-columns: 1fr !important;
+        gap: 0 !important;
+    }
+    
+    .note-selector-sidebar {
+        display: none !important;
+    }
+    
+    .note-page-container {
+        padding: 0 !important;
+        box-shadow: none !important;
+        background: transparent !important;
+    }
+    
+    .notebook-sheet {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: white !important;
+        color: black !important;
+    }
+
+}
 

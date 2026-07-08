@@ -892,6 +892,7 @@
                 <a href="index.html#auth" id="nav-auth" onclick="showView('auth'); return false;">Account</a>
                 <a href="reference.html" onclick="return checkReferenceAccess(event)" id="nav-references">References</a>
                 <a href="index.html#visualizer" id="nav-visualizer" onclick="showView('visualizer'); return false;">Pravio Visualizer</a>
+                <a href="index.html#notes" id="nav-notes" onclick="showView('notes'); return false;">Pravio Notes</a>
                 <a href="index.html#chatbot" id="nav-chatbot" onclick="showView('chatbot'); return false;">Pravio AI</a>
             </nav>
             <div class="header-controls unified-toolbar">
@@ -1775,6 +1776,115 @@
                         <div id="viz-memory-stack" style="display:flex; flex-direction:column; gap:4px;">
                             <!-- Stack list -->
                         </div>
+                    </div>
+                </div>
+            </div>
+        <!-- ==================== VIEW 3.8: PRAVIO NOTES ==================== -->
+        <div id="notes-panel" class="view-panel" style="width: 100%; height: calc(100vh - 120px); min-height: 500px; padding: 0; margin: 0; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); background: var(--bg-secondary); overflow: hidden; display: flex;">
+            <div class="app-shell" style="display: flex; width: 100%; height: 100%; overflow: hidden;">
+                <!-- 1. LEFT SIDEBAR -->
+                <aside class="sidebar" style="flex-shrink: 0;">
+                    <div class="brand">
+                        <div class="brand-icon"><i data-lucide="book-open"></i></div>
+                        <div class="brand-text">
+                            <h2>Pravio Notes</h2>
+                            <span>AI Study Companion</span>
+                        </div>
+                    </div>
+
+                    <nav class="sidebar-nav">
+                        <button class="nav-btn active" data-tab="dashboard">
+                            <i data-lucide="layout-dashboard"></i>
+                            <span>Dashboard</span>
+                        </button>
+                        <button class="nav-btn" data-tab="notes">
+                            <i data-lucide="file-text"></i>
+                            <span>Notebook Workspace</span>
+                        </button>
+                        <button class="nav-btn" data-tab="cheatsheet">
+                            <i data-lucide="help-circle"></i>
+                            <span>Cheatsheet</span>
+                        </button>
+                        <button class="nav-btn" data-tab="flashcards">
+                            <i data-lucide="layers"></i>
+                            <span>Flashcards</span>
+                        </button>
+                        <button class="nav-btn" data-tab="canvas">
+                            <i data-lucide="pen-tool"></i>
+                            <span>Drawing Canvas</span>
+                        </button>
+                    </nav>
+
+                    <div class="sidebar-section">
+                        <div class="section-header">
+                            <span>MY NOTEBOOKS</span>
+                            <button class="icon-btn" id="btn-add-folder" title="New Folder"><i data-lucide="plus"></i></button>
+                        </div>
+                        <ul class="folder-tree" id="folder-list">
+                            <!-- Loaded dynamically -->
+                        </ul>
+                    </div>
+
+                    <div class="sidebar-footer" style="display: none;">
+                        <button class="theme-toggle-btn" id="btn-theme-toggle">
+                            <span class="dark-icon" style="display: flex; align-items: center;"><i data-lucide="moon"></i></span>
+                            <span class="light-icon hidden" style="display: flex; align-items: center;"><i data-lucide="sun"></i></span>
+                            <span>Switch Theme</span>
+                        </button>
+                    </div>
+                </aside>
+
+                <!-- 2. MAIN HUB -->
+                <main class="main-hub" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;">
+                    <header class="hub-header">
+                        <div class="header-left">
+                            <div class="search-bar-container">
+                                <i data-lucide="search" class="search-icon"></i>
+                                <input type="text" id="search-input" placeholder="Search titles, code, algorithms, folders...">
+                            </div>
+                        </div>
+                        <div class="header-right" style="display: flex; align-items: center; gap: 16px;">
+                            <div id="autosave-indicator" class="autosave-badge hidden">
+                                <i data-lucide="cloud-check" style="width: 14px; height: 14px;"></i>
+                                <span>Saved Successfully</span>
+                            </div>
+                            <button class="btn btn-secondary" id="btn-import-file">
+                                <i data-lucide="file-up"></i>
+                                <span>Smart Import</span>
+                            </button>
+                            <button class="btn btn-primary" id="btn-create-note">
+                                <i data-lucide="plus-circle"></i>
+                                <span>New Note</span>
+                            </button>
+                        </div>
+                    </header>
+
+                    <div class="viewport" id="active-viewport" style="flex: 1; overflow-y: auto; padding: 28px;">
+                        <!-- Dynamic Viewports -->
+                    </div>
+                </main>
+            </div>
+            
+            <!-- Smart Import Dialog Backdrop -->
+            <div class="modal-backdrop hidden" id="import-modal-backdrop"></div>
+            <div class="modal solution-modal hidden" id="import-modal">
+                <div class="modal-header">
+                    <h3>Smart Document Import</h3>
+                    <button class="modal-close" id="btn-close-import"><i data-lucide="x"></i></button>
+                </div>
+                <div class="modal-body">
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+                        Upload a programming syllabus, PDF, or image screenshot. Pravio AI will parse it and automatically generate structured notes, diagrams, and study questions.
+                    </p>
+                    <div class="import-dropzone" id="import-drop-area">
+                        <i data-lucide="file-text" style="width: 48px; height: 48px; color: var(--color-primary); margin-bottom: 12px;"></i>
+                        <p>Drag & drop document here or click to browse</p>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">PDF, DOCX, TXT, MD, PNG, JPG</span>
+                        <input type="file" id="file-picker" class="hidden" accept=".pdf,.docx,.txt,.md,.png,.jpg,.jpeg">
+                    </div>
+                    <div class="import-processing hidden" id="import-loader">
+                        <i data-lucide="loader" class="icon-spin" style="color: var(--color-secondary);"></i>
+                        <span>AI is extracting structure, generating quizzes, and drawing flowcharts...</span>
                     </div>
                 </div>
             </div>
@@ -3031,6 +3141,8 @@
                 } else {
                     showView('landing');
                 }
+            } else if (currentHash === 'notes') {
+                showView('notes');
             } else if (currentHash === 'chatbot') {
                 showView('chatbot');
             } else {
@@ -3578,6 +3690,12 @@
         }
     </script>
     <script src="visualizer.js?v=2.1.1"></script>
+    
+    <!-- Pravio Notes Scripts -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/loader.min.js"></script>
+    <script type="module" src="js/main.js"></script>
 
     <!-- Google Account Chooser Modal -->
     <div id="google-auth-modal" class="google-modal-backdrop" onclick="closeGoogleAuthModal()">
