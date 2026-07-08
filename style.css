@@ -222,6 +222,20 @@ body.theme-dark {
     --bg-secondary: #11131a;
 }
 
+/* Global Select & Option Element Contrast Fixes (Prevents browser white-on-white / dark-on-dark dropdowns) */
+select, option {
+    background-color: var(--bg-container) !important;
+    color: var(--text-body) !important;
+}
+body.theme-dark select, body.theme-dark option {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+}
+body.theme-light select, body.theme-light option {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+}
+
 /* ==========================================================================
    2. GENERAL LAYOUT, SPACING, & TYPOGRAPHY
    ========================================================================== */
