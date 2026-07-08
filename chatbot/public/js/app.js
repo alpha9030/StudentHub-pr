@@ -15,7 +15,7 @@ let isListening = false; // Speech state reference
 let micStream = null; // Scoped microphone stream reference
 const HEALTH_CHECK_INTERVAL = 30000; // Check server health every 30s
 
-const API_BASE = '';
+const API_BASE = (window.location.protocol === 'file:' || window.location.port === '8000' || window.location.port === '8001' || window.location.port === '8002') ? 'http://localhost:3008' : '';
 
 // Theme Management
 const THEME_KEY = 'siteTheme';

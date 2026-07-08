@@ -61,7 +61,7 @@ app.use((req, res, next) => {
 app.use(cors({
   origin: '*', // Allow all origins for local deployment flexibility
   methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-API-Key']
 }));
 app.use(express.json());
 
