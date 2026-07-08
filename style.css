@@ -5514,7 +5514,7 @@ body #notes-panel {
     z-index: 5;
 
 }
-body #notes-panel.theme-dark #notes-panel .floating-text-block {
+body.theme-dark #notes-panel .floating-text-block {
 
     background: transparent;
     border: none;
@@ -5537,13 +5537,13 @@ body.theme-dark #notes-panel .template-classic {
     color: var(--text-main) !important;
 
 }
-body #notes-panel.theme-dark #notes-panel .template-handwritten {
+body.theme-dark #notes-panel .template-handwritten {
 
     background-color: #0f0a1c !important;
     color: #a5f3fc !important; /* Cyan ink handwriting */
 
 }
-body #notes-panel.theme-dark #notes-panel .template-grid {
+body.theme-dark #notes-panel .template-grid {
 
     background-color: #0c081d !important;
     color: var(--text-main) !important;
@@ -5552,28 +5552,28 @@ body #notes-panel.theme-dark #notes-panel .template-grid {
         linear-gradient(90deg, rgba(14, 165, 233, 0.1) 1px, transparent 1px) !important;
 
 }
-body #notes-panel.theme-dark #notes-panel .template-cornell {
+body.theme-dark #notes-panel .template-cornell {
 
     background-color: #110e24 !important;
     color: var(--text-main) !important;
 
 }
-body #notes-panel.theme-dark #notes-panel .cornell-cue {
+body.theme-dark #notes-panel .cornell-cue {
 
     border-color: rgba(255, 255, 255, 0.08) !important;
 
 }
-body #notes-panel.theme-dark #notes-panel .cornell-notes {
+body.theme-dark #notes-panel .cornell-notes {
 
     background-color: #110e24 !important;
 
 }
-body #notes-panel.theme-dark #notes-panel .cornell-summary {
+body.theme-dark #notes-panel .cornell-summary {
 
     border-color: rgba(255, 255, 255, 0.08) !important;
 
 }
-body #notes-panel.theme-dark #notes-panel .template-sticky {
+body.theme-dark #notes-panel .template-sticky {
 
     background: linear-gradient(135deg, #78350f 0%, #451a03 100%) !important;
     color: #fef08a !important;
