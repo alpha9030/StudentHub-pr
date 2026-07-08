@@ -1,15 +1,15 @@
 // Pravio Notes Rich Database
 
-export const initialFolders = [
+const initialFolders = [
     { id: 'f-dsa', name: 'Data Structures & Algs', icon: 'git-branch' },
     { id: 'f-webdev', name: 'Web Development', icon: 'globe' },
     { id: 'f-langs', name: 'Programming Languages', icon: 'code' },
     { id: 'f-sql', name: 'Database & SQL', icon: 'database' }
 ];
 
-export const initialNotes = [];
+const initialNotes = [];
 
-export const initialQuizzes = [
+const initialQuizzes = [
     {
         topic: 'JavaScript',
         question: 'Which console logs first?',
@@ -26,7 +26,7 @@ export const initialQuizzes = [
     }
 ];
 
-export const initialFlashcards = [
+const initialFlashcards = [
     {
         category: 'Data Structures',
         question: 'Time complexity of Binary Search?',

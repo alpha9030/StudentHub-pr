@@ -1,11 +1,4 @@
 // Pravio Notes Central App Coordinator
-import { initialFolders, initialNotes, initialQuizzes, initialFlashcards } from './database.js';
-import { Dashboard } from './components/dashboard.js';
-import { Editor } from './components/editor.js';
-import { CanvasBoard } from './components/canvas.js';
-import { StudyHub } from './components/study-hub.js';
-import { AIAssistant } from './components/ai-assistant.js';
-import { FlowchartBoard } from './components/flowchart.js';
 
 class App {
     constructor() {

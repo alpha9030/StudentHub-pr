@@ -1,6 +1,6 @@
 // Pravio Notes Sketchpad Drawing Canvas
 
-export class CanvasBoard {
+class CanvasBoard {
     constructor(app) {
         this.app = app;
         this.isDrawing = false;

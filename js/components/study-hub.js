@@ -1,6 +1,6 @@
 // Pravio Notes Quizzes and Spaced Repetition Flashcards Practice Decks
 
-export class StudyHub {
+class StudyHub {
     constructor(app) {
         this.app = app;
         this.cardIndex = 0;
@@ -176,4 +176,4 @@ export class StudyHub {
         });
     }
 }
-export const StudyHubMock = StudyHub;
+const StudyHubMock = StudyHub;

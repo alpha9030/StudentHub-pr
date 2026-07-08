@@ -1,6 +1,6 @@
 // Pravio Notes Concept Replay Visualizer
 
-export class Visualizer {
+class NotesVisualizer {
     constructor(app) {
         this.app = app;
         this.isRunning = false;

@@ -1779,6 +1779,7 @@
                     </div>
                 </div>
             </div>
+        </div>
         <!-- ==================== VIEW 3.8: PRAVIO NOTES ==================== -->
         <div id="notes-panel" class="view-panel" style="width: 100%; height: calc(100vh - 120px); min-height: 500px; padding: 0; margin: 0; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); background: var(--bg-secondary); overflow: hidden; display: flex;">
             <div class="app-shell" style="display: flex; width: 100%; height: 100%; overflow: hidden;">
@@ -3695,7 +3696,17 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.39.0/min/vs/loader.min.js"></script>
-    <script type="module" src="js/main.js"></script>
+    
+    <!-- Pravio Notes Core Scripts (Non-Module for File:// protocol support) -->
+    <script src="js/database.js"></script>
+    <script src="js/components/dashboard.js"></script>
+    <script src="js/components/editor.js"></script>
+    <script src="js/components/canvas.js"></script>
+    <script src="js/components/study-hub.js"></script>
+    <script src="js/components/ai-assistant.js"></script>
+    <script src="js/components/flowchart.js"></script>
+    <script src="js/components/visualizer.js"></script>
+    <script src="js/main.js"></script>
 
     <!-- Google Account Chooser Modal -->
     <div id="google-auth-modal" class="google-modal-backdrop" onclick="closeGoogleAuthModal()">

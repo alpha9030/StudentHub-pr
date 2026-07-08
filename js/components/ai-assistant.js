@@ -1,6 +1,6 @@
 // Pravio Notes AI Assistant Side Panel and Voice Narration Helpers
 
-export class AIAssistant {
+class AIAssistant {
     constructor(app) {
         this.app = app;
         this.isRecording = false;

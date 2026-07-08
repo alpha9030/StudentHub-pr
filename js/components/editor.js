@@ -1,6 +1,6 @@
 // Pravio Notes Notebook Editor Workspace
 
-export class Editor {
+class Editor {
     constructor(app) {
         this.app = app;
         this.editorInstance = null;

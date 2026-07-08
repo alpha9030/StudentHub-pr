@@ -1,6 +1,6 @@
 // Pravio Notes Flowchart & Diagram Board
 
-export class FlowchartBoard {
+class FlowchartBoard {
     constructor(app) {
         this.app = app;
         this.selectedNode = null;
@@ -332,4 +332,4 @@ export class FlowchartBoard {
         });
     }
 }
-export const FlowchartBoardMock = FlowchartBoard;
+const FlowchartBoardMock = FlowchartBoard;

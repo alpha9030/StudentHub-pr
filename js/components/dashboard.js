@@ -1,6 +1,6 @@
 // Pravio Notes Learning Dashboard Render Helper
 
-export class Dashboard {
+class Dashboard {
     constructor(app) {
         this.app = app;
     }
