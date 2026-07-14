@@ -1247,7 +1247,7 @@ def proxy_chat():
                 
         flask_resp = Response(stream_with_context(generate()), status=resp.status)
         for k, v in resp.getheaders():
-            if k.lower() in ['content-type', 'cache-control', 'connection', 'x-accel-buffering']:
+            if k.lower() in ['content-type', 'cache-control', 'x-accel-buffering']:
                 flask_resp.headers[k] = v
         return flask_resp
     except Exception as e:

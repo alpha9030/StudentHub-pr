@@ -133,7 +133,7 @@ async function retryWithBackoff(fn, retries = 3, delay = 1000) {
   } catch (error) {
     // 503 Service Unavailable, 429 Rate limit, and transient network errors can be retried
     const status = error.status || (error.response && error.response.status);
-    const isTransient = status === 503 || status === 429 || error.message.includes('fetch failed') || error.message.includes('network');
+    const isTransient = status === 503 || status === 429 || (error.message && (error.message.includes('fetch failed') || error.message.includes('network')));
     
     if (retries > 0 && isTransient) {
       console.warn(`Transient error encountered (Status: ${status || 'unknown'}). Retrying in ${delay}ms... (${retries} attempts left)`);
