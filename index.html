@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Hub - Academic Workspace (V2)</title>
     <link rel="stylesheet" href="style.css?v=1.0.3">
+    <link rel="stylesheet" href="chatbot.css">
+    <link rel="stylesheet" href="syntax-highlight.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Consolidated Premium styles for homepage redesign */
@@ -1637,29 +1639,496 @@
         </div>
 
         <!-- ==================== VIEW 4: STUDENT HUB AI CHATBOT ==================== -->
-        <div id="chatbot-panel" class="view-panel" style="width: 100%; height: calc(100vh - 120px); min-height: 500px; padding: 0; margin: 0; overflow: hidden; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); background: var(--bg-secondary); flex-direction: column;">
-            <!-- Minimal Workspace Top Bar -->
-            <div id="chatbot-workspace-topbar" style="height: 55px; background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; flex-shrink: 0; box-sizing: border-box;">
-                <!-- Left Logo -->
-                <div style="display: flex; align-items: center; gap: 10px; font-family: 'Outfit', sans-serif;">
-                    <span style="font-size: 1.5rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));">🎓</span>
-                    <span style="font-weight: 800; font-size: 15.5px; letter-spacing: -0.3px; color: var(--text-body); background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Pravio AI</span>
-                </div>
-                <!-- Middle active conversation title -->
-                <div style="flex: 1; text-align: center; max-width: 50%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 20px;">
-                    <span id="parent-active-chat-title" style="font-weight: 600; font-size: 13.5px; color: var(--text-muted); font-family: 'Outfit', sans-serif;">New Conversation</span>
-                </div>
-                <!-- Right Action Button -->
-                <div>
-                    <button onclick="exitChatbotWorkspace()" class="btn btn-secondary" style="padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; background: var(--bg-container); border: 1px solid var(--border-color); cursor: pointer; color: var(--text-body); display: flex; align-items: center; gap: 6px; transition: all 0.2s ease; box-shadow: var(--shadow-sm);" onmouseover="this.style.borderColor='var(--primary-color)'; this.style.color='var(--primary-color)'" onmouseout="this.style.borderColor='var(--border-color)'; this.style.color='var(--text-body)'">
-                        <i class="fas fa-arrow-left"></i> Back to StudentHub
-                    </button>
-                </div>
+        <div id="chatbot-panel" class="view-panel chatbot-scope" style="width: 100%; height: calc(100vh - 120px); min-height: 500px; padding: 0; margin: 0; overflow: hidden; border-radius: var(--radius-md); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); background: var(--bg-secondary); flex-direction: column;">
+            <!-- Connection Status Banner -->
+  <div id="connection-banner" class="connection-banner offline-hidden">
+    <span class="banner-content">
+      <i class="fas fa-wifi-slash"></i> Connection lost. Attempting to reconnect...
+    </span>
+  </div>
+
+  <!-- MAIN WRAPPER -->
+  <div class="app-container">
+    
+    <!-- 1. LANDING PAGE SCREEN -->
+    <section id="landing-page" class="screen active">
+      <!-- Glow Effects -->
+      <div class="glow-orb orb-1"></div>
+      <div class="glow-orb orb-2"></div>
+      
+      <nav class="landing-nav">
+        <div class="brand">
+          <div class="logo-icon-container" style="font-size: 1.5rem;">
+            🎓
+          </div>
+          <span class="brand-name font-outfit">Pravio AI</span>
+        </div>
+        <div class="nav-actions">
+          <a href="#features" class="nav-link">Features</a>
+        </div>
+      </nav>
+
+      <div class="hero-container">
+        <div class="hero-content">
+          <div class="badge font-outfit">
+            <span class="badge-dot"></span> Powered by Gemini 2.5 Flash
+          </div>
+          <h1 class="hero-title font-outfit">
+            Conversational Intelligence <span class="gradient-text">Redefined</span>
+          </h1>
+          <p class="hero-subtitle">
+            Experience a sleek, modern, and production-ready chatbot designed to elevate your productivity. Build, write, debug, and learn with an interface that responds as fast as you think.
+          </p>
+          <div class="hero-buttons">
+            <button id="btn-start-chat" class="btn btn-primary btn-large font-outfit">
+              Start Chatting <i class="fas fa-arrow-right icon-right"></i>
+            </button>
+            <a href="#features" class="btn btn-tertiary btn-large font-outfit">Learn More</a>
+          </div>
+        </div>
+        
+        <div class="hero-mockup-wrapper">
+          <div class="hero-mockup">
+            <div class="mockup-header">
+              <div class="mockup-dots">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+              </div>
+              <div class="mockup-title">StudentHub Workspace</div>
             </div>
-            <!-- Chatbot Iframe -->
-            <iframe src="chatbot/public/index.html" style="flex: 1; width: 100%; border: none; overflow: hidden;" id="chatbot-iframe"></iframe>
+            <div class="mockup-body">
+              <div class="mockup-message model">
+                <div class="mockup-avatar" style="font-size: 1.1rem; line-height: 1;">🎓</div>
+                <div class="mockup-bubble">
+                  <p>How can I help you design today?</p>
+                </div>
+              </div>
+              <div class="mockup-message user">
+                <div class="mockup-bubble">
+                  <p>Create a CSS grid with three columns and smooth hover effects.</p>
+                </div>
+              </div>
+              <div class="mockup-message model">
+                <div class="mockup-avatar" style="font-size: 1.1rem; line-height: 1;">🎓</div>
+                <div class="mockup-bubble">
+                  <pre class="mockup-code"><code><span class="kw">.grid</span> {
+  <span class="prop">display</span>: grid;
+  <span class="prop">grid-template-columns</span>: repeat(3, 1fr);
+  <span class="prop">gap</span>: 20px;
+  <span class="prop">transition</span>: transform 0.3s;
+}</code></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FEATURES SECTION -->
+      <section id="features" class="features-section">
+        <h2 class="section-title font-outfit">Exceptional Features</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+            <h3 class="font-outfit">Streaming Responses</h3>
+            <p>Real-time server-sent event token streaming for immediate output generation without waiting.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-code"></i></div>
+            <h3 class="font-outfit">Markdown & Code Blocks</h3>
+            <p>Complete Markdown rendering with copy shortcuts and beautiful, syntax-highlighted code containers.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-history"></i></div>
+            <h3 class="font-outfit">Persistent History</h3>
+            <p>Multiple conversations saved locally, complete with search, rename, pin, and delete features.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-file-export"></i></div>
+            <h3 class="font-outfit">Export Formats</h3>
+            <p>Download chat history as plain text files or clean PDF formats with a single click.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-palette"></i></div>
+            <h3 class="font-outfit">Glassmorphic Styling</h3>
+            <p>Sophisticated light/dark transitions utilizing rich gradients, backdrops, and interactive states.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+            <h3 class="font-outfit">Enterprise Security</h3>
+            <p>Secure Node.js proxying prevents Gemini API exposure on frontend. Robust client-side input sanitization.</p>
+          </div>
+        </div>
+      </section>
+
+    </section>
+
+    <!-- 2. MAIN CHAT DASHBOARD SCREEN -->
+    <section id="chat-dashboard" class="screen">
+      
+      <!-- SIDEBAR -->
+      <aside id="chat-sidebar" class="sidebar">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+          <div class="brand" id="sidebar-logo">
+            <span class="logo-icon" style="font-size: 1.5rem; margin-right: 8px;">🎓</span>
+            <span class="brand-name font-outfit">Pravio AI</span>
+          </div>
+          <button id="btn-sidebar-collapse" class="icon-btn mobile-only" aria-label="Collapse Sidebar" title="Collapse Sidebar">
+            <i class="fas fa-chevron-left"></i>
+          </button>
         </div>
 
+        <!-- Collapsible AI Tools Section -->
+        <div class="sidebar-ai-tools-section" style="padding: 12px 16px 0 16px; display: flex; flex-direction: column; flex-shrink: 0; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 8px;">
+          <div onclick="toggleAIToolsPanel()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding-left: 4px; margin-bottom: 6px; user-select: none;">
+            <div class="section-title-label font-outfit" style="margin: 0; padding: 0; display: flex; align-items: center; gap: 6px; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 1px;">
+              <i class="fas fa-robot"></i> AI Tools
+            </div>
+            <i id="ai-tools-chevron" class="fas fa-chevron-down" style="font-size: 10px; color: var(--text-muted); transition: transform 0.2s;"></i>
+          </div>
+          <div id="sidebar-ai-tools-list" class="sidebar-tools-list" style="display: flex; flex-direction: column; gap: 4px; max-height: 220px; overflow-y: auto; transition: max-height 0.3s ease, opacity 0.3s ease; opacity: 1;">
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="study-planner"><i class="fas fa-calendar-alt"></i> <span>Study Planner</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="roadmap"><i class="fas fa-map-signs"></i> <span>Career Roadmaps</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="resume"><i class="fas fa-file-invoice"></i> <span>Resume Assistant</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="career"><i class="fas fa-compass"></i> <span>Career Guide</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="interview"><i class="fas fa-user-tie"></i> <span>Interview Prep</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="college"><i class="fas fa-university"></i> <span>College Advisor</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="notes"><i class="fas fa-sticky-note"></i> <span>Smart Notes</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="doc-intel"><i class="fas fa-brain"></i> <span>Document Intel</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="coding"><i class="fas fa-code"></i> <span>Coding Assistant</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="research"><i class="fas fa-microscope"></i> <span>Research Assistant</span></button>
+            <button type="button" class="quick-action-chip sidebar-tool-item" data-tool="productivity"><i class="fas fa-tasks"></i> <span>Productivity</span></button>
+          </div>
+        </div>
+
+        <!-- New Chat Button -->
+        <div class="sidebar-action-container">
+          <button id="btn-new-chat" class="btn btn-new-chat font-outfit">
+            <i class="fas fa-plus"></i> New Chat
+          </button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="sidebar-search" style="padding: 0 16px; margin-bottom: 8px;">
+          <div class="search-input-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="search-chats" placeholder="Search conversations..." aria-label="Search chats">
+            <button id="btn-clear-search" class="clear-search-btn hidden" aria-label="Clear Search">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Conversations List -->
+        <div class="conversations-list-container" style="flex: 1; overflow-y: auto; padding: 8px 16px; display: flex; flex-direction: column; gap: 8px;">
+          <!-- Pinned Chats -->
+          <div id="pinned-chats-section" class="list-section hidden" style="margin-bottom: 8px;">
+            <div class="section-title-label font-outfit" style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 1px; margin-bottom: 6px; padding-left: 4px; display: flex; align-items: center; gap: 6px;">
+              <i class="fas fa-thumbtack"></i> Pinned Chats
+            </div>
+            <ul id="pinned-chats-list" class="chats-list" style="margin: 0; padding: 0; list-style: none;"></ul>
+          </div>
+          
+          <!-- Recent Chats -->
+          <div id="recent-chats-section" class="list-section" style="margin-bottom: 8px;">
+            <div onclick="toggleRecentChatsPanel()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding-left: 4px; margin-bottom: 6px; user-select: none;">
+              <div class="section-title-label font-outfit" style="margin: 0; padding: 0; display: flex; align-items: center; gap: 6px; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 1px;">
+                <i class="fas fa-history"></i> Recent Chats (<span id="recent-chats-count">0</span>)
+              </div>
+              <i id="recent-chats-chevron" class="fas fa-chevron-down" style="font-size: 10px; color: var(--text-muted); transition: transform 0.2s;"></i>
+            </div>
+            <ul id="recent-chats-list" class="chats-list" style="display: flex; flex-direction: column; gap: 4px; list-style: none; margin: 0; padding: 0; transition: max-height 0.3s ease, opacity 0.3s ease;"></ul>
+          </div>
+
+          <!-- Empty Chats View -->
+          <div id="empty-history-view" class="empty-history hidden" style="text-align: center; padding: 20px 10px; color: var(--text-muted); font-size: 0.85rem;">
+            <i class="far fa-comments" style="font-size: 1.5rem; margin-bottom: 8px; display: block;"></i>
+            <p>No chats found</p>
+          </div>
+        </div>
+
+        <!-- To-Do Productivity Widget -->
+        <div class="todo-section" style="border-top: 1px solid var(--border-color); padding: 12px 16px 8px 16px; margin-top: auto; flex-shrink: 0;">
+          <div onclick="toggleTodoPanel()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding-left: 4px; margin-bottom: 6px; user-select: none;">
+            <div class="todo-title font-outfit" style="margin: 0; padding: 0; display: flex; align-items: center; gap: 6px; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 1px;">
+              <i class="fas fa-tasks"></i> Goals & Tasks (<span id="todo-goals-count">0</span>)
+            </div>
+            <i id="todo-chevron" class="fas fa-chevron-down" style="font-size: 10px; color: var(--text-muted); transition: transform 0.2s;"></i>
+          </div>
+          <div id="todo-panel-content" style="display: none; flex-direction: column; gap: 8px;">
+            <div class="todo-input-wrapper" style="display: flex; gap: 8px; margin-bottom: 4px;">
+              <input type="text" id="todo-new-task" class="todo-input" placeholder="Add study goal..." aria-label="New study goal" style="flex: 1; padding: 6px 10px; background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-body); border-radius: var(--radius-sm); font-size: 0.8rem; outline: none;">
+              <button type="button" id="btn-add-todo" class="todo-add-btn" title="Add Goal" style="padding: 6px 10px; border-radius: var(--radius-sm); background: var(--primary-color); border: none; color: #fff; cursor: pointer; font-size: 0.8rem;"><i class="fas fa-plus"></i></button>
+            </div>
+            <ul id="todo-tasks-list" class="todo-list" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; max-height: 120px; overflow-y: auto;">
+              <!-- Injected dynamically -->
+            </ul>
+          </div>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer" style="padding: 12px 16px; background-color: var(--bg-secondary); border-top: 1px solid var(--border-color); position: relative; flex-shrink: 0;">
+          <!-- Connection Status Info -->
+          <div class="status-indicator-wrapper" style="display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px; padding-left: 4px;">
+            <span class="status-dot online" id="status-dot" style="width: 7px; height: 7px; border-radius: 50%; background-color: #10b981; box-shadow: 0 0 6px #10b981;"></span>
+            <span class="status-text font-outfit" id="status-text">Connected</span>
+          </div>
+
+          <!-- Single Settings Trigger Row -->
+          <div style="position: relative; width: 100%;">
+            <button id="btn-settings-trigger" onclick="toggleSidebarSettingsMenu(event)" style="width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--bg-tertiary); border: 1px solid var(--border-color); color: var(--text-body); border-radius: var(--radius-md); font-family: var(--font-sans); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;">
+              <span style="display: flex; align-items: center; gap: 8px;"><i class="fas fa-cog"></i> Settings & Utilities</span>
+              <i id="settings-chevron" class="fas fa-chevron-up" style="font-size: 10px; color: var(--text-muted); transition: transform 0.2s;"></i>
+            </button>
+            
+            <!-- Unified Popup Settings Menu -->
+            <div id="sidebar-settings-menu" class="sidebar-settings-popup hidden" style="position: absolute; bottom: 50px; left: 0; right: 0; background-color: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); padding: 6px; z-index: 999; display: flex; flex-direction: column; gap: 4px;">
+              <button id="btn-theme-toggle" class="dropdown-item" style="border: none; background: transparent; cursor: pointer; text-align: left; width: 100%;"><i class="fas fa-moon theme-icon"></i> Change Theme</button>
+              <button id="btn-settings-key" class="dropdown-item" style="border: none; background: transparent; cursor: pointer; text-align: left; width: 100%;"><i class="fas fa-key"></i> Gemini API Key</button>
+              
+              <div style="height: 1px; background: var(--border-color); margin: 4px 0;"></div>
+              
+              <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; padding: 4px 12px 2px 12px;">Export Conversation</div>
+              <button id="btn-export-txt" class="dropdown-item" style="border: none; background: transparent; cursor: pointer; text-align: left; width: 100%;"><i class="far fa-file-alt"></i> Export as Text (.txt)</button>
+              <button id="btn-export-md" class="dropdown-item" style="border: none; background: transparent; cursor: pointer; text-align: left; width: 100%;"><i class="fab fa-markdown"></i> Export as Markdown (.md)</button>
+              <button id="btn-export-pdf" class="dropdown-item" style="border: none; background: transparent; cursor: pointer; text-align: left; width: 100%;"><i class="far fa-file-pdf"></i> Export as PDF</button>
+              <button id="btn-export-json" class="dropdown-item" style="border: none; background: transparent; cursor: pointer; text-align: left; width: 100%;"><i class="far fa-file-code"></i> Backup History (.json)</button>
+              
+              <div style="height: 1px; background: var(--border-color); margin: 4px 0;"></div>
+              
+              <button id="btn-clear-all" class="dropdown-item" style="border: none; background: transparent; cursor: pointer; text-align: left; width: 100%; color: #ef4444;"><i class="fas fa-trash-alt"></i> Clear All Chats</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Sidebar Mobile Overlay -->
+      <div id="sidebar-overlay" class="sidebar-overlay hidden"></div>
+
+      <!-- MAIN WORKSPACE -->
+      <main class="chat-workspace">
+        <!-- Drag & Drop overlay -->
+        <div id="drag-drop-overlay" class="drag-drop-overlay hidden">
+          <div class="drag-drop-content">
+            <i class="fas fa-cloud-upload-alt drag-icon"></i>
+            <h3>Drag & Drop Files Here</h3>
+            <p>Upload documents, sheets, or images for analysis</p>
+          </div>
+        </div>
+        
+        <!-- Workspace Header -->
+        <header class="workspace-header">
+          <div class="header-left">
+            <button id="btn-sidebar-toggle" class="icon-btn" aria-label="Toggle Sidebar" title="Toggle Sidebar">
+              <i class="fas fa-bars"></i>
+            </button>
+            <div class="active-chat-info">
+              <h2 id="active-chat-title" class="chat-title font-outfit" contenteditable="true" spellcheck="false" title="Click to rename">New Conversation</h2>
+              <button id="btn-pin-active" class="icon-btn pin-active-btn" title="Pin Conversation" aria-label="Pin Conversation">
+                <i class="far fa-thumbtack"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="header-right" style="display: flex; gap: 8px; align-items: center;">
+            <button id="btn-exit-studenthub" onclick="exitChatbotWorkspace()" class="btn btn-secondary font-outfit" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: 0.8rem; font-weight: 700; border-radius: 8px;" title="Exit Chatbot">
+              <i class="fas fa-arrow-left"></i> <span>Exit to Hub</span>
+            </button>
+            <button id="btn-exit-studenthub" onclick="exitChatbotWorkspace()" class="btn btn-secondary font-outfit" style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-size: 0.8rem; font-weight: 700; border-radius: 8px; margin-right: 8px;" title="Exit Chatbot"><i class="fas fa-arrow-left"></i> <span>Exit to Hub</span></button><button id="btn-leave-chat" class="btn btn-icon-text font-outfit btn-back" title="Back to Landing">
+              <i class="fas fa-home"></i> <span>Home</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- Chat Output Pane -->
+        <div id="chat-output-container" class="chat-output-container">
+          
+          <!-- WELCOME SCREEN (Shown when active conversation has no messages) -->
+          <div id="chat-welcome-screen" class="chat-welcome-screen">
+            <div class="welcome-header">
+              <div class="welcome-logo" style="font-size: 3rem; margin-bottom: 12px; display: inline-block;">🎓</div>
+              <h2 class="welcome-title font-outfit">Welcome to Pravio AI</h2>
+              <p class="welcome-subtitle">A state-of-the-art AI interface powered by Google Gemini API.</p>
+            </div>
+
+            <div class="welcome-prompts-container">
+              <div class="prompts-category">
+                <div class="category-header font-outfit"><i class="fas fa-code"></i> Coding & Tech</div>
+                <div class="suggested-prompts">
+                  <button class="suggested-prompt-btn">Write a clean JavaScript utility to format currency with symbol</button>
+                  <button class="suggested-prompt-btn">Create a responsive CSS flexbox grid layout with hover zoom effects</button>
+                </div>
+              </div>
+              
+              <div class="prompts-category">
+                <div class="category-header font-outfit"><i class="fas fa-lightbulb"></i> Brainstorm & Write</div>
+                <div class="suggested-prompts">
+                  <button class="suggested-prompt-btn">Help me brainstorm card game design mechanics for a space exploration theme</button>
+                  <button class="suggested-prompt-btn">Write a polite and professional email requesting a 3-day extension on a software project</button>
+                </div>
+              </div>
+              
+              <div class="prompts-category">
+                <div class="category-header font-outfit"><i class="fas fa-graduation-cap"></i> Explain & Learn</div>
+                <div class="suggested-prompts">
+                  <button class="suggested-prompt-btn">Explain quantum computing simply with an analogy for a 10-year-old child</button>
+                  <button class="suggested-prompt-btn">Summarize the key differences between SQL database design and NoSQL document storage</button>
+                </div>
+              </div>
+            </div>
+            
+            <div class="welcome-instructions">
+              <p class="font-outfit"><i class="fas fa-keyboard"></i> Tip: Use <strong>Enter</strong> to send, and <strong>Shift + Enter</strong> for a new line.</p>
+            </div>
+          </div>
+
+          <!-- MESSAGES CONTAINER -->
+          <div id="messages-list" class="messages-list">
+            <!-- Messages will be injected dynamically -->
+          </div>
+
+          <!-- Quota Warning Banner -->
+          <div id="quota-warning-banner" class="quota-warning-banner hidden">
+            <div class="quota-warning-content">
+              <i class="fas fa-exclamation-triangle"></i>
+              <span>You have reached today's limit for free AI queries. You can <a href="#" id="quota-warning-settings-link">enter your own Gemini API key in Settings</a> to continue.</span>
+            </div>
+          </div>
+
+          <!-- Typing Indicator -->
+          <div id="ai-typing-indicator" class="ai-typing-indicator hidden">
+            <div class="typing-bubble">
+              <div class="avatar ai-avatar" style="font-size: 1.1rem; line-height: 1; display: flex; align-items: center; justify-content: center;">🎓</div>
+              <div class="typing-animation-container">
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Input Form -->
+        <footer class="chat-input-container">
+          <!-- File Previews Container -->
+          <div id="file-previews-container" class="file-previews-container hidden"></div>
+
+          <!-- Input Quick Actions Bar Removed for spacious workspace -->
+
+          <!-- Active Generation Control -->
+          <div id="generation-control-panel" class="generation-control hidden">
+            <button id="btn-stop-generation" class="btn btn-stop font-outfit">
+              <i class="fas fa-stop"></i> Stop Response Generation
+            </button>
+          </div>
+
+          <!-- Input Bar -->
+          <form id="chat-input-form" class="chat-input-form">
+            <!-- Hidden inputs -->
+            <input type="file" id="file-input" multiple accept=".pdf,.docx,.txt,.csv,.xlsx,.pptx,image/png,image/jpeg,image/jpg,image/webp" class="hidden">
+            
+            <!-- Attachment Button -->
+            <button type="button" id="btn-attach-file" class="icon-btn input-inline-btn" title="Attach Files (PDF, Word, Excel, PPTX, Text, Images)" aria-label="Attach files">
+              <i class="fas fa-paperclip"></i>
+            </button>
+
+            <div class="input-textarea-wrapper">
+              <textarea 
+                id="chat-textarea" 
+                placeholder="Message Pravio AI or ask about files..." 
+                rows="1" 
+                maxlength="20000"
+                required
+                autocomplete="off"
+                aria-label="Chat input message"
+              ></textarea>
+            </div>
+            
+            <!-- Voice Input Button -->
+            <button type="button" id="btn-voice-input" class="icon-btn input-inline-btn voice-btn" title="Voice Input" aria-label="Voice Input">
+              <i class="fas fa-microphone"></i>
+            </button>
+
+            <button type="submit" id="btn-send-message" class="btn-send-message" aria-label="Send Message" title="Send Message">
+              <i class="fas fa-paper-plane send-icon"></i>
+            </button>
+          </form>
+          
+          <div class="chat-input-footer-hint font-outfit">
+            <span>Gemini may display inaccurate info, so double-check responses.</span>
+          </div>
+        </footer>
+      </main>
+    </section>
+  </div>
+
+  <!-- PDF Export Temporary Container (Hidden off-screen) -->
+  <div id="pdf-export-canvas" class="pdf-export-canvas hidden"></div>
+
+  <!-- CDN scripts fallbacks for Markdown and PDF export -->
+  <!-- We serve standard, robust scripts with dynamic recovery logic -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5IfS5QRLPs5vIFJHObL39B07R70g55/CkyRxgSEyQV+ow2mFl1vr5Y1spgYB59QIeV9yR/5gA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- CDNs for Document Text Extraction -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script>
+    // Point pdfjs to the correct worker URL
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <!-- Pravio AI Assistant Modal -->
+  <div id="assistant-modal" class="modal-overlay hidden">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 id="modal-title" class="font-outfit">AI Assistant Tool</h3>
+        <button id="btn-close-modal" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-content-area">
+        <!-- Form elements injected dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button id="btn-modal-cancel" class="btn btn-secondary font-outfit">Cancel</button>
+        <button id="btn-modal-submit" class="btn btn-primary font-outfit">Generate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- API Key settings modal -->
+  <div id="api-key-modal" class="modal-overlay hidden">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="font-outfit" style="margin: 0; font-size: 1.15rem; color: var(--text-body);"><i class="fas fa-key"></i> Gemini API Key Settings</h3>
+        <button id="btn-close-key-modal" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 12px; font-size: 0.85rem; line-height: 1.4; color: var(--text-muted);">
+          By default, this application uses the shared system API key. To bypass shared rate limits, you can enter your own free Gemini API key below.
+        </p>
+        <p style="margin-bottom: 16px; font-size: 0.85rem; line-height: 1.4; color: var(--text-muted);">
+          Your key will be stored securely in your browser's LocalStorage and will never be exposed.
+        </p>
+        <label for="input-custom-api-key" style="display: block; margin-bottom: 8px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Custom Gemini API Key</label>
+        <input type="password" id="input-custom-api-key" placeholder="AIzaSy... (leave blank to use system key)" style="width: 100%; padding: 10px 12px; border: 1px solid var(--border-color); background: var(--bg-card); color: var(--text-body); border-radius: 8px; font-size: 0.9rem; outline: none; margin-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <input type="checkbox" id="chk-show-key" style="cursor: pointer; width: 14px; height: 14px; accent-color: var(--primary-color);">
+          <label for="chk-show-key" style="cursor: pointer; font-size: 0.8rem; color: var(--text-muted); margin: 0;">Show API Key</label>
+        </div>
+        <div id="api-key-status-container" style="margin-top: 14px; padding: 8px 12px; background: rgba(20, 184, 166, 0.05); border: 1px solid var(--border-color); border-radius: 8px; font-size: 0.8rem; color: var(--text-muted);">
+          Active Key: <strong id="api-key-status-text" style="color: var(--primary-color);">Shared System Key</strong>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-key-modal-cancel" class="btn btn-secondary font-outfit">Cancel</button>
+        <button id="btn-key-modal-save" class="btn btn-primary font-outfit">Save Key</button>
+      </div>
+    </div>
+  </div>
+        </div>
+        
         <!-- ==================== MODAL: GEMINI KEY CONFIGURATION ==================== -->
         
 
@@ -3449,6 +3918,14 @@
     <script src="js/components/study-hub.js"></script>
     <script src="js/components/ai-assistant.js"></script>
     <script src="js/components/flowchart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5IfS5QRLPs5vIFJHObL39B07R70g55/CkyRxgSEyQV+ow2mFl1vr5Y1spgYB59QIeV9yR/5gA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script>
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="js/components/chatbot.js"></script>
     <script src="js/main.js"></script>
 
     <!-- Google Account Chooser Modal -->
