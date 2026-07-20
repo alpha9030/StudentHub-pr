@@ -418,13 +418,9 @@ function setupEventListeners() {
   // Voice Input Handlers
   DOMElements.btnVoiceInput.addEventListener('click', toggleSpeechRecognition);
 
-  // Message submission form
-  DOMElements.chatInputForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    submitUserMessage();
-  });
-  if (DOMElements.btnSendMessage) {
-    DOMElements.btnSendMessage.addEventListener('click', (e) => {
+  // Message submission form (submits on button click or Enter key)
+  if (DOMElements.chatInputForm) {
+    DOMElements.chatInputForm.addEventListener('submit', (e) => {
       e.preventDefault();
       submitUserMessage();
     });
@@ -1180,8 +1176,8 @@ async function submitUserMessage() {
         }
       }
       
-      if (errMsg.includes('API key') || errMsg.includes('401') || errMsg.includes('403') || errMsg.includes('not configured')) {
-        errMsg = 'AI service is temporarily unavailable. Please try again later.';
+      if (!errMsg || errMsg === 'Failed to fetch') {
+        errMsg = 'Unable to connect to StudentHub AI server. Please check your internet connection.';
       }
       aiMsg.text = `Error: ${errMsg}`;
       saveConversations();
