@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Hub - Academic Workspace (V2)</title>
-    <link rel="stylesheet" href="style.css?v=2.1.7">
-    <link rel="stylesheet" href="chatbot.css?v=2.1.7">
-    <link rel="stylesheet" href="syntax-highlight.css?v=2.1.7">
+    <link rel="stylesheet" href="style.css?v=2.1.8">
+    <link rel="stylesheet" href="chatbot.css?v=2.1.8">
+    <link rel="stylesheet" href="syntax-highlight.css?v=2.1.8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Consolidated Premium styles for homepage redesign */
@@ -1993,7 +1993,7 @@
           <div id="quota-warning-banner" class="quota-warning-banner hidden">
             <div class="quota-warning-content">
               <i class="fas fa-exclamation-triangle"></i>
-              <span>You have reached today's limit for free AI queries. You can <a href="#" id="quota-warning-settings-link">enter your own Gemini API key in Settings</a> to continue.</span>
+              <span>You have reached today's limit for free AI queries. You can <a href="javascript:void(0)" id="quota-warning-settings-link" onclick="if (typeof toggleSidebarSettingsMenu === 'function') toggleSidebarSettingsMenu(event);">enter your own Gemini API key in Settings</a> to continue.</span>
             </div>
           </div>
 
@@ -3929,8 +3929,8 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="js/components/chatbot.js?v=2.1.7"></script>
-    <script src="js/main.js?v=2.1.7"></script>
+    <script src="js/components/chatbot.js?v=2.1.8"></script>
+    <script src="js/main.js?v=2.1.8"></script>
 
     <!-- Google Account Chooser Modal -->
     <div id="google-auth-modal" class="google-modal-backdrop" onclick="closeGoogleAuthModal()">
@@ -3954,8 +3954,8 @@
                     <label for="google-custom-email" style="display:block; text-align:left; font-size:13px; font-weight:600; color:#3c4043; margin-bottom:6px;">Email address</label>
                     <input type="email" id="google-custom-email" placeholder="email@gmail.com" style="width:100%; padding:12px; margin-bottom:14px; border:1px solid #dadce0; border-radius:4px; box-sizing:border-box; font-size:14px; outline:none; transition:border-color 0.2s;" onfocus="this.style.borderColor='#1a73e8'" onblur="this.style.borderColor='#dadce0'">
                     
-                    <label for="google-custom-dept" style="display:block; text-align:left; font-size:13px; font-weight:600; color:#3c4043; margin-bottom:6px;">Department</label>
-                    <select id="google-custom-dept" style="width:100%; padding:12px; margin-bottom:14px; border:1px solid #dadce0; border-radius:4px; box-sizing:border-box; font-size:14px; outline:none; background-color:white; transition:border-color 0.2s;" onfocus="this.style.borderColor='#1a73e8'" onblur="this.style.borderColor='#dadce0'">
+                    <label for="google-custom-dept" style="display:block; text-align:left; font-size:13px; font-weight:600; color:var(--text-body); margin-bottom:6px;">Department</label>
+                    <select id="google-custom-dept" style="width:100%; padding:12px; margin-bottom:14px; border:1px solid var(--border-color); border-radius:4px; box-sizing:border-box; font-size:14px; outline:none; background-color:var(--bg-container); color:var(--text-body); transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--primary-color)'" onblur="this.style.borderColor='var(--border-color)'">
                         <option value="" disabled selected>-- Choose your department --</option>
                         <option value="cse">Computer Science & Engineering (CSE)</option>
                         <option value="it">Information Technology (IT)</option>
@@ -3966,8 +3966,8 @@
                         <option value="bca">Bachelor of Computer Applications (BCA)</option>
                     </select>
 
-                    <label for="google-custom-grade" style="display:block; text-align:left; font-size:13px; font-weight:600; color:#3c4043; margin-bottom:6px;">Academic Year</label>
-                    <select id="google-custom-grade" style="width:100%; padding:12px; margin-bottom:18px; border:1px solid #dadce0; border-radius:4px; box-sizing:border-box; font-size:14px; outline:none; background-color:white; transition:border-color 0.2s;" onfocus="this.style.borderColor='#1a73e8'" onblur="this.style.borderColor='#dadce0'">
+                    <label for="google-custom-grade" style="display:block; text-align:left; font-size:13px; font-weight:600; color:var(--text-body); margin-bottom:6px;">Academic Year</label>
+                    <select id="google-custom-grade" style="width:100%; padding:12px; margin-bottom:18px; border:1px solid var(--border-color); border-radius:4px; box-sizing:border-box; font-size:14px; outline:none; background-color:var(--bg-container); color:var(--text-body); transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--primary-color)'" onblur="this.style.borderColor='var(--border-color)'">
                         <option value="" disabled selected>-- Choose your year --</option>
                         <option value="freshman">1st Year (Freshman)</option>
                         <option value="sophomore">2nd Year (Sophomore)</option>
@@ -3975,7 +3975,7 @@
                         <option value="senior">4th Year (Senior)</option>
                     </select>
                     
-                    <button type="button" class="btn btn-primary" onclick="submitGoogleCustomAccount()" style="width:100%; padding:12px; border:none; border-radius:4px; background:#1a73e8; color:white; font-weight:600; font-size:14px; cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='#1557b0'" onmouseout="this.style.background='#1a73e8'">Sign in</button>
+                    <button type="button" class="btn btn-primary" onclick="submitGoogleCustomAccount()" style="width:100%; padding:12px; border:none; border-radius:4px; background:var(--btn-primary-bg); color:var(--btn-primary-text); font-weight:600; font-size:14px; cursor:pointer; transition:background 0.2s;">Sign in</button>
                 </div>
             </div>
             
