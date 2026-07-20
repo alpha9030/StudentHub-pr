@@ -59,7 +59,7 @@ def validate_gemini_key():
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
     
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite?key={key}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models?key={key}"
     try:
         req = urllib.request.Request(url, method="GET")
         with urllib.request.urlopen(req, context=ctx) as response:

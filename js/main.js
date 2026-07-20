@@ -5,8 +5,8 @@ class App {
         this.activeTab = 'dashboard';
         
         // App Database State (Load from localStorage if exists)
-        this.folders = JSON.parse(localStorage.getItem('pravio_folders')) || [...initialFolders];
-        this.notes = JSON.parse(localStorage.getItem('pravio_notes')) || [...initialNotes];
+        this.folders = JSON.parse(localStorage.getItem('studenthub_folders')) || JSON.parse(localStorage.getItem('pravio_folders')) || [...initialFolders];
+        this.notes = JSON.parse(localStorage.getItem('studenthub_notes')) || JSON.parse(localStorage.getItem('pravio_notes')) || [...initialNotes];
 
         // Self-healing migration to split Web Dev and Programming Languages folders
         let migrated = false;
@@ -37,7 +37,7 @@ class App {
             { id: 'cs-1', name: 'JavaScript Array Methods.pdf', type: 'pdf', size: '245 KB', date: 'Jul 06, 2026', data: '#' },
             { id: 'cs-2', name: 'Git Cheat Sheet.png', type: 'image', size: '420 KB', date: 'Jul 07, 2026', data: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%236366f1"/><text x="50" y="55" fill="white" font-family="sans-serif" font-size="12" text-anchor="middle">Git Cheatsheet</text></svg>' }
         ];
-        this.cheatsheets = JSON.parse(localStorage.getItem('pravio_cheatsheets')) || mockCheatsheets;
+        this.cheatsheets = JSON.parse(localStorage.getItem('studenthub_cheatsheets')) || JSON.parse(localStorage.getItem('pravio_cheatsheets')) || mockCheatsheets;
         this.quizzes = [...initialQuizzes];
         
         // Populate flashcard deck from initial global cards + all note-specific cards
@@ -108,6 +108,9 @@ class App {
         this.setupSearch();
         this.setupImportModal();
         this.setupFolderCreation();
+        if (this.aiAssistant) {
+            this.aiAssistant.init();
+        }
 
         // Load Default View
         this.switchTab('dashboard');
@@ -564,20 +567,38 @@ class App {
 
 
     setupThemeToggle() {
-        this.btnThemeToggle.addEventListener('click', () => {
-            const body = document.body;
+        if (!this.btnThemeToggle) return;
+        
+        const syncIcons = () => {
+            const isDark = document.body.classList.contains('theme-dark');
             const darkIcon = this.btnThemeToggle.querySelector('.dark-icon');
             const lightIcon = this.btnThemeToggle.querySelector('.light-icon');
-
-            if (body.classList.contains('light-mode')) {
-                body.classList.replace('light-mode', 'dark-mode');
-                darkIcon.classList.add('hidden');
-                lightIcon.classList.remove('hidden');
-            } else {
-                body.classList.replace('dark-mode', 'light-mode');
-                darkIcon.classList.remove('hidden');
-                lightIcon.classList.add('hidden');
+            if (darkIcon && lightIcon) {
+                if (isDark) {
+                    darkIcon.classList.add('hidden');
+                    lightIcon.classList.remove('hidden');
+                } else {
+                    darkIcon.classList.remove('hidden');
+                    lightIcon.classList.add('hidden');
+                }
             }
+        };
+        syncIcons();
+
+        this.btnThemeToggle.addEventListener('click', () => {
+            const isDark = document.body.classList.contains('theme-dark');
+            if (isDark) {
+                document.body.classList.remove('theme-dark');
+                document.body.classList.add('theme-light');
+                localStorage.setItem('siteTheme', 'light');
+                document.documentElement.setAttribute('data-theme', 'light');
+            } else {
+                document.body.classList.remove('theme-light');
+                document.body.classList.add('theme-dark');
+                localStorage.setItem('siteTheme', 'dark');
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+            syncIcons();
         });
     }
 
@@ -757,9 +778,9 @@ class App {
     }
 
     saveToLocalStorage(manual = false) {
-        localStorage.setItem('pravio_folders', JSON.stringify(this.folders));
-        localStorage.setItem('pravio_notes', JSON.stringify(this.notes));
-        localStorage.setItem('pravio_cheatsheets', JSON.stringify(this.cheatsheets));
+        localStorage.setItem('studenthub_folders', JSON.stringify(this.folders));
+        localStorage.setItem('studenthub_notes', JSON.stringify(this.notes));
+        localStorage.setItem('studenthub_cheatsheets', JSON.stringify(this.cheatsheets));
         
         // Pulse save indicator badge only when manually clicked
         const indicator = document.getElementById('autosave-indicator');

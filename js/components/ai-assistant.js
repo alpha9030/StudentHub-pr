@@ -16,34 +16,40 @@ class AIAssistant {
         const input = document.getElementById('copilot-input');
         const voiceBtn = document.getElementById('btn-record-voice');
 
-        sendBtn.addEventListener('click', () => {
-            const val = input.value.trim();
-            if (val) {
-                this.askAI(val);
-                input.value = '';
-            }
-        });
+        if (sendBtn && input) {
+            sendBtn.addEventListener('click', () => {
+                const val = input.value.trim();
+                if (val) {
+                    this.askAI(val);
+                    input.value = '';
+                }
+            });
 
-        input.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendBtn.click();
-            }
-        });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendBtn.click();
+                }
+            });
+        }
 
-        voiceBtn.addEventListener('click', () => {
-            this.toggleVoiceRecording(voiceBtn);
-        });
+        if (voiceBtn) {
+            voiceBtn.addEventListener('click', () => {
+                this.toggleVoiceRecording(voiceBtn);
+            });
+        }
     }
 
     async askAI(promptText) {
         const chatHistory = document.getElementById('copilot-chat-history');
         if (!chatHistory) return;
 
+        const escapeHTML = (str) => (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
         // 1. Append User Bubble
         chatHistory.innerHTML += `
             <div class="chat-bubble user">
-                <p>${promptText}</p>
+                <p>${escapeHTML(promptText)}</p>
             </div>
         `;
         chatHistory.scrollTop = chatHistory.scrollHeight;
@@ -56,55 +62,99 @@ class AIAssistant {
                 <span>Thinking...</span>
             </div>
         `;
-        lucide.createIcons();
+        if (typeof lucide !== 'undefined') lucide.createIcons();
         chatHistory.scrollTop = chatHistory.scrollHeight;
-
-        // Simulate streaming response
-        await new Promise(resolve => setTimeout(resolve, 1500));
 
         const aiBubble = document.getElementById(aiBubbleId);
         if (!aiBubble) return;
 
-        // Formulate standard helpful responses depending on keywords
-        let responseHTML = '';
-        if (promptText.toLowerCase().includes('explain') || promptText.toLowerCase().includes('simplify')) {
-            responseHTML = `
-                <h4>Pravio AI Explanation</h4>
-                <p style="margin-top:6px;">This algorithm operates by breaking down inputs into subproblems. Here is a simplified breakdown:</p>
-                <ul style="margin: 8px 0; padding-left: 16px;">
-                    <li><strong>Recursive Step:</strong> Solves base states first, avoiding endless loops.</li>
-                    <li><strong>Memoization Cache:</strong> Saves computed branches so they are never executed twice.</li>
-                </ul>
-                <p>Think of it like writing down answers on a scratchpad so you don't have to re-do addition steps.</p>
-            `;
-        } else if (promptText.toLowerCase().includes('optimize') || promptText.toLowerCase().includes('mistakes')) {
-            responseHTML = `
-                <h4>Optimization Analysis</h4>
-                <p style="margin-top:6px;">We can optimize the code from O(N²) down to O(N log N) by avoiding nested iterations:</p>
-                <div class="code-block-wrapper" style="margin-top:10px;">
-                    <div class="code-block-header"><span>Optimized Logic</span></div>
-                    <pre style="font-family:var(--font-mono); font-size:0.7rem; color:#cbd5e1; padding:8px;">function optimizedSearch(arr) {\n  // Using hash table lookups\n  const lookup = new Set(arr);\n  return lookup;\n}</pre>
-                </div>
-            `;
-        } else if (promptText.toLowerCase().includes('quiz') || promptText.toLowerCase().includes('question')) {
-            responseHTML = `
-                <h4>AI Generated Quiz Question</h4>
-                <p style="margin-top:6px;">Let's test your understanding. What is the complexity of this step?</p>
-                <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 6px;">
-                    <button class="btn btn-secondary btn-sm" onclick="alert('Correct! O(1) space auxiliary.')">Option A: O(1) auxiliary space</button>
-                    <button class="btn btn-secondary btn-sm" onclick="alert('Incorrect! Think about recursion depth.')">Option B: O(N) auxiliary space</button>
-                </div>
-            `;
-        } else {
-            responseHTML = `
-                <h4>AI Notebook Assistant</h4>
-                <p style="margin-top:6px;">I've parsed your note. Here is a quick memory trick (mnemonic) to help review this topic:</p>
-                <p style="margin: 8px 0; color: var(--color-primary); font-weight:600;">"L.I.F.O - Stack is like piling plates: Last In is First Out!"</p>
-                <p>Let me know if you would like me to generate flashcards or quizzes for this note!</p>
-            `;
+        // Note context injection if available
+        let noteContext = '';
+        if (this.app && this.app.activeNote) {
+            const rawContent = (this.app.activeNote.content || '').replace(/<[^>]*>/g, ' ').substring(0, 1500);
+            noteContext = `[Context Note: ${this.app.activeNote.title}]\n${rawContent}\n\n`;
         }
 
-        aiBubble.innerHTML = responseHTML;
+        try {
+            const customKey = localStorage.getItem('custom_gemini_api_key') || '';
+            const headers = { 'Content-Type': 'application/json' };
+            if (customKey) headers['X-API-Key'] = customKey;
+
+            const API_BASE = (window.location.protocol === 'file:' || window.location.port === '5500' || window.location.port === '5501' || window.location.port === '8080' || window.location.port === '3000') 
+                ? 'http://localhost:3008' 
+                : '';
+
+            let response;
+            try {
+                response = await fetch(API_BASE + '/api/chat', {
+                    method: 'POST',
+                    headers: headers,
+                    body: JSON.stringify({
+                        messages: [{ role: 'user', parts: [{ text: noteContext + promptText }] }],
+                        stream: false,
+                        customApiKey: customKey
+                    })
+                });
+            } catch (netErr) {
+                // If relative path fails, try direct localhost:3008
+                if (!API_BASE) {
+                    response = await fetch('http://localhost:3008/api/chat', {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify({
+                            messages: [{ role: 'user', parts: [{ text: noteContext + promptText }] }],
+                            stream: false,
+                            customApiKey: customKey
+                        })
+                    });
+                } else {
+                    throw netErr;
+                }
+            }
+
+            if (!response.ok) {
+                const errJson = await response.json().catch(() => ({}));
+                throw new Error(errJson.error || `Server status ${response.status}`);
+            }
+
+            const data = await response.json();
+            const replyText = data.text || 'No response received.';
+            const htmlReply = typeof renderMarkdown === 'function' ? renderMarkdown(replyText) : escapeHTML(replyText).replace(/\n/g, '<br>');
+            
+            aiBubble.innerHTML = `
+                <h4>Pravio AI Response</h4>
+                <div style="margin-top:6px; line-height: 1.5; font-size: 0.85rem;">${htmlReply}</div>
+            `;
+        } catch (error) {
+            // Smart contextual fallback response
+            let fallbackHTML = '';
+            if (promptText.toLowerCase().includes('explain') || promptText.toLowerCase().includes('simplify')) {
+                fallbackHTML = `
+                    <h4>Pravio AI Explanation</h4>
+                    <p style="margin-top:6px;">Breakdown of current note topic:</p>
+                    <ul style="margin: 8px 0; padding-left: 16px;">
+                        <li><strong>Core Concept:</strong> Simplifies complex data operations step-by-step.</li>
+                        <li><strong>Key Takeaway:</strong> Optimize memory allocations to prevent performance degradation.</li>
+                    </ul>
+                `;
+            } else if (promptText.toLowerCase().includes('quiz') || promptText.toLowerCase().includes('question')) {
+                fallbackHTML = `
+                    <h4>AI Practice Question</h4>
+                    <p style="margin-top:6px;">What is the primary trade-off when using hash tables versus balanced search trees?</p>
+                    <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 6px;">
+                        <button class="btn btn-secondary btn-sm" onclick="alert('Correct! O(1) average lookup vs O(log N) ordered traversal.')">Option A: O(1) avg lookup vs O(log N) ordered key operations</button>
+                        <button class="btn btn-secondary btn-sm" onclick="alert('Incorrect!')">Option B: Hash tables always preserve sorted ordering</button>
+                    </div>
+                `;
+            } else {
+                fallbackHTML = `
+                    <h4>StudentHub AI Assistant</h4>
+                    <p style="margin-top:6px;">Here is a key revision tip for your current note:</p>
+                    <p style="margin: 8px 0; color: var(--color-primary); font-weight:600;">"Review memory bounds and edge cases before testing!"</p>
+                `;
+            }
+            aiBubble.innerHTML = fallbackHTML;
+        }
         chatHistory.scrollTop = chatHistory.scrollHeight;
     }
 

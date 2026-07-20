@@ -180,8 +180,8 @@ app.post('/api/chat', async (req, res) => {
 
   // Set up model options
   const genAI = new GoogleGenerativeAI(apiKey);
-  // Using gemini-3.1-flash-lite as the default model for general purpose chats (supported by this API key)
-  const modelName = 'gemini-3.1-flash-lite';
+  // Using gemini-2.5-flash as the default model for general purpose chats
+  const modelName = 'gemini-2.5-flash';
   const model = genAI.getGenerativeModel({ 
     model: modelName,
     generationConfig: {

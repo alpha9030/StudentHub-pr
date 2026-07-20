@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;700&family=Architects+Daughter&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;700&family=Architects+Daughter&family=Kalam:wght@400;700&display=swap');
 
 /* ==========================================================================
    BEGINNER-FRIENDLY ACADEMIC STYLESHEET (CSS VARIABLES BASED)
@@ -27,6 +27,11 @@
     --accent-color: #a855f7;        /* Purple */
     --border-color: rgba(0, 0, 0, 0.08);
     --border-focus: rgba(139, 92, 246, 0.4);
+    
+    --font-hand: 'Caveat', 'Architects Daughter', 'Kalam', cursive, sans-serif;
+    --font-handwritten: 'Caveat', 'Architects Daughter', 'Kalam', cursive, sans-serif;
+    --paper-line-color: rgba(99, 102, 241, 0.14);
+    --paper-margin-color: #f43f5e;
     
     --bg-container: #ffffff;        /* Secondary */
     --bg-card: #f3f4f6;             /* Tertiary */
@@ -4985,24 +4990,55 @@ body #notes-panel {
     line-height: 1.6;
 
 }
-#notes-panel /* 2. Handwritten Notebook */
-.template-handwritten {
-
-    padding: 40px 40px 40px 60px;
-    background-color: #fcfcf4;
-    background-image: linear-gradient(var(--paper-line-color) 1px, transparent 1px);
-    background-size: 100% 28px;
-    font-family: var(--font-hand);
-    font-size: 1.3rem;
-    color: #0c1c3a;
-    line-height: 28px;
-    position: relative;
-    border-left: 3px double var(--paper-margin-color);
-    margin-left: 20px;
-
+.template-handwritten,
+#notes-panel .template-handwritten {
+    padding: 36px 40px 40px 60px !important;
+    background-color: #fcfdf6 !important;
+    background-image: linear-gradient(var(--paper-line-color, rgba(99, 102, 241, 0.14)) 1px, transparent 1px) !important;
+    background-size: 100% 32px !important;
+    background-position: 0 8px !important;
+    font-family: var(--font-hand), 'Caveat', 'Architects Daughter', cursive, sans-serif !important;
+    font-size: 1.35rem !important;
+    color: #0c1c3a !important;
+    line-height: 32px !important;
+    position: relative !important;
+    border-left: 3px double var(--paper-margin-color, #f43f5e) !important;
+    margin-left: 10px !important;
+    border-radius: var(--radius-sm) !important;
+    box-shadow: var(--shadow-sm) !important;
 }
-#notes-panel .template-handwritten::before {
 
+.template-handwritten *,
+#notes-panel .template-handwritten *,
+.template-handwritten #note-title-input,
+.template-handwritten #note-text-edit,
+.template-handwritten p,
+.template-handwritten div,
+.template-handwritten span,
+.template-handwritten li,
+.template-handwritten h1,
+.template-handwritten h2,
+.template-handwritten h3,
+.template-handwritten h4 {
+    font-family: var(--font-hand), 'Caveat', 'Architects Daughter', cursive, sans-serif !important;
+}
+
+.template-handwritten #note-title-input {
+    font-size: 2.2rem !important;
+    font-weight: 700 !important;
+    color: #4338ca !important;
+    border-bottom: 2px solid rgba(99, 102, 241, 0.2) !important;
+    padding-bottom: 6px !important;
+    margin-bottom: 16px !important;
+}
+
+.template-handwritten #note-text-edit {
+    line-height: 32px !important;
+    font-size: 1.35rem !important;
+    color: #0c1c3a !important;
+}
+
+#notes-panel .template-handwritten::before {
     content: '';
     position: absolute;
     left: -20px;
@@ -5010,15 +5046,6 @@ body #notes-panel {
     width: 2px;
     height: 100%;
     border-left: 1px dashed var(--text-muted);
-
-}
-#notes-panel .template-handwritten h2, #notes-panel .template-handwritten h3 {
-
-    font-family: var(--font-hand);
-    font-weight: 700;
-    color: var(--color-primary);
-    margin-bottom: 8px;
-
 }
 #notes-panel /* 3. Grid / Engineering notes */
 .template-grid {
@@ -5551,11 +5578,25 @@ body.theme-dark #notes-panel .template-classic {
     color: var(--text-main) !important;
 
 }
+body.theme-dark .template-handwritten,
 body.theme-dark #notes-panel .template-handwritten {
-
     background-color: #0f0a1c !important;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px) !important;
     color: #a5f3fc !important; /* Cyan ink handwriting */
+    border-left-color: #ec4899 !important;
+}
 
+body.theme-dark .template-handwritten *,
+body.theme-dark #notes-panel .template-handwritten *,
+body.theme-dark .template-handwritten #note-text-edit {
+    color: #a5f3fc !important;
+    font-family: var(--font-hand), 'Caveat', cursive !important;
+}
+
+body.theme-dark .template-handwritten #note-title-input {
+    color: #c7d2fe !important;
+    border-bottom-color: rgba(199, 210, 254, 0.25) !important;
+    font-family: var(--font-hand), 'Caveat', cursive !important;
 }
 body.theme-dark #notes-panel .template-grid {
 

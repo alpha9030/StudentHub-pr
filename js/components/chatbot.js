@@ -15,7 +15,7 @@ let isListening = false; // Speech state reference
 let micStream = null; // Scoped microphone stream reference
 const HEALTH_CHECK_INTERVAL = 30000; // Check server health every 30s
 
-const API_BASE = (window.location.protocol === 'file:' || window.location.port === '8000' || window.location.port === '8001' || window.location.port === '8002') ? 'http://localhost:3008' : '';
+const API_BASE = (window.location.protocol === 'file:' || window.location.port === '5500' || window.location.port === '5501' || window.location.port === '8080' || window.location.port === '3000') ? 'http://localhost:3008' : '';
 
 // Theme Management
 const THEME_KEY = 'siteTheme';
@@ -59,9 +59,9 @@ function updateThemeIcons(theme) {
 }
 
 // Storage Helpers
-const STORAGE_KEY = 'lumina_conversations';
+const STORAGE_KEY = 'studenthub_conversations';
 function loadConversations() {
-  const saved = localStorage.getItem(STORAGE_KEY);
+  const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('lumina_conversations');
   if (saved) {
     try {
       chats = JSON.parse(saved);
@@ -418,6 +418,12 @@ function setupEventListeners() {
     e.preventDefault();
     submitUserMessage();
   });
+  if (DOMElements.btnSendMessage) {
+    DOMElements.btnSendMessage.addEventListener('click', (e) => {
+      e.preventDefault();
+      submitUserMessage();
+    });
+  }
   
   // Dynamic textarea scaling and keystrokes
   DOMElements.chatTextarea.addEventListener('input', autoScaleTextarea);
@@ -1133,12 +1139,12 @@ function exportActiveChatTxt() {
     return;
   }
 
-  let txtContent = `Lumina Chat Conversation Log: ${chat.title}\n`;
+  let txtContent = `StudentHub AI Conversation Log: ${chat.title}\n`;
   txtContent += `Date Created: ${new Date(chat.createdAt).toLocaleString()}\n`;
   txtContent += `==================================================\n\n`;
 
   chat.messages.forEach(msg => {
-    const sender = msg.role === 'user' ? 'YOU' : 'LUMINA AI';
+    const sender = msg.role === 'user' ? 'YOU' : 'STUDENTHUB AI';
     txtContent += `[${new Date(msg.timestamp).toLocaleString()}] ${sender}:\n`;
     txtContent += `${msg.text}\n`;
     txtContent += `--------------------------------------------------\n\n`;
@@ -1154,7 +1160,7 @@ function exportAllChatsJson() {
     return;
   }
   const jsonString = JSON.stringify(chats, null, 2);
-  downloadFile(jsonString, `lumina_chats_backup.json`, 'application/json');
+  downloadFile(jsonString, `studenthub_chats_backup.json`, 'application/json');
 }
 
 // Export Active Chat as PDF Document
@@ -1177,13 +1183,13 @@ function exportActiveChatPdf() {
   
   let html = `
     <div style="padding: 24px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #111827; background-color: #ffffff;">
-      <h1 style="font-size: 24px; border-bottom: 2px solid #7c3aed; padding-bottom: 8px; margin-bottom: 4px; color: #7c3aed;">Lumina Chat Transcript</h1>
+      <h1 style="font-size: 24px; border-bottom: 2px solid #7c3aed; padding-bottom: 8px; margin-bottom: 4px; color: #7c3aed;">StudentHub AI Transcript</h1>
       <p style="font-size: 12px; color: #6b7280; margin-bottom: 24px;">Conversation: <strong>${chat.title}</strong> | Exported on ${new Date().toLocaleString()}</p>
   `;
 
   chat.messages.forEach(msg => {
     const isUser = msg.role === 'user';
-    const sender = isUser ? 'User' : 'Lumina AI';
+    const sender = isUser ? 'User' : 'StudentHub AI';
     const bg = isUser ? '#f3f4f6' : '#ffffff';
     const border = isUser ? 'none' : '1px solid #e5e7eb';
     
@@ -1338,11 +1344,11 @@ function exportActiveChatMd() {
     return;
   }
 
-  let md = `# Lumina Chat Conversation: ${chat.title}\n`;
+  let md = `# StudentHub AI Conversation: ${chat.title}\n`;
   md += `*Date Created: ${new Date(chat.createdAt).toLocaleString()}*\n\n---\n\n`;
 
   chat.messages.forEach(msg => {
-    const sender = msg.role === 'user' ? '👤 **You**' : '🤖 **Lumina AI**';
+    const sender = msg.role === 'user' ? '👤 **You**' : '🤖 **StudentHub AI**';
     md += `### ${sender} *(at ${new Date(msg.timestamp).toLocaleTimeString()})*\n\n`;
     md += `${msg.text}\n\n`;
     
