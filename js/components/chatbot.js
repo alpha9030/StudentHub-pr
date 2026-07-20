@@ -256,71 +256,71 @@ window.copyMessage = function(button, messageId) {
   });
 };
 
-// DOM Elements Bindings
+// DOM Elements Bindings with Dynamic Getters
 const DOMElements = {
-  landingPage: document.getElementById('landing-page'),
-  chatDashboard: document.getElementById('chat-dashboard'),
+  get landingPage() { return document.getElementById('landing-page'); },
+  get chatDashboard() { return document.getElementById('chat-dashboard'); },
   
-  btnHeroLaunch: document.getElementById('btn-hero-launch'),
-  btnStartChat: document.getElementById('btn-start-chat'),
+  get btnHeroLaunch() { return document.getElementById('btn-hero-launch'); },
+  get btnStartChat() { return document.getElementById('btn-start-chat'); },
   
-  sidebar: document.getElementById('chat-sidebar'),
-  btnSidebarToggle: document.getElementById('btn-sidebar-toggle'),
-  btnSidebarCollapse: document.getElementById('btn-sidebar-collapse'),
-  sidebarOverlay: document.getElementById('sidebar-overlay'),
+  get sidebar() { return document.getElementById('chat-sidebar'); },
+  get btnSidebarToggle() { return document.getElementById('btn-sidebar-toggle'); },
+  get btnSidebarCollapse() { return document.getElementById('btn-sidebar-collapse'); },
+  get sidebarOverlay() { return document.getElementById('sidebar-overlay'); },
   
-  btnNewChat: document.getElementById('btn-new-chat'),
-  searchChats: document.getElementById('search-chats'),
-  btnClearSearch: document.getElementById('btn-clear-search'),
-  pinnedChatsSection: document.getElementById('pinned-chats-section'),
-  pinnedChatsList: document.getElementById('pinned-chats-list'),
-  recentChatsSection: document.getElementById('recent-chats-section'),
-  recentChatsList: document.getElementById('recent-chats-list'),
-  emptyHistoryView: document.getElementById('empty-history-view'),
+  get btnNewChat() { return document.getElementById('btn-new-chat'); },
+  get searchChats() { return document.getElementById('search-chats'); },
+  get btnClearSearch() { return document.getElementById('btn-clear-search'); },
+  get pinnedChatsSection() { return document.getElementById('pinned-chats-section'); },
+  get pinnedChatsList() { return document.getElementById('pinned-chats-list'); },
+  get recentChatsSection() { return document.getElementById('recent-chats-section'); },
+  get recentChatsList() { return document.getElementById('recent-chats-list'); },
+  get emptyHistoryView() { return document.getElementById('empty-history-view'); },
   
-  statusDot: document.getElementById('status-dot'),
-  statusText: document.getElementById('status-text'),
-  connectionBanner: document.getElementById('connection-banner'),
+  get statusDot() { return document.getElementById('status-dot'); },
+  get statusText() { return document.getElementById('status-text'); },
+  get connectionBanner() { return document.getElementById('connection-banner'); },
   
-  btnThemeToggle: document.getElementById('btn-theme-toggle'),
-  btnExportDropdown: document.getElementById('btn-export-dropdown'),
-  exportDropdownMenu: document.getElementById('export-dropdown-menu'),
-  btnClearAll: document.getElementById('btn-clear-all'),
+  get btnThemeToggle() { return document.getElementById('btn-sidebar-theme-toggle') || document.getElementById('btn-theme-toggle'); },
+  get btnExportDropdown() { return document.getElementById('btn-export-dropdown'); },
+  get exportDropdownMenu() { return document.getElementById('export-dropdown-menu'); },
+  get btnClearAll() { return document.getElementById('btn-clear-all'); },
   
-  btnExportTxt: document.getElementById('btn-export-txt'),
-  btnExportMd: document.getElementById('btn-export-md'),
-  btnExportPdf: document.getElementById('btn-export-pdf'),
-  btnExportJson: document.getElementById('btn-export-json'),
+  get btnExportTxt() { return document.getElementById('btn-export-txt'); },
+  get btnExportMd() { return document.getElementById('btn-export-md'); },
+  get btnExportPdf() { return document.getElementById('btn-export-pdf'); },
+  get btnExportJson() { return document.getElementById('btn-export-json'); },
   
-  btnSettingsKey: document.getElementById('btn-settings-key'),
-  apiKeyModal: document.getElementById('api-key-modal'),
-  btnCloseKeyModal: document.getElementById('btn-close-key-modal'),
-  btnKeyModalCancel: document.getElementById('btn-key-modal-cancel'),
-  btnKeyModalSave: document.getElementById('btn-key-modal-save'),
-  inputCustomApiKey: document.getElementById('input-custom-api-key'),
-  chkShowKey: document.getElementById('chk-show-key'),
-  apiKeyStatusText: document.getElementById('api-key-status-text'),
+  get btnSettingsKey() { return document.getElementById('btn-settings-key'); },
+  get apiKeyModal() { return document.getElementById('api-key-modal'); },
+  get btnCloseKeyModal() { return document.getElementById('btn-close-key-modal'); },
+  get btnKeyModalCancel() { return document.getElementById('btn-key-modal-cancel'); },
+  get btnKeyModalSave() { return document.getElementById('btn-key-modal-save'); },
+  get inputCustomApiKey() { return document.getElementById('input-custom-api-key'); },
+  get chkShowKey() { return document.getElementById('chk-show-key'); },
+  get apiKeyStatusText() { return document.getElementById('api-key-status-text'); },
   
-  activeChatTitle: document.getElementById('active-chat-title'),
-  btnPinActive: document.getElementById('btn-pin-active'),
-  btnLeaveChat: document.getElementById('btn-leave-chat'),
+  get activeChatTitle() { return document.getElementById('active-chat-title'); },
+  get btnPinActive() { return document.getElementById('btn-pin-active'); },
+  get btnLeaveChat() { return document.getElementById('btn-leave-chat'); },
   
-  chatOutputContainer: document.getElementById('chat-output-container'),
-  chatWelcomeScreen: document.getElementById('chat-welcome-screen'),
-  messagesList: document.getElementById('messages-list'),
-  aiTypingIndicator: document.getElementById('ai-typing-indicator'),
+  get chatOutputContainer() { return document.getElementById('chat-output-container'); },
+  get chatWelcomeScreen() { return document.getElementById('chat-welcome-screen'); },
+  get messagesList() { return document.getElementById('messages-list'); },
+  get aiTypingIndicator() { return document.getElementById('ai-typing-indicator'); },
   
-  generationControlPanel: document.getElementById('generation-control-panel'),
-  btnStopGeneration: document.getElementById('btn-stop-generation'),
+  get generationControlPanel() { return document.getElementById('generation-control-panel'); },
+  get btnStopGeneration() { return document.getElementById('btn-stop-generation'); },
   
-  chatInputForm: document.getElementById('chat-input-form'),
-  chatTextarea: document.getElementById('chat-textarea'),
-  btnSendMessage: document.getElementById('btn-send-message'),
-  btnAttachFile: document.getElementById('btn-attach-file'),
-  fileInput: document.getElementById('file-input'),
-  btnVoiceInput: document.getElementById('btn-voice-input'),
-  filePreviewsContainer: document.getElementById('file-previews-container'),
-  dragDropOverlay: document.getElementById('drag-drop-overlay')
+  get chatInputForm() { return document.getElementById('chat-input-form'); },
+  get chatTextarea() { return document.getElementById('chat-textarea'); },
+  get btnSendMessage() { return document.getElementById('btn-send-message'); },
+  get btnAttachFile() { return document.getElementById('btn-attach-file'); },
+  get fileInput() { return document.getElementById('file-input'); },
+  get btnVoiceInput() { return document.getElementById('btn-voice-input'); },
+  get filePreviewsContainer() { return document.getElementById('file-previews-container'); },
+  get dragDropOverlay() { return document.getElementById('drag-drop-overlay'); }
 };
 
 // Initialize Application
@@ -342,50 +342,52 @@ document.addEventListener('DOMContentLoaded', () => {
 // Event Listeners Routing
 function setupEventListeners() {
   // Theme Switches
-  DOMElements.btnThemeToggle.addEventListener('click', toggleTheme);
+  if (DOMElements.btnThemeToggle) DOMElements.btnThemeToggle.addEventListener('click', toggleTheme);
   
   // Screen Router
-  if (DOMElements.btnHeroLaunch) {
-    DOMElements.btnHeroLaunch.addEventListener('click', switchToChatScreen);
-  }
-  DOMElements.btnStartChat.addEventListener('click', switchToChatScreen);
-  DOMElements.btnLeaveChat.addEventListener('click', switchToLandingScreen);
+  if (DOMElements.btnHeroLaunch) DOMElements.btnHeroLaunch.addEventListener('click', switchToChatScreen);
+  if (DOMElements.btnStartChat) DOMElements.btnStartChat.addEventListener('click', switchToChatScreen);
+  if (DOMElements.btnLeaveChat) DOMElements.btnLeaveChat.addEventListener('click', switchToLandingScreen);
   
   // Sidebar actions
-  DOMElements.btnSidebarToggle.addEventListener('click', openMobileSidebar);
-  DOMElements.btnSidebarCollapse.addEventListener('click', closeMobileSidebar);
-  DOMElements.sidebarOverlay.addEventListener('click', closeMobileSidebar);
+  if (DOMElements.btnSidebarToggle) DOMElements.btnSidebarToggle.addEventListener('click', openMobileSidebar);
+  if (DOMElements.btnSidebarCollapse) DOMElements.btnSidebarCollapse.addEventListener('click', closeMobileSidebar);
+  if (DOMElements.sidebarOverlay) DOMElements.sidebarOverlay.addEventListener('click', closeMobileSidebar);
   
-  DOMElements.btnNewChat.addEventListener('click', () => createNewChat());
-  DOMElements.searchChats.addEventListener('input', filterChats);
-  DOMElements.btnClearSearch.addEventListener('click', clearSearch);
+  if (DOMElements.btnNewChat) DOMElements.btnNewChat.addEventListener('click', () => createNewChat());
+  if (DOMElements.searchChats) DOMElements.searchChats.addEventListener('input', filterChats);
+  if (DOMElements.btnClearSearch) DOMElements.btnClearSearch.addEventListener('click', clearSearch);
   
-  DOMElements.btnClearAll.addEventListener('click', clearAllChats);
+  if (DOMElements.btnClearAll) DOMElements.btnClearAll.addEventListener('click', clearAllChats);
   
   // Export Dropdown
-  DOMElements.btnExportDropdown.addEventListener('click', (e) => {
-    e.stopPropagation();
-    DOMElements.exportDropdownMenu.classList.toggle('hidden');
-  });
+  if (DOMElements.btnExportDropdown) {
+    DOMElements.btnExportDropdown.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (DOMElements.exportDropdownMenu) DOMElements.exportDropdownMenu.classList.toggle('hidden');
+    });
+  }
   
   document.addEventListener('click', () => {
-    DOMElements.exportDropdownMenu.classList.add('hidden');
+    if (DOMElements.exportDropdownMenu) DOMElements.exportDropdownMenu.classList.add('hidden');
   });
   
-  DOMElements.btnExportTxt.addEventListener('click', exportActiveChatTxt);
-  DOMElements.btnExportMd.addEventListener('click', exportActiveChatMd);
-  DOMElements.btnExportJson.addEventListener('click', exportAllChatsJson);
-  DOMElements.btnExportPdf.addEventListener('click', exportActiveChatPdf);
+  if (DOMElements.btnExportTxt) DOMElements.btnExportTxt.addEventListener('click', exportActiveChatTxt);
+  if (DOMElements.btnExportMd) DOMElements.btnExportMd.addEventListener('click', exportActiveChatMd);
+  if (DOMElements.btnExportJson) DOMElements.btnExportJson.addEventListener('click', exportAllChatsJson);
+  if (DOMElements.btnExportPdf) DOMElements.btnExportPdf.addEventListener('click', exportActiveChatPdf);
   
   // Pin & Title in Chat Header
-  DOMElements.btnPinActive.addEventListener('click', togglePinActiveChat);
-  DOMElements.activeChatTitle.addEventListener('blur', renameActiveChat);
-  DOMElements.activeChatTitle.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      DOMElements.activeChatTitle.blur();
-    }
-  });
+  if (DOMElements.btnPinActive) DOMElements.btnPinActive.addEventListener('click', togglePinActiveChat);
+  if (DOMElements.activeChatTitle) {
+    DOMElements.activeChatTitle.addEventListener('blur', renameActiveChat);
+    DOMElements.activeChatTitle.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        DOMElements.activeChatTitle.blur();
+      }
+    });
+  }
   
   // Suggested prompt quick triggers
   const promptButtons = document.querySelectorAll('.suggested-prompt-btn');
@@ -397,34 +399,42 @@ function setupEventListeners() {
   });
   
   // File Upload Handlers
-  DOMElements.btnAttachFile.addEventListener('click', () => DOMElements.fileInput.click());
-  DOMElements.fileInput.addEventListener('change', handleFileInputChange);
+  if (DOMElements.btnAttachFile && DOMElements.fileInput) {
+    DOMElements.btnAttachFile.addEventListener('click', () => DOMElements.fileInput.click());
+    DOMElements.fileInput.addEventListener('change', handleFileInputChange);
+  }
 
   // Drag and Drop support
   const dropZone = DOMElements.chatDashboard;
-  ['dragenter', 'dragover'].forEach(eventName => {
-    dropZone.addEventListener(eventName, showDragDropOverlay, false);
-  });
-  ['dragleave', 'drop'].forEach(eventName => {
-    dropZone.addEventListener(eventName, hideDragDropOverlay, false);
-  });
-  dropZone.addEventListener('drop', handleFileDrop, false);
+  if (dropZone) {
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, showDragDropOverlay, false);
+    });
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, hideDragDropOverlay, false);
+    });
+    dropZone.addEventListener('drop', handleFileDrop, false);
+  }
 
   // Voice Input Handlers
-  DOMElements.btnVoiceInput.addEventListener('click', toggleSpeechRecognition);
+  if (DOMElements.btnVoiceInput) DOMElements.btnVoiceInput.addEventListener('click', toggleSpeechRecognition);
 
   // Message submission form
-  DOMElements.chatInputForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    submitUserMessage();
-  });
+  if (DOMElements.chatInputForm) {
+    DOMElements.chatInputForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      submitUserMessage();
+    });
+  }
   
   // Dynamic textarea scaling and keystrokes
-  DOMElements.chatTextarea.addEventListener('input', autoScaleTextarea);
-  DOMElements.chatTextarea.addEventListener('keydown', handleTextareaKeydown);
+  if (DOMElements.chatTextarea) {
+    DOMElements.chatTextarea.addEventListener('input', autoScaleTextarea);
+    DOMElements.chatTextarea.addEventListener('keydown', handleTextareaKeydown);
+  }
   
   // Streaming Controller
-  DOMElements.btnStopGeneration.addEventListener('click', stopResponseGeneration);
+  if (DOMElements.btnStopGeneration) DOMElements.btnStopGeneration.addEventListener('click', stopResponseGeneration);
 
   // API Key Settings Modal Trigger
   if (DOMElements.btnSettingsKey) {
@@ -916,7 +926,7 @@ async function submitUserMessage() {
     }
     
     return {
-      role: msg.role,
+      role: (msg.role === 'assistant' || msg.role === 'ai') ? 'model' : (msg.role || 'user'),
       parts: parts
     };
   });
