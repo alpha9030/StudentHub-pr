@@ -435,11 +435,13 @@
   position: relative;
 }.chatbot-scope #chat-dashboard {
   display: flex;
-  height: 100%;
+  min-height: 100%;
   width: 100%;
+  overflow: visible;
 }.chatbot-scope .sidebar {
   width: var(--sidebar-width);
-  height: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
   background-color: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
   display: flex;
@@ -672,11 +674,12 @@
   background-color: rgba(0, 0, 0, 0.05);
 }.chatbot-scope .chat-workspace {
   flex: 1;
-  height: 100%;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   background-color: var(--bg-primary);
   position: relative;
+  overflow: visible;
 }.chatbot-scope .workspace-header {
   height: var(--header-height);
   border-bottom: 1px solid var(--border-color);
@@ -734,7 +737,7 @@
   color: var(--text-primary);
 }.chatbot-scope .chat-output-container {
   flex: 1;
-  overflow-y: auto;
+  overflow: visible;
   position: relative;
   background-color: var(--bg-primary);
   scroll-behavior: smooth;
