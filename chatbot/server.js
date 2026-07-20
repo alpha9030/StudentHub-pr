@@ -12,8 +12,19 @@ const mammoth = require('mammoth');
 const AdmZip = require('adm-zip');
 const XLSX = require('xlsx');
 
-// Load environment variables
+// Load environment variables from chatbot/.env and parent root .env/config.json
 const envConfig = dotenv.config();
+dotenv.config({ path: path.join(__dirname, '../.env') });
+
+let configJsonApiKey = '';
+try {
+  const configPath = path.join(__dirname, '../config.json');
+  if (fs.existsSync(configPath)) {
+    const cfgData = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    configJsonApiKey = cfgData.GEMINI_API_KEY || cfgData.GOOGLE_API_KEY || '';
+  }
+} catch (e) {}
+
 // Explicitly override PORT if defined in chatbot/.env to prevent inheriting parent process PORT (which causes EADDRINUSE on Render)
 if (envConfig.parsed && envConfig.parsed.PORT) {
   process.env.PORT = envConfig.parsed.PORT;
@@ -148,7 +159,7 @@ async function retryWithBackoff(fn, retries = 3, delay = 1000) {
 app.post('/api/chat', async (req, res) => {
   const { messages, stream, customApiKey } = req.body;
   const headerApiKey = req.headers['x-api-key'];
-  const apiKey = customApiKey || headerApiKey || process.env.GEMINI_API_KEY;
+  const apiKey = customApiKey || headerApiKey || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || configJsonApiKey;
 
   const keyType = customApiKey ? 'Body Custom' : (headerApiKey ? 'Header Custom' : 'Default');
   const keyPrefix = apiKey ? apiKey.substring(0, 7) + '...' : 'None';
