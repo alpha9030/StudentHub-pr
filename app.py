@@ -1227,12 +1227,27 @@ def proxy_chat():
     }
     if "X-API-Key" in request.headers:
         headers["X-API-Key"] = request.headers.get("X-API-Key")
-    try:
-        conn, prefix = get_chatbot_connection(timeout=60)
-        conn.request("POST", f"{prefix}/api/chat", body, headers)
-        resp = conn.getresponse()
-        print(f"[PROXY] /api/chat connected to Node backend. Status: {resp.status}")
+    
+    resp = None
+    conn = None
+    last_err = None
+    
+    for attempt in range(6):
+        try:
+            conn, prefix = get_chatbot_connection(timeout=60)
+            conn.request("POST", f"{prefix}/api/chat", body, headers)
+            resp = conn.getresponse()
+            print(f"[PROXY] /api/chat connected to Node backend (attempt {attempt + 1}). Status: {resp.status}")
+            break
+        except Exception as e:
+            last_err = e
+            time.sleep(1)
+            
+    if not resp:
+        print(f"[PROXY Error] Proxy connection failed after retries: {last_err}")
+        return jsonify({"error": "Chatbot backend is temporarily offline.", "status": 503}), 503
         
+    try:
         def generate():
             try:
                 while True:
@@ -1243,7 +1258,8 @@ def proxy_chat():
             except Exception as e:
                 print(f"[PROXY Error] Proxy stream error: {e}")
             finally:
-                conn.close()
+                if conn:
+                    conn.close()
                 
         flask_resp = Response(stream_with_context(generate()), status=resp.status)
         for k, v in resp.getheaders():
@@ -1251,8 +1267,8 @@ def proxy_chat():
                 flask_resp.headers[k] = v
         return flask_resp
     except Exception as e:
-        print(f"[PROXY Error] Proxy connection failed: {e}")
-        return jsonify({"error": "Chatbot backend is temporarily offline.", "status": 503}), 503
+        print(f"[PROXY Error] Proxy handling failed: {e}")
+        return jsonify({"error": "Chatbot service error.", "status": 500}), 500
 
 @app.route('/api/upload', methods=['POST'])
 def proxy_upload():
