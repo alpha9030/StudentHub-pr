@@ -282,7 +282,7 @@ const DOMElements = {
   get statusText() { return document.getElementById('status-text'); },
   get connectionBanner() { return document.getElementById('connection-banner'); },
   
-  get btnThemeToggle() { return document.getElementById('btn-theme-toggle'); },
+  get btnThemeToggle() { return document.getElementById('btn-sidebar-theme-toggle') || document.getElementById('btn-theme-toggle'); },
   get btnExportDropdown() { return document.getElementById('btn-export-dropdown'); },
   get exportDropdownMenu() { return document.getElementById('export-dropdown-menu'); },
   get btnClearAll() { return document.getElementById('btn-clear-all'); },
