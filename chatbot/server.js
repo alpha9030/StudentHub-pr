@@ -12,19 +12,8 @@ const mammoth = require('mammoth');
 const AdmZip = require('adm-zip');
 const XLSX = require('xlsx');
 
-// Load environment variables from chatbot/.env and parent root .env/config.json
+// Load environment variables
 const envConfig = dotenv.config();
-dotenv.config({ path: path.join(__dirname, '../.env') });
-
-let configJsonApiKey = '';
-try {
-  const configPath = path.join(__dirname, '../config.json');
-  if (fs.existsSync(configPath)) {
-    const cfgData = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-    configJsonApiKey = cfgData.GEMINI_API_KEY || cfgData.GOOGLE_API_KEY || '';
-  }
-} catch (e) {}
-
 // Explicitly override PORT if defined in chatbot/.env to prevent inheriting parent process PORT (which causes EADDRINUSE on Render)
 if (envConfig.parsed && envConfig.parsed.PORT) {
   process.env.PORT = envConfig.parsed.PORT;
@@ -84,7 +73,7 @@ function validateMessages(messages) {
   if (!Array.isArray(messages)) return false;
   for (const msg of messages) {
     if (typeof msg !== 'object' || msg === null) return false;
-    if (msg.role !== 'user' && msg.role !== 'model' && msg.role !== 'assistant' && msg.role !== 'ai') return false;
+    if (msg.role !== 'user' && msg.role !== 'model') return false;
     if (!Array.isArray(msg.parts)) return false;
     for (const part of msg.parts) {
       if (typeof part !== 'object' || part === null) return false;
@@ -159,7 +148,7 @@ async function retryWithBackoff(fn, retries = 3, delay = 1000) {
 app.post('/api/chat', async (req, res) => {
   const { messages, stream, customApiKey } = req.body;
   const headerApiKey = req.headers['x-api-key'];
-  const apiKey = customApiKey || headerApiKey || process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || configJsonApiKey;
+  const apiKey = customApiKey || headerApiKey || process.env.GEMINI_API_KEY;
 
   const keyType = customApiKey ? 'Body Custom' : (headerApiKey ? 'Header Custom' : 'Default');
   const keyPrefix = apiKey ? apiKey.substring(0, 7) + '...' : 'None';
@@ -205,13 +194,9 @@ app.post('/api/chat', async (req, res) => {
 
   // Prepare standard gemini formatting
   // The SDK expects: [{ role: 'user'|'model', parts: [{ text: '...' } | { inlineData: { mimeType, data } }] }]
-  const formattedContents = messages.map(msg => {
-    let cleanRole = (msg.role === 'assistant' || msg.role === 'ai') ? 'model' : (msg.role || 'user');
-    if (cleanRole !== 'user' && cleanRole !== 'model') cleanRole = 'user';
-
-    const rawParts = Array.isArray(msg.parts) ? msg.parts : [{ text: msg.text || ' ' }];
-    const cleanParts = rawParts.map(p => {
-      if (typeof p === 'string') return { text: p };
+  const formattedContents = messages.map(msg => ({
+    role: msg.role,
+    parts: msg.parts.map(p => {
       if (p.inlineData) {
         return {
           inlineData: {
@@ -220,14 +205,9 @@ app.post('/api/chat', async (req, res) => {
           }
         };
       }
-      return { text: p.text || ' ' };
-    });
-
-    return {
-      role: cleanRole,
-      parts: cleanParts.length > 0 ? cleanParts : [{ text: ' ' }]
-    };
-  });
+      return { text: p.text };
+    })
+  }));
 
   try {
     if (stream) {

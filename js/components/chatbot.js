@@ -15,7 +15,7 @@ let isListening = false; // Speech state reference
 let micStream = null; // Scoped microphone stream reference
 const HEALTH_CHECK_INTERVAL = 30000; // Check server health every 30s
 
-const API_BASE = (window.location.protocol === 'file:' || window.location.port === '5500' || window.location.port === '5501' || window.location.port === '8080' || window.location.port === '3000') ? 'http://localhost:3008' : '';
+const API_BASE = (window.location.protocol === 'file:' || window.location.port === '8000' || window.location.port === '8001' || window.location.port === '8002') ? 'http://localhost:3008' : '';
 
 // Theme Management
 const THEME_KEY = 'siteTheme';
@@ -59,9 +59,9 @@ function updateThemeIcons(theme) {
 }
 
 // Storage Helpers
-const STORAGE_KEY = 'studenthub_conversations';
+const STORAGE_KEY = 'lumina_conversations';
 function loadConversations() {
-  const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('lumina_conversations');
+  const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
     try {
       chats = JSON.parse(saved);
@@ -256,71 +256,71 @@ window.copyMessage = function(button, messageId) {
   });
 };
 
-// DOM Elements Bindings (Dynamic Getters for maximum resilience)
+// DOM Elements Bindings
 const DOMElements = {
-  get landingPage() { return document.getElementById('landing-page'); },
-  get chatDashboard() { return document.getElementById('chat-dashboard'); },
+  landingPage: document.getElementById('landing-page'),
+  chatDashboard: document.getElementById('chat-dashboard'),
   
-  get btnHeroLaunch() { return document.getElementById('btn-hero-launch'); },
-  get btnStartChat() { return document.getElementById('btn-start-chat'); },
+  btnHeroLaunch: document.getElementById('btn-hero-launch'),
+  btnStartChat: document.getElementById('btn-start-chat'),
   
-  get sidebar() { return document.getElementById('chat-sidebar'); },
-  get btnSidebarToggle() { return document.getElementById('btn-sidebar-toggle'); },
-  get btnSidebarCollapse() { return document.getElementById('btn-sidebar-collapse'); },
-  get sidebarOverlay() { return document.getElementById('sidebar-overlay'); },
+  sidebar: document.getElementById('chat-sidebar'),
+  btnSidebarToggle: document.getElementById('btn-sidebar-toggle'),
+  btnSidebarCollapse: document.getElementById('btn-sidebar-collapse'),
+  sidebarOverlay: document.getElementById('sidebar-overlay'),
   
-  get btnNewChat() { return document.getElementById('btn-new-chat'); },
-  get searchChats() { return document.getElementById('search-chats'); },
-  get btnClearSearch() { return document.getElementById('btn-clear-search'); },
-  get pinnedChatsSection() { return document.getElementById('pinned-chats-section'); },
-  get pinnedChatsList() { return document.getElementById('pinned-chats-list'); },
-  get recentChatsSection() { return document.getElementById('recent-chats-section'); },
-  get recentChatsList() { return document.getElementById('recent-chats-list'); },
-  get emptyHistoryView() { return document.getElementById('empty-history-view'); },
+  btnNewChat: document.getElementById('btn-new-chat'),
+  searchChats: document.getElementById('search-chats'),
+  btnClearSearch: document.getElementById('btn-clear-search'),
+  pinnedChatsSection: document.getElementById('pinned-chats-section'),
+  pinnedChatsList: document.getElementById('pinned-chats-list'),
+  recentChatsSection: document.getElementById('recent-chats-section'),
+  recentChatsList: document.getElementById('recent-chats-list'),
+  emptyHistoryView: document.getElementById('empty-history-view'),
   
-  get statusDot() { return document.getElementById('status-dot'); },
-  get statusText() { return document.getElementById('status-text'); },
-  get connectionBanner() { return document.getElementById('connection-banner'); },
+  statusDot: document.getElementById('status-dot'),
+  statusText: document.getElementById('status-text'),
+  connectionBanner: document.getElementById('connection-banner'),
   
-  get btnThemeToggle() { return document.getElementById('btn-sidebar-theme-toggle') || document.getElementById('btn-theme-toggle'); },
-  get btnExportDropdown() { return document.getElementById('btn-export-dropdown'); },
-  get exportDropdownMenu() { return document.getElementById('export-dropdown-menu'); },
-  get btnClearAll() { return document.getElementById('btn-clear-all'); },
+  btnThemeToggle: document.getElementById('btn-theme-toggle'),
+  btnExportDropdown: document.getElementById('btn-export-dropdown'),
+  exportDropdownMenu: document.getElementById('export-dropdown-menu'),
+  btnClearAll: document.getElementById('btn-clear-all'),
   
-  get btnExportTxt() { return document.getElementById('btn-export-txt'); },
-  get btnExportMd() { return document.getElementById('btn-export-md'); },
-  get btnExportPdf() { return document.getElementById('btn-export-pdf'); },
-  get btnExportJson() { return document.getElementById('btn-export-json'); },
+  btnExportTxt: document.getElementById('btn-export-txt'),
+  btnExportMd: document.getElementById('btn-export-md'),
+  btnExportPdf: document.getElementById('btn-export-pdf'),
+  btnExportJson: document.getElementById('btn-export-json'),
   
-  get btnSettingsKey() { return document.getElementById('btn-settings-key'); },
-  get apiKeyModal() { return document.getElementById('api-key-modal'); },
-  get btnCloseKeyModal() { return document.getElementById('btn-close-key-modal'); },
-  get btnKeyModalCancel() { return document.getElementById('btn-key-modal-cancel'); },
-  get btnKeyModalSave() { return document.getElementById('btn-key-modal-save'); },
-  get inputCustomApiKey() { return document.getElementById('input-custom-api-key'); },
-  get chkShowKey() { return document.getElementById('chk-show-key'); },
-  get apiKeyStatusText() { return document.getElementById('api-key-status-text'); },
+  btnSettingsKey: document.getElementById('btn-settings-key'),
+  apiKeyModal: document.getElementById('api-key-modal'),
+  btnCloseKeyModal: document.getElementById('btn-close-key-modal'),
+  btnKeyModalCancel: document.getElementById('btn-key-modal-cancel'),
+  btnKeyModalSave: document.getElementById('btn-key-modal-save'),
+  inputCustomApiKey: document.getElementById('input-custom-api-key'),
+  chkShowKey: document.getElementById('chk-show-key'),
+  apiKeyStatusText: document.getElementById('api-key-status-text'),
   
-  get activeChatTitle() { return document.getElementById('active-chat-title'); },
-  get btnPinActive() { return document.getElementById('btn-pin-active'); },
-  get btnLeaveChat() { return document.getElementById('btn-leave-chat'); },
+  activeChatTitle: document.getElementById('active-chat-title'),
+  btnPinActive: document.getElementById('btn-pin-active'),
+  btnLeaveChat: document.getElementById('btn-leave-chat'),
   
-  get chatOutputContainer() { return document.getElementById('chat-output-container'); },
-  get chatWelcomeScreen() { return document.getElementById('chat-welcome-screen'); },
-  get messagesList() { return document.getElementById('messages-list'); },
-  get aiTypingIndicator() { return document.getElementById('ai-typing-indicator'); },
+  chatOutputContainer: document.getElementById('chat-output-container'),
+  chatWelcomeScreen: document.getElementById('chat-welcome-screen'),
+  messagesList: document.getElementById('messages-list'),
+  aiTypingIndicator: document.getElementById('ai-typing-indicator'),
   
-  get generationControlPanel() { return document.getElementById('generation-control-panel'); },
-  get btnStopGeneration() { return document.getElementById('btn-stop-generation'); },
+  generationControlPanel: document.getElementById('generation-control-panel'),
+  btnStopGeneration: document.getElementById('btn-stop-generation'),
   
-  get chatInputForm() { return document.getElementById('chat-input-form'); },
-  get chatTextarea() { return document.getElementById('chat-textarea'); },
-  get btnSendMessage() { return document.getElementById('btn-send-message'); },
-  get btnAttachFile() { return document.getElementById('btn-attach-file'); },
-  get fileInput() { return document.getElementById('file-input'); },
-  get btnVoiceInput() { return document.getElementById('btn-voice-input'); },
-  get filePreviewsContainer() { return document.getElementById('file-previews-container'); },
-  get dragDropOverlay() { return document.getElementById('drag-drop-overlay'); }
+  chatInputForm: document.getElementById('chat-input-form'),
+  chatTextarea: document.getElementById('chat-textarea'),
+  btnSendMessage: document.getElementById('btn-send-message'),
+  btnAttachFile: document.getElementById('btn-attach-file'),
+  fileInput: document.getElementById('file-input'),
+  btnVoiceInput: document.getElementById('btn-voice-input'),
+  filePreviewsContainer: document.getElementById('file-previews-container'),
+  dragDropOverlay: document.getElementById('drag-drop-overlay')
 };
 
 // Initialize Application
@@ -329,11 +329,6 @@ document.addEventListener('DOMContentLoaded', () => {
   loadConversations();
   setupEventListeners();
   renderSidebarChats();
-  if (chats.length > 0) {
-    selectChat(chats[0].id);
-  } else {
-    createNewChat();
-  }
   checkServerHealth();
   updateKeyStatusUI();
   setInterval(checkServerHealth, HEALTH_CHECK_INTERVAL);
@@ -418,13 +413,11 @@ function setupEventListeners() {
   // Voice Input Handlers
   DOMElements.btnVoiceInput.addEventListener('click', toggleSpeechRecognition);
 
-  // Message submission form (submits on button click or Enter key)
-  if (DOMElements.chatInputForm) {
-    DOMElements.chatInputForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      submitUserMessage();
-    });
-  }
+  // Message submission form
+  DOMElements.chatInputForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    submitUserMessage();
+  });
   
   // Dynamic textarea scaling and keystrokes
   DOMElements.chatTextarea.addEventListener('input', autoScaleTextarea);
@@ -493,94 +486,10 @@ function setupEventListeners() {
       DOMElements.apiKeyModal.classList.remove('hidden');
     });
   }
-
-  // Sidebar Tool Item chips click triggers
-  const toolChips = document.querySelectorAll('.sidebar-tool-item');
-  toolChips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      const toolName = chip.getAttribute('data-tool');
-      const toolLabel = chip.innerText.trim();
-      sendPromptMessage(`Help me with ${toolLabel}. Give me a structured guide and step-by-step template.`);
-    });
-  });
-
-  // Close popup settings menu on click outside
-  document.addEventListener('click', (e) => {
-    const settingsBtn = document.getElementById('btn-settings-trigger');
-    const settingsMenu = document.getElementById('sidebar-settings-menu');
-    if (settingsMenu && settingsBtn && !settingsBtn.contains(e.target) && !settingsMenu.contains(e.target)) {
-      settingsMenu.classList.add('hidden');
-      const chevron = document.getElementById('settings-chevron');
-      if (chevron) chevron.style.transform = 'rotate(0deg)';
-    }
-  });
 }
-
-// Global UI Helper Functions attached to window
-window.toggleSidebarSettingsMenu = function(e) {
-  if (e) e.stopPropagation();
-  const menu = document.getElementById('sidebar-settings-menu');
-  const chevron = document.getElementById('settings-chevron');
-  if (menu) {
-    menu.classList.toggle('hidden');
-    if (chevron) {
-      chevron.style.transform = menu.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
-    }
-  }
-};
-
-window.toggleAIToolsPanel = function() {
-  const panel = document.getElementById('sidebar-ai-tools-list');
-  const chevron = document.getElementById('ai-tools-chevron');
-  if (panel) {
-    const isHidden = panel.style.display === 'none';
-    panel.style.display = isHidden ? 'flex' : 'none';
-    if (chevron) {
-      chevron.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
-    }
-  }
-};
-
-window.toggleRecentChatsPanel = function() {
-  const panel = document.getElementById('recent-chats-list');
-  const chevron = document.getElementById('recent-chats-chevron');
-  if (panel) {
-    const isHidden = panel.style.display === 'none';
-    panel.style.display = isHidden ? 'flex' : 'none';
-    if (chevron) {
-      chevron.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
-    }
-  }
-};
-
-window.toggleTodoPanel = function() {
-  const panel = document.getElementById('todo-panel-content');
-  const chevron = document.getElementById('todo-chevron');
-  if (panel) {
-    const isHidden = panel.style.display === 'none' || panel.style.display === '';
-    panel.style.display = isHidden ? 'flex' : 'none';
-    if (chevron) {
-      chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
-    }
-  }
-};
-
-window.exitChatbotWorkspace = function() {
-  if (typeof mainApp !== 'undefined' && mainApp.switchTab) {
-    mainApp.switchTab('dashboard');
-  } else if (typeof showView === 'function') {
-    showView('landing');
-  } else {
-    window.location.hash = '#dashboard';
-  }
-};
 
 // Screen Routing Actions
 function switchToChatScreen() {
-  const chatbotPanel = document.getElementById('chatbot-panel');
-  if (chatbotPanel) {
-    chatbotPanel.classList.add('active');
-  }
   DOMElements.landingPage.classList.remove('active');
   DOMElements.chatDashboard.classList.add('active');
   
@@ -910,13 +819,6 @@ function renderChatMessages() {
 
 // Send user prompt triggers
 function sendPromptMessage(text) {
-  if (!activeChatId) {
-    if (chats.length > 0) {
-      selectChat(chats[0].id);
-    } else {
-      createNewChat();
-    }
-  }
   DOMElements.chatTextarea.value = text;
   submitUserMessage();
 }
@@ -938,16 +840,7 @@ async function submitUserMessage() {
   DOMElements.chatTextarea.value = '';
   DOMElements.chatTextarea.style.height = 'auto';
   
-  let chat = chats.find(c => c.id === activeChatId);
-  if (!chat) {
-    if (chats.length > 0) {
-      selectChat(chats[0].id);
-      chat = chats.find(c => c.id === activeChatId);
-    } else {
-      createNewChat(text);
-      return;
-    }
-  }
+  const chat = chats.find(c => c.id === activeChatId);
   if (!chat) return;
 
   // If first user message, update title dynamically
@@ -1023,16 +916,13 @@ async function submitUserMessage() {
     }
     
     return {
-      role: (msg.role === 'assistant' || msg.role === 'ai') ? 'model' : (msg.role || 'user'),
+      role: msg.role,
       parts: parts
     };
   });
 
   try {
-    let customKey = localStorage.getItem('custom_gemini_api_key') || '';
-    if (customKey === 'your_gemini_api_key_here' || customKey.trim() === '') {
-      customKey = '';
-    }
+    const customKey = localStorage.getItem('custom_gemini_api_key') || '';
     const headers = {
       'Content-Type': 'application/json',
     };
@@ -1093,19 +983,16 @@ async function submitUserMessage() {
     DOMElements.messagesList.appendChild(dummyAiBlock);
     const textBubble = dummyAiBlock.querySelector('.bubble-content');
     
-    let streamBuffer = '';
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
       
-      streamBuffer += decoder.decode(value, { stream: true });
-      const lines = streamBuffer.split('\n');
-      streamBuffer = lines.pop() || ''; // Preserve trailing incomplete line chunk
+      const chunkStr = decoder.decode(value, { stream: true });
+      const lines = chunkStr.split('\n');
       
       for (const line of lines) {
-        const trimmedLine = line.trim();
-        if (trimmedLine.startsWith('data: ')) {
-          const dataContent = trimmedLine.slice(6).trim();
+        if (line.startsWith('data: ')) {
+          const dataContent = line.slice(6).trim();
           if (dataContent === '[DONE]') {
             break;
           }
@@ -1124,20 +1011,6 @@ async function submitUserMessage() {
             // Avoid failing on broken line parsing
           }
         }
-      }
-    }
-    
-    // Process any remaining buffered text
-    if (streamBuffer.trim().startsWith('data: ')) {
-      const dataContent = streamBuffer.trim().slice(6).trim();
-      if (dataContent !== '[DONE]') {
-        try {
-          const parsed = JSON.parse(dataContent);
-          if (parsed.text) {
-            accumulatedText += parsed.text;
-            textBubble.innerHTML = renderMarkdown(accumulatedText);
-          }
-        } catch (e) {}
       }
     }
 
@@ -1176,8 +1049,8 @@ async function submitUserMessage() {
         }
       }
       
-      if (!errMsg || errMsg === 'Failed to fetch') {
-        errMsg = 'Unable to connect to StudentHub AI server. Please check your internet connection.';
+      if (errMsg.includes('API key') || errMsg.includes('401') || errMsg.includes('403') || errMsg.includes('not configured')) {
+        errMsg = 'AI service is temporarily unavailable. Please try again later.';
       }
       aiMsg.text = `Error: ${errMsg}`;
       saveConversations();
@@ -1260,12 +1133,12 @@ function exportActiveChatTxt() {
     return;
   }
 
-  let txtContent = `StudentHub AI Conversation Log: ${chat.title}\n`;
+  let txtContent = `Lumina Chat Conversation Log: ${chat.title}\n`;
   txtContent += `Date Created: ${new Date(chat.createdAt).toLocaleString()}\n`;
   txtContent += `==================================================\n\n`;
 
   chat.messages.forEach(msg => {
-    const sender = msg.role === 'user' ? 'YOU' : 'STUDENTHUB AI';
+    const sender = msg.role === 'user' ? 'YOU' : 'LUMINA AI';
     txtContent += `[${new Date(msg.timestamp).toLocaleString()}] ${sender}:\n`;
     txtContent += `${msg.text}\n`;
     txtContent += `--------------------------------------------------\n\n`;
@@ -1281,7 +1154,7 @@ function exportAllChatsJson() {
     return;
   }
   const jsonString = JSON.stringify(chats, null, 2);
-  downloadFile(jsonString, `studenthub_chats_backup.json`, 'application/json');
+  downloadFile(jsonString, `lumina_chats_backup.json`, 'application/json');
 }
 
 // Export Active Chat as PDF Document
@@ -1304,13 +1177,13 @@ function exportActiveChatPdf() {
   
   let html = `
     <div style="padding: 24px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #111827; background-color: #ffffff;">
-      <h1 style="font-size: 24px; border-bottom: 2px solid #7c3aed; padding-bottom: 8px; margin-bottom: 4px; color: #7c3aed;">StudentHub AI Transcript</h1>
+      <h1 style="font-size: 24px; border-bottom: 2px solid #7c3aed; padding-bottom: 8px; margin-bottom: 4px; color: #7c3aed;">Lumina Chat Transcript</h1>
       <p style="font-size: 12px; color: #6b7280; margin-bottom: 24px;">Conversation: <strong>${chat.title}</strong> | Exported on ${new Date().toLocaleString()}</p>
   `;
 
   chat.messages.forEach(msg => {
     const isUser = msg.role === 'user';
-    const sender = isUser ? 'User' : 'StudentHub AI';
+    const sender = isUser ? 'User' : 'Lumina AI';
     const bg = isUser ? '#f3f4f6' : '#ffffff';
     const border = isUser ? 'none' : '1px solid #e5e7eb';
     
@@ -1465,11 +1338,11 @@ function exportActiveChatMd() {
     return;
   }
 
-  let md = `# StudentHub AI Conversation: ${chat.title}\n`;
+  let md = `# Lumina Chat Conversation: ${chat.title}\n`;
   md += `*Date Created: ${new Date(chat.createdAt).toLocaleString()}*\n\n---\n\n`;
 
   chat.messages.forEach(msg => {
-    const sender = msg.role === 'user' ? '👤 **You**' : '🤖 **StudentHub AI**';
+    const sender = msg.role === 'user' ? '👤 **You**' : '🤖 **Lumina AI**';
     md += `### ${sender} *(at ${new Date(msg.timestamp).toLocaleTimeString()})*\n\n`;
     md += `${msg.text}\n\n`;
     
