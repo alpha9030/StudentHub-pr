@@ -2170,13 +2170,13 @@
                 viewId = 'dashboard';
             }
 
-            // Hide all panels & screens
-            const panels = document.querySelectorAll('.view-panel, .screen');
+            // Hide all top-level view panels
+            const panels = document.querySelectorAll('.view-panel');
             panels.forEach(p => p.classList.remove('active'));
 
-            // Show selected panel
-            let targetId = viewId === 'chatbot' ? 'chat-dashboard' : (viewId + '-panel');
-            const activePanel = document.getElementById(targetId) || document.getElementById(viewId + '-panel') || document.getElementById(viewId);
+            // Show selected view panel
+            const panelId = viewId + '-panel';
+            const activePanel = document.getElementById(panelId) || document.getElementById(viewId);
             if (activePanel) {
                 activePanel.classList.add('active');
             }

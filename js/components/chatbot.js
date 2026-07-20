@@ -581,6 +581,10 @@ window.exitChatbotWorkspace = function() {
 
 // Screen Routing Actions
 function switchToChatScreen() {
+  const chatbotPanel = document.getElementById('chatbot-panel');
+  if (chatbotPanel) {
+    chatbotPanel.classList.add('active');
+  }
   DOMElements.landingPage.classList.remove('active');
   DOMElements.chatDashboard.classList.add('active');
   
