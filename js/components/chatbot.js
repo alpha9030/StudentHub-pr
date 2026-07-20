@@ -329,6 +329,11 @@ document.addEventListener('DOMContentLoaded', () => {
   loadConversations();
   setupEventListeners();
   renderSidebarChats();
+  if (chats.length > 0) {
+    selectChat(chats[0].id);
+  } else {
+    createNewChat();
+  }
   checkServerHealth();
   updateKeyStatusUI();
   setInterval(checkServerHealth, HEALTH_CHECK_INTERVAL);
@@ -825,6 +830,13 @@ function renderChatMessages() {
 
 // Send user prompt triggers
 function sendPromptMessage(text) {
+  if (!activeChatId) {
+    if (chats.length > 0) {
+      selectChat(chats[0].id);
+    } else {
+      createNewChat();
+    }
+  }
   DOMElements.chatTextarea.value = text;
   submitUserMessage();
 }
@@ -846,7 +858,16 @@ async function submitUserMessage() {
   DOMElements.chatTextarea.value = '';
   DOMElements.chatTextarea.style.height = 'auto';
   
-  const chat = chats.find(c => c.id === activeChatId);
+  let chat = chats.find(c => c.id === activeChatId);
+  if (!chat) {
+    if (chats.length > 0) {
+      selectChat(chats[0].id);
+      chat = chats.find(c => c.id === activeChatId);
+    } else {
+      createNewChat(text);
+      return;
+    }
+  }
   if (!chat) return;
 
   // If first user message, update title dynamically
