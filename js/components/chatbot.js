@@ -1023,13 +1023,16 @@ async function submitUserMessage() {
     }
     
     return {
-      role: msg.role,
+      role: (msg.role === 'assistant' || msg.role === 'ai') ? 'model' : (msg.role || 'user'),
       parts: parts
     };
   });
 
   try {
-    const customKey = localStorage.getItem('custom_gemini_api_key') || '';
+    let customKey = localStorage.getItem('custom_gemini_api_key') || '';
+    if (customKey === 'your_gemini_api_key_here' || customKey.trim() === '') {
+      customKey = '';
+    }
     const headers = {
       'Content-Type': 'application/json',
     };

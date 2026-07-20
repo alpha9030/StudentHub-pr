@@ -84,7 +84,7 @@ function validateMessages(messages) {
   if (!Array.isArray(messages)) return false;
   for (const msg of messages) {
     if (typeof msg !== 'object' || msg === null) return false;
-    if (msg.role !== 'user' && msg.role !== 'model') return false;
+    if (msg.role !== 'user' && msg.role !== 'model' && msg.role !== 'assistant' && msg.role !== 'ai') return false;
     if (!Array.isArray(msg.parts)) return false;
     for (const part of msg.parts) {
       if (typeof part !== 'object' || part === null) return false;
