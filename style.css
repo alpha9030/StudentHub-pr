@@ -4214,25 +4214,21 @@ body.theme-dark #notes-panel {
 
 }
 body #notes-panel {
-
     background-color: var(--bg-app);
     color: var(--text-main);
     font-family: var(--font-sans);
-    height: 100vh;
-    width: 100vw;
-    overflow: hidden;
+    min-height: 100%;
+    width: 100%;
+    overflow: visible;
     transition: background-color 0.3s, color 0.3s;
-
 }
 #notes-panel /* App Shell Grid */
 .app-shell {
-
     display: grid;
     grid-template-columns: 260px 1fr;
-    height: 100vh;
-    width: 100vw;
-    overflow: hidden;
-
+    min-height: 100%;
+    width: 100%;
+    overflow: visible;
 }
 @media (max-width: 1200px) {
 #notes-panel .app-shell {
@@ -4488,12 +4484,10 @@ body #notes-panel {
 
 }
 #notes-panel .viewport {
-
     flex: 1;
     padding: 28px;
-    overflow-y: auto;
+    overflow: visible;
     position: relative;
-
 }
 #notes-panel /* Buttons */
 .btn {
@@ -4672,14 +4666,12 @@ body #notes-panel {
 
 }
 #notes-panel .copilot-chat-history {
-
     flex: 1;
     padding: 20px;
-    overflow-y: auto;
+    overflow: visible;
     display: flex;
     flex-direction: column;
     gap: 16px;
-
 }
 #notes-panel .chat-bubble {
 
