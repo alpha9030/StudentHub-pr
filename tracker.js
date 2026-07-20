@@ -1,6 +1,13 @@
 // Load and apply theme & font size on start so all pages stay synchronized
 (function() {
-    // Bidirectional theme synchronization with iframe
+    // Listen for theme storage changes across tabs/windows
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'siteAppearanceMode' || e.key === 'siteTheme') {
+            applySettings();
+        }
+    });
+
+    // Bidirectional theme synchronization with iframe/popups
     window.addEventListener('message', function(event) {
         if (event.data && event.data.type === 'sync-theme') {
             const newTheme = event.data.theme;
@@ -44,9 +51,10 @@
             resolvedTheme = systemDark ? 'dark' : 'light';
         }
 
-        // Apply theme and font size classes to body
+        // Apply theme and font size classes to body and data-theme attribute to html
         localStorage.setItem('siteTheme', resolvedTheme);
         document.body.classList.remove('theme-light', 'theme-dark', 'font-size-small', 'font-size-medium', 'font-size-large');
+        document.documentElement.setAttribute('data-theme', resolvedTheme);
         if (resolvedTheme === 'dark') {
             document.body.classList.add('theme-dark');
         } else {
