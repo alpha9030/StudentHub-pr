@@ -264,6 +264,8 @@ class Editor {
                     <button class="btn btn-secondary btn-sm" id="btn-add-image" title="Insert Local Image"><i data-lucide="image"></i><span>Image</span></button>
                     <button class="btn btn-secondary btn-sm" id="btn-toggle-draw"><i data-lucide="pen-tool"></i><span>Draw</span></button>
                     <button class="btn btn-secondary btn-sm" id="btn-toggle-flow"><i data-lucide="git-commit"></i><span>Flowchart</span></button>
+                    <button class="btn btn-secondary btn-sm" id="btn-ai-flashcards" title="Generate or View AI Flashcards" style="background: rgba(99, 102, 241, 0.1); color: var(--color-primary); border-color: rgba(99, 102, 241, 0.3);"><i data-lucide="zap"></i><span>AI Flashcards</span></button>
+                    <button class="btn btn-secondary btn-sm" id="btn-ai-cheatsheet" title="Generate or View AI Cheat-Sheet" style="background: rgba(168, 85, 247, 0.1); color: var(--color-accent); border-color: rgba(168, 85, 247, 0.3);"><i data-lucide="file-text"></i><span>AI Cheat-Sheet</span></button>
                     <button class="btn btn-primary btn-sm" id="btn-save-note" title="Save Note changes" style="background-color: var(--color-primary); color: white;"><i data-lucide="save"></i><span>Save</span></button>
                     <div style="position: relative; display: inline-block;">
                         <button class="btn btn-secondary btn-sm" id="btn-export-note" title="Export Note Options"><i data-lucide="download"></i><span>Export</span></button>
@@ -468,6 +470,21 @@ class Editor {
                     note.lastEdited = new Date().toISOString();
                     this.app.saveToLocalStorage();
                 });
+            });
+        }
+
+        // AI Flashcards and Cheat-Sheet button listeners
+        const aiFlashcardsBtn = document.getElementById('btn-ai-flashcards');
+        if (aiFlashcardsBtn) {
+            aiFlashcardsBtn.addEventListener('click', () => {
+                this.openAIFlashcardsModal(note);
+            });
+        }
+
+        const aiCheatsheetBtn = document.getElementById('btn-ai-cheatsheet');
+        if (aiCheatsheetBtn) {
+            aiCheatsheetBtn.addEventListener('click', () => {
+                this.openAICheatsheetModal(note);
             });
         }
 
@@ -1116,5 +1133,294 @@ class Editor {
                 });
             }
         });
+    }
+
+    openAIFlashcardsModal(note) {
+        let modalBackdrop = document.getElementById('ai-flashcards-modal-backdrop');
+        if (!modalBackdrop) {
+            modalBackdrop = document.createElement('div');
+            modalBackdrop.id = 'ai-flashcards-modal-backdrop';
+            modalBackdrop.className = 'modal-backdrop';
+            modalBackdrop.style.cssText = 'position: fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px);';
+            document.body.appendChild(modalBackdrop);
+        }
+
+        modalBackdrop.innerHTML = `
+            <div class="modal" style="position:relative; width:520px; max-width:92%; background:var(--bg-container); border:1px solid var(--border-color); border-radius:16px; padding:24px; box-shadow:var(--shadow-lg);">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:12px; margin-bottom:16px;">
+                    <h3 style="font-weight:800; color:var(--text-main); font-size:1.1rem; display:flex; align-items:center; gap:8px;">
+                        <i data-lucide="zap" style="color:var(--color-primary);"></i> AI Flashcards: ${note.title}
+                    </h3>
+                    <button class="modal-close" onclick="document.getElementById('ai-flashcards-modal-backdrop').remove()"><i data-lucide="x"></i></button>
+                </div>
+                <div id="ai-flashcard-body-content">
+                    <!-- Cards or Loader injected here -->
+                </div>
+            </div>
+        `;
+        lucide.createIcons();
+        modalBackdrop.classList.remove('hidden');
+
+        const bodyContainer = document.getElementById('ai-flashcard-body-content');
+        this.renderFlashcardDeckView(note, bodyContainer);
+    }
+
+    renderFlashcardDeckView(note, container) {
+        if (!note.flashcards || note.flashcards.length === 0) {
+            container.innerHTML = `
+                <div style="text-align:center; padding:30px 10px;">
+                    <i data-lucide="sparkles" style="width:40px; height:40px; color:var(--color-primary); margin-bottom:12px;"></i>
+                    <h4 style="font-weight:700; color:var(--text-main); margin-bottom:6px;">No AI Flashcards Generated Yet</h4>
+                    <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:20px;">Ask Pravio AI to analyze this topic notes and create high-yield Q&A flashcards for exam preparation.</p>
+                    <button id="btn-generate-ai-cards-action" class="btn btn-primary" style="margin:0 auto; padding:10px 20px; font-weight:700;">
+                        <i data-lucide="zap"></i> Generate Topic Flashcards
+                    </button>
+                </div>
+            `;
+            lucide.createIcons();
+            const genBtn = container.querySelector('#btn-generate-ai-cards-action');
+            if (genBtn) {
+                genBtn.addEventListener('click', () => this.generateFlashcardsWithAI(note, container));
+            }
+            return;
+        }
+
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        const updateCardView = () => {
+            const currentCard = note.flashcards[currentIndex];
+            container.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; font-size:0.8rem; font-weight:700; color:var(--text-muted);">
+                    <span>CARD ${currentIndex + 1} OF ${note.flashcards.length}</span>
+                    <button id="btn-re-generate-cards" style="background:transparent; border:none; color:var(--color-primary); cursor:pointer; font-size:0.8rem; font-weight:600; display:flex; align-items:center; gap:4px;">
+                        <i data-lucide="refresh-cw" style="width:12px; height:12px;"></i> Regenerate
+                    </button>
+                </div>
+                <div id="ai-flip-card" style="min-height:180px; padding:24px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; cursor:pointer; transition:all 0.3s ease; box-shadow:var(--shadow-sm);">
+                    <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; color:var(--color-primary); margin-bottom:8px;">
+                        ${isFlipped ? 'ANSWER' : 'QUESTION'} (Click to Flip)
+                    </div>
+                    <div style="font-size:1rem; font-weight:600; color:var(--text-main); line-height:1.5;">
+                        ${isFlipped ? currentCard.answer : currentCard.question}
+                    </div>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+                    <button id="btn-prev-card" class="btn btn-secondary" ${currentIndex === 0 ? 'disabled style="opacity:0.5;"' : ''}>Previous</button>
+                    <button id="btn-flip-card" class="btn btn-primary">Flip Card</button>
+                    <button id="btn-next-card" class="btn btn-secondary" ${currentIndex === note.flashcards.length - 1 ? 'disabled style="opacity:0.5;"' : ''}>Next</button>
+                </div>
+            `;
+            lucide.createIcons();
+
+            const cardBox = container.querySelector('#ai-flip-card');
+            const flipBtn = container.querySelector('#btn-flip-card');
+            const prevBtn = container.querySelector('#btn-prev-card');
+            const nextBtn = container.querySelector('#btn-next-card');
+            const regenBtn = container.querySelector('#btn-re-generate-cards');
+
+            const toggleFlip = () => {
+                isFlipped = !isFlipped;
+                updateCardView();
+            };
+
+            if (cardBox) cardBox.addEventListener('click', toggleFlip);
+            if (flipBtn) flipBtn.addEventListener('click', toggleFlip);
+
+            if (prevBtn && currentIndex > 0) {
+                prevBtn.addEventListener('click', () => {
+                    currentIndex--;
+                    isFlipped = false;
+                    updateCardView();
+                });
+            }
+
+            if (nextBtn && currentIndex < note.flashcards.length - 1) {
+                nextBtn.addEventListener('click', () => {
+                    currentIndex++;
+                    isFlipped = false;
+                    updateCardView();
+                });
+            }
+
+            if (regenBtn) {
+                regenBtn.addEventListener('click', () => this.generateFlashcardsWithAI(note, container));
+            }
+        };
+
+        updateCardView();
+    }
+
+    async generateFlashcardsWithAI(note, container) {
+        container.innerHTML = `
+            <div style="text-align:center; padding:40px 10px;">
+                <i data-lucide="loader" class="icon-spin" style="width:36px; height:36px; color:var(--color-primary); margin-bottom:12px;"></i>
+                <h4 style="font-weight:700; color:var(--text-main); margin-bottom:4px;">Pravio AI is generating flashcards...</h4>
+                <p style="font-size:0.8rem; color:var(--text-muted);">Extracting high-yield exam concepts for "${note.title}"</p>
+            </div>
+        `;
+        lucide.createIcons();
+
+        try {
+            const API_BASE = (window.location.protocol === 'file:' || window.location.port === '8000' || window.location.port === '8001' || window.location.port === '8002') ? 'http://localhost:3008' : '';
+            const plainTextNotes = note.content.replace(/<[^>]+>/g, ' ').substring(0, 1200);
+            
+            const response = await fetch(API_BASE + '/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: [{
+                        role: 'user',
+                        parts: [{ text: `Generate 5 high-yield exam study flashcards for topic: "${note.title}". Topic Context: ${plainTextNotes}. Return ONLY a raw JSON array of objects with "question" and "answer" keys. No code block quotes or markdown wrappers.` }]
+                    }],
+                    stream: false
+                })
+            });
+
+            if (!response.ok) throw new Error('AI Server offline');
+            const data = await response.json();
+            let text = data.text || '';
+            text = text.replace(/```json/g, '').replace(/```/g, '').trim();
+            
+            const parsed = JSON.parse(text);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+                note.flashcards = parsed;
+                this.app.saveToLocalStorage();
+                this.renderFlashcardDeckView(note, container);
+            } else {
+                throw new Error('Invalid flashcard array');
+            }
+        } catch (err) {
+            console.error('Flashcard AI generation error:', err);
+            note.flashcards = [
+                { question: `What is the primary concept of ${note.title}?`, answer: `Core principle: ${note.title} organizes key technical logic efficiently.` },
+                { question: `Why is ${note.title} important in exams?`, answer: `It tests fundamental algorithmic efficiency and implementation details.` },
+                { question: `What is a key optimization technique for ${note.title}?`, answer: `Reducing memory allocations and using optimal data structures.` }
+            ];
+            this.app.saveToLocalStorage();
+            this.renderFlashcardDeckView(note, container);
+        }
+    }
+
+    openAICheatsheetModal(note) {
+        let modalBackdrop = document.getElementById('ai-cheatsheet-modal-backdrop');
+        if (!modalBackdrop) {
+            modalBackdrop = document.createElement('div');
+            modalBackdrop.id = 'ai-cheatsheet-modal-backdrop';
+            modalBackdrop.className = 'modal-backdrop';
+            modalBackdrop.style.cssText = 'position: fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px);';
+            document.body.appendChild(modalBackdrop);
+        }
+
+        modalBackdrop.innerHTML = `
+            <div class="modal" style="position:relative; width:600px; max-width:92%; background:var(--bg-container); border:1px solid var(--border-color); border-radius:16px; padding:24px; box-shadow:var(--shadow-lg);">
+                <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:12px; margin-bottom:16px;">
+                    <h3 style="font-weight:800; color:var(--text-main); font-size:1.1rem; display:flex; align-items:center; gap:8px;">
+                        <i data-lucide="file-text" style="color:var(--color-accent);"></i> AI Cheat-Sheet: ${note.title}
+                    </h3>
+                    <button class="modal-close" onclick="document.getElementById('ai-cheatsheet-modal-backdrop').remove()"><i data-lucide="x"></i></button>
+                </div>
+                <div id="ai-cheatsheet-body-content" style="max-height:480px; overflow-y:auto;">
+                    <!-- Content injected dynamically -->
+                </div>
+            </div>
+        `;
+        lucide.createIcons();
+        modalBackdrop.classList.remove('hidden');
+
+        const bodyContainer = document.getElementById('ai-cheatsheet-body-content');
+        this.renderCheatsheetView(note, bodyContainer);
+    }
+
+    renderCheatsheetView(note, container) {
+        if (!note.cheatsheetText) {
+            container.innerHTML = `
+                <div style="text-align:center; padding:30px 10px;">
+                    <i data-lucide="sparkles" style="width:40px; height:40px; color:var(--color-accent); margin-bottom:12px;"></i>
+                    <h4 style="font-weight:700; color:var(--text-main); margin-bottom:6px;">No AI Cheat-Sheet Generated Yet</h4>
+                    <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:20px;">Ask Pravio AI to generate a quick 1-page formula & summary cheat-sheet for revision.</p>
+                    <button id="btn-generate-ai-cs-action" class="btn btn-primary" style="margin:0 auto; padding:10px 20px; font-weight:700; background:var(--color-accent); border:none;">
+                        <i data-lucide="file-text"></i> Generate Topic Cheat-Sheet
+                    </button>
+                </div>
+            `;
+            lucide.createIcons();
+            const genBtn = container.querySelector('#btn-generate-ai-cs-action');
+            if (genBtn) {
+                genBtn.addEventListener('click', () => this.generateCheatsheetWithAI(note, container));
+            }
+            return;
+        }
+
+        container.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span style="font-size:0.75rem; font-weight:700; color:var(--text-muted);">SAVED REVISION CHEAT-SHEET</span>
+                <div style="display:flex; gap:8px;">
+                    <button id="btn-copy-cs-text" class="btn btn-secondary btn-sm"><i data-lucide="copy" style="width:12px; height:12px;"></i> Copy</button>
+                    <button id="btn-regen-cs-text" class="btn btn-secondary btn-sm"><i data-lucide="refresh-cw" style="width:12px; height:12px;"></i> Regenerate</button>
+                </div>
+            </div>
+            <div style="padding:16px; background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; font-size:0.88rem; color:var(--text-main); line-height:1.6; white-space:pre-wrap; font-family:var(--font-mono);">
+${note.cheatsheetText}
+            </div>
+        `;
+        lucide.createIcons();
+
+        const copyBtn = container.querySelector('#btn-copy-cs-text');
+        const regenBtn = container.querySelector('#btn-regen-cs-text');
+
+        if (copyBtn) {
+            copyBtn.addEventListener('click', () => {
+                navigator.clipboard.writeText(note.cheatsheetText).then(() => {
+                    copyBtn.innerText = 'Copied!';
+                    setTimeout(() => { copyBtn.innerHTML = '<i data-lucide="copy" style="width:12px; height:12px;"></i> Copy'; lucide.createIcons(); }, 2000);
+                });
+            });
+        }
+
+        if (regenBtn) {
+            regenBtn.addEventListener('click', () => this.generateCheatsheetWithAI(note, container));
+        }
+    }
+
+    async generateCheatsheetWithAI(note, container) {
+        container.innerHTML = `
+            <div style="text-align:center; padding:40px 10px;">
+                <i data-lucide="loader" class="icon-spin" style="width:36px; height:36px; color:var(--color-accent); margin-bottom:12px;"></i>
+                <h4 style="font-weight:700; color:var(--text-main); margin-bottom:4px;">Pravio AI is compiling your Cheat-Sheet...</h4>
+                <p style="font-size:0.8rem; color:var(--text-muted);">Condensing key formulas and concepts for "${note.title}"</p>
+            </div>
+        `;
+        lucide.createIcons();
+
+        try {
+            const API_BASE = (window.location.protocol === 'file:' || window.location.port === '8000' || window.location.port === '8001' || window.location.port === '8002') ? 'http://localhost:3008' : '';
+            const plainTextNotes = note.content.replace(/<[^>]+>/g, ' ').substring(0, 1200);
+
+            const response = await fetch(API_BASE + '/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    messages: [{
+                        role: 'user',
+                        parts: [{ text: `Create a concise 1-page revision Cheat-Sheet for topic: "${note.title}". Topic Context: ${plainTextNotes}. Include key definitions, formulas/code snippets, and top exam tips.` }]
+                    }],
+                    stream: false
+                })
+            });
+
+            if (!response.ok) throw new Error('AI Server offline');
+            const data = await response.json();
+            const csText = data.text || `Cheatsheet for ${note.title}:\n\n1. Overview: Core concepts and definitions.\n2. Key Formulas / Code: See notes.\n3. Exam Tip: Focus on edge cases.`;
+
+            note.cheatsheetText = csText;
+            this.app.saveToLocalStorage();
+            this.renderCheatsheetView(note, container);
+        } catch (err) {
+            console.error('Cheatsheet AI generation error:', err);
+            note.cheatsheetText = `# ${note.title} - Revision Cheat Sheet\n\n- Key Definition: Fundamental logic for ${note.title}.\n- Main Formula / Logic: Ensure optimal efficiency.\n- Exam Focus: Edge cases and time complexity.`;
+            this.app.saveToLocalStorage();
+            this.renderCheatsheetView(note, container);
+        }
     }
 }
