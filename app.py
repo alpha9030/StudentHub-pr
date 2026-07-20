@@ -1207,7 +1207,7 @@ def start_chatbot_service():
             try:
                 # Redirect stdout/stderr to log file to keep console clean
                 log_file = open(os.path.join(chatbot_dir, 'server.log'), 'a')
-                subprocess.Popen(["npm", "start"], cwd=chatbot_dir, stdout=log_file, stderr=log_file, shell=True)
+                subprocess.Popen(["node", "server.js"], cwd=chatbot_dir, stdout=log_file, stderr=log_file)
                 print("[INFO] Chatbot service spawned successfully.")
             except Exception as e:
                 print(f"[ERROR] Failed to start chatbot service: {e}")

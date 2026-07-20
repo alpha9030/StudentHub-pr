@@ -194,9 +194,13 @@ app.post('/api/chat', async (req, res) => {
 
   // Prepare standard gemini formatting
   // The SDK expects: [{ role: 'user'|'model', parts: [{ text: '...' } | { inlineData: { mimeType, data } }] }]
-  const formattedContents = messages.map(msg => ({
-    role: msg.role,
-    parts: msg.parts.map(p => {
+  const formattedContents = messages.map(msg => {
+    let cleanRole = (msg.role === 'assistant' || msg.role === 'ai') ? 'model' : (msg.role || 'user');
+    if (cleanRole !== 'user' && cleanRole !== 'model') cleanRole = 'user';
+
+    const rawParts = Array.isArray(msg.parts) ? msg.parts : [{ text: msg.text || ' ' }];
+    const cleanParts = rawParts.map(p => {
+      if (typeof p === 'string') return { text: p };
       if (p.inlineData) {
         return {
           inlineData: {
@@ -205,9 +209,14 @@ app.post('/api/chat', async (req, res) => {
           }
         };
       }
-      return { text: p.text };
-    })
-  }));
+      return { text: p.text || ' ' };
+    });
+
+    return {
+      role: cleanRole,
+      parts: cleanParts.length > 0 ? cleanParts : [{ text: ' ' }]
+    };
+  });
 
   try {
     if (stream) {

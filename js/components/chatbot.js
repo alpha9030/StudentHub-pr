@@ -256,71 +256,71 @@ window.copyMessage = function(button, messageId) {
   });
 };
 
-// DOM Elements Bindings
+// DOM Elements Bindings (Dynamic Getters for maximum resilience)
 const DOMElements = {
-  landingPage: document.getElementById('landing-page'),
-  chatDashboard: document.getElementById('chat-dashboard'),
+  get landingPage() { return document.getElementById('landing-page'); },
+  get chatDashboard() { return document.getElementById('chat-dashboard'); },
   
-  btnHeroLaunch: document.getElementById('btn-hero-launch'),
-  btnStartChat: document.getElementById('btn-start-chat'),
+  get btnHeroLaunch() { return document.getElementById('btn-hero-launch'); },
+  get btnStartChat() { return document.getElementById('btn-start-chat'); },
   
-  sidebar: document.getElementById('chat-sidebar'),
-  btnSidebarToggle: document.getElementById('btn-sidebar-toggle'),
-  btnSidebarCollapse: document.getElementById('btn-sidebar-collapse'),
-  sidebarOverlay: document.getElementById('sidebar-overlay'),
+  get sidebar() { return document.getElementById('chat-sidebar'); },
+  get btnSidebarToggle() { return document.getElementById('btn-sidebar-toggle'); },
+  get btnSidebarCollapse() { return document.getElementById('btn-sidebar-collapse'); },
+  get sidebarOverlay() { return document.getElementById('sidebar-overlay'); },
   
-  btnNewChat: document.getElementById('btn-new-chat'),
-  searchChats: document.getElementById('search-chats'),
-  btnClearSearch: document.getElementById('btn-clear-search'),
-  pinnedChatsSection: document.getElementById('pinned-chats-section'),
-  pinnedChatsList: document.getElementById('pinned-chats-list'),
-  recentChatsSection: document.getElementById('recent-chats-section'),
-  recentChatsList: document.getElementById('recent-chats-list'),
-  emptyHistoryView: document.getElementById('empty-history-view'),
+  get btnNewChat() { return document.getElementById('btn-new-chat'); },
+  get searchChats() { return document.getElementById('search-chats'); },
+  get btnClearSearch() { return document.getElementById('btn-clear-search'); },
+  get pinnedChatsSection() { return document.getElementById('pinned-chats-section'); },
+  get pinnedChatsList() { return document.getElementById('pinned-chats-list'); },
+  get recentChatsSection() { return document.getElementById('recent-chats-section'); },
+  get recentChatsList() { return document.getElementById('recent-chats-list'); },
+  get emptyHistoryView() { return document.getElementById('empty-history-view'); },
   
-  statusDot: document.getElementById('status-dot'),
-  statusText: document.getElementById('status-text'),
-  connectionBanner: document.getElementById('connection-banner'),
+  get statusDot() { return document.getElementById('status-dot'); },
+  get statusText() { return document.getElementById('status-text'); },
+  get connectionBanner() { return document.getElementById('connection-banner'); },
   
-  btnThemeToggle: document.getElementById('btn-theme-toggle'),
-  btnExportDropdown: document.getElementById('btn-export-dropdown'),
-  exportDropdownMenu: document.getElementById('export-dropdown-menu'),
-  btnClearAll: document.getElementById('btn-clear-all'),
+  get btnThemeToggle() { return document.getElementById('btn-theme-toggle'); },
+  get btnExportDropdown() { return document.getElementById('btn-export-dropdown'); },
+  get exportDropdownMenu() { return document.getElementById('export-dropdown-menu'); },
+  get btnClearAll() { return document.getElementById('btn-clear-all'); },
   
-  btnExportTxt: document.getElementById('btn-export-txt'),
-  btnExportMd: document.getElementById('btn-export-md'),
-  btnExportPdf: document.getElementById('btn-export-pdf'),
-  btnExportJson: document.getElementById('btn-export-json'),
+  get btnExportTxt() { return document.getElementById('btn-export-txt'); },
+  get btnExportMd() { return document.getElementById('btn-export-md'); },
+  get btnExportPdf() { return document.getElementById('btn-export-pdf'); },
+  get btnExportJson() { return document.getElementById('btn-export-json'); },
   
-  btnSettingsKey: document.getElementById('btn-settings-key'),
-  apiKeyModal: document.getElementById('api-key-modal'),
-  btnCloseKeyModal: document.getElementById('btn-close-key-modal'),
-  btnKeyModalCancel: document.getElementById('btn-key-modal-cancel'),
-  btnKeyModalSave: document.getElementById('btn-key-modal-save'),
-  inputCustomApiKey: document.getElementById('input-custom-api-key'),
-  chkShowKey: document.getElementById('chk-show-key'),
-  apiKeyStatusText: document.getElementById('api-key-status-text'),
+  get btnSettingsKey() { return document.getElementById('btn-settings-key'); },
+  get apiKeyModal() { return document.getElementById('api-key-modal'); },
+  get btnCloseKeyModal() { return document.getElementById('btn-close-key-modal'); },
+  get btnKeyModalCancel() { return document.getElementById('btn-key-modal-cancel'); },
+  get btnKeyModalSave() { return document.getElementById('btn-key-modal-save'); },
+  get inputCustomApiKey() { return document.getElementById('input-custom-api-key'); },
+  get chkShowKey() { return document.getElementById('chk-show-key'); },
+  get apiKeyStatusText() { return document.getElementById('api-key-status-text'); },
   
-  activeChatTitle: document.getElementById('active-chat-title'),
-  btnPinActive: document.getElementById('btn-pin-active'),
-  btnLeaveChat: document.getElementById('btn-leave-chat'),
+  get activeChatTitle() { return document.getElementById('active-chat-title'); },
+  get btnPinActive() { return document.getElementById('btn-pin-active'); },
+  get btnLeaveChat() { return document.getElementById('btn-leave-chat'); },
   
-  chatOutputContainer: document.getElementById('chat-output-container'),
-  chatWelcomeScreen: document.getElementById('chat-welcome-screen'),
-  messagesList: document.getElementById('messages-list'),
-  aiTypingIndicator: document.getElementById('ai-typing-indicator'),
+  get chatOutputContainer() { return document.getElementById('chat-output-container'); },
+  get chatWelcomeScreen() { return document.getElementById('chat-welcome-screen'); },
+  get messagesList() { return document.getElementById('messages-list'); },
+  get aiTypingIndicator() { return document.getElementById('ai-typing-indicator'); },
   
-  generationControlPanel: document.getElementById('generation-control-panel'),
-  btnStopGeneration: document.getElementById('btn-stop-generation'),
+  get generationControlPanel() { return document.getElementById('generation-control-panel'); },
+  get btnStopGeneration() { return document.getElementById('btn-stop-generation'); },
   
-  chatInputForm: document.getElementById('chat-input-form'),
-  chatTextarea: document.getElementById('chat-textarea'),
-  btnSendMessage: document.getElementById('btn-send-message'),
-  btnAttachFile: document.getElementById('btn-attach-file'),
-  fileInput: document.getElementById('file-input'),
-  btnVoiceInput: document.getElementById('btn-voice-input'),
-  filePreviewsContainer: document.getElementById('file-previews-container'),
-  dragDropOverlay: document.getElementById('drag-drop-overlay')
+  get chatInputForm() { return document.getElementById('chat-input-form'); },
+  get chatTextarea() { return document.getElementById('chat-textarea'); },
+  get btnSendMessage() { return document.getElementById('btn-send-message'); },
+  get btnAttachFile() { return document.getElementById('btn-attach-file'); },
+  get fileInput() { return document.getElementById('file-input'); },
+  get btnVoiceInput() { return document.getElementById('btn-voice-input'); },
+  get filePreviewsContainer() { return document.getElementById('file-previews-container'); },
+  get dragDropOverlay() { return document.getElementById('drag-drop-overlay'); }
 };
 
 // Initialize Application
@@ -1010,16 +1010,19 @@ async function submitUserMessage() {
     DOMElements.messagesList.appendChild(dummyAiBlock);
     const textBubble = dummyAiBlock.querySelector('.bubble-content');
     
+    let streamBuffer = '';
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
       
-      const chunkStr = decoder.decode(value, { stream: true });
-      const lines = chunkStr.split('\n');
+      streamBuffer += decoder.decode(value, { stream: true });
+      const lines = streamBuffer.split('\n');
+      streamBuffer = lines.pop() || ''; // Preserve trailing incomplete line chunk
       
       for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          const dataContent = line.slice(6).trim();
+        const trimmedLine = line.trim();
+        if (trimmedLine.startsWith('data: ')) {
+          const dataContent = trimmedLine.slice(6).trim();
           if (dataContent === '[DONE]') {
             break;
           }
@@ -1038,6 +1041,20 @@ async function submitUserMessage() {
             // Avoid failing on broken line parsing
           }
         }
+      }
+    }
+    
+    // Process any remaining buffered text
+    if (streamBuffer.trim().startsWith('data: ')) {
+      const dataContent = streamBuffer.trim().slice(6).trim();
+      if (dataContent !== '[DONE]') {
+        try {
+          const parsed = JSON.parse(dataContent);
+          if (parsed.text) {
+            accumulatedText += parsed.text;
+            textBubble.innerHTML = renderMarkdown(accumulatedText);
+          }
+        } catch (e) {}
       }
     }
 
