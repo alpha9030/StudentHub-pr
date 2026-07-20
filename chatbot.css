@@ -177,6 +177,8 @@
   flex-direction: column;
   overflow-y: auto;
   position: relative;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }.chatbot-scope .glow-orb {
   position: absolute;
   border-radius: var(--radius-full);

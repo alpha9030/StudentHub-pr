@@ -333,6 +333,10 @@ document.addEventListener('DOMContentLoaded', () => {
   updateKeyStatusUI();
   setInterval(checkServerHealth, HEALTH_CHECK_INTERVAL);
   
+  if (window.location.hash === '#chatbot') {
+    switchToChatScreen();
+  }
+  
   // Set up connection event handlers
   window.addEventListener('online', updateNetworkStatus);
   window.addEventListener('offline', updateNetworkStatus);
