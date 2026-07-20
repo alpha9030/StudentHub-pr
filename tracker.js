@@ -86,6 +86,11 @@
 
         // Update Sun/Moon icon toggle
         updateToggleIcons(resolvedTheme);
+
+        // Instantly notify Pravio AI in the current window tab if loaded natively
+        if (typeof initTheme === 'function') {
+            initTheme();
+        }
     }
 
     // Expose change settings functions globally

@@ -20,30 +20,46 @@ const API_BASE = (window.location.protocol === 'file:' || window.location.port =
 // Theme Management
 const THEME_KEY = 'siteTheme';
 function initTheme() {
-  const savedTheme = localStorage.getItem(THEME_KEY) || 'default';
-  const resolvedTheme = savedTheme === 'dark' ? 'dark' : 'light';
+  const savedAppearance = localStorage.getItem('siteAppearanceMode') || 'system';
+  const savedTheme = localStorage.getItem('siteTheme');
+  let resolvedTheme = 'light';
+  if (savedAppearance === 'dark' || savedTheme === 'dark') {
+    resolvedTheme = 'dark';
+  } else if (savedAppearance === 'light') {
+    resolvedTheme = 'light';
+  } else {
+    resolvedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
   document.documentElement.setAttribute('data-theme', resolvedTheme);
+  document.body.classList.remove('theme-light', 'theme-dark');
+  document.body.classList.add('theme-' + resolvedTheme);
   updateThemeIcons(resolvedTheme);
 }
 
 function toggleTheme() {
-  const currentTheme = document.documentElement.getAttribute('data-theme');
+  const currentTheme = document.documentElement.getAttribute('data-theme') || (document.body.classList.contains('theme-dark') ? 'dark' : 'light');
   const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', newTheme);
-  localStorage.setItem(THEME_KEY, newTheme);
-  updateThemeIcons(newTheme);
-  
-  // Post message to parent window to sync theme
-  window.parent.postMessage({ type: 'sync-theme', theme: newTheme }, '*');
+  if (typeof window.changeAppearanceMode === 'function') {
+    window.changeAppearanceMode(newTheme);
+  } else {
+    localStorage.setItem('siteTheme', newTheme);
+    localStorage.setItem('siteAppearanceMode', newTheme);
+    initTheme();
+  }
 }
 
-// Listen to theme sync messages from parent window
+// Listen to theme storage and message sync
+window.addEventListener('storage', function(e) {
+  if (e.key === 'siteTheme' || e.key === 'siteAppearanceMode') {
+    initTheme();
+  }
+});
 window.addEventListener('message', function(event) {
   if (event.data && event.data.type === 'sync-theme') {
     const newTheme = event.data.theme;
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem(THEME_KEY, newTheme);
-    updateThemeIcons(newTheme);
+    localStorage.setItem('siteTheme', newTheme);
+    localStorage.setItem('siteAppearanceMode', newTheme);
+    initTheme();
   }
 });
 
