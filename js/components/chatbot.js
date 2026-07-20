@@ -496,7 +496,86 @@ function setupEventListeners() {
       DOMElements.apiKeyModal.classList.remove('hidden');
     });
   }
+
+  // Sidebar Tool Item chips click triggers
+  const toolChips = document.querySelectorAll('.sidebar-tool-item');
+  toolChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const toolLabel = chip.innerText.trim();
+      sendPromptMessage(`Help me with ${toolLabel}. Give me a structured guide and step-by-step template.`);
+    });
+  });
+
+  // Close popup settings menu on click outside
+  document.addEventListener('click', (e) => {
+    const settingsBtn = document.getElementById('btn-settings-trigger');
+    const settingsMenu = document.getElementById('sidebar-settings-menu');
+    if (settingsMenu && settingsBtn && !settingsBtn.contains(e.target) && !settingsMenu.contains(e.target)) {
+      settingsMenu.classList.add('hidden');
+      const chevron = document.getElementById('settings-chevron');
+      if (chevron) chevron.style.transform = 'rotate(0deg)';
+    }
+  });
 }
+
+// Global UI Helper Functions attached to window for inline onclick handlers
+window.toggleSidebarSettingsMenu = function(e) {
+  if (e) e.stopPropagation();
+  const menu = document.getElementById('sidebar-settings-menu');
+  const chevron = document.getElementById('settings-chevron');
+  if (menu) {
+    menu.classList.toggle('hidden');
+    if (chevron) {
+      chevron.style.transform = menu.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+    }
+  }
+};
+
+window.toggleAIToolsPanel = function() {
+  const panel = document.getElementById('sidebar-ai-tools-list');
+  const chevron = document.getElementById('ai-tools-chevron');
+  if (panel) {
+    const isHidden = panel.style.display === 'none';
+    panel.style.display = isHidden ? 'flex' : 'none';
+    if (chevron) {
+      chevron.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
+    }
+  }
+};
+
+window.toggleRecentChatsPanel = function() {
+  const panel = document.getElementById('recent-chats-list');
+  const chevron = document.getElementById('recent-chats-chevron');
+  if (panel) {
+    const isHidden = panel.style.display === 'none';
+    panel.style.display = isHidden ? 'flex' : 'none';
+    if (chevron) {
+      chevron.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(-90deg)';
+    }
+  }
+};
+
+window.toggleTodoPanel = function() {
+  const panel = document.getElementById('todo-panel-content');
+  const chevron = document.getElementById('todo-chevron');
+  if (panel) {
+    const isHidden = panel.style.display === 'none' || panel.style.display === '';
+    panel.style.display = isHidden ? 'flex' : 'none';
+    if (chevron) {
+      chevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+  }
+};
+
+window.exitChatbotWorkspace = function() {
+  if (typeof mainApp !== 'undefined' && mainApp.switchTab) {
+    mainApp.switchTab('dashboard');
+  } else if (typeof showView === 'function') {
+    showView('landing');
+  } else {
+    window.location.hash = '#dashboard';
+  }
+};
 
 // Screen Routing Actions
 function switchToChatScreen() {
