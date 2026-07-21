@@ -5974,3 +5974,24 @@ body.theme-dark #notes-panel .template-sticky {
     display: flex !important;
 }
 
+/* Pravio Notes Sheet Document Paragraph Spacing & Line Height */
+#note-text-edit p {
+    margin-top: 0;
+    margin-bottom: 0.95em;
+    line-height: 1.65;
+}
+
+#note-text-edit div {
+    line-height: 1.65;
+    margin-bottom: 0.5em;
+}
+
+#note-text-edit h1, 
+#note-text-edit h2, 
+#note-text-edit h3, 
+#note-text-edit h4 {
+    margin-top: 1.2em;
+    margin-bottom: 0.5em;
+    line-height: 1.3;
+}
+

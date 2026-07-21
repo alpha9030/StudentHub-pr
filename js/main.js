@@ -703,6 +703,21 @@ class App {
             ? 'http://localhost:3008' 
             : '';
 
+        const formatDocumentText = (text) => {
+            if (!text) return '';
+            if (text.includes('<p>') || text.includes('<h3>') || text.includes('<h4>') || text.includes('<ul>')) {
+                return text;
+            }
+            const normalized = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+            const paragraphs = normalized.split(/\n\s*\n/);
+            return paragraphs.map(p => {
+                const clean = p.trim();
+                if (!clean) return '';
+                const safe = clean.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+                return `<p style="margin-bottom: 1em; line-height: 1.6;">${safe}</p>`;
+            }).filter(Boolean).join('\n') || `<div>${text}</div>`;
+        };
+
         let parsedSuccessfully = false;
 
         // 1. Try backend server-side parser (/api/upload) first for binary documents
@@ -717,8 +732,7 @@ class App {
                 if (response.ok) {
                     const data = await response.json();
                     if (data.extractedContent && typeof data.extractedContent === 'string' && data.extractedContent.trim()) {
-                        const safe = data.extractedContent.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
-                        rawText = `<div>${safe}</div>`;
+                        rawText = formatDocumentText(data.extractedContent);
                         parsedSuccessfully = true;
                     }
                 }
@@ -745,8 +759,11 @@ class App {
                     for (let i = 1; i <= pdf.numPages; i++) {
                         const page = await pdf.getPage(i);
                         const textContent = await page.getTextContent();
-                        const pageStrings = textContent.items.map(item => item.str).join(' ');
-                        pdfText += `<h4 style="margin-top: 12px; color: var(--color-primary);">Page ${i}</h4><div>${pageStrings.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</div>`;
+                        let pageRaw = '';
+                        textContent.items.forEach(item => {
+                            pageRaw += item.str + (item.hasEOL ? '\n' : ' ');
+                        });
+                        pdfText += `<h4 style="margin-top: 18px; margin-bottom: 8px; color: var(--color-primary); font-weight: 700;">Page ${i}</h4>` + formatDocumentText(pageRaw);
                     }
                     rawText = pdfText || `<div>[PDF Document: ${fileName}] No extractable text found in PDF pages.</div>`;
                 } else if (fileExt === 'docx' && typeof mammoth !== 'undefined') {
@@ -755,15 +772,12 @@ class App {
                     rawText = result.value || `<div>[Docx Document: ${fileName}] No extractable text found.</div>`;
                 } else {
                     // Default plain text reader for .txt, .md, .csv, .json, .js, .py, etc.
-                    rawText = await new Promise((resolve) => {
+                    const plain = await new Promise((resolve) => {
                         const reader = new FileReader();
                         reader.onload = (e) => resolve(e.target.result);
                         reader.readAsText(file);
                     });
-                    if (!rawText.includes('<p>') && !rawText.includes('<div>')) {
-                        const safe = rawText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
-                        rawText = `<div>${safe}</div>`;
-                    }
+                    rawText = formatDocumentText(plain);
                 }
             } catch (err) {
                 console.error('File import reading error:', err);
