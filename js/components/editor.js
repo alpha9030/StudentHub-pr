@@ -591,10 +591,23 @@ class Editor {
 
         const colorPicker = document.getElementById('format-color-picker');
         if (colorPicker) {
-            colorPicker.addEventListener('input', (e) => {
-                document.execCommand('foreColor', false, e.target.value);
+            const applySelectedColor = (color) => {
+                textEdit.focus();
+                const sel = window.getSelection();
+                if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+                    document.execCommand('foreColor', false, color);
+                } else {
+                    document.execCommand('insertHTML', false, `<span style="color: ${color};">&#8203;</span>`);
+                }
                 note.content = textEdit.innerHTML;
                 this.app.saveToLocalStorage();
+            };
+
+            colorPicker.addEventListener('input', (e) => {
+                applySelectedColor(e.target.value);
+            });
+            colorPicker.addEventListener('change', (e) => {
+                applySelectedColor(e.target.value);
             });
         }
 
