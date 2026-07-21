@@ -699,35 +699,76 @@ class App {
         let rawText = '';
         const fileName = file.name;
         const fileExt = fileName.split('.').pop().toLowerCase();
+        const API_BASE = (window.location.protocol === 'file:' || window.location.port === '8000' || window.location.port === '8001' || window.location.port === '8002' || window.location.port === '5500') 
+            ? 'http://localhost:3008' 
+            : '';
 
-        try {
-            if (['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'].includes(fileExt)) {
-                const dataUrl = await new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => resolve(e.target.result);
-                    reader.readAsDataURL(file);
+        let parsedSuccessfully = false;
+
+        // 1. Try backend server-side parser (/api/upload) first for binary documents
+        if (['pdf', 'docx', 'pptx', 'xlsx', 'csv', 'doc'].includes(fileExt)) {
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                const response = await fetch(API_BASE + '/api/upload', {
+                    method: 'POST',
+                    body: formData
                 });
-                rawText = `<div class="resizable-image-container" style="max-width: 100%; max-height: 500px;"><img src="${dataUrl}" class="embedded-note-image" alt="${fileName}" /></div>`;
-            } else if (fileExt === 'docx' && typeof mammoth !== 'undefined') {
-                const arrayBuffer = await file.arrayBuffer();
-                const result = await mammoth.convertToHtml({ arrayBuffer });
-                rawText = result.value || '';
-            } else {
-                // Default text reader for .txt, .md, .csv, .json, .js, .py, etc.
-                rawText = await new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => resolve(e.target.result);
-                    reader.readAsText(file);
-                });
-                // Escape HTML special characters if plain text, preserve line breaks
-                if (!rawText.includes('<p>') && !rawText.includes('<div>')) {
-                    const safe = rawText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
-                    rawText = `<div>${safe}</div>`;
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.extractedContent && typeof data.extractedContent === 'string' && data.extractedContent.trim()) {
+                        const safe = data.extractedContent.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+                        rawText = `<div>${safe}</div>`;
+                        parsedSuccessfully = true;
+                    }
                 }
+            } catch (netErr) {
+                console.warn('Backend document parser endpoint unavailable, switching to client-side fallback:', netErr);
             }
-        } catch (err) {
-            console.error('File import reading error:', err);
-            rawText = `<div>Failed to read content from ${fileName}. You can paste or type text here.</div>`;
+        }
+
+        // 2. Client-side fallback parsers if backend parsing was not performed or failed
+        if (!parsedSuccessfully) {
+            try {
+                if (['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'].includes(fileExt)) {
+                    const dataUrl = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.readAsDataURL(file);
+                    });
+                    rawText = `<div class="resizable-image-container" style="max-width: 100%; max-height: 500px;"><img src="${dataUrl}" class="embedded-note-image" alt="${fileName}" /></div>`;
+                } else if (fileExt === 'pdf' && typeof pdfjsLib !== 'undefined') {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+                    const pdf = await loadingTask.promise;
+                    let pdfText = '';
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const textContent = await page.getTextContent();
+                        const pageStrings = textContent.items.map(item => item.str).join(' ');
+                        pdfText += `<h4 style="margin-top: 12px; color: var(--color-primary);">Page ${i}</h4><div>${pageStrings.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')}</div>`;
+                    }
+                    rawText = pdfText || `<div>[PDF Document: ${fileName}] No extractable text found in PDF pages.</div>`;
+                } else if (fileExt === 'docx' && typeof mammoth !== 'undefined') {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const result = await mammoth.convertToHtml({ arrayBuffer });
+                    rawText = result.value || `<div>[Docx Document: ${fileName}] No extractable text found.</div>`;
+                } else {
+                    // Default plain text reader for .txt, .md, .csv, .json, .js, .py, etc.
+                    rawText = await new Promise((resolve) => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => resolve(e.target.result);
+                        reader.readAsText(file);
+                    });
+                    if (!rawText.includes('<p>') && !rawText.includes('<div>')) {
+                        const safe = rawText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+                        rawText = `<div>${safe}</div>`;
+                    }
+                }
+            } catch (err) {
+                console.error('File import reading error:', err);
+                rawText = `<div>Failed to read content from ${fileName}. You can paste or type text here.</div>`;
+            }
         }
 
         const targetFolderId = this.activeFolderId || (this.folders.length > 0 ? this.folders[0].id : 'f-dsa');
