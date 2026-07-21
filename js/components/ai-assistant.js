@@ -12,32 +12,32 @@ class AIAssistant {
     }
 
     setupEvents() {
-        const sendBtn = document.getElementById('btn-ask-ai');
-        const input = document.getElementById('copilot-input');
-        const voiceBtn = document.getElementById('btn-record-voice');
-
-        if (sendBtn && input) {
-            sendBtn.addEventListener('click', () => {
-                const val = input.value.trim();
-                if (val) {
+        document.addEventListener('click', (e) => {
+            const sendBtn = e.target.closest('#btn-ask-ai');
+            if (sendBtn) {
+                const input = document.getElementById('copilot-input');
+                if (input && input.value.trim()) {
+                    const val = input.value.trim();
                     this.askAI(val);
                     input.value = '';
                 }
-            });
+                return;
+            }
 
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendBtn.click();
-                }
-            });
-        }
-
-        if (voiceBtn) {
-            voiceBtn.addEventListener('click', () => {
+            const voiceBtn = e.target.closest('#btn-record-voice');
+            if (voiceBtn) {
                 this.toggleVoiceRecording(voiceBtn);
-            });
-        }
+                return;
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey && e.target && e.target.id === 'copilot-input') {
+                e.preventDefault();
+                const sendBtn = document.getElementById('btn-ask-ai');
+                if (sendBtn) sendBtn.click();
+            }
+        });
     }
 
     async askAI(promptText) {
