@@ -5041,7 +5041,7 @@ body #notes-panel {
 .template-handwritten #note-text-edit {
     line-height: 32px !important;
     font-size: 1.35rem !important;
-    color: #0c1c3a !important;
+    color: #0c1c3a;
 }
 
 #notes-panel .template-handwritten::before {
@@ -5588,14 +5588,13 @@ body.theme-dark .template-handwritten,
 body.theme-dark #notes-panel .template-handwritten {
     background-color: #0f0a1c !important;
     background-image: linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px) !important;
-    color: #a5f3fc !important; /* Cyan ink handwriting */
+    color: #a5f3fc; /* Cyan ink handwriting */
     border-left-color: #ec4899 !important;
 }
 
 body.theme-dark .template-handwritten *,
 body.theme-dark #notes-panel .template-handwritten *,
 body.theme-dark .template-handwritten #note-text-edit {
-    color: #a5f3fc !important;
     font-family: var(--font-hand), 'Caveat', cursive !important;
 }
 
