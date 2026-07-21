@@ -574,7 +574,9 @@ class Editor {
         const headingSelect = document.getElementById('format-heading');
         if (headingSelect) {
             headingSelect.addEventListener('change', (e) => {
-                document.execCommand('formatBlock', false, e.target.value);
+                textEdit.focus();
+                const tag = '<' + e.target.value + '>';
+                document.execCommand('formatBlock', false, tag);
                 note.content = textEdit.innerHTML;
                 this.app.saveToLocalStorage();
             });
@@ -582,8 +584,32 @@ class Editor {
 
         const sizeSelect = document.getElementById('format-font-size');
         if (sizeSelect) {
+            const sizeMap = {
+                '1': '10px',
+                '2': '12px',
+                '3': '16px',
+                '4': '18px',
+                '5': '24px',
+                '6': '32px',
+                '7': '48px'
+            };
+
             sizeSelect.addEventListener('change', (e) => {
-                document.execCommand('fontSize', false, e.target.value);
+                textEdit.focus();
+                const pxSize = sizeMap[e.target.value] || '16px';
+                const sel = window.getSelection();
+                if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+                    const range = sel.getRangeAt(0);
+                    const selectedText = range.toString();
+                    if (selectedText) {
+                        const span = document.createElement('span');
+                        span.style.fontSize = pxSize;
+                        span.appendChild(range.extractContents());
+                        range.insertNode(span);
+                    }
+                } else {
+                    document.execCommand('insertHTML', false, `<span style="font-size: ${pxSize};">&#8203;</span>`);
+                }
                 note.content = textEdit.innerHTML;
                 this.app.saveToLocalStorage();
             });
