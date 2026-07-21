@@ -290,15 +290,15 @@ class Editor {
             </div>
 
             <!-- Text Formatting toolbar -->
-            <div class="formatting-bar" style="display: flex; align-items: center; gap: 8px; padding: 6px 16px; background-color: var(--bg-card); border-bottom: 1px solid var(--border-color); flex-wrap: wrap;">
-                <select id="format-heading" title="Format Text Block" style="padding: 4px 6px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-main); font-size: 0.75rem; font-weight: 600; cursor: pointer; outline: none;">
-                    <option value="p">Normal Text</option>
+            <div class="formatting-bar" style="display: flex; align-items: center; gap: 6px; padding: 6px 16px; background-color: var(--bg-card); border-bottom: 1px solid var(--border-color); flex-wrap: wrap;">
+                <select id="format-heading" title="Format Text Block" style="max-width: 105px; width: auto; padding: 4px 6px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-main); font-size: 0.75rem; font-weight: 600; cursor: pointer; outline: none; text-overflow: ellipsis;">
+                    <option value="p">Normal</option>
                     <option value="h1">Heading 1</option>
                     <option value="h2">Heading 2</option>
                     <option value="h3">Heading 3</option>
                 </select>
 
-                <select id="format-font-size" title="Font Size" style="padding: 4px 6px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-main); font-size: 0.75rem; font-weight: 600; cursor: pointer; outline: none;">
+                <select id="format-font-size" title="Font Size" style="max-width: 75px; width: auto; padding: 4px 6px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text-main); font-size: 0.75rem; font-weight: 600; cursor: pointer; outline: none;">
                     <option value="1">10px</option>
                     <option value="2">12px</option>
                     <option value="3" selected>16px</option>
@@ -308,22 +308,27 @@ class Editor {
                     <option value="7">48px</option>
                 </select>
 
-                <div style="width: 1px; height: 16px; background-color: var(--border-color); margin: 0 4px;"></div>
+                <div style="position: relative; display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background: var(--bg-card);" title="Text Color">
+                    <i data-lucide="palette" style="width: 13px; height: 13px; color: var(--text-muted);"></i>
+                    <input type="color" id="format-color-picker" value="#6366f1" style="width: 20px; height: 20px; border: none; padding: 0; background: transparent; cursor: pointer; border-radius: 3px;" title="Choose Text Highlight Color">
+                </div>
+
+                <div style="width: 1px; height: 16px; background-color: var(--border-color); margin: 0 2px;"></div>
 
                 <button class="icon-btn" id="format-bold" title="Bold" style="padding: 4px 8px;"><i data-lucide="bold" style="width: 14px; height: 14px;"></i></button>
                 <button class="icon-btn" id="format-italic" title="Italic" style="padding: 4px 8px;"><i data-lucide="italic" style="width: 14px; height: 14px;"></i></button>
                 <button class="icon-btn" id="format-underline" title="Underline" style="padding: 4px 8px;"><i data-lucide="underline" style="width: 14px; height: 14px;"></i></button>
 
-                <div style="width: 1px; height: 16px; background-color: var(--border-color); margin: 0 4px;"></div>
+                <div style="width: 1px; height: 16px; background-color: var(--border-color); margin: 0 2px;"></div>
 
                 <button class="icon-btn" id="format-align-left" title="Align Left" style="padding: 4px 8px;"><i data-lucide="align-left" style="width: 14px; height: 14px;"></i></button>
                 <button class="icon-btn" id="format-align-center" title="Align Center" style="padding: 4px 8px;"><i data-lucide="align-center" style="width: 14px; height: 14px;"></i></button>
                 <button class="icon-btn" id="format-align-right" title="Align Right" style="padding: 4px 8px;"><i data-lucide="align-right" style="width: 14px; height: 14px;"></i></button>
                 
-                <div style="width: 1px; height: 16px; background-color: var(--border-color); margin: 0 4px;"></div>
+                <div style="width: 1px; height: 16px; background-color: var(--border-color); margin: 0 2px;"></div>
                 <button class="icon-btn" id="format-link-note" title="Link to another note (Zettelkasten)" style="padding: 4px 8px;"><i data-lucide="link-2" style="width: 14px; height: 14px;"></i></button>
 
-                <div style="width: 1px; height: 16px; background-color: var(--border-color); margin: 0 4px;"></div>
+                <div style="width: 1px; height: 16px; background-color: var(--border-color); margin: 0 2px;"></div>
 
                 <button class="icon-btn" id="format-list-ul" title="Bulleted List" style="padding: 4px 8px;"><i data-lucide="list" style="width: 14px; height: 14px;"></i></button>
                 <button class="icon-btn" id="format-list-ol" title="Numbered List" style="padding: 4px 8px;"><i data-lucide="list-ordered" style="width: 14px; height: 14px;"></i></button>
@@ -579,6 +584,15 @@ class Editor {
         if (sizeSelect) {
             sizeSelect.addEventListener('change', (e) => {
                 document.execCommand('fontSize', false, e.target.value);
+                note.content = textEdit.innerHTML;
+                this.app.saveToLocalStorage();
+            });
+        }
+
+        const colorPicker = document.getElementById('format-color-picker');
+        if (colorPicker) {
+            colorPicker.addEventListener('input', (e) => {
+                document.execCommand('foreColor', false, e.target.value);
                 note.content = textEdit.innerHTML;
                 this.app.saveToLocalStorage();
             });
