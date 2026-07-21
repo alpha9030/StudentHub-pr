@@ -1217,6 +1217,43 @@ def start_chatbot_service():
     t = threading.Thread(target=run, daemon=True)
     t.start()
 
+def call_gemini_direct_python(messages_data, api_key):
+    import urllib.request
+    import ssl
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+    
+    contents = []
+    for msg in messages_data:
+        role = msg.get('role', 'user')
+        if role not in ['user', 'model']:
+            role = 'user'
+        parts = msg.get('parts', [])
+        clean_parts = []
+        for p in parts:
+            if isinstance(p, dict) and 'text' in p:
+                clean_parts.append({'text': p['text']})
+            elif isinstance(p, dict) and 'inlineData' in p:
+                clean_parts.append(p)
+            elif isinstance(p, str):
+                clean_parts.append({'text': p})
+        if clean_parts:
+            contents.append({'role': role, 'parts': clean_parts})
+            
+    payload = json.dumps({'contents': contents}).encode('utf-8')
+    req = urllib.request.Request(url, data=payload, headers={'Content-Type': 'application/json'}, method='POST')
+    
+    with urllib.request.urlopen(req, context=ctx, timeout=30) as resp:
+        if resp.status == 200:
+            res_json = json.loads(resp.read().decode('utf-8'))
+            candidate_text = res_json.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', '')
+            return candidate_text
+        else:
+            raise Exception(f"Gemini API status {resp.status}")
+
 @app.route('/api/chat', methods=['POST'])
 def proxy_chat():
     print("[PROXY] Incoming request to /api/chat")
@@ -1232,20 +1269,39 @@ def proxy_chat():
     conn = None
     last_err = None
     
-    for attempt in range(6):
+    for attempt in range(3):
         try:
-            conn, prefix = get_chatbot_connection(timeout=60)
+            conn, prefix = get_chatbot_connection(timeout=3)
             conn.request("POST", f"{prefix}/api/chat", body, headers)
             resp = conn.getresponse()
             print(f"[PROXY] /api/chat connected to Node backend (attempt {attempt + 1}). Status: {resp.status}")
             break
         except Exception as e:
             last_err = e
-            time.sleep(1)
+            time.sleep(0.5)
             
-    if not resp:
-        print(f"[PROXY Error] Proxy connection failed after retries: {last_err}")
-        return jsonify({"error": "Chatbot backend is temporarily offline.", "status": 503}), 503
+    if not resp or resp.status in [502, 503, 504]:
+        print(f"[PROXY Warning] Node backend connection failed ({last_err}), attempting direct Python Gemini API fallback...")
+        user_key = request.headers.get("X-API-Key") or get_gemini_api_key()
+        if user_key:
+            try:
+                req_json = request.get_json(silent=True) or {}
+                msgs = req_json.get('messages', [])
+                ai_text = call_gemini_direct_python(msgs, user_key)
+                
+                if req_json.get('stream'):
+                    def sse_stream():
+                        chunk_payload = json.dumps({"text": ai_text})
+                        yield f"data: {chunk_payload}\n\n"
+                        yield "data: [DONE]\n\n"
+                    return Response(stream_with_context(sse_stream()), content_type='text/event-stream')
+                else:
+                    return jsonify({"text": ai_text, "timestamp": datetime.datetime.utcnow().isoformat() + "Z"})
+            except Exception as py_err:
+                print(f"[PROXY Error] Direct Python Gemini call failed: {py_err}")
+                return jsonify({"error": f"AI service error: {str(py_err)}", "status": 500}), 500
+        else:
+            return jsonify({"error": "Chatbot backend is temporarily offline and no API key was found.", "status": 503}), 503
         
     try:
         def generate():
@@ -1281,7 +1337,7 @@ def proxy_upload():
     if "X-API-Key" in request.headers:
         headers["X-API-Key"] = request.headers.get("X-API-Key")
     try:
-        conn, prefix = get_chatbot_connection(timeout=60)
+        conn, prefix = get_chatbot_connection(timeout=10)
         conn.request("POST", f"{prefix}/api/upload", body, headers)
         resp = conn.getresponse()
         print(f"[PROXY] /api/upload connected to Node backend. Status: {resp.status}")
@@ -1303,7 +1359,7 @@ def proxy_health():
     if "X-API-Key" in request.headers:
         headers["X-API-Key"] = request.headers.get("X-API-Key")
     try:
-        conn, prefix = get_chatbot_connection(timeout=5)
+        conn, prefix = get_chatbot_connection(timeout=3)
         conn.request("GET", f"{prefix}/health", headers=headers)
         resp = conn.getresponse()
         print(f"[PROXY] /health connected to Node backend. Status: {resp.status}")
@@ -1314,10 +1370,12 @@ def proxy_health():
         flask_resp.headers["Content-Type"] = "application/json"
         return flask_resp
     except Exception as e:
+        key = get_gemini_api_key()
         return jsonify({
-            "status": "offline",
-            "geminiConfigured": False,
-            "error": str(e)
+            "status": "healthy" if key else "offline",
+            "geminiConfigured": bool(key),
+            "ai": "connected" if key else "disconnected",
+            "mode": "python_fallback"
         }), 200
 
 # Catch-all to serve any static asset (js, css, images)

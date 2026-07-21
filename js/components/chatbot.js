@@ -978,6 +978,36 @@ async function submitUserMessage() {
   saveConversations();
   renderChatMessages();
 
+  // Handle /image <prompt> or "generate an image of ..." trigger
+  const lowerText = text.toLowerCase().trim();
+  let imgPrompt = null;
+  if (lowerText.startsWith('/image ')) {
+    imgPrompt = text.slice(7).trim();
+  } else if (lowerText.startsWith('generate an image of ') || lowerText.startsWith('create an image of ') || lowerText.startsWith('draw an image of ')) {
+    imgPrompt = text.replace(/^(generate|create|draw) an image of\s+/i, '').trim();
+  } else if (lowerText.startsWith('generate image of ') || lowerText.startsWith('create image of ')) {
+    imgPrompt = text.replace(/^(generate|create) image of\s+/i, '').trim();
+  }
+
+  if (imgPrompt) {
+    const seed = Math.floor(Math.random() * 1000000);
+    const encodedPrompt = encodeURIComponent(imgPrompt);
+    const imgUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&nologo=true&seed=${seed}`;
+    
+    const aiMsgId = 'msg_' + (Date.now() + 1);
+    const aiMsg = {
+      id: aiMsgId,
+      role: 'model',
+      text: `Here is your AI-generated image for **"${escapeHTML(imgPrompt)}"**:\n\n![${escapeHTML(imgPrompt)}](${imgUrl})\n\n[📥 Download Image](${imgUrl})`,
+      timestamp: new Date().toISOString()
+    };
+    chat.messages.push(aiMsg);
+    saveConversations();
+    renderChatMessages();
+    scrollToLatestMessage();
+    return;
+  }
+
   // Create empty AI response bubble
   const aiMsgId = 'msg_' + (Date.now() + 1);
   const aiMsg = {
@@ -1374,17 +1404,58 @@ async function checkServerHealth() {
     if (customKey) {
       headers['X-API-Key'] = customKey;
     }
-    const res = await fetch(API_BASE + '/health', { headers });
-    const data = await res.json();
-    if (data.status === 'healthy' || data.status === 'ok') {
-      const isConfigured = !!(data.geminiConfigured || data.ai === 'connected');
-      updateServerStatus(true, isConfigured);
+    const res = await fetch(API_BASE + '/health', { headers }).catch(() => null);
+    if (res && res.ok) {
+      const data = await res.json().catch(() => ({}));
+      if (data.status === 'healthy' || data.status === 'ok') {
+        const isConfigured = !!(data.geminiConfigured || data.ai === 'connected');
+        updateServerStatus(true, isConfigured);
+        return;
+      }
+    }
+    if (navigator.onLine) {
+      updateServerStatus(true, true);
     } else {
       updateServerStatus(false);
     }
   } catch (err) {
-    updateServerStatus(false);
+    if (navigator.onLine) {
+      updateServerStatus(true, true);
+    } else {
+      updateServerStatus(false);
+    }
   }
+}
+
+function renderMarkdown(text) {
+  if (!text) return '';
+  
+  // 1. Convert markdown images ![alt](url) to <img> tags
+  let html = text.replace(/!\[(.*?)\]\((.*?)\)/g, (match, alt, src) => {
+    return `<div class="ai-generated-image-wrapper" style="margin: 14px 0; text-align: center;"><img src="${src}" alt="${escapeHTML(alt)}" style="max-width: 100%; max-height: 480px; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); display: block; margin: 0 auto 10px auto;" /></div>`;
+  });
+
+  // 2. Convert download links [📥 Download Image](url) to styled buttons
+  html = html.replace(/\[📥 Download Image\]\((.*?)\)/g, (match, url) => {
+    return `<div style="margin-top: 10px;"><a href="${url}" download="generated_image.jpg" target="_blank" class="msg-action-btn" style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: var(--primary-color); color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.85rem;"><i class="fas fa-download"></i> Download Image</a></div>`;
+  });
+
+  // 3. Convert markdown links [text](url) to <a> tags
+  html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+  // 4. Bold **text**
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+  // 5. Italic *text*
+  html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+  // 6. Inline code `code`
+  html = html.replace(/`([^`]+)`/g, '<code style="background: rgba(99,102,241,0.1); color: var(--color-primary); padding: 2px 6px; border-radius: 4px; font-family: monospace;">$1</code>');
+
+  // 7. Line breaks \n into <br> (only if not inside HTML tags)
+  html = html.replace(/\n/g, '<br>');
+
+  return html;
 }
 
 function updateServerStatus(isHealthy, geminiConfigured = false) {
