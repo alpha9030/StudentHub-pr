@@ -696,72 +696,71 @@ class App {
         this.importDropzone.classList.add('hidden');
         this.importLoader.classList.remove('hidden');
 
-        // Simulate AI import parsing
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        let rawText = '';
+        const fileName = file.name;
+        const fileExt = fileName.split('.').pop().toLowerCase();
 
-        const baseName = file.name.split('.')[0];
-        const generatedNote = {
+        try {
+            if (['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'].includes(fileExt)) {
+                const dataUrl = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.readAsDataURL(file);
+                });
+                rawText = `<div class="resizable-image-container" style="max-width: 100%; max-height: 500px;"><img src="${dataUrl}" class="embedded-note-image" alt="${fileName}" /></div>`;
+            } else if (fileExt === 'docx' && typeof mammoth !== 'undefined') {
+                const arrayBuffer = await file.arrayBuffer();
+                const result = await mammoth.convertToHtml({ arrayBuffer });
+                rawText = result.value || '';
+            } else {
+                // Default text reader for .txt, .md, .csv, .json, .js, .py, etc.
+                rawText = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.readAsText(file);
+                });
+                // Escape HTML special characters if plain text, preserve line breaks
+                if (!rawText.includes('<p>') && !rawText.includes('<div>')) {
+                    const safe = rawText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+                    rawText = `<div>${safe}</div>`;
+                }
+            }
+        } catch (err) {
+            console.error('File import reading error:', err);
+            rawText = `<div>Failed to read content from ${fileName}. You can paste or type text here.</div>`;
+        }
+
+        const targetFolderId = this.activeFolderId || (this.folders.length > 0 ? this.folders[0].id : 'f-dsa');
+        const targetFolder = this.folders.find(f => f.id === targetFolderId);
+
+        const importedNote = {
             id: 'n-' + Date.now(),
-            folderId: this.activeFolderId || this.folders[0].id,
-            title: `AI Notes: ${baseName}`,
-            category: 'AI Generated Notes',
+            folderId: targetFolderId,
+            title: fileName,
+            category: targetFolder ? targetFolder.name : 'Imported Documents',
             template: 'Classic Notebook',
             pinned: false,
             favorite: false,
-            tags: ['AI-Imported', 'Revision'],
-            color: '#14b8a6',
+            tags: ['Imported', fileExt.toUpperCase()],
+            color: '#6366f1',
             lastEdited: new Date().toISOString(),
-            content: `<h3>AI Generated summary of ${file.name}</h3>
-<p>Extracted main programming concepts. This syllabus details memory layouts and compilation rules.</p>
-<div class="note-box note-box-note">
-    <strong>Syllabus Focus:</strong> Code complexity optimization, data structure selections, and compilation pipeline properties.
-</div>`,
-            code: `// Extracted example code\nfunction executeTask() {\n    console.log("Syllabus logic");\n}`,
-            language: 'javascript',
-            complexity: {
-                time: 'O(N)',
-                space: 'O(N)',
-                best: 'O(1)',
-                average: 'O(N)',
-                worst: 'O(N)',
-                stable: 'Yes',
-                recursive: 'Iterative',
-                inplace: 'Out-of-place',
-                difficulty: 'Medium',
-                frequency: '65%',
-                applications: 'Process flows.',
-                tips: 'Optimize recursion using iteration.'
-            },
+            content: rawText,
+            code: '',
+            language: 'text',
             flowchart: { nodes: [], links: [] },
-            quizzes: [
-                {
-                    type: 'mcq',
-                    question: 'What is compilation pipeline output?',
-                    options: ['Assembly / Bytecode', 'Source code', 'Pseudocode'],
-                    answer: 0,
-                    explanation: 'Compilers translate source code directly into low level machine bytes or assembly.'
-                }
-            ],
-            flashcards: [
-                {
-                    question: 'Difference between compiler and interpreter?',
-                    answer: 'Compilers compile the entire code ahead of execution, whereas interpreters evaluate it line-by-line during runtime.'
-                }
-            ]
+            flashcards: [],
+            cheatsheets: []
         };
 
-        this.notes.unshift(generatedNote);
-        this.activeNote = generatedNote;
+        this.notes.unshift(importedNote);
+        this.activeFolderId = targetFolderId;
+        this.activeNote = importedNote;
         this.saveToLocalStorage();
-        
-        // Push generated quiz & flashcard to global lists
-        this.quizzes.push(...generatedNote.quizzes);
-        this.flashcards.push(...generatedNote.flashcards);
 
         // Reset UI states
         this.setupSidebarData();
         this.switchTab('notes');
-        this.editor.loadNote(generatedNote);
+        this.editor.loadNote(importedNote);
 
         // Close modal
         this.importBackdrop.classList.add('hidden');
@@ -770,11 +769,13 @@ class App {
         this.importDropzone.classList.remove('hidden');
 
         // Confetti!
-        confetti({
-            particleCount: 80,
-            spread: 50,
-            origin: { y: 0.6 }
-        });
+        if (typeof confetti !== 'undefined') {
+            confetti({
+                particleCount: 60,
+                spread: 40,
+                origin: { y: 0.6 }
+            });
+        }
     }
 
     saveToLocalStorage(manual = false) {
