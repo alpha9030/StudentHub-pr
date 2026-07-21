@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Hub - Academic Workspace (V2)</title>
-    <link rel="stylesheet" href="style.css?v=2.2.4">
-    <link rel="stylesheet" href="chatbot.css?v=2.2.4">
-    <link rel="stylesheet" href="syntax-highlight.css?v=2.2.4">
+    <link rel="stylesheet" href="style.css?v=2.2.5">
+    <link rel="stylesheet" href="chatbot.css?v=2.2.5">
+    <link rel="stylesheet" href="syntax-highlight.css?v=2.2.5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Consolidated Premium styles for homepage redesign */
@@ -2164,8 +2164,15 @@
         }
 
         function showView(viewId) {
-            // Redirect landing to dashboard if user is logged in
             const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+
+            // Protect Pravio AI, Pravio Notes, and Dashboard from unauthenticated guest access
+            if (!loggedIn && (viewId === 'chatbot' || viewId === 'notes' || viewId === 'dashboard')) {
+                alert("Access Denied: You must be registered and signed in to access Pravio AI and Pravio Notes. Redirecting to Enrollment Terminal...");
+                viewId = 'auth';
+            }
+
+            // Redirect landing to dashboard if user is logged in
             if (viewId === 'landing' && loggedIn) {
                 viewId = 'dashboard';
             }
@@ -3361,9 +3368,19 @@
                     showView('landing');
                 }
             } else if (currentHash === 'notes') {
-                showView('notes');
+                if (loggedIn) {
+                    showView('notes');
+                } else {
+                    alert("Access Denied: You must be registered and signed in to access Pravio Notes. Redirecting to Enrollment Terminal...");
+                    showView('auth');
+                }
             } else if (currentHash === 'chatbot') {
-                showView('chatbot');
+                if (loggedIn) {
+                    showView('chatbot');
+                } else {
+                    alert("Access Denied: You must be registered and signed in to access Pravio AI. Redirecting to Enrollment Terminal...");
+                    showView('auth');
+                }
             } else {
                 if (loggedIn) {
                     showView('dashboard');
@@ -3929,8 +3946,8 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="js/components/chatbot.js?v=2.2.4"></script>
-    <script src="js/main.js?v=2.2.4"></script>
+    <script src="js/components/chatbot.js?v=2.2.5"></script>
+    <script src="js/main.js?v=2.2.5"></script>
 
     <!-- Google Account Chooser Modal -->
     <div id="google-auth-modal" class="google-modal-backdrop" onclick="closeGoogleAuthModal()">
