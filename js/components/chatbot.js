@@ -1040,16 +1040,27 @@ async function submitUserMessage() {
       headers['X-API-Key'] = customKey;
     }
 
-    const response = await fetch(API_BASE + '/api/chat', {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify({
-        messages: apiHistory,
-        stream: true,
-        customApiKey: customKey
-      }),
-      signal: abortController.signal
-    });
+    let response = null;
+    let attempts = 3;
+    while (attempts > 0) {
+      response = await fetch(API_BASE + '/api/chat', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({
+          messages: apiHistory,
+          stream: true,
+          customApiKey: customKey
+        }),
+        signal: abortController.signal
+      });
+
+      if ((response.status === 502 || response.status === 503) && attempts > 1) {
+        attempts--;
+        await new Promise(r => setTimeout(r, 4000));
+        continue;
+      }
+      break;
+    }
 
     DOMElements.aiTypingIndicator.classList.add('hidden');
 
@@ -1057,7 +1068,9 @@ async function submitUserMessage() {
       // Handle server error responses
       const errorJson = await response.json().catch(() => ({}));
       let errMsg = errorJson.error || `Server responded with status ${response.status}`;
-      if (response.status === 401 || response.status === 403 || errMsg.includes('API key') || errMsg.includes('api_key_invalid') || errMsg.includes('not configured')) {
+      if (response.status === 502 || response.status === 503) {
+        errMsg = 'The Pravio AI server on Render is waking up from idle sleep mode. Please try sending your prompt again in 5–10 seconds!';
+      } else if (response.status === 401 || response.status === 403 || errMsg.includes('API key') || errMsg.includes('api_key_invalid') || errMsg.includes('not configured')) {
         errMsg = 'AI service is temporarily unavailable. Please try again later.';
       }
       throw new Error(errMsg);
