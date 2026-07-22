@@ -700,8 +700,63 @@ class Editor {
                     const cleanFileName = note.title.toLowerCase().replace(/[^a-z0-9]+/g, '_');
                     
                     if (format === 'pdf') {
-                        // Native high-fidelity PDF print layout
-                        window.print();
+                        // Open print window to export ONLY the note sheet content
+                        const printWindow = window.open('', '_blank');
+                        if (printWindow) {
+                            const templateClass = note.template === 'Handwritten Notebook' ? 'template-handwritten' :
+                                                 (note.template === 'Grid Paper' ? 'template-grid' :
+                                                 (note.template === 'Cornell Notes' ? 'template-cornell' :
+                                                 (note.template === 'Sticky Notes' ? 'template-sticky' : 'template-classic')));
+
+                            const sheetElement = document.getElementById('notebook-sheet-body');
+                            const sheetHtml = sheetElement ? sheetElement.innerHTML : '';
+                            const noteTitle = (note.title || 'Untitled Note').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                            
+                            printWindow.document.write(`
+                                <html>
+                                <head>
+                                    <title>${noteTitle}</title>
+                                    <link rel="stylesheet" href="style.css?v=2.4.0">
+                                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                                    <style>
+                                        body {
+                                            background: white !important;
+                                            color: black !important;
+                                            padding: 40px !important;
+                                            font-family: 'Outfit', sans-serif;
+                                        }
+                                        #notebook-sheet-body {
+                                            box-shadow: none !important;
+                                            border: none !important;
+                                            margin: 0 !important;
+                                            padding: 0 !important;
+                                            background: white !important;
+                                            color: black !important;
+                                            width: 100% !important;
+                                        }
+                                        /* Hide interactive/editing components */
+                                        .sticky-handle, .resize-handle, .canvas-toolbar, .icon-btn {
+                                            display: none !important;
+                                        }
+                                    </style>
+                                </head>
+                                <body>
+                                    <div class="${templateClass}" id="notebook-sheet-body">
+                                        ${sheetHtml}
+                                    </div>
+                                    <script>
+                                        window.onload = function() {
+                                            setTimeout(function() {
+                                                window.print();
+                                                window.close();
+                                            }, 400);
+                                        };
+                                    </script>
+                                </body>
+                                </html>
+                            `);
+                            printWindow.document.close();
+                        }
                     } else if (format === 'markdown') {
                         // Save as Markdown (.md) - Export ALL contents cleanly
                         let mdContent = `# ${note.title}\n\n`;
