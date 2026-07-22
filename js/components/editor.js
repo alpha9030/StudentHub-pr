@@ -840,40 +840,91 @@ class Editor {
                         link.click();
                         document.body.removeChild(link);
                     } else if (format === 'ppt') {
-                        // Save as Presentation Slide Outline (.ppt outline layout)
-                        let pptContent = `<html><head><meta charset="utf-8"><style>body { font-family: sans-serif; background-color: #f8fafc; padding: 20px; } .slide { border: 2px solid #e2e8f0; border-radius: 8px; background-color: white; padding: 40px; margin-bottom: 24px; min-height: 300px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); } h1 { color: #6366f1; font-size: 2rem; border-bottom: 2px solid #6366f1; padding-bottom: 10px; } h2 { color: #0f172a; margin-top: 20px; } .sticky-info { font-style: italic; color: #b45309; }</style></head><body>`;
-                        pptContent += `<div class="slide"><h1>${note.title}</h1><h2>Topic Presentation Outline</h2><p>Category: ${note.category}</p><p>Created: ${new Date().toLocaleDateString()}</p></div>`;
+                        // Save as Presentation Slide Outline using pptxgenjs library (.pptx)
+                        if (typeof PptxGenJS === 'undefined') {
+                            alert("Presentation Outline engine is initializing. Please try again in a moment!");
+                            return;
+                        }
                         
-                        let tempDiv = document.createElement('div');
+                        const pptx = new PptxGenJS();
+                        
+                        // Slide 1: Title Slide
+                        const slide1 = pptx.addSlide();
+                        slide1.background = { fill: "F8FAFC" };
+                        slide1.addText(note.title || "Untitled Presentation", {
+                            x: 1.0, y: 1.5, w: 8.0, h: 1.5,
+                            fontSize: 32, bold: true, color: "6366F1",
+                            fontFace: "Arial", align: "center"
+                        });
+                        slide1.addText(`Topic Presentation Slide Outline\nCategory: ${note.category}\nCreated: ${new Date().toLocaleDateString()}`, {
+                            x: 1.0, y: 3.2, w: 8.0, h: 2.0,
+                            fontSize: 14, color: "0F172A",
+                            fontFace: "Arial", align: "center"
+                        });
+                        
+                        const tempDiv = document.createElement('div');
                         tempDiv.innerHTML = note.content;
                         
-                        // Extract headings and key slides
+                        // Extract headings for main slide outline cards
                         const headings = tempDiv.querySelectorAll('h1, h2, h3');
                         if (headings.length > 0) {
                             headings.forEach((h, idx) => {
-                                pptContent += `<div class="slide"><h1>Slide ${idx + 2}: ${h.innerText}</h1><p>Key Study Reference Outline</p></div>`;
+                                const slide = pptx.addSlide();
+                                slide.background = { fill: "FFFFFF" };
+                                slide.addText(`Slide ${idx + 2}: ${h.innerText}`, {
+                                    x: 0.5, y: 0.5, w: 9.0, h: 0.8,
+                                    fontSize: 22, bold: true, color: "6366F1",
+                                    fontFace: "Arial"
+                                });
+                                slide.addText("• Key Study Reference Outline\n• Tap to edit slide key notes...", {
+                                    x: 0.5, y: 1.5, w: 9.0, h: 4.0,
+                                    fontSize: 16, color: "334155",
+                                    fontFace: "Arial"
+                                });
+                            });
+                        } else {
+                            // Extract paragraphs for basic slides
+                            const paragraphs = [...tempDiv.querySelectorAll('p, div')].map(p => p.innerText.trim()).filter(t => t.length > 15);
+                            const uniqueParagraphs = [...new Set(paragraphs)].slice(0, 5);
+                            uniqueParagraphs.forEach((pText, idx) => {
+                                const slide = pptx.addSlide();
+                                slide.background = { fill: "FFFFFF" };
+                                slide.addText(`Slide ${idx + 2}: Topic Outline`, {
+                                    x: 0.5, y: 0.5, w: 9.0, h: 0.8,
+                                    fontSize: 22, bold: true, color: "6366F1",
+                                    fontFace: "Arial"
+                                });
+                                slide.addText(pText, {
+                                    x: 0.5, y: 1.5, w: 9.0, h: 4.0,
+                                    fontSize: 16, color: "334155",
+                                    fontFace: "Arial"
+                                });
                             });
                         }
                         
-                        // Append stickies as cards outline slides
+                        // Append stickies as custom slide cards
                         const stickies = tempDiv.querySelectorAll('.embedded-sticky-note');
                         if (stickies.length > 0) {
                             stickies.forEach((sticky, idx) => {
                                 const contentDiv = sticky.querySelector('.sticky-content');
                                 const text = contentDiv ? contentDiv.innerText.trim() : sticky.innerText.trim();
-                                pptContent += `<div class="slide"><h1>Slide Slide: Sticky Note Info #${idx + 1}</h1><p class="sticky-info">${text}</p></div>`;
+                                
+                                const slide = pptx.addSlide();
+                                slide.background = { fill: "FEF08A" }; // yellow background
+                                slide.addText(`Sticky Note #${idx + 1}`, {
+                                    x: 0.5, y: 0.5, w: 9.0, h: 0.8,
+                                    fontSize: 22, bold: true, color: "B45309",
+                                    fontFace: "Arial"
+                                });
+                                slide.addText(text, {
+                                    x: 0.5, y: 1.5, w: 9.0, h: 4.0,
+                                    fontSize: 16, color: "78350F",
+                                    fontFace: "Arial", italic: true
+                                });
                             });
                         }
                         
-                        pptContent += `</body></html>`;
-                        
-                        const link = document.createElement('a');
-                        const file = new Blob(['\ufeff' + pptContent], { type: 'application/vnd.ms-powerpoint' });
-                        link.href = URL.createObjectURL(file);
-                        link.download = `${cleanFileName}_presentation.ppt`;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
+                        pptx.writeFile({ fileName: `${cleanFileName}_presentation.pptx` });
                     }
                 });
             });
