@@ -277,9 +277,6 @@ class Editor {
                             <button class="export-dropdown-item" data-format="word" style="background: transparent; border: none; text-align: left; padding: 6px 12px; font-size: 0.8rem; color: var(--text-main); cursor: pointer; border-radius: var(--radius-sm); font-weight: 500; display: flex; align-items: center; gap: 8px; width: 100%;">
                                 <i data-lucide="file-text" style="width: 12px; height: 12px; color: #3b82f6;"></i>Save as Word (.doc)
                             </button>
-                            <button class="export-dropdown-item" data-format="markdown" style="background: transparent; border: none; text-align: left; padding: 6px 12px; font-size: 0.8rem; color: var(--text-main); cursor: pointer; border-radius: var(--radius-sm); font-weight: 500; display: flex; align-items: center; gap: 8px; width: 100%;">
-                                <i data-lucide="edit-3" style="width: 12px; height: 12px; color: #10b981;"></i>Save as Markdown
-                            </button>
                             <button class="export-dropdown-item" data-format="ppt" style="background: transparent; border: none; text-align: left; padding: 6px 12px; font-size: 0.8rem; color: var(--text-main); cursor: pointer; border-radius: var(--radius-sm); font-weight: 500; display: flex; align-items: center; gap: 8px; width: 100%;">
                                 <i data-lucide="presentation" style="width: 12px; height: 12px; color: #f59e0b;"></i>Save as PPT (.ppt)
                             </button>
