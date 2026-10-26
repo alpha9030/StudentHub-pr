@@ -20,6 +20,7 @@ if (envConfig.parsed && envConfig.parsed.PORT) {
 }
 
 const app = express();
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3008;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -180,8 +181,8 @@ app.post('/api/chat', async (req, res) => {
 
   // Set up model options
   const genAI = new GoogleGenerativeAI(apiKey);
-  // Using gemini-2.5-flash as the default model for general purpose chats
-  const modelName = 'gemini-2.5-flash';
+  // Default model for general purpose chats (configurable via GEMINI_MODEL)
+  const modelName = process.env.GEMINI_MODEL || 'gemini-3.8-flash';
   const model = genAI.getGenerativeModel({ 
     model: modelName,
     generationConfig: {
@@ -375,8 +376,17 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
         extractedContent = parseExcelText(filePath);
       } else if (ext === 'pdf') {
         const fileBuffer = fs.readFileSync(filePath);
-        const pdfData = await pdfParse(fileBuffer);
-        extractedContent = pdfData.text;
+        if (typeof pdfParse === 'function') {
+          const pdfData = await pdfParse(fileBuffer);
+          extractedContent = pdfData.text;
+        } else if (pdfParse && pdfParse.PDFParse) {
+          const parser = new pdfParse.PDFParse({ data: fileBuffer });
+          const pdfData = await parser.getText();
+          extractedContent = typeof pdfData === 'string' ? pdfData : (pdfData.text || '');
+          if (typeof parser.destroy === 'function') await parser.destroy();
+        } else {
+          throw new Error('PDF parser engine unavailable.');
+        }
       } else if (ext === 'docx') {
         const result = await mammoth.extractRawText({ path: filePath });
         extractedContent = result.value;

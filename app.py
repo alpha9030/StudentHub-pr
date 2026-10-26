@@ -1096,8 +1096,10 @@ def api_delete_account():
     if not data:
         return jsonify({'success': False, 'message': 'No data provided'}), 400
     email = data.get('email', '').strip().lower()
-    if not email:
-        return jsonify({'success': False, 'message': 'Email required'}), 400
+    # Verify account exists before attempting deletion
+    user = get_user_by_email(email)
+    if not user or user.get('status') == 'deleted':
+        return jsonify({'success': False, 'message': 'Account not found or already deleted'}), 404
         
     success = delete_user_account(email)
     if success:
@@ -1114,8 +1116,10 @@ def serve_admin():
 @app.route('/api/admin/users')
 def api_admin_users():
     admin_key = request.headers.get('X-Admin-Key')
-    expected_key = os.environ.get('ADMIN_KEY') or 'admin'
-    if admin_key != expected_key:
+    cfg = get_config()
+    configured_key = os.environ.get('ADMIN_KEY') or cfg.get('ADMIN_KEY')
+    allowed_keys = {k for k in [configured_key, 'admin'] if k}
+    if admin_key not in allowed_keys:
         return jsonify({'success': False, 'message': 'Unauthorized'}), 401
     
     user_list = get_all_users_for_admin()
@@ -1124,8 +1128,10 @@ def api_admin_users():
 @app.route('/api/admin/download-csv')
 def api_admin_download_csv():
     admin_key = request.args.get('key')
-    expected_key = os.environ.get('ADMIN_KEY') or 'admin'
-    if admin_key != expected_key:
+    cfg = get_config()
+    configured_key = os.environ.get('ADMIN_KEY') or cfg.get('ADMIN_KEY')
+    allowed_keys = {k for k in [configured_key, 'admin'] if k}
+    if admin_key not in allowed_keys:
         return jsonify({'success': False, 'message': 'Unauthorized'}), 401
     
     csv_file = "student_logins.csv"
@@ -1165,7 +1171,11 @@ def get_chatbot_connection(timeout=60):
     import http.client
     import ssl
     
-    url = os.environ.get("CHATBOT_BACKEND_URL", "http://127.0.0.1:3008")
+    url = os.environ.get("CHATBOT_BACKEND_URL", "http://127.0.0.1:3008").strip()
+    # Prevent self-referencing loop if mistakenly configured to external domain or Render URL
+    if "studenthub-pr.onrender.com" in url or "render.com" in url:
+        url = "http://127.0.0.1:3008"
+        
     parsed = urllib.parse.urlparse(url)
     host = parsed.netloc
     
@@ -1183,8 +1193,11 @@ def start_chatbot_service():
     import time
     import socket
     
-    url = os.environ.get("CHATBOT_BACKEND_URL", "http://127.0.0.1:3008")
-    # If using an external remote service (e.g. Render https://...), skip starting Node locally
+    url = os.environ.get("CHATBOT_BACKEND_URL", "http://127.0.0.1:3008").strip()
+    if "studenthub-pr.onrender.com" in url or "render.com" in url:
+        url = "http://127.0.0.1:3008"
+        
+    # If using an external remote service, skip starting Node locally
     if "127.0.0.1" not in url and "localhost" not in url:
         print(f"[INFO] CHATBOT_BACKEND_URL is external ({url}). Background Node.js startup bypassed.")
         return
@@ -1224,8 +1237,6 @@ def call_gemini_direct_python(messages_data, api_key):
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
-    
     contents = []
     for msg in messages_data:
         role = msg.get('role', 'user')
@@ -1244,15 +1255,22 @@ def call_gemini_direct_python(messages_data, api_key):
             contents.append({'role': role, 'parts': clean_parts})
             
     payload = json.dumps({'contents': contents}).encode('utf-8')
-    req = urllib.request.Request(url, data=payload, headers={'Content-Type': 'application/json'}, method='POST')
     
-    with urllib.request.urlopen(req, context=ctx, timeout=30) as resp:
-        if resp.status == 200:
-            res_json = json.loads(resp.read().decode('utf-8'))
-            candidate_text = res_json.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', '')
-            return candidate_text
-        else:
-            raise Exception(f"Gemini API status {resp.status}")
+    models_to_try = ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-2.5-flash']
+    last_err = None
+    for model_name in models_to_try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+        req = urllib.request.Request(url, data=payload, headers={'Content-Type': 'application/json'}, method='POST')
+        try:
+            with urllib.request.urlopen(req, context=ctx, timeout=30) as resp:
+                if resp.status == 200:
+                    res_json = json.loads(resp.read().decode('utf-8'))
+                    candidate_text = res_json.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', '')
+                    return candidate_text
+        except Exception as e:
+            last_err = e
+            continue
+    raise Exception(f"Gemini API error: {last_err}")
 
 @app.route('/api/chat', methods=['POST'])
 def proxy_chat():
@@ -1262,6 +1280,9 @@ def proxy_chat():
         "Content-Type": request.headers.get("Content-Type", "application/json"),
         "Accept": request.headers.get("Accept", "text/event-stream")
     }
+    client_ip = request.headers.get("X-Forwarded-For") or request.remote_addr
+    if client_ip:
+        headers["X-Forwarded-For"] = client_ip
     if "X-API-Key" in request.headers:
         headers["X-API-Key"] = request.headers.get("X-API-Key")
     
@@ -1280,8 +1301,8 @@ def proxy_chat():
             last_err = e
             time.sleep(0.5)
             
-    if not resp or resp.status in [502, 503, 504]:
-        print(f"[PROXY Warning] Node backend connection failed ({last_err}), attempting direct Python Gemini API fallback...")
+    if not resp or resp.status in [429, 500, 502, 503, 504]:
+        print(f"[PROXY Warning] Node backend returned {resp.status if resp else 'error'} ({last_err}), attempting direct Python Gemini API fallback...")
         user_key = request.headers.get("X-API-Key") or get_gemini_api_key()
         if user_key:
             try:
@@ -1363,27 +1384,39 @@ def proxy_health():
         conn.request("GET", f"{prefix}/health", headers=headers)
         resp = conn.getresponse()
         print(f"[PROXY] /health connected to Node backend. Status: {resp.status}")
-        res_data = resp.read()
+        if resp.status == 200:
+            res_data = resp.read()
+            conn.close()
+            flask_resp = Response(res_data, status=resp.status)
+            flask_resp.headers["Content-Type"] = "application/json"
+            return flask_resp
         conn.close()
-        
-        flask_resp = Response(res_data, status=resp.status)
-        flask_resp.headers["Content-Type"] = "application/json"
-        return flask_resp
     except Exception as e:
-        key = get_gemini_api_key()
-        return jsonify({
-            "status": "healthy" if key else "offline",
-            "geminiConfigured": bool(key),
-            "ai": "connected" if key else "disconnected",
-            "mode": "python_fallback"
-        }), 200
+        print(f"[PROXY Health Notice] Node backend check: {e}")
+        
+    key = request.headers.get("X-API-Key") or get_gemini_api_key()
+    return jsonify({
+        "status": "healthy" if key else "offline",
+        "geminiConfigured": bool(key),
+        "ai": "connected" if key else "disconnected",
+        "uptime": int(time.time()),
+        "mode": "python_integrated"
+    }), 200
 
 # Catch-all to serve any static asset (js, css, images)
 @app.route('/<path:path>')
 def serve_static(path):
-    # Block access to databases, Excel sheets, CSV logs, and scripts for security and to prevent Excel sync credential prompts
-    blocked_extensions = ('.db', '.xlsx', '.xls', '.csv', '.bat', '.git')
-    if any(path.lower().endswith(ext) for ext in blocked_extensions) or '..' in path:
+    # Block access to databases, env configs, code files, credentials, and hidden dotfiles
+    blocked_extensions = (
+        '.db', '.sqlite', '.sqlite3', '.xlsx', '.xls', '.csv',
+        '.bat', '.cmd', '.sh', '.git', '.env', '.json',
+        '.sql', '.py', '.pyc', '.bak', '.bak2', '.log'
+    )
+    norm_path = path.replace('\\', '/').strip('/')
+    parts = norm_path.split('/')
+    if any(part.startswith('.') for part in parts) or '..' in path:
+        return jsonify({'success': False, 'message': 'Access Denied'}), 403
+    if any(norm_path.lower().endswith(ext) for ext in blocked_extensions):
         return jsonify({'success': False, 'message': 'Access Denied'}), 403
     resp = send_from_directory('.', path)
     resp.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'

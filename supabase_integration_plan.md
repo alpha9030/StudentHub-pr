@@ -46,13 +46,9 @@ CREATE TABLE users (
     dept TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()),
     last_login_at TIMESTAMP WITH TIME ZONE,
-    login_count INT DEFAULT 0
+    login_count INT DEFAULT 0,
+    status TEXT DEFAULT 'active'
 );
-
--- Note: To alter an existing users table to add tracking columns:
--- ALTER TABLE users ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW());
--- ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMP WITH TIME ZONE;
--- ALTER TABLE users ADD COLUMN IF NOT EXISTS login_count INT DEFAULT 0;
 
 -- 2. Create PROGRESS table
 CREATE TABLE progress (
@@ -69,23 +65,30 @@ CREATE TABLE deleted_users (
     dept TEXT NOT NULL,
     deleted_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW())
 );
+
+-- 4. Enable Row-Level Security (RLS) to secure tables
+-- This fixes the 'rls_disabled_in_public' and 'sensitive_columns_exposed' issues.
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE progress ENABLE ROW LEVEL SECURITY;
+ALTER TABLE deleted_users ENABLE ROW LEVEL SECURITY;
 ```
 
 ---
 
-## Step 3: Get your API Credentials
+## Step 3: Get your API Credentials (Secure Approach)
 
 1. In the left sidebar, click the **Settings** gear icon.
 2. Click on **API** in the settings menu.
 3. Locate your credentials:
    * **Project URL**: Under *Project API keys* (e.g., `https://xyz.supabase.co`).
-   * **API Key**: Under *Project API keys*, copy the key labeled **`anon` `public`**.
+   * **API Key**: Copy the secret key labeled **`service_role`** (which safely bypasses RLS on the server). 
+     * **CRITICAL SECURITY NOTE**: Do **NOT** use the `anon` `public` key in the Flask backend. Using the `anon` key exposes your database (including hashed passwords) to anyone querying your project API without RLS policies. The `service_role` key must be kept secret and only used on your secure server backend.
 
 ---
 
 ## Step 4: Configure `config.json`
 
-Open [config.json](file:///C:/Users/alasa/OneDrive/ドキュメント/IMP/project/website1.html/config.json) and enter your Supabase URL and API Key:
+Open [config.json](file:///C:/Users/alasa/OneDrive/ドキュメント/IMP/project/website1.html/config.json) and enter your Supabase URL and your **`service_role`** API Key:
 
 ```json
 {
@@ -94,7 +97,7 @@ Open [config.json](file:///C:/Users/alasa/OneDrive/ドキュメント/IMP/projec
   "SMTP_SERVER": "smtp.gmail.com",
   "SMTP_PORT": "587",
   "SUPABASE_URL": "https://your-project-id.supabase.co",
-  "SUPABASE_KEY": "your-anon-public-api-key"
+  "SUPABASE_KEY": "your-secret-service_role-api-key"
 }
 ```
 If these two keys are present, Flask will automatically use Supabase; otherwise, it will fall back to local SQLite.

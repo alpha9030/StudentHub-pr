@@ -16,3 +16,7 @@ chatbot/node_modules/
 chatbot/uploads/
 chatbot/server.log
 chatbot/.env
+
+# Environment & Secrets
+.env
+*.env

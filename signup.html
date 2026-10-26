@@ -292,7 +292,8 @@
             const cleanId = idValue.toLowerCase();
             const foundUser = users.find(u => 
                 ((u.email || '').trim().toLowerCase() === cleanId || (u.username || '').trim().toLowerCase() === cleanId) && 
-                (u.password || '').trim() === pwdValue
+                (u.password || '').trim() === pwdValue &&
+                u.status !== 'deleted'
             );
 
             if (!foundUser) {
@@ -428,20 +429,36 @@
             try { users = JSON.parse(localStorage.getItem('registeredUsers') || '[]'); } catch(e) { users = []; }
             if (!Array.isArray(users)) users = [];
             const cleanEmail = emailVal.toLowerCase();
-            if (users.some(u => (u.email || '').toLowerCase() === cleanEmail)) {
-                alert("An account with this email address is already registered.");
-                return false;
+            const existingUser = users.find(u => (u.email || '').toLowerCase() === cleanEmail);
+            if (existingUser) {
+                if (existingUser.status === 'deleted') {
+                    // Reactivate
+                    existingUser.username = usernameVal;
+                    existingUser.password = pwdVal;
+                    existingUser.grade = gradeVal;
+                    existingUser.dept = deptVal;
+                    existingUser.status = 'active';
+                    existingUser.progress = [];
+                    existingUser.login_count = 0;
+                    existingUser.last_login_at = null;
+                } else {
+                    alert("An account with this email address is already registered.");
+                    return false;
+                }
+            } else {
+                const newUser = {
+                    username: usernameVal,
+                    email: cleanEmail,
+                    password: pwdVal,
+                    grade: gradeVal,
+                    dept: deptVal,
+                    progress: [],
+                    status: 'active',
+                    login_count: 0,
+                    last_login_at: null
+                };
+                users.push(newUser);
             }
-
-            const newUser = {
-                username: usernameVal,
-                email: cleanEmail,
-                password: pwdVal,
-                grade: gradeVal,
-                dept: deptVal,
-                progress: []
-            };
-            users.push(newUser);
             localStorage.setItem('registeredUsers', JSON.stringify(users));
             
             localStorage.setItem('studentName', usernameVal);
