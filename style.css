@@ -17,7 +17,7 @@
    1. THEME VARIABLES DEFINITIONS
    ========================================================================== */
 :root {
-    /* Pravio AI Light Theme Colors */
+    /* StudentHub Light Theme Colors */
     --bg-body: #f9fafb;
     --text-body: #111827;
     --text-muted: #4b5563;
@@ -130,7 +130,7 @@
 }
 
 body.theme-dark {
-    /* Pravio AI Dark Theme Colors */
+    /* StudentHub Dark Theme Colors */
     --bg-body: #0a0b10;
     --text-body: #f3f4f6;
     --text-muted: #6b7280;
@@ -3865,7 +3865,7 @@ body.theme-light .career-wrapper .career-select option {
     pointer-events: none;
 }
 
-/* Full viewport chatbot mode */
+/* Full viewport workspace mode */
 .app-container.full-screen-chat {
     padding: 0 !important;
     max-width: 100% !important;
@@ -3889,38 +3889,6 @@ body.theme-light .career-wrapper .career-select option {
     padding: 0 !important;
 }
 
-/* Dedicated chatbot full-screen workspace mode */
-.app-container.chatbot-workspace-active {
-    padding: 0 !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    border: none !important;
-    border-radius: 0 !important;
-    height: 100vh !important;
-    display: flex !important;
-    flex-direction: column !important;
-    overflow: hidden !important;
-    background-color: var(--bg-secondary) !important;
-}
-
-.app-container.chatbot-workspace-active .global-navbar {
-    display: none !important;
-}
-
-.app-container.chatbot-workspace-active .app-footer {
-    display: none !important;
-}
-
-.app-container.chatbot-workspace-active #chatbot-panel {
-    flex: 1 !important;
-    height: 100vh !important;
-    min-height: 0 !important;
-    border-radius: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
 
 /* UI Polishing overrides */
 a, button, .dash-stat-card, .btn, input, select {
@@ -5968,7 +5936,6 @@ body.theme-dark #notes-panel .template-sticky {
 
 }
 
-#chatbot-panel.active,
 #notes-panel.active {
     display: flex !important;
 }

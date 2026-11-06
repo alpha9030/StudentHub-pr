@@ -11,12 +11,6 @@ config.json
 *.xls
 *.csv
 
-# Chatbot local files
-chatbot/node_modules/
-chatbot/uploads/
-chatbot/server.log
-chatbot/.env
-
 # Environment & Secrets
 .env
 *.env

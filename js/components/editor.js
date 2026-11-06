@@ -1324,7 +1324,7 @@ class Editor {
                 <div style="text-align:center; padding:30px 10px;">
                     <i data-lucide="sparkles" style="width:40px; height:40px; color:var(--color-primary); margin-bottom:12px;"></i>
                     <h4 style="font-weight:700; color:var(--text-main); margin-bottom:6px;">No AI Flashcards Generated Yet</h4>
-                    <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:20px;">Ask Pravio AI to analyze this topic notes and create high-yield Q&A flashcards for exam preparation.</p>
+                    <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:20px;">Analyze this topic notes and create high-yield Q&A flashcards for exam preparation.</p>
                     <button id="btn-generate-ai-cards-action" class="btn btn-primary" style="margin:0 auto; padding:10px 20px; font-weight:700;">
                         <i data-lucide="zap"></i> Generate Topic Flashcards
                     </button>
@@ -1408,7 +1408,7 @@ class Editor {
         container.innerHTML = `
             <div style="text-align:center; padding:40px 10px;">
                 <i data-lucide="loader" class="icon-spin" style="width:36px; height:36px; color:var(--color-primary); margin-bottom:12px;"></i>
-                <h4 style="font-weight:700; color:var(--text-main); margin-bottom:4px;">Pravio AI is generating flashcards...</h4>
+                <h4 style="font-weight:700; color:var(--text-main); margin-bottom:4px;">Generating flashcards...</h4>
                 <p style="font-size:0.8rem; color:var(--text-muted);">Extracting high-yield exam concepts for "${note.title}"</p>
             </div>
         `;
@@ -1491,7 +1491,7 @@ class Editor {
                 <div style="text-align:center; padding:30px 10px;">
                     <i data-lucide="sparkles" style="width:40px; height:40px; color:var(--color-accent); margin-bottom:12px;"></i>
                     <h4 style="font-weight:700; color:var(--text-main); margin-bottom:6px;">No AI Cheat-Sheet Generated Yet</h4>
-                    <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:20px;">Ask Pravio AI to generate a quick 1-page formula & summary cheat-sheet for revision.</p>
+                    <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:20px;">Generate a quick 1-page formula & summary cheat-sheet for revision.</p>
                     <button id="btn-generate-ai-cs-action" class="btn btn-primary" style="margin:0 auto; padding:10px 20px; font-weight:700; background:var(--color-accent); border:none;">
                         <i data-lucide="file-text"></i> Generate Topic Cheat-Sheet
                     </button>
@@ -1540,7 +1540,7 @@ ${note.cheatsheetText}
         container.innerHTML = `
             <div style="text-align:center; padding:40px 10px;">
                 <i data-lucide="loader" class="icon-spin" style="width:36px; height:36px; color:var(--color-accent); margin-bottom:12px;"></i>
-                <h4 style="font-weight:700; color:var(--text-main); margin-bottom:4px;">Pravio AI is compiling your Cheat-Sheet...</h4>
+                <h4 style="font-weight:700; color:var(--text-main); margin-bottom:4px;">Compiling your Cheat-Sheet...</h4>
                 <p style="font-size:0.8rem; color:var(--text-muted);">Condensing key formulas and concepts for "${note.title}"</p>
             </div>
         `;

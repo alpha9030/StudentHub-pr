@@ -87,7 +87,6 @@
         // Update Sun/Moon icon toggle
         updateToggleIcons(resolvedTheme);
 
-        // Instantly notify Pravio AI in the current window tab if loaded natively
         if (typeof initTheme === 'function') {
             initTheme();
         }
@@ -102,12 +101,7 @@
         localStorage.setItem('siteAppearanceMode', appearanceMode);
         applySettings();
         
-        // Sync to Pravio AI iframe if present
-        const resolvedTheme = localStorage.getItem('siteTheme') || 'light';
-        const iframe = document.getElementById('chatbot-iframe');
-        if (iframe && iframe.contentWindow) {
-            iframe.contentWindow.postMessage({ type: 'sync-theme', theme: resolvedTheme }, '*');
-        }
+
     };
 
     window.toggleGlobalTheme = function() {
@@ -223,7 +217,6 @@
                     <a href="index.html">Home</a>
                     <a href="account.html">Account</a>
                     <a href="reference.html">References</a>
-                    <a href="index.html#chatbot">Pravio AI</a>
                 </nav>
                 <hr>
             `;

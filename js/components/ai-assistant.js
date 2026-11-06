@@ -122,7 +122,7 @@ class AIAssistant {
             const htmlReply = typeof renderMarkdown === 'function' ? renderMarkdown(replyText) : escapeHTML(replyText).replace(/\n/g, '<br>');
             
             aiBubble.innerHTML = `
-                <h4>Pravio AI Response</h4>
+                <h4>AI Assistant Response</h4>
                 <div style="margin-top:6px; line-height: 1.5; font-size: 0.85rem;">${htmlReply}</div>
             `;
         } catch (error) {
@@ -130,7 +130,7 @@ class AIAssistant {
             let fallbackHTML = '';
             if (promptText.toLowerCase().includes('explain') || promptText.toLowerCase().includes('simplify')) {
                 fallbackHTML = `
-                    <h4>Pravio AI Explanation</h4>
+                    <h4>AI Assistant Explanation</h4>
                     <p style="margin-top:6px;">Breakdown of current note topic:</p>
                     <ul style="margin: 8px 0; padding-left: 16px;">
                         <li><strong>Core Concept:</strong> Simplifies complex data operations step-by-step.</li>
