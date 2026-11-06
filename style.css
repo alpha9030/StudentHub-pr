@@ -33,6 +33,19 @@
     --paper-line-color: rgba(99, 102, 241, 0.14);
     --paper-margin-color: #f43f5e;
     
+    /* Notes Module Palette - Light Theme */
+    --color-primary: #6366f1;
+    --color-primary-light: #818cf8;
+    --color-primary-glow: rgba(99, 102, 241, 0.15);
+    --color-secondary: #14b8a6;
+    --color-secondary-light: #2dd4bf;
+    --color-accent: #f43f5e;
+    --bg-app: #f8fafc;
+    --bg-sidebar: #ffffff;
+    --bg-input: #f1f5f9;
+    --text-main: #0f172a;
+    --text-dark: #334155;
+    
     --bg-container: #ffffff;        /* Secondary */
     --bg-card: #f3f4f6;             /* Tertiary */
     
@@ -140,6 +153,20 @@ body.theme-dark {
     --accent-color: #a855f7;        /* Purple */
     --border-color: rgba(255, 255, 255, 0.08);
     --border-focus: rgba(147, 51, 234, 0.4);
+    
+    /* Notes Module Palette - Dark Theme */
+    --color-primary: #6366f1;
+    --color-primary-light: #818cf8;
+    --color-primary-glow: rgba(99, 102, 241, 0.25);
+    --color-secondary: #14b8a6;
+    --color-secondary-light: #2dd4bf;
+    --color-accent: #f43f5e;
+    --bg-app: #090715;
+    --bg-sidebar: #110e24;
+    --bg-input: #1b1637;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --text-dark: #cbd5e1;
     
     --bg-container: #121420;        /* Secondary */
     --bg-card: #191c2b;             /* Tertiary */
@@ -4129,7 +4156,7 @@ a, button, .dash-stat-card, .btn, input, select {
 /* ==========================================================================
    PRAVIO NOTES INTEGRATION MODULE - SCOPED STYLES
    ========================================================================== */
-#notes-panel /* Global Variables & Themes */
+/* Global Variables & Themes */
 #notes-panel {
 
     /* Color Palette */
@@ -4169,8 +4196,9 @@ a, button, .dash-stat-card, .btn, input, select {
     --paper-margin-color: #f43f5e;
 
 }
-#notes-panel /* Dark Mode Variables */
-body.theme-dark #notes-panel {
+/* Dark Mode Variables */
+body.theme-dark #notes-panel,
+.theme-dark #notes-panel {
 
     --bg-app: #090715;
     --bg-sidebar: #110e24;
@@ -4487,17 +4515,71 @@ body #notes-panel {
     transition: all 0.2s;
 
 }
-#notes-panel .btn-primary {
-
-    background-color: var(--color-primary);
-    color: white;
-
+#notes-panel .btn-primary,
+#notes-panel #btn-create-note {
+    background-color: #6366f1 !important;
+    color: #ffffff !important;
+    border: 1px solid #4f46e5 !important;
+    box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3) !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
 }
-#notes-panel .btn-primary:hover {
 
-    background-color: var(--color-primary-light);
-    transform: translateY(-1px);
+#notes-panel .btn-primary:hover,
+#notes-panel #btn-create-note:hover {
+    background-color: #4f46e5 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.45) !important;
+    transform: translateY(-1px) !important;
+}
 
+#notes-panel .btn-primary *,
+#notes-panel #btn-create-note * {
+    color: #ffffff !important;
+    stroke: #ffffff !important;
+}
+
+#notes-panel .btn-secondary,
+#notes-panel #btn-import-file {
+    background-color: var(--bg-input, #f1f5f9) !important;
+    color: var(--text-dark, #334155) !important;
+    border: 1px solid var(--border-color, #e2e8f0) !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+body.theme-dark #notes-panel .btn-secondary,
+body.theme-dark #notes-panel #btn-import-file,
+.theme-dark #notes-panel .btn-secondary,
+.theme-dark #notes-panel #btn-import-file {
+    background-color: #1b1637 !important;
+    color: #f1f5f9 !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+#notes-panel .btn-secondary:hover,
+#notes-panel #btn-import-file:hover {
+    background-color: var(--border-color, #e2e8f0) !important;
+}
+
+body.theme-dark #notes-panel .btn-secondary:hover,
+body.theme-dark #notes-panel #btn-import-file:hover,
+.theme-dark #notes-panel .btn-secondary:hover,
+.theme-dark #notes-panel #btn-import-file:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+#notes-panel .btn-secondary *,
+#notes-panel #btn-import-file * {
+    color: inherit !important;
 }
 #notes-panel .btn-secondary {
 
@@ -5545,8 +5627,9 @@ body.theme-dark #notes-panel .floating-text-block {
     outline: none;
 
 }
-#notes-panel /* Dark Mode Notebook Sheet Overrides */
-body.theme-dark #notes-panel .template-classic {
+/* Dark Mode Notebook Sheet Overrides */
+body.theme-dark #notes-panel .template-classic,
+.theme-dark #notes-panel .template-classic {
 
     background-color: #110e24 !important;
     color: var(--text-main) !important;
@@ -5883,7 +5966,7 @@ body.theme-dark #notes-panel .template-sticky {
     color: var(--color-primary) !important;
 
 }
-#notes-panel /* Print Overrides: Export only notes to PDF */
+/* Print Overrides: Export only notes to PDF */
 @media print {
 
     body, html {
