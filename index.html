@@ -949,8 +949,6 @@
                 }
                 return true;
             }
-
-            }
         </script>
 
         <!-- ==================== VIEW 1: WELCOME GATEWAY ==================== -->
@@ -2838,7 +2836,7 @@
                     alert("Access Denied: You must be registered and signed in to access Pravio Notes. Redirecting to Enrollment Terminal...");
                     showView('auth');
                 }
- else {
+            } else {
                 if (loggedIn) {
                     showView('dashboard');
                 } else {
