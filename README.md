@@ -30,7 +30,7 @@ You can try out the live website here:
 ## 🛠️ Technology Stack
 - **Frontend:** HTML5, CSS3, JavaScript (Clean, responsive, and mobile-friendly design)
 - **Backend:** Python & Flask (Lightweight and fast web server)
-- **Database:** SQLite (Stores user accounts and progress safely)
+- **Database:** Supabase postgre sql (Stores user accounts and progress safely)
 - **Deployment:** Render (Cloud hosting)
 
 ---
