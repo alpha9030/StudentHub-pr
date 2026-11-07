@@ -1,6 +1,7 @@
 # 🎓 Student Hub — Academic Workspace & Learning Platform
 
 [![Live Application](https://img.shields.io/badge/Live%20Site-studenthub--pr.onrender.com-6366f1?style=for-the-badge&logo=render)](https://studenthub-pr.onrender.com/)
+[![CI Pipeline](https://github.com/alpha9030/StudentHub-pr/actions/workflows/ci.yml/badge.svg)](https://github.com/alpha9030/StudentHub-pr/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-3.x-black?style=for-the-badge&logo=flask)](https://palletsprojects.com/p/flask/)
 [![License](https://img.shields.io/badge/License-MIT-emerald?style=for-the-badge)](LICENSE)
